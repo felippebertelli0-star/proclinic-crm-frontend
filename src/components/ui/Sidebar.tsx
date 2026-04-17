@@ -16,17 +16,37 @@ import {
 interface NavItem {
   label: string;
   href: string;
-  icon: React.ReactNode;
+  iconName: string;
 }
 
 const navItems: NavItem[] = [
-  { label: 'Dashboard', href: '/dashboard', icon: <LayoutDashboard size={20} /> },
-  { label: 'Usuários', href: '/dashboard/usuarios', icon: <Users size={20} /> },
-  { label: 'Conversas', href: '/dashboard/conversas', icon: <MessageSquare size={20} /> },
-  { label: 'Contatos', href: '/dashboard/contatos', icon: <Phone size={20} /> },
-  { label: 'Pagamentos', href: '/dashboard/pagamentos', icon: <CreditCard size={20} /> },
-  { label: 'Configurações', href: '/dashboard/configuracoes', icon: <Settings size={20} /> },
+  { label: 'Dashboard', href: '/dashboard', iconName: 'dashboard' },
+  { label: 'Usuários', href: '/dashboard/usuarios', iconName: 'users' },
+  { label: 'Conversas', href: '/dashboard/conversas', iconName: 'message' },
+  { label: 'Contatos', href: '/dashboard/contatos', iconName: 'phone' },
+  { label: 'Pagamentos', href: '/dashboard/pagamentos', iconName: 'card' },
+  { label: 'Configurações', href: '/dashboard/configuracoes', iconName: 'settings' },
 ];
+
+const getIcon = (iconName: string) => {
+  const iconProps = { size: 20 };
+  switch (iconName) {
+    case 'dashboard':
+      return <LayoutDashboard {...iconProps} />;
+    case 'users':
+      return <Users {...iconProps} />;
+    case 'message':
+      return <MessageSquare {...iconProps} />;
+    case 'phone':
+      return <Phone {...iconProps} />;
+    case 'card':
+      return <CreditCard {...iconProps} />;
+    case 'settings':
+      return <Settings {...iconProps} />;
+    default:
+      return null;
+  }
+};
 
 export function Sidebar() {
   const pathname = usePathname();
@@ -57,7 +77,7 @@ export function Sidebar() {
                   : 'text-gray-700 hover:bg-gray-50'
               }`}
             >
-              {item.icon}
+              {getIcon(item.iconName)}
               <span className="flex-1">{item.label}</span>
               {isActive && <ChevronRight size={18} />}
             </Link>
