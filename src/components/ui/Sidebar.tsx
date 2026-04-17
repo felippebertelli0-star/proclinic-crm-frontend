@@ -15,9 +15,9 @@ import {
   CheckSquare,
   Lightbulb,
   Grid,
-  GitNetwork,
+  Network,
   GitBranch,
-  Queue,
+  ListChecks,
   Users2,
   Link2,
   Folder,
@@ -69,14 +69,14 @@ const navSections: NavSection[] = [
     items: [
       { label: 'Estratégias', href: '/dashboard/estrategias', icon: <Lightbulb size={16} /> },
       { label: 'Portal das IAs', href: '/dashboard/portal-ias', icon: <Grid size={16} /> },
-      { label: 'FlowBuilder', href: '/dashboard/flowbuilder', icon: <GitNetwork size={16} /> },
+      { label: 'FlowBuilder', href: '/dashboard/flowbuilder', icon: <Network size={16} /> },
       { label: 'Webhooks / Triggers', href: '/dashboard/webhooks', icon: <GitBranch size={16} /> },
     ],
   },
   {
     section: 'GESTÃO',
     items: [
-      { label: 'Filas', href: '/dashboard/filas', icon: <Queue size={16} /> },
+      { label: 'Filas', href: '/dashboard/filas', icon: <ListChecks size={16} /> },
       { label: 'Equipe', href: '/dashboard/equipe', icon: <Users2 size={16} /> },
       { label: 'Conexões', href: '/dashboard/conexoes', icon: <Link2 size={16} /> },
       { label: 'Arquivos', href: '/dashboard/arquivos', icon: <Folder size={16} /> },

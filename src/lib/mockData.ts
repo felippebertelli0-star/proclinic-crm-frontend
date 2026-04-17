@@ -94,7 +94,7 @@ const gerarTelefone = (): string => {
 // ============================================================================
 
 export const mockUsuarios: UsuarioExpandido[] = [
-  ...nomesBrasileiros.map((nome, index) => ({
+  ...nomesBrasileiros.map((nome, index): UsuarioExpandido => ({
     id: gerarId(),
     nome,
     email: gerarEmail(nome),

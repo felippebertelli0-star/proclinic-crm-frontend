@@ -3,7 +3,7 @@
  * Qualidade: Premium AAA
  */
 
-import { Edit, Trash2, Eye, Eye2Icon } from 'lucide-react';
+import { Edit, Trash2, Eye } from 'lucide-react';
 
 interface ActionButtonsProps {
   onEdit?: () => void;
