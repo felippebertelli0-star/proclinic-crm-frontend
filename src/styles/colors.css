@@ -1,0 +1,30 @@
+/* ProClinic CRM - Cores Oficiais (Idênticas ao Protótipo Aprovado) */
+
+:root {
+  /* Navy (Fundo Escuro) */
+  --navy: #0d1f2d;
+  --navy-mid: #132636;
+  --navy-light: #1a3347;
+  --navy-border: #1e3d54;
+
+  /* Ouro/Dourado (Primária) */
+  --gold: #c9943a;
+  --gold-light: #e8b86d;
+  --gold-gradient: linear-gradient(135deg, #c9943a, #e8b86d, #c9943a);
+
+  /* Texto */
+  --text: #e8edf2;
+  --text-muted: #7a96aa;
+
+  /* Status Colors */
+  --green: #2ecc71;
+  --orange: #f39c12;
+  --red: #e74c3c;
+  --blue-accent: #3498db;
+}
+
+/* Tailwind equivalents for our gold color */
+.bg-gold { background-color: var(--gold); }
+.text-gold { color: var(--gold); }
+.border-gold { border-color: var(--gold); }
+.bg-gold-gradient { background: var(--gold-gradient); }

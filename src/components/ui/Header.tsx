@@ -24,7 +24,7 @@ export function Header() {
         <div className="flex justify-between items-center">
           {/* Logo */}
           <Link href="/dashboard" className="flex items-center space-x-2">
-            <div className="w-10 h-10 bg-amber-400 rounded-lg flex items-center justify-center shadow-lg">
+            <div className="w-10 h-10 bg-[#c9943a] rounded-lg flex items-center justify-center shadow-lg">
               <span className="text-slate-900 font-bold text-lg">P</span>
             </div>
             <div>
@@ -44,7 +44,7 @@ export function Header() {
 
                 <button
                   onClick={handleLogout}
-                  className="px-4 py-2 text-sm font-medium text-slate-300 hover:bg-slate-700 hover:text-amber-400 rounded-lg transition"
+                  className="px-4 py-2 text-sm font-medium text-slate-300 hover:bg-slate-700 hover:text-[#c9943a] rounded-lg transition"
                 >
                   Sair
                 </button>

@@ -32,7 +32,7 @@ export function TableCard({
         {actionLabel && onAction && (
           <button
             onClick={onAction}
-            className="flex items-center gap-2 px-4 py-2 bg-amber-400 text-slate-900 font-semibold rounded-lg hover:bg-amber-500 transition-colors shadow-lg"
+            className="flex items-center gap-2 px-4 py-2 bg-[#c9943a] text-slate-900 font-semibold rounded-lg hover:bg-[#c9943a] transition-colors shadow-lg"
             aria-label={actionLabel}
           >
             <Plus size={20} />

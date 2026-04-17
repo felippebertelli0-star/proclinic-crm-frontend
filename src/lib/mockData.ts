@@ -390,7 +390,7 @@ export const obterCorStatus = (status: string): string => {
     // Conversas
     ativa: 'bg-green-950 text-green-300 border border-green-800',
     fechada: 'bg-slate-700 text-slate-300 border border-slate-600',
-    aguardando: 'bg-amber-950 text-amber-300 border border-amber-800',
+    aguardando: 'bg-orange-950 text-orange-300 border border-orange-700',
 
     // Contatos
     ativo: 'bg-green-950 text-green-300 border border-green-800',
@@ -399,7 +399,7 @@ export const obterCorStatus = (status: string): string => {
 
     // Pagamentos
     confirmado: 'bg-green-950 text-green-300 border border-green-800',
-    pendente: 'bg-amber-950 text-amber-300 border border-amber-800',
+    pendente: 'bg-orange-950 text-orange-300 border border-orange-700',
     falhou: 'bg-red-950 text-red-300 border border-red-800',
     reembolsado: 'bg-purple-950 text-purple-300 border border-purple-800',
   };

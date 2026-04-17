@@ -75,7 +75,7 @@ export function LoginForm() {
         <div className="text-center mb-8">
           {/* Logo com ícone amarelo */}
           <div className="flex justify-center mb-6">
-            <div className="bg-amber-400 rounded-full p-4 shadow-lg">
+            <div className="bg-[#c9943a] rounded-full p-4 shadow-lg">
               <svg className="w-8 h-8 text-slate-900" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
               </svg>
@@ -109,7 +109,7 @@ export function LoginForm() {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="seu@email.com"
-                className="w-full px-4 py-2 bg-slate-700 border border-slate-600 text-white placeholder-slate-500 rounded-lg focus:ring-2 focus:ring-amber-400 focus:border-amber-400 outline-none transition"
+                className="w-full px-4 py-2 bg-slate-700 border border-slate-600 text-white placeholder-slate-500 rounded-lg focus:ring-2 focus:ring-[#c9943a] focus:border-[#c9943a] outline-none transition"
                 disabled={isLoading}
               />
             </div>
@@ -126,7 +126,7 @@ export function LoginForm() {
                 value={formData.senha}
                 onChange={handleChange}
                 placeholder="••••••••"
-                className="w-full px-4 py-2 bg-slate-700 border border-amber-500 text-white placeholder-slate-500 rounded-lg focus:ring-2 focus:ring-amber-400 focus:border-amber-400 outline-none transition"
+                className="w-full px-4 py-2 bg-slate-700 border border-[#c9943a] text-white placeholder-slate-500 rounded-lg focus:ring-2 focus:ring-[#c9943a] focus:border-[#c9943a] outline-none transition"
                 disabled={isLoading}
               />
             </div>
@@ -135,7 +135,7 @@ export function LoginForm() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-amber-400 hover:bg-amber-500 disabled:bg-amber-300 text-slate-900 font-bold py-3 rounded-lg transition duration-200 shadow-lg"
+              className="w-full bg-[#c9943a] hover:bg-[#c9943a] disabled:bg-amber-300 text-slate-900 font-bold py-3 rounded-lg transition duration-200 shadow-lg"
             >
               {isLoading ? (
                 <div className="flex items-center justify-center">

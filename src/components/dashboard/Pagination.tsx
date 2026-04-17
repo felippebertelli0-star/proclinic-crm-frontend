@@ -34,7 +34,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
             onClick={() => onPageChange(page)}
             className={`w-8 h-8 rounded-lg font-semibold transition-colors ${
               currentPage === page
-                ? 'bg-amber-400 text-slate-900 font-bold'
+                ? 'bg-[#c9943a] text-slate-900 font-bold'
                 : 'border border-slate-600 text-slate-400 hover:bg-slate-700 hover:text-white'
             }`}
             aria-label={`Página ${page}`}
@@ -52,7 +52,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
               onClick={() => onPageChange(totalPages)}
               className={`w-8 h-8 rounded-lg font-semibold transition-colors ${
                 currentPage === totalPages
-                  ? 'bg-amber-400 text-slate-900 font-bold'
+                  ? 'bg-[#c9943a] text-slate-900 font-bold'
                   : 'border border-slate-600 text-slate-400 hover:bg-slate-700 hover:text-white'
               }`}
               aria-label={`Página ${totalPages}`}

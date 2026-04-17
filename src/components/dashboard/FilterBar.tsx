@@ -39,7 +39,7 @@ export function FilterBar({
           value={searchValue}
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder={searchPlaceholder}
-          className="w-full pl-10 pr-4 py-2 bg-slate-700 border border-slate-600 text-white placeholder-slate-500 rounded-lg focus:ring-2 focus:ring-amber-400 focus:border-amber-400 transition-all"
+          className="w-full pl-10 pr-4 py-2 bg-slate-700 border border-slate-600 text-white placeholder-slate-500 rounded-lg focus:ring-2 focus:ring-[#c9943a] focus:border-[#c9943a] transition-all"
           aria-label="Buscar"
         />
       </div>
@@ -50,7 +50,7 @@ export function FilterBar({
           key={filter.name}
           value={filter.value}
           onChange={(e) => filter.onChange(e.target.value)}
-          className="px-4 py-2 bg-slate-700 border border-slate-600 text-white rounded-lg focus:ring-2 focus:ring-amber-400 focus:border-amber-400 transition-all"
+          className="px-4 py-2 bg-slate-700 border border-slate-600 text-white rounded-lg focus:ring-2 focus:ring-[#c9943a] focus:border-[#c9943a] transition-all"
           aria-label={filter.label}
         >
           <option value="" className="bg-slate-700 text-white">{filter.label}</option>
