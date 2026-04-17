@@ -71,9 +71,9 @@ export function Dashboard() {
   };
 
   const chartData = generateChartData();
-  const chartWidth = 900;
-  const chartHeight = 280;
-  const padding = 45;
+  const chartWidth = 1100;
+  const chartHeight = 350;
+  const padding = 50;
 
   const maxValue = 40;
   const graphWidth = chartWidth - padding * 2;
@@ -496,8 +496,8 @@ export function Dashboard() {
           background: '#132636',
           border: '1px solid #1e3d54',
           borderRadius: '14px',
-          padding: '24px',
-          minHeight: '350px',
+          padding: '32px 40px',
+          minHeight: '420px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
