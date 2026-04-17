@@ -423,3 +423,494 @@ export const obterLabelStatus = (status: string): string => {
 
   return labels[status] || status;
 };
+
+// ============================================================================
+// TAREFAS
+// ============================================================================
+
+const tarefasTitulos = [
+  'Acompanhar paciente pós-cirurgia',
+  'Revisar resultados de exames',
+  'Preencher prescrições pendentes',
+  'Atender ligação de paciente',
+  'Preparar documentos para seguro',
+  'Agendar consulta de rotina',
+  'Responder dúvidas via WhatsApp',
+  'Organizar documentação médica',
+  'Confirmar agendamentos',
+  'Atualizar prontuários',
+];
+
+export const mockTarefas = Array.from({ length: 15 }, (_, index) => ({
+  id: gerarId(),
+  titulo: tarefasTitulos[index % tarefasTitulos.length],
+  descricao: `Tarefa importante para garantir qualidade do atendimento`,
+  status: ['pendente', 'em andamento', 'concluido'][Math.floor(Math.random() * 3)] as any,
+  prioridade: ['baixa', 'media', 'alta'][Math.floor(Math.random() * 3)] as any,
+  responsavel: mockUsuarios[Math.floor(Math.random() * mockUsuarios.length)]?.nome,
+  dataVencimento: dataAleatoriaUltimo30Dias(),
+  dataCriacao: dataAleatoriaUltimoAno(),
+  percentualConclusao: Math.floor(Math.random() * 100),
+  categoria: ['admin', 'paciente', 'seguimento'][Math.floor(Math.random() * 3)],
+}));
+
+export const filtrarTarefas = (
+  termo: string,
+  status?: string,
+  prioridade?: string,
+): typeof mockTarefas => {
+  const termoBaixo = termo.toLowerCase();
+  return mockTarefas.filter(
+    (t) =>
+      (t.titulo.toLowerCase().includes(termoBaixo) ||
+        t.descricao?.toLowerCase().includes(termoBaixo)) &&
+      (!status || t.status === status) &&
+      (!prioridade || t.prioridade === prioridade),
+  );
+};
+
+// ============================================================================
+// FILAS
+// ============================================================================
+
+const filasNomes = [
+  'Fila de Atendimento Geral',
+  'Fila Prioridade (Idosos)',
+  'Fila de Consultas Urgentes',
+  'Fila de Retorno',
+  'Fila de Novos Pacientes',
+];
+
+export const mockFilas = Array.from({ length: 5 }, (_, index) => ({
+  id: gerarId(),
+  nome: filasNomes[index],
+  descricao: `Fila para ${filasNomes[index].toLowerCase()}`,
+  totalAtendimentos: Math.floor(Math.random() * 20) + 5,
+  atendimentosCompletos: Math.floor(Math.random() * 15),
+  tempoMedio: Math.floor(Math.random() * 40) + 10,
+  agentesAtivos: Math.floor(Math.random() * 5) + 1,
+  status: Math.random() > 0.3 ? 'ativa' : 'pausada',
+  ultimaAtualizacao: dataAleatoriaUltimo30Dias(),
+}));
+
+export const filtrarFilas = (termo: string, status?: string): typeof mockFilas => {
+  const termoBaixo = termo.toLowerCase();
+  return mockFilas.filter(
+    (f) =>
+      (f.nome.toLowerCase().includes(termoBaixo) ||
+        f.descricao?.toLowerCase().includes(termoBaixo)) &&
+      (!status || f.status === status),
+  );
+};
+
+// ============================================================================
+// EQUIPE
+// ============================================================================
+
+const especialidades = ['Clínico Geral', 'Cardiologia', 'Dermatologia', 'Pediatria', 'Neurologia'];
+const departamentos = ['Clínica', 'Cirurgia', 'Suporte', 'Administrativo', 'Financeiro'];
+
+export const mockEquipe = mockUsuarios.slice(0, 10).map((usuario, index) => ({
+  id: usuario.id,
+  nome: usuario.nome,
+  email: usuario.email,
+  avatar: usuario.avatar,
+  cargo: ['Médico', 'Enfermeiro', 'Recepcionista', 'Administrativo', 'Gerente'][
+    index % 5
+  ],
+  especialidade: especialidades[index % especialidades.length],
+  departamento: departamentos[index % departamentos.length],
+  telefone: gerarTelefone(),
+  status: usuario.ativo ? 'ativo' : 'inativo',
+  dataPrimeiroAcesso: usuario.criadoEm,
+  ultimoAcesso: usuario.ultimoAcesso || new Date().toISOString(),
+  horasTrabalhadas: Math.floor(Math.random() * 40) + 20,
+}));
+
+export const filtrarEquipe = (
+  termo: string,
+  departamento?: string,
+): typeof mockEquipe => {
+  const termoBaixo = termo.toLowerCase();
+  return mockEquipe.filter(
+    (e) =>
+      (e.nome.toLowerCase().includes(termoBaixo) ||
+        e.email.toLowerCase().includes(termoBaixo) ||
+        e.cargo.toLowerCase().includes(termoBaixo)) &&
+      (!departamento || e.departamento === departamento),
+  );
+};
+
+// ============================================================================
+// CONEXÕES
+// ============================================================================
+
+const tiposConexoes = [
+  'Email',
+  'SMS',
+  'WhatsApp',
+  'Telegram',
+  'Slack',
+  'Google Calendar',
+  'Stripe',
+  'PayPal',
+  'Twilio',
+];
+
+export const mockConexoes = Array.from({ length: 9 }, (_, index) => ({
+  id: gerarId(),
+  nome: tiposConexoes[index],
+  tipo: tiposConexoes[index].toLowerCase(),
+  status: Math.random() > 0.2 ? 'conectado' : 'desconectado',
+  descricao: `Integração com ${tiposConexoes[index]} para melhorar comunicação`,
+  dataConexao: dataAleatoriaUltimoAno(),
+  ultimaSincronizacao: dataAleatoriaUltimo30Dias(),
+  usuarioConfiguracao: mockUsuarios[0]?.nome,
+  chaveAPI: `****${gerarId().substring(0, 8)}`,
+  erros: Math.random() > 0.8 ? `Erro na sincronização de ${tiposConexoes[index]}` : null,
+}));
+
+export const filtrarConexoes = (
+  termo: string,
+  status?: string,
+): typeof mockConexoes => {
+  const termoBaixo = termo.toLowerCase();
+  return mockConexoes.filter(
+    (c) =>
+      (c.nome.toLowerCase().includes(termoBaixo) ||
+        c.descricao?.toLowerCase().includes(termoBaixo)) &&
+      (!status || c.status === status),
+  );
+};
+
+// ============================================================================
+// ARQUIVOS
+// ============================================================================
+
+const tiposArquivos = ['PDF', 'DOC', 'XLS', 'JPG', 'PNG', 'ZIP'];
+const categorias = ['Documentação', 'Prontuários', 'Exames', 'Contratos', 'Financeiro'];
+
+export const mockArquivos = Array.from({ length: 12 }, (_, index) => ({
+  id: gerarId(),
+  nome: `Documento_${String(index + 1).padStart(3, '0')}.${tiposArquivos[index % tiposArquivos.length].toLowerCase()}`,
+  tipo: tiposArquivos[index % tiposArquivos.length],
+  tamanho: Math.floor(Math.random() * 50) + 1,
+  categoria: categorias[Math.floor(Math.random() * categorias.length)],
+  dataCriacao: dataAleatoriaUltimoAno(),
+  dataModificacao: dataAleatoriaUltimo30Dias(),
+  criador: mockUsuarios[Math.floor(Math.random() * mockUsuarios.length)]?.nome,
+  acesso: Math.random() > 0.5 ? 'privado' : 'compartilhado',
+  pessoas: Math.floor(Math.random() * 5),
+  versao: Math.floor(Math.random() * 5) + 1,
+}));
+
+export const filtrarArquivos = (
+  termo: string,
+  categoria?: string,
+): typeof mockArquivos => {
+  const termoBaixo = termo.toLowerCase();
+  return mockArquivos.filter(
+    (a) =>
+      (a.nome.toLowerCase().includes(termoBaixo) ||
+        a.categoria?.toLowerCase().includes(termoBaixo)) &&
+      (!categoria || a.categoria === categoria),
+  );
+};
+
+// ============================================================================
+// ESTRATÉGIAS
+// ============================================================================
+
+const estrategiasNomes = [
+  'Agendamento Automático',
+  'Follow-up de Consultas',
+  'Confirmação de Agendamento',
+  'Lembretes de Medicação',
+  'Pesquisa de Satisfação',
+  'Oferta de Pacotes',
+];
+
+export const mockEstrategias = Array.from({ length: 6 }, (_, index) => ({
+  id: gerarId(),
+  nome: estrategiasNomes[index],
+  descricao: `Estratégia automatizada para ${estrategiasNomes[index].toLowerCase()}`,
+  tipo: ['email', 'sms', 'whatsapp'][Math.floor(Math.random() * 3)],
+  ativa: Math.random() > 0.3,
+  dataCriacao: dataAleatoriaUltimoAno(),
+  dataAtivacao: dataAleatoriaUltimo30Dias(),
+  totalExecutions: Math.floor(Math.random() * 1000) + 100,
+  taxaSucesso: Math.floor(Math.random() * 40) + 60,
+  criadoPor: mockUsuarios[0]?.nome,
+}));
+
+export const filtrarEstrategias = (
+  termo: string,
+  tipo?: string,
+): typeof mockEstrategias => {
+  const termoBaixo = termo.toLowerCase();
+  return mockEstrategias.filter(
+    (e) =>
+      (e.nome.toLowerCase().includes(termoBaixo) ||
+        e.descricao?.toLowerCase().includes(termoBaixo)) &&
+      (!tipo || e.tipo === tipo),
+  );
+};
+
+// ============================================================================
+// PORTAL IA
+// ============================================================================
+
+const agentesTitulos = [
+  'Assistente de Atendimento',
+  'Analisador de Prontuários',
+  'Gerador de Relatórios',
+  'Chatbot de Agendamento',
+  'Assistente de Diagnóstico',
+  'Analisador de Exames',
+  'Gerador de Prescrições',
+  'Assistente de Faturamento',
+];
+
+export const mockPortalIAs = Array.from({ length: 8 }, (_, index) => ({
+  id: gerarId(),
+  nome: agentesTitulos[index],
+  descricao: `${agentesTitulos[index]} alimentado por IA avançada`,
+  versao: `${Math.floor(Math.random() * 3) + 1}.${Math.floor(Math.random() * 10)}`,
+  categoria: ['Atendimento', 'Análise', 'Automação'][Math.floor(Math.random() * 3)],
+  rating: (Math.random() * 2 + 3).toFixed(1),
+  instalacoes: Math.floor(Math.random() * 5000) + 100,
+  ativa: Math.random() > 0.3,
+  dataLancamento: dataAleatoriaUltimoAno(),
+}));
+
+export const filtrarPortalIAs = (
+  termo: string,
+  categoria?: string,
+): typeof mockPortalIAs => {
+  const termoBaixo = termo.toLowerCase();
+  return mockPortalIAs.filter(
+    (p) =>
+      (p.nome.toLowerCase().includes(termoBaixo) ||
+        p.descricao?.toLowerCase().includes(termoBaixo)) &&
+      (!categoria || p.categoria === categoria),
+  );
+};
+
+// ============================================================================
+// FLOW BUILDER
+// ============================================================================
+
+export const mockFlowBuilder = Array.from({ length: 8 }, (_, index) => ({
+  id: gerarId(),
+  nome: `Fluxo de Automação ${index + 1}`,
+  descricao: `Fluxo automatizado para processos clínicos e administrativos`,
+  status: ['ativo', 'pausado', 'arquivado'][Math.floor(Math.random() * 3)],
+  trigger: ['novo_paciente', 'agendamento', 'mensagem'][Math.floor(Math.random() * 3)],
+  passos: Math.floor(Math.random() * 10) + 2,
+  execucoes: Math.floor(Math.random() * 1000) + 100,
+  taxaErro: Math.floor(Math.random() * 5),
+  dataCriacao: dataAleatoriaUltimoAno(),
+  ultimaExecucao: dataAleatoriaUltimo30Dias(),
+  criadoPor: mockUsuarios[0]?.nome,
+}));
+
+export const filtrarFlowBuilder = (
+  termo: string,
+  status?: string,
+): typeof mockFlowBuilder => {
+  const termoBaixo = termo.toLowerCase();
+  return mockFlowBuilder.filter(
+    (f) =>
+      (f.nome.toLowerCase().includes(termoBaixo) ||
+        f.descricao?.toLowerCase().includes(termoBaixo)) &&
+      (!status || f.status === status),
+  );
+};
+
+// ============================================================================
+// WEBHOOKS
+// ============================================================================
+
+const webhooksURL = [
+  'https://api.clinic.com/webhooks/events',
+  'https://webhook.site/patient-updates',
+  'https://integration.saude.com/notify',
+  'https://api.agenda.com/schedule-changes',
+  'https://payments.clinic.com/transactions',
+  'https://messaging.clinic.com/sms',
+  'https://reports.clinic.com/export',
+  'https://analytics.clinic.com/track',
+];
+
+export const mockWebhooks = Array.from({ length: 8 }, (_, index) => ({
+  id: gerarId(),
+  nome: `Webhook ${index + 1}`,
+  url: webhooksURL[index],
+  evento: [
+    'paciente_criado',
+    'agendamento_confirmado',
+    'pagamento_recebido',
+    'mensagem_recebida',
+    'documento_enviado',
+    'relatorio_gerado',
+  ][Math.floor(Math.random() * 6)],
+  ativo: Math.random() > 0.2,
+  dataUltimoDisparo: dataAleatoriaUltimo30Dias(),
+  totalDisparos: Math.floor(Math.random() * 1000) + 10,
+  tentativasFailadas: Math.floor(Math.random() * 5),
+  dataCriacao: dataAleatoriaUltimoAno(),
+  criadoPor: mockUsuarios[0]?.nome,
+}));
+
+export const filtrarWebhooks = (
+  termo: string,
+  evento?: string,
+): typeof mockWebhooks => {
+  const termoBaixo = termo.toLowerCase();
+  return mockWebhooks.filter(
+    (w) =>
+      (w.nome.toLowerCase().includes(termoBaixo) ||
+        w.url?.toLowerCase().includes(termoBaixo)) &&
+      (!evento || w.evento === evento),
+  );
+};
+
+// ============================================================================
+// RESPOSTAS RÁPIDAS
+// ============================================================================
+
+const respostasTitulos = [
+  'Orientações Pré-Cirurgia',
+  'Confirmação de Agendamento',
+  'Informações de Faturamento',
+  'Horário de Atendimento',
+  'Política de Cancelamento',
+  'Instruções de Exame',
+  'Resultado de Exame',
+  'Consulta de Rotina',
+];
+
+export const mockRespostas = Array.from({ length: 8 }, (_, index) => ({
+  id: gerarId(),
+  titulo: respostasTitulos[index],
+  conteudo: `Resposta padrão para ${respostasTitulos[index].toLowerCase()} com informações detalhadas e instruções claras`,
+  categoria: ['administrativo', 'clinico', 'financeiro'][Math.floor(Math.random() * 3)],
+  dataCriacao: dataAleatoriaUltimoAno(),
+  dataModificacao: dataAleatoriaUltimo30Dias(),
+  usos: Math.floor(Math.random() * 500) + 10,
+  criadoPor: mockUsuarios[Math.floor(Math.random() * mockUsuarios.length)]?.nome,
+  ativo: true,
+}));
+
+export const filtrarRespostas = (
+  termo: string,
+  categoria?: string,
+): typeof mockRespostas => {
+  const termoBaixo = termo.toLowerCase();
+  return mockRespostas.filter(
+    (r) =>
+      (r.titulo.toLowerCase().includes(termoBaixo) ||
+        r.conteudo?.toLowerCase().includes(termoBaixo)) &&
+      (!categoria || r.categoria === categoria),
+  );
+};
+
+// ============================================================================
+// INDICADORES (KPI)
+// ============================================================================
+
+export const mockIndicadores = [
+  {
+    id: gerarId(),
+    titulo: 'Total de Pacientes',
+    valor: Math.floor(Math.random() * 5000) + 1000,
+    variacao: Math.floor(Math.random() * 20) - 5,
+    periodo: 'este mês',
+  },
+  {
+    id: gerarId(),
+    titulo: 'Agendamentos Realizados',
+    valor: Math.floor(Math.random() * 500) + 100,
+    variacao: Math.floor(Math.random() * 30) - 10,
+    periodo: 'este mês',
+  },
+  {
+    id: gerarId(),
+    titulo: 'Taxa de Presença',
+    valor: Math.floor(Math.random() * 40) + 75,
+    variacao: Math.floor(Math.random() * 10) - 2,
+    periodo: 'este mês',
+    unidade: '%',
+  },
+  {
+    id: gerarId(),
+    titulo: 'Receita Total',
+    valor: Math.floor(Math.random() * 500000) + 100000,
+    variacao: Math.floor(Math.random() * 25) - 5,
+    periodo: 'este mês',
+    unidade: 'R$',
+  },
+  {
+    id: gerarId(),
+    titulo: 'Satisfação de Pacientes',
+    valor: (Math.random() * 1 + 4).toFixed(1),
+    variacao: Math.floor(Math.random() * 5) - 2,
+    periodo: 'este mês',
+    unidade: '/5.0',
+  },
+  {
+    id: gerarId(),
+    titulo: 'Tempo Médio de Atendimento',
+    valor: Math.floor(Math.random() * 20) + 15,
+    variacao: Math.floor(Math.random() * 5) - 3,
+    periodo: 'este mês',
+    unidade: 'min',
+  },
+];
+
+// ============================================================================
+// PEDIDOS DE EXAMES
+// ============================================================================
+
+const tiposExames = [
+  'Hemograma Completo',
+  'Tomografia',
+  'Ressonância Magnética',
+  'Ultrassom',
+  'Radiografia',
+  'ECG',
+  'Teste de COVID-19',
+  'Colonoscopia',
+];
+
+export const mockPedidosExames = Array.from({ length: 12 }, (_, index) => ({
+  id: `EXM-${String(index + 1).padStart(5, '0')}`,
+  paciente: nomesBrasileiros[index % nomesBrasileiros.length],
+  tipoExame: tiposExames[index % tiposExames.length],
+  medico: mockUsuarios[Math.floor(Math.random() * mockUsuarios.length)]?.nome,
+  dataSolicitacao: dataAleatoriaUltimoAno(),
+  dataPrevista: dataAleatoriaUltimo30Dias(),
+  dataRealizado: Math.random() > 0.4 ? dataAleatoriaUltimo30Dias() : null,
+  status: ['solicitado', 'agendado', 'realizado', 'cancelado'][
+    Math.floor(Math.random() * 4)
+  ],
+  laboratorio: ['Laboratório Central', 'Clínica Diagnóstica', 'Hospital da Clínica'][
+    Math.floor(Math.random() * 3)
+  ],
+  resultado: Math.random() > 0.6 ? 'Normal' : 'Alterado',
+  prioridade: ['baixa', 'media', 'alta'][Math.floor(Math.random() * 3)],
+}));
+
+export const filtrarPedidosExames = (
+  termo: string,
+  status?: string,
+): typeof mockPedidosExames => {
+  const termoBaixo = termo.toLowerCase();
+  return mockPedidosExames.filter(
+    (p) =>
+      (p.id.toLowerCase().includes(termoBaixo) ||
+        p.paciente?.toLowerCase().includes(termoBaixo) ||
+        p.tipoExame?.toLowerCase().includes(termoBaixo)) &&
+      (!status || p.status === status),
+  );
+};
