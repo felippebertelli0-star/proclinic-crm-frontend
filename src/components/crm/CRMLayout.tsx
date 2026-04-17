@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { LayoutDashboard, MessageCircle, Users, Grid3x3, TrendingUp, Tag, Zap, Calendar, RotateCw, CheckSquare, Cog, Brain, Sliders, List, Link, Folder, BarChart3, ClipboardList, LogOut } from 'lucide-react';
 import { Dashboard } from './pages/Dashboard';
 import { Conversas } from './pages/Conversas';
@@ -68,7 +69,33 @@ const FOOTER_MENU = [
   { id: 'sair', label: 'Sair', icon: LogOut },
 ];
 
+const PAGE_MAPPING: Record<PageType, React.ComponentType> = {
+  dashboard: Dashboard,
+  conversas: Conversas,
+  contatos: Contatos,
+  kanban: Kanban,
+  pipeline: Pipeline,
+  calendario: Calendario,
+  etiquetas: Etiquetas,
+  respostas: Respostas,
+  followups: Followups,
+  tarefas: Tarefas,
+  estrategias: Estrategias,
+  portal_ias: PortalIas,
+  flowbuilder: FlowBuilder,
+  webhooks: Webhooks,
+  filas: Filas,
+  equipe: Equipe,
+  conexoes: Conexoes,
+  arquivos: Arquivos,
+  indicadores: Indicadores,
+  pedido_exames: PedidoExames,
+  configuracoes: Configuracoes,
+  sair: () => <div style={{ padding: '32px', color: '#7a96aa' }}>Saindo...</div>,
+};
+
 export function CRMLayout() {
+  const router = useRouter();
   const [currentPage, setCurrentPage] = useState<PageType>('dashboard');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const menuScrollRef = useRef<HTMLDivElement>(null);
@@ -79,39 +106,28 @@ export function CRMLayout() {
     }
   }, []);
 
-  const renderPage = () => {
-    switch (currentPage) {
-      case 'dashboard': return <Dashboard />;
-      case 'conversas': return <Conversas />;
-      case 'contatos': return <Contatos />;
-      case 'kanban': return <Kanban />;
-      case 'pipeline': return <Pipeline />;
-      case 'calendario': return <Calendario />;
-      case 'etiquetas': return <Etiquetas />;
-      case 'respostas': return <Respostas />;
-      case 'followups': return <Followups />;
-      case 'tarefas': return <Tarefas />;
-      case 'estrategias': return <Estrategias />;
-      case 'portal_ias': return <PortalIas />;
-      case 'flowbuilder': return <FlowBuilder />;
-      case 'webhooks': return <Webhooks />;
-      case 'filas': return <Filas />;
-      case 'equipe': return <Equipe />;
-      case 'conexoes': return <Conexoes />;
-      case 'arquivos': return <Arquivos />;
-      case 'indicadores': return <Indicadores />;
-      case 'pedido_exames': return <PedidoExames />;
-      case 'configuracoes': return <Configuracoes />;
-      case 'sair': {
-        console.log('Logout acionado');
-        return <div style={{ padding: '32px', color: '#7a96aa' }}>Saindo...</div>;
-      }
-      default: return <div style={{ padding: '32px', color: '#7a96aa' }}>Página em desenvolvimento: {currentPage}</div>;
+  const handleNavigation = (pageId: string) => {
+    const id = pageId as PageType;
+    setCurrentPage(id);
+    
+    // Navegar para a URL real
+    if (id === 'sair') {
+      console.log('Logout acionado');
+      return;
     }
+    
+    router.push(`/${id}`);
+  };
+
+  const renderPage = () => {
+    const PageComponent = PAGE_MAPPING[currentPage];
+    if (PageComponent) {
+      return <PageComponent />;
+    }
+    return <div style={{ padding: '32px', color: '#7a96aa' }}>Página em desenvolvimento: {currentPage}</div>;
   };
 
   const SidebarSection = ({ title, items }: { title: string; items: any[] }) => {
-    const IconComponent = items[0]?.icon;
     return (
       <>
         {!sidebarCollapsed && (
@@ -122,7 +138,7 @@ export function CRMLayout() {
         {items.map((item) => {
           const Icon = item.icon;
           return (
-            <button key={item.id} onClick={() => setCurrentPage(item.id as PageType)} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '0 10px', borderRadius: '8px', border: 'none', background: currentPage === item.id ? 'rgba(201, 148, 58, 0.1)' : 'transparent', color: currentPage === item.id ? '#c9943a' : 'rgba(255, 255, 255, 0.5)', fontSize: '13px', fontWeight: currentPage === item.id ? 600 : 500, cursor: 'pointer', transition: 'all 0.2s', width: '100%', textAlign: 'left', height: '36px', marginBottom: '2px' }} title={sidebarCollapsed ? item.label : ''} onMouseEnter={(e) => { if (currentPage !== item.id) (e.currentTarget as HTMLElement).style.background = 'rgba(255, 255, 255, 0.05)'; }} onMouseLeave={(e) => { if (currentPage !== item.id) (e.currentTarget as HTMLElement).style.background = 'transparent'; }}>
+            <button key={item.id} onClick={() => handleNavigation(item.id)} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '0 10px', borderRadius: '8px', border: 'none', background: currentPage === item.id ? 'rgba(201, 148, 58, 0.1)' : 'transparent', color: currentPage === item.id ? '#c9943a' : 'rgba(255, 255, 255, 0.5)', fontSize: '13px', fontWeight: currentPage === item.id ? 600 : 500, cursor: 'pointer', transition: 'all 0.2s', width: '100%', textAlign: 'left', height: '36px', marginBottom: '2px' }} title={sidebarCollapsed ? item.label : ''} onMouseEnter={(e) => { if (currentPage !== item.id) (e.currentTarget as HTMLElement).style.background = 'rgba(255, 255, 255, 0.05)'; }} onMouseLeave={(e) => { if (currentPage !== item.id) (e.currentTarget as HTMLElement).style.background = 'transparent'; }}>
               <Icon size={18} style={{ flexShrink: 0 }} />
               {!sidebarCollapsed && <>
                 <span>{item.label}</span>
@@ -138,7 +154,7 @@ export function CRMLayout() {
   const SidebarButton = ({ item }: { item: any }) => {
     const Icon = item.icon;
     return (
-      <button onClick={() => setCurrentPage(item.id as PageType)} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '0 10px', borderRadius: '8px', border: 'none', background: currentPage === item.id ? 'rgba(201, 148, 58, 0.1)' : 'transparent', color: currentPage === item.id ? '#c9943a' : item.id === 'sair' ? '#e74c3c' : 'rgba(255, 255, 255, 0.5)', fontSize: '13px', fontWeight: currentPage === item.id ? 600 : 500, cursor: 'pointer', transition: 'all 0.2s', width: '100%', textAlign: 'left', height: '36px', marginBottom: '2px' }} title={sidebarCollapsed ? item.label : ''} onMouseEnter={(e) => { if (currentPage !== item.id) (e.currentTarget as HTMLElement).style.background = 'rgba(255, 255, 255, 0.05)'; }} onMouseLeave={(e) => { if (currentPage !== item.id) (e.currentTarget as HTMLElement).style.background = 'transparent'; }}>
+      <button onClick={() => handleNavigation(item.id)} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '0 10px', borderRadius: '8px', border: 'none', background: currentPage === item.id ? 'rgba(201, 148, 58, 0.1)' : 'transparent', color: currentPage === item.id ? '#c9943a' : item.id === 'sair' ? '#e74c3c' : 'rgba(255, 255, 255, 0.5)', fontSize: '13px', fontWeight: currentPage === item.id ? 600 : 500, cursor: 'pointer', transition: 'all 0.2s', width: '100%', textAlign: 'left', height: '36px', marginBottom: '2px' }} title={sidebarCollapsed ? item.label : ''} onMouseEnter={(e) => { if (currentPage !== item.id) (e.currentTarget as HTMLElement).style.background = 'rgba(255, 255, 255, 0.05)'; }} onMouseLeave={(e) => { if (currentPage !== item.id) (e.currentTarget as HTMLElement).style.background = 'transparent'; }}>
         <Icon size={18} style={{ flexShrink: 0 }} />
         {!sidebarCollapsed && <span>{item.label}</span>}
       </button>
