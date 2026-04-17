@@ -764,30 +764,78 @@ export function Dashboard() {
 
       {/* CHANNELS & FUNNEL */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '28px' }}>
-        {/* TICKETS POR CANAL */}
+        {/* TICKETS POR CANAL - PREMIUM */}
         <div>
-          <h3 style={{ fontSize: '13px', fontWeight: 700, marginBottom: '12px', display: 'flex', justifyContent: 'space-between' }}>
-            <span>Tickets por Canal</span>
-            <span style={{ fontSize: '11px', color: '#2ecc71', fontWeight: 600 }}>🟢 AO VIVO</span>
+          <h3 style={{ fontSize: '14px', fontWeight: 700, marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ letterSpacing: '-0.5px' }}>Distribuição por Canal</span>
+            <span style={{ fontSize: '11px', color: '#2ecc71', fontWeight: 600, background: 'rgba(46, 204, 113, 0.1)', padding: '4px 10px', borderRadius: '12px', border: '1px solid #2ecc71' }}>🟢 AO VIVO</span>
           </h3>
           <div style={{
             background: '#132636',
             border: '1px solid #1e3d54',
-            borderRadius: '14px',
-            padding: '16px',
+            borderRadius: '16px',
+            padding: '24px',
             display: 'flex',
-            gap: '16px',
-          }}>
-            <div style={{ width: '120px', height: '120px', borderRadius: '50%', background: 'conic-gradient(#2ecc71 0deg 280deg, #e74c3c 280deg 338deg, #3498db 338deg 360deg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: '#132636', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', fontSize: '14px', fontWeight: 700 }}>
-                <div>437</div>
-                <div style={{ fontSize: '8px', color: '#7a96aa' }}>TICKETS</div>
+            gap: '24px',
+            transition: 'all 0.3s',
+            cursor: 'pointer',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.borderColor = '#c9943a';
+            e.currentTarget.style.boxShadow = '0 8px 24px rgba(201, 148, 58, 0.15)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.borderColor = '#1e3d54';
+            e.currentTarget.style.boxShadow = 'none';
+          }}
+          >
+            {/* GRÁFICO DONUT */}
+            <div style={{ position: 'relative', width: '140px', height: '140px', flexShrink: 0 }}>
+              <svg width="140" height="140" style={{ transform: 'rotate(-90deg)' }}>
+                <defs>
+                  <filter id="shadow-donut" x="-50%" y="-50%" width="200%" height="200%">
+                    <feDropShadow dx="0" dy="4" stdDeviation="6" floodOpacity="0.4" />
+                  </filter>
+                </defs>
+                <circle cx="70" cy="70" r="55" fill="none" stroke="#2ecc71" strokeWidth="14" strokeDasharray="219 359" filter="url(#shadow-donut)" />
+                <circle cx="70" cy="70" r="55" fill="none" stroke="#e74c3c" strokeWidth="14" strokeDasharray="57 359" strokeDashoffset="-219" />
+                <circle cx="70" cy="70" r="55" fill="none" stroke="#3498db" strokeWidth="14" strokeDasharray="20 359" strokeDashoffset="-276" />
+              </svg>
+              <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
+                <div style={{ fontSize: '24px', fontWeight: 900, color: '#e8edf2' }}>437</div>
+                <div style={{ fontSize: '10px', color: '#7a96aa', fontWeight: 700, letterSpacing: '0.5px', marginTop: '4px' }}>TICKETS</div>
               </div>
             </div>
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: '8px' }}>
-              {[{ name: 'WhatsApp', pct: 78, count: 341, color: '#2ecc71' }, { name: 'Instagram', pct: 16, count: 70, color: '#e74c3c' }, { name: 'Direto', pct: 6, count: 26, color: '#3498db' }].map((c) => (
-                <div key={c.name} style={{ fontSize: '10px', color: '#e8edf2' }}>
-                  {c.name} • {c.pct}% ({c.count})
+
+            {/* LEGENDA COM BARRAS */}
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: '16px' }}>
+              {[
+                { emoji: '💬', name: 'WhatsApp', pct: 78, count: 341, color: '#2ecc71' },
+                { emoji: '📸', name: 'Instagram', pct: 16, count: 70, color: '#e74c3c' },
+                { emoji: '🔗', name: 'Direto', pct: 6, count: 26, color: '#3498db' }
+              ].map((c) => (
+                <div key={c.name}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                    <span style={{ fontSize: '12px', fontWeight: 600, color: '#e8edf2' }}>
+                      {c.emoji} {c.name}
+                    </span>
+                    <span style={{ fontSize: '12px', fontWeight: 700, color: c.color }}>{c.pct}%</span>
+                  </div>
+                  <div style={{
+                    height: '6px',
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    borderRadius: '3px',
+                    overflow: 'hidden',
+                  }}>
+                    <div style={{
+                      height: '100%',
+                      width: `${c.pct}%`,
+                      background: `linear-gradient(90deg, ${c.color}, ${c.color}dd)`,
+                      borderRadius: '3px',
+                      transition: 'width 0.5s ease',
+                    }} />
+                  </div>
+                  <div style={{ fontSize: '11px', color: '#7a96aa', marginTop: '4px' }}>{c.count} tickets</div>
                 </div>
               ))}
             </div>
