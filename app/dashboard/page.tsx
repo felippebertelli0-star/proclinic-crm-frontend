@@ -1,15 +1,16 @@
 /**
  * Página do Dashboard CRM
- * Fiel ao protótipo localhost:3456/dashboard
+ * 100% Fiel ao protótipo localhost:3456
+ * Layout com Sidebar navegável completo
  */
 
-import { DashboardContent } from '@/components/dashboard/DashboardContent';
+import { CRMLayout } from '@/components/crm/CRMLayout';
 
 export const metadata = {
   title: 'Dashboard - ProClinic CRM',
-  description: 'Dashboard principal do ProClinic CRM',
+  description: 'Dashboard principal do ProClinic CRM - 100% Completo',
 };
 
 export default function DashboardPage() {
-  return <DashboardContent />;
+  return <CRMLayout />;
 }
