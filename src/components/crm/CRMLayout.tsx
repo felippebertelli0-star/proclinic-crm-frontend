@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Dashboard } from './pages/Dashboard';
 import { Conversas } from './pages/Conversas';
 import { Contatos } from './pages/Contatos';
@@ -70,6 +70,13 @@ const FOOTER_MENU = [
 export function CRMLayout() {
   const [currentPage, setCurrentPage] = useState<PageType>('dashboard');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const menuScrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (menuScrollRef.current) {
+      menuScrollRef.current.scrollTop = 0;
+    }
+  }, []);
 
   const renderPage = () => {
     switch (currentPage) {
@@ -95,7 +102,6 @@ export function CRMLayout() {
       case 'pedido_exames': return <PedidoExames />;
       case 'configuracoes': return <Configuracoes />;
       case 'sair': {
-        // Implementar logout aqui
         console.log('Logout acionado');
         return <div style={{ padding: '32px', color: '#7a96aa' }}>Saindo...</div>;
       }
@@ -122,7 +128,7 @@ export function CRMLayout() {
     </>
   );
 
-  const SidebarButton = ({ item, isFooter }: { item: any; isFooter?: boolean }) => (
+  const SidebarButton = ({ item }: { item: any }) => (
     <button onClick={() => setCurrentPage(item.id as PageType)} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '0 10px', borderRadius: '10px', border: 'none', background: currentPage === item.id ? 'rgba(201, 148, 58, 0.15)' : 'transparent', color: currentPage === item.id ? '#c9943a' : item.id === 'sair' ? '#e74c3c' : '#7a96aa', fontSize: '13px', fontWeight: currentPage === item.id ? 600 : 500, cursor: 'pointer', transition: 'all 0.2s', width: '100%', textAlign: 'left', height: '36px' }} title={sidebarCollapsed ? item.label : ''}>
       <span style={{ fontSize: '16px', minWidth: '16px' }}>{item.icon}</span>
       {!sidebarCollapsed && <span>{item.label}</span>}
@@ -145,7 +151,7 @@ export function CRMLayout() {
         </div>
 
         {/* MENU */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '8px 6px', display: 'flex', flexDirection: 'column', gap: '4px', scrollbarWidth: 'none' }}>
+        <div ref={menuScrollRef} style={{ flex: 1, overflowY: 'auto', padding: '8px 6px', display: 'flex', flexDirection: 'column', gap: '4px', scrollbarWidth: 'none', scrollBehavior: 'smooth' }}>
           <SidebarSection title="ATENDIMENTO" items={MENU_STRUCTURE.atendimento} />
           <SidebarSection title="UTILITÁRIOS" items={MENU_STRUCTURE.utilitarios} />
           <SidebarSection title="AGENDA" items={MENU_STRUCTURE.agenda} />
@@ -157,7 +163,7 @@ export function CRMLayout() {
 
         {/* FOOTER */}
         <div style={{ padding: '12px 6px', borderTop: '1px solid #1e3d54', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-          {FOOTER_MENU.map((item) => <SidebarButton key={item.id} item={item} isFooter />)}
+          {FOOTER_MENU.map((item) => <SidebarButton key={item.id} item={item} />)}
         </div>
       </div>
 
