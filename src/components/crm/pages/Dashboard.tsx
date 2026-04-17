@@ -84,6 +84,39 @@ export function Dashboard() {
 
   const stats = calculateStats();
 
+  // Função para calcular atividades do dia baseado no período
+  const calculateActivity = () => {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const dates: string[] = [];
+
+    for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+      const dateStr = d.toISOString().split('T')[0];
+      dates.push(dateStr);
+    }
+
+    const validDates = dates.filter(d => dailyData[d]);
+
+    if (validDates.length === 0) {
+      return {
+        leads: 0,
+        recebidas: '0',
+        enviadas: '0',
+      };
+    }
+
+    const sum = (key: string) => validDates.reduce((acc, d) => acc + (dailyData[d][key] || 0), 0);
+    const formatK = (num: number) => num >= 1000 ? `${(num / 1000).toFixed(1)}k` : num.toString();
+
+    return {
+      leads: sum('leads'),
+      recebidas: formatK(sum('recebidas')),
+      enviadas: formatK(sum('enviadas')),
+    };
+  };
+
+  const activity = calculateActivity();
+
   const KPI_TOOLTIPS = {
     tickets: 'Número total de conversas abertas (tickets criados) no período selecionado',
     agendamento: 'Percentual de leads atendidos que efetivamente agendaram uma consulta',
@@ -372,9 +405,9 @@ export function Dashboard() {
         </h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '18px' }}>
           {[
-            { icon: '👤', label: 'Novos Leads Chegaram', value: '47', color: '#c9943a', subtext: '↑ no período selecionado' },
-            { icon: '📥', label: 'Mensagens Recebidas', value: '2.2k', color: '#3498db', subtext: '↑ WhatsApp + Instagram' },
-            { icon: '📤', label: 'Mensagens Enviadas', value: '2.5k', color: '#2ecc71', subtext: '↑ Pela equipe' },
+            { icon: '👤', label: 'Novos Leads Chegaram', value: activity.leads.toString(), color: '#c9943a', subtext: '↑ no período selecionado' },
+            { icon: '📥', label: 'Mensagens Recebidas', value: activity.recebidas, color: '#3498db', subtext: '↑ WhatsApp + Instagram' },
+            { icon: '📤', label: 'Mensagens Enviadas', value: activity.enviadas, color: '#2ecc71', subtext: '↑ Pela equipe' },
           ].map((card) => (
             <div
               key={card.label}
