@@ -140,90 +140,90 @@ export function DashboardContent() {
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">
+        <h1 className="text-3xl font-bold text-white">
           Bem-vindo, {usuario?.nome}! 👋
         </h1>
-        <p className="text-gray-600 mt-2">
-          Sistema: <span className="font-semibold">{usuario?.sistemaId}</span>
+        <p className="text-slate-400 mt-2">
+          Sistema: <span className="font-semibold text-slate-300">{usuario?.sistemaId}</span>
         </p>
       </div>
 
       {/* Status Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* Socket Status */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-sm font-medium text-gray-700 mb-2">Real-time</h3>
-          <p className="text-2xl font-bold text-gray-900">
+        <div className="bg-slate-800 border border-slate-700 rounded-lg p-6">
+          <h3 className="text-sm font-medium text-slate-400 mb-2">Real-time</h3>
+          <p className="text-2xl font-bold text-white">
             {socketStatus === 'conectado' ? '🟢' : '🔴'} {socketStatus}
           </p>
-          <p className="text-xs text-gray-500 mt-1">Socket.io Status</p>
+          <p className="text-xs text-slate-500 mt-1">Socket.io Status</p>
         </div>
 
         {/* Total Pagamentos */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-sm font-medium text-gray-700 mb-2">Total de Pagamentos</h3>
-          <p className="text-2xl font-bold text-gray-900">{pagamentos.length}</p>
-          <p className="text-xs text-gray-500 mt-1">Registros no sistema</p>
+        <div className="bg-slate-800 border border-slate-700 rounded-lg p-6">
+          <h3 className="text-sm font-medium text-slate-400 mb-2">Total de Pagamentos</h3>
+          <p className="text-2xl font-bold text-white">{pagamentos.length}</p>
+          <p className="text-xs text-slate-500 mt-1">Registros no sistema</p>
         </div>
 
         {/* API Status */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-sm font-medium text-gray-700 mb-2">Status da API</h3>
-          <p className="text-2xl font-bold text-green-600">✅ Online</p>
-          <p className="text-xs text-gray-500 mt-1">Conectado ao backend</p>
+        <div className="bg-slate-800 border border-slate-700 rounded-lg p-6">
+          <h3 className="text-sm font-medium text-slate-400 mb-2">Status da API</h3>
+          <p className="text-2xl font-bold text-green-400">✅ Online</p>
+          <p className="text-xs text-slate-500 mt-1">Conectado ao backend</p>
         </div>
       </div>
 
       {/* Real-time Notification */}
       {realtimeMsg && (
-        <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg animate-pulse">
-          <p className="text-sm text-blue-700">{realtimeMsg}</p>
+        <div className="p-4 bg-blue-950 border border-blue-800 rounded-lg animate-pulse">
+          <p className="text-sm text-blue-300">{realtimeMsg}</p>
         </div>
       )}
 
       {/* Pagamentos Section */}
-      <div className="bg-white rounded-lg shadow">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">Pagamentos</h2>
+      <div className="bg-slate-800 border border-slate-700 rounded-lg">
+        <div className="px-6 py-4 border-b border-slate-700">
+          <h2 className="text-lg font-semibold text-white">Pagamentos</h2>
         </div>
 
         <div className="p-6">
           {error && (
-            <div className="p-4 bg-red-50 border border-red-200 rounded-lg mb-4">
-              <p className="text-sm text-red-700">❌ {error}</p>
+            <div className="p-4 bg-red-950 border border-red-800 rounded-lg mb-4">
+              <p className="text-sm text-red-300">❌ {error}</p>
             </div>
           )}
 
           {isLoading ? (
             <div className="flex items-center justify-center py-12">
-              <div className="text-gray-500">
+              <div className="text-slate-400">
                 <div className="animate-spin mb-2">⏳</div>
                 <p>Carregando pagamentos...</p>
               </div>
             </div>
           ) : pagamentos.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">
+            <div className="text-center py-12 text-slate-400">
               <p className="mb-2">📭 Nenhum pagamento encontrado</p>
               <p className="text-sm">Os pagamentos aparecerão aqui quando forem criados</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50">
+                <thead className="bg-slate-700">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700">ID</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700">Valor</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700">Status</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700">Data</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-300">ID</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-300">Valor</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-300">Status</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-300">Data</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200">
+                <tbody className="divide-y divide-slate-700">
                   {pagamentos.map((pagamento) => (
-                    <tr key={pagamento.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 text-sm text-gray-900 font-mono">
+                    <tr key={pagamento.id} className="hover:bg-slate-700">
+                      <td className="px-6 py-4 text-sm text-white font-mono">
                         {pagamento.id.substring(0, 8)}...
                       </td>
-                      <td className="px-6 py-4 text-sm font-semibold text-gray-900">
+                      <td className="px-6 py-4 text-sm font-semibold text-white">
                         {formatCurrency(pagamento.valor)}
                       </td>
                       <td className="px-6 py-4">
@@ -231,7 +231,7 @@ export function DashboardContent() {
                           {pagamento.status}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-600">
+                      <td className="px-6 py-4 text-sm text-slate-400">
                         {formatDate(pagamento.criadoEm)}
                       </td>
                     </tr>
@@ -244,7 +244,7 @@ export function DashboardContent() {
       </div>
 
       {/* Footer */}
-      <div className="text-center text-xs text-gray-500 py-4">
+      <div className="text-center text-xs text-slate-500 py-4">
         <p>Sistema Premium AAA • v1.0.0 • Todos os direitos reservados</p>
       </div>
     </div>
