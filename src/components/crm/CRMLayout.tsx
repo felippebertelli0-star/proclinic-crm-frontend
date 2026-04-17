@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { LayoutDashboard, MessageCircle, Users, Grid3x3, TrendingUp, Tag, Zap, Calendar, RotateCw, CheckSquare, Cog, Brain, Sliders, List, Link, Folder, BarChart3, ClipboardList, LogOut } from 'lucide-react';
 import { Dashboard } from './pages/Dashboard';
 import { Conversas } from './pages/Conversas';
 import { Contatos } from './pages/Contatos';
@@ -27,44 +28,44 @@ type PageType = 'sair' | 'dashboard' | 'conversas' | 'contatos' | 'kanban' | 'pi
 
 const MENU_STRUCTURE = {
   atendimento: [
-    { id: 'dashboard', label: 'Dashboard', icon: '📊', badge: undefined },
-    { id: 'conversas', label: 'Conversas', icon: '💬', badge: 97 },
-    { id: 'contatos', label: 'Contatos', icon: '👥', badge: undefined },
-    { id: 'kanban', label: 'Kanban', icon: '🎯', badge: undefined },
-    { id: 'pipeline', label: 'Pipeline CRM', icon: '📈', badge: undefined },
+    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, badge: undefined },
+    { id: 'conversas', label: 'Conversas', icon: MessageCircle, badge: 97 },
+    { id: 'contatos', label: 'Contatos', icon: Users, badge: undefined },
+    { id: 'kanban', label: 'Kanban', icon: Grid3x3, badge: undefined },
+    { id: 'pipeline', label: 'Pipeline CRM', icon: TrendingUp, badge: undefined },
   ],
   utilitarios: [
-    { id: 'etiquetas', label: 'Etiquetas', icon: '🏷️', badge: undefined },
-    { id: 'respostas', label: 'Respostas Rápidas', icon: '⚡', badge: undefined },
+    { id: 'etiquetas', label: 'Etiquetas', icon: Tag, badge: undefined },
+    { id: 'respostas', label: 'Respostas Rápidas', icon: Zap, badge: undefined },
   ],
   agenda: [
-    { id: 'calendario', label: 'Calendário', icon: '📅', badge: undefined },
-    { id: 'followups', label: 'Follow-ups', icon: '↩️', badge: undefined },
-    { id: 'tarefas', label: 'Tarefas', icon: '✓', badge: undefined },
+    { id: 'calendario', label: 'Calendário', icon: Calendar, badge: undefined },
+    { id: 'followups', label: 'Follow-ups', icon: RotateCw, badge: undefined },
+    { id: 'tarefas', label: 'Tarefas', icon: CheckSquare, badge: undefined },
   ],
   automacao: [
-    { id: 'estrategias', label: 'Estratégias', icon: '🎯', badge: undefined },
-    { id: 'portal_ias', label: 'Portal das IAs', icon: '🤖', badge: undefined },
-    { id: 'flowbuilder', label: 'FlowBuilder', icon: '⚙️', badge: undefined },
-    { id: 'webhooks', label: 'Webhooks / Triggers', icon: '🔗', badge: undefined },
+    { id: 'estrategias', label: 'Estratégias', icon: Cog, badge: undefined },
+    { id: 'portal_ias', label: 'Portal das IAs', icon: Brain, badge: undefined },
+    { id: 'flowbuilder', label: 'FlowBuilder', icon: Sliders, badge: undefined },
+    { id: 'webhooks', label: 'Webhooks / Triggers', icon: Zap, badge: undefined },
   ],
   gestao: [
-    { id: 'filas', label: 'Filas', icon: '📋', badge: undefined },
-    { id: 'equipe', label: 'Equipe', icon: '👨‍💼', badge: undefined },
-    { id: 'conexoes', label: 'Conexões', icon: '🔌', badge: undefined },
-    { id: 'arquivos', label: 'Arquivos', icon: '📁', badge: undefined },
+    { id: 'filas', label: 'Filas', icon: List, badge: undefined },
+    { id: 'equipe', label: 'Equipe', icon: Users, badge: undefined },
+    { id: 'conexoes', label: 'Conexões', icon: Link, badge: undefined },
+    { id: 'arquivos', label: 'Arquivos', icon: Folder, badge: undefined },
   ],
   relatorios: [
-    { id: 'indicadores', label: 'Indicadores', icon: '📊', badge: undefined },
+    { id: 'indicadores', label: 'Indicadores', icon: BarChart3, badge: undefined },
   ],
   clinica: [
-    { id: 'pedido_exames', label: 'Pedido de Exames', icon: '🏥', badge: undefined },
+    { id: 'pedido_exames', label: 'Pedido de Exames', icon: ClipboardList, badge: undefined },
   ],
 };
 
 const FOOTER_MENU = [
-  { id: 'configuracoes', label: 'Configurações', icon: '⚙️' },
-  { id: 'sair', label: 'Sair', icon: '🚪' },
+  { id: 'configuracoes', label: 'Configurações', icon: Cog },
+  { id: 'sair', label: 'Sair', icon: LogOut },
 ];
 
 export function CRMLayout() {
@@ -109,31 +110,40 @@ export function CRMLayout() {
     }
   };
 
-  const SidebarSection = ({ title, items }: { title: string; items: any[] }) => (
-    <>
-      {!sidebarCollapsed && (
-        <div style={{ fontSize: '9px', fontWeight: 700, color: '#7a96aa', textTransform: 'uppercase', letterSpacing: '0.8px', padding: '12px 10px', marginTop: title === 'ATENDIMENTO' ? 0 : '12px', marginBottom: '4px' }}>
-          {title}
-        </div>
-      )}
-      {items.map((item) => (
-        <button key={item.id} onClick={() => setCurrentPage(item.id as PageType)} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '0 10px', borderRadius: '10px', border: 'none', background: currentPage === item.id ? 'rgba(201, 148, 58, 0.15)' : 'transparent', color: currentPage === item.id ? '#c9943a' : '#7a96aa', fontSize: '13px', fontWeight: currentPage === item.id ? 600 : 500, cursor: 'pointer', transition: 'all 0.2s', width: '100%', textAlign: 'left', height: '36px' }} title={sidebarCollapsed ? item.label : ''}>
-          <span style={{ fontSize: '16px', minWidth: '16px' }}>{item.icon}</span>
-          {!sidebarCollapsed && <>
-            <span>{item.label}</span>
-            {item.badge && <span style={{ marginLeft: 'auto', background: '#c9943a', color: '#0d1f2d', fontSize: '10px', fontWeight: 800, padding: '2px 6px', borderRadius: '10px', minWidth: '20px', textAlign: 'center' }}>{item.badge}</span>}
-          </>}
-        </button>
-      ))}
-    </>
-  );
+  const SidebarSection = ({ title, items }: { title: string; items: any[] }) => {
+    const IconComponent = items[0]?.icon;
+    return (
+      <>
+        {!sidebarCollapsed && (
+          <div style={{ fontSize: '9px', fontWeight: 700, color: 'rgba(255, 255, 255, 0.4)', textTransform: 'uppercase', letterSpacing: '0.8px', padding: '12px 10px', marginTop: title === 'ATENDIMENTO' ? 0 : '12px', marginBottom: '4px' }}>
+            {title}
+          </div>
+        )}
+        {items.map((item) => {
+          const Icon = item.icon;
+          return (
+            <button key={item.id} onClick={() => setCurrentPage(item.id as PageType)} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '0 10px', borderRadius: '8px', border: 'none', background: currentPage === item.id ? 'rgba(201, 148, 58, 0.1)' : 'transparent', color: currentPage === item.id ? '#c9943a' : 'rgba(255, 255, 255, 0.5)', fontSize: '13px', fontWeight: currentPage === item.id ? 600 : 500, cursor: 'pointer', transition: 'all 0.2s', width: '100%', textAlign: 'left', height: '36px', marginBottom: '2px' }} title={sidebarCollapsed ? item.label : ''} onMouseEnter={(e) => { if (currentPage !== item.id) (e.currentTarget as HTMLElement).style.background = 'rgba(255, 255, 255, 0.05)'; }} onMouseLeave={(e) => { if (currentPage !== item.id) (e.currentTarget as HTMLElement).style.background = 'transparent'; }}>
+              <Icon size={18} style={{ flexShrink: 0 }} />
+              {!sidebarCollapsed && <>
+                <span>{item.label}</span>
+                {item.badge && <span style={{ marginLeft: 'auto', background: '#e74c3c', color: '#ffffff', fontSize: '9px', fontWeight: 800, padding: '2px 6px', borderRadius: '8px', minWidth: '18px', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{item.badge}</span>}
+              </>}
+            </button>
+          );
+        })}
+      </>
+    );
+  };
 
-  const SidebarButton = ({ item }: { item: any }) => (
-    <button onClick={() => setCurrentPage(item.id as PageType)} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '0 10px', borderRadius: '10px', border: 'none', background: currentPage === item.id ? 'rgba(201, 148, 58, 0.15)' : 'transparent', color: currentPage === item.id ? '#c9943a' : item.id === 'sair' ? '#e74c3c' : '#7a96aa', fontSize: '13px', fontWeight: currentPage === item.id ? 600 : 500, cursor: 'pointer', transition: 'all 0.2s', width: '100%', textAlign: 'left', height: '36px' }} title={sidebarCollapsed ? item.label : ''}>
-      <span style={{ fontSize: '16px', minWidth: '16px' }}>{item.icon}</span>
-      {!sidebarCollapsed && <span>{item.label}</span>}
-    </button>
-  );
+  const SidebarButton = ({ item }: { item: any }) => {
+    const Icon = item.icon;
+    return (
+      <button onClick={() => setCurrentPage(item.id as PageType)} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '0 10px', borderRadius: '8px', border: 'none', background: currentPage === item.id ? 'rgba(201, 148, 58, 0.1)' : 'transparent', color: currentPage === item.id ? '#c9943a' : item.id === 'sair' ? '#e74c3c' : 'rgba(255, 255, 255, 0.5)', fontSize: '13px', fontWeight: currentPage === item.id ? 600 : 500, cursor: 'pointer', transition: 'all 0.2s', width: '100%', textAlign: 'left', height: '36px', marginBottom: '2px' }} title={sidebarCollapsed ? item.label : ''} onMouseEnter={(e) => { if (currentPage !== item.id) (e.currentTarget as HTMLElement).style.background = 'rgba(255, 255, 255, 0.05)'; }} onMouseLeave={(e) => { if (currentPage !== item.id) (e.currentTarget as HTMLElement).style.background = 'transparent'; }}>
+        <Icon size={18} style={{ flexShrink: 0 }} />
+        {!sidebarCollapsed && <span>{item.label}</span>}
+      </button>
+    );
+  };
 
   return (
     <div style={{ display: 'flex', height: '100vh', background: '#0d1f2d', color: '#e8edf2', fontFamily: "'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif" }}>
@@ -151,7 +161,7 @@ export function CRMLayout() {
         </div>
 
         {/* MENU */}
-        <div ref={menuScrollRef} style={{ flex: 1, overflowY: 'auto', padding: '8px 6px', display: 'flex', flexDirection: 'column', gap: '4px', scrollbarWidth: 'none', scrollBehavior: 'smooth' }}>
+        <div ref={menuScrollRef} style={{ flex: 1, overflowY: 'auto', padding: '8px 6px', display: 'flex', flexDirection: 'column', gap: '4px', scrollbarWidth: 'none' }}>
           <SidebarSection title="ATENDIMENTO" items={MENU_STRUCTURE.atendimento} />
           <SidebarSection title="UTILITÁRIOS" items={MENU_STRUCTURE.utilitarios} />
           <SidebarSection title="AGENDA" items={MENU_STRUCTURE.agenda} />
