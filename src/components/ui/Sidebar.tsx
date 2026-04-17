@@ -65,24 +65,21 @@ export function Sidebar() {
 
       {/* Navigation */}
       <nav className="flex-1 px-4 py-6 space-y-2">
-        {navItems.map((item) => {
-          const isActive = pathname === item.href;
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                isActive
-                  ? 'bg-blue-50 text-blue-600 font-semibold'
-                  : 'text-gray-700 hover:bg-gray-50'
-              }`}
-            >
-              {getIcon(item.iconName)}
-              <span className="flex-1">{item.label}</span>
-              {isActive && <ChevronRight size={18} />}
-            </Link>
-          );
-        })}
+        {navItems.map((item) => (
+          <Link
+            key={item.href}
+            href={item.href}
+            className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+              pathname === item.href
+                ? 'bg-blue-50 text-blue-600 font-semibold'
+                : 'text-gray-700 hover:bg-gray-50'
+            }`}
+          >
+            {getIcon(item.iconName)}
+            <span className="flex-1">{item.label}</span>
+            {pathname === item.href && <ChevronRight size={18} />}
+          </Link>
+        ))}
       </nav>
 
       {/* Logout */}
