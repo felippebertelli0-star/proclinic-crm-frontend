@@ -275,7 +275,15 @@ export function Dashboard() {
   const chartHeight = 360;
   const padding = 70;
 
-  const maxValue = 40;
+  // Calcular maxValue dinamicamente baseado nos dados
+  const maxValue = Math.max(
+    ...chartData.flatMap(d => [
+      d.tickets, d.agendamento, d.fechamento, d.comparecimento,
+      d.followups, d.reativados, d.primeiraResposta, d.tempoResposta,
+      d.tempoResolucao, d.faturamento, d.conversasFechadas
+    ])
+  ) * 1.1; // +10% para margem visual
+
   const graphWidth = chartWidth - padding * 2;
   const graphHeight = chartHeight - padding * 2;
 
@@ -717,8 +725,8 @@ export function Dashboard() {
             <line x1={padding} y1={chartHeight - padding} x2={chartWidth - padding} y2={chartHeight - padding} stroke="#1e3d54" strokeWidth="2" />
             <line x1={padding} y1={padding} x2={padding} y2={chartHeight - padding} stroke="#1e3d54" strokeWidth="2" />
 
-            {/* Labels Y (valores) */}
-            {[0, 10, 20, 30, 40].map((val) => (
+            {/* Labels Y (valores dinâmicos) */}
+            {Array.from({length: 5}, (_, i) => Math.round((maxValue / 4) * i)).map((val) => (
               <text key={`y-label-${val}`} x={padding - 10} y={chartHeight - padding - (val / maxValue) * graphHeight + 4} textAnchor="end" fontSize="10" fill="#7a96aa">
                 {val}
               </text>
