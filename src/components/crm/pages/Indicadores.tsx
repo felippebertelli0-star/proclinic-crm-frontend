@@ -8,7 +8,7 @@ export function Indicadores() {
     { data: '2026-04-14', leads: 11, conversas: 44, propostas: 7, agendamentos: 5, conversao: '45%', faturamento: 'R$ 3.100' },
   ];
   return (
-    <div style={{ padding: '32px', background: '#0d1f2d', minHeight: '100vh', color: '#e8edf2', fontFamily: "'Segoe UI', sans-serif" }}>
+    <div style={{ padding: '24px', background: '#0d1f2d', minHeight: '100vh', color: '#e8edf2', fontFamily: "'Segoe UI', sans-serif" }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '28px' }}>
         <h1 style={{ fontSize: '24px', fontWeight: 700, margin: 0 }}>Indicadores</h1>
         <div style={{ display: 'flex', gap: '8px' }}>
@@ -16,7 +16,7 @@ export function Indicadores() {
           <button style={{ padding: '10px 16px', borderRadius: '8px', border: 'none', background: '#2ecc71', color: '#fff', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}>📥 Exportar</button>
         </div>
       </div>
-      <div style={{ background: '#132636', border: '1px solid #1e3d54', borderRadius: '12px', overflow: 'hidden' }}>
+      <div style={{ background: '#132636', border: '1px solid #1e3d54', borderRadius: '14px', overflow: 'hidden' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px' }}>
           <thead style={{ borderBottom: '1px solid #1e3d54', background: '#0d1f2d' }}>
             <tr>

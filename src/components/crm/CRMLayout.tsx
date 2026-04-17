@@ -88,16 +88,16 @@ export function CRMLayout() {
   const SidebarSection = ({ title, items }: { title: string; items: any[] }) => (
     <>
       {!sidebarCollapsed && (
-        <div style={{ fontSize: '11px', fontWeight: 700, color: '#7a96aa', textTransform: 'uppercase', letterSpacing: '0.5px', padding: '12px 14px', marginTop: title === 'ATENDIMENTO' ? 0 : '12px', marginBottom: '4px' }}>
+        <div style={{ fontSize: '9px', fontWeight: 700, color: '#7a96aa', textTransform: 'uppercase', letterSpacing: '0.8px', padding: '12px 10px', marginTop: title === 'ATENDIMENTO' ? 0 : '12px', marginBottom: '4px' }}>
           {title}
         </div>
       )}
       {items.map((item) => (
-        <button key={item.id} onClick={() => setCurrentPage(item.id as PageType)} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 14px', borderRadius: '10px', border: 'none', background: currentPage === item.id ? 'rgba(201, 148, 58, 0.15)' : 'transparent', color: currentPage === item.id ? '#c9943a' : '#7a96aa', fontSize: '13px', fontWeight: currentPage === item.id ? 600 : 500, cursor: 'pointer', transition: 'all 0.2s', width: '100%', textAlign: 'left' }} title={sidebarCollapsed ? item.label : ''}>
+        <button key={item.id} onClick={() => setCurrentPage(item.id as PageType)} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '0 10px', borderRadius: '10px', border: 'none', background: currentPage === item.id ? 'rgba(201, 148, 58, 0.15)' : 'transparent', color: currentPage === item.id ? '#c9943a' : '#7a96aa', fontSize: '13px', fontWeight: currentPage === item.id ? 600 : 500, cursor: 'pointer', transition: 'all 0.2s', width: '100%', textAlign: 'left', height: '36px' }} title={sidebarCollapsed ? item.label : ''}>
           <span style={{ fontSize: '16px', minWidth: '16px' }}>{item.icon}</span>
           {!sidebarCollapsed && <>
             <span>{item.label}</span>
-            {item.badge && <span style={{ marginLeft: 'auto', background: '#c9943a', color: '#0d1f2d', fontSize: '10px', fontWeight: 700, padding: '2px 6px', borderRadius: '10px', minWidth: '20px', textAlign: 'center' }}>{item.badge}</span>}
+            {item.badge && <span style={{ marginLeft: 'auto', background: '#c9943a', color: '#0d1f2d', fontSize: '10px', fontWeight: 800, padding: '2px 6px', borderRadius: '10px', minWidth: '20px', textAlign: 'center' }}>{item.badge}</span>}
           </>}
         </button>
       ))}
@@ -106,9 +106,9 @@ export function CRMLayout() {
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: '#0d1f2d', color: '#e8edf2', fontFamily: "'Segoe UI', sans-serif" }}>
-      <div style={{ width: sidebarCollapsed ? '70px' : '220px', background: '#132636', borderRight: '1px solid #1e3d54', padding: '20px 0', display: 'flex', flexDirection: 'column', transition: 'width 0.3s ease', overflow: 'hidden' }}>
+      <div style={{ width: sidebarCollapsed ? '70px' : '214px', background: '#132636', borderRight: '1px solid #1e3d54', padding: '20px 0', display: 'flex', flexDirection: 'column', transition: 'width 0.3s ease', overflow: 'hidden' }}>
         <div style={{ padding: '0 15px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '18px', fontWeight: 700, color: '#e8edf2' }}>
-          <span style={{ fontSize: '24px' }}>P</span>
+          <span style={{ fontSize: '24px', background: 'linear-gradient(135deg, #c9943a, #e8b86d, #c9943a)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>P</span>
           {!sidebarCollapsed && <><span>ProClinic</span><div style={{ fontSize: '10px', color: '#7a96aa', fontWeight: 600, marginTop: '4px' }}>Inteligência Comercial</div></> }
         </div>
         <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0px', padding: '0 8px' }}>
@@ -118,9 +118,9 @@ export function CRMLayout() {
           <SidebarSection title="AUTOMAÇÃO & IA" items={MENU_STRUCTURE.automacao} />
         </nav>
         <div style={{ padding: '12px 8px', borderTop: '1px solid #1e3d54', marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-          {!sidebarCollapsed && <div style={{ fontSize: '11px', fontWeight: 700, color: '#7a96aa', textTransform: 'uppercase', letterSpacing: '0.5px', padding: '12px 14px', marginBottom: '4px' }}>GESTÃO</div>}
+          {!sidebarCollapsed && <div style={{ fontSize: '9px', fontWeight: 700, color: '#7a96aa', textTransform: 'uppercase', letterSpacing: '0.8px', padding: '12px 10px', marginBottom: '4px' }}>GESTÃO</div>}
           {FOOTER_MENU.map((item) => (
-            <button key={item.id} onClick={() => setCurrentPage(item.id as PageType)} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 14px', borderRadius: '10px', border: 'none', background: currentPage === item.id ? 'rgba(201, 148, 58, 0.15)' : 'transparent', color: currentPage === item.id ? '#c9943a' : '#7a96aa', fontSize: '13px', fontWeight: currentPage === item.id ? 600 : 500, cursor: 'pointer', transition: 'all 0.2s', width: '100%', textAlign: 'left' }} title={sidebarCollapsed ? item.label : ''}>
+            <button key={item.id} onClick={() => setCurrentPage(item.id as PageType)} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '0 10px', borderRadius: '10px', border: 'none', background: currentPage === item.id ? 'rgba(201, 148, 58, 0.15)' : 'transparent', color: currentPage === item.id ? '#c9943a' : '#7a96aa', fontSize: '13px', fontWeight: currentPage === item.id ? 600 : 500, cursor: 'pointer', transition: 'all 0.2s', width: '100%', textAlign: 'left', height: '36px' }} title={sidebarCollapsed ? item.label : ''}>
               <span style={{ fontSize: '16px', minWidth: '16px' }}>{item.icon}</span>
               {!sidebarCollapsed && <span>{item.label}</span>}
             </button>
@@ -128,7 +128,7 @@ export function CRMLayout() {
         </div>
       </div>
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-        <div style={{ background: '#0d1f2d', borderBottom: '1px solid #1e3d54', padding: '12px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '60px' }}>
+        <div style={{ background: '#0d1f2d', borderBottom: '1px solid #1e3d54', padding: '12px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '58px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <button onClick={() => setSidebarCollapsed(!sidebarCollapsed)} style={{ background: 'none', border: 'none', color: '#c9943a', fontSize: '20px', cursor: 'pointer' }}>☰</button>
             <h1 style={{ fontSize: '16px', fontWeight: 700, color: '#e8edf2', margin: 0 }}>ProClinic — Inteligência Comercial</h1>

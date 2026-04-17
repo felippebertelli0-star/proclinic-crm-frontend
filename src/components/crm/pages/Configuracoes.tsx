@@ -7,12 +7,12 @@ export function Configuracoes() {
     setTimeout(() => setSaveMsg(''), 3000);
   };
   return (
-    <div style={{ padding: '32px', background: '#0d1f2d', minHeight: '100vh', color: '#e8edf2', fontFamily: "'Segoe UI', sans-serif" }}>
+    <div style={{ padding: '24px', background: '#0d1f2d', minHeight: '100vh', color: '#e8edf2', fontFamily: "'Segoe UI', sans-serif" }}>
       <h1 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '28px' }}>Configurações</h1>
       
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '24px', marginBottom: '28px' }}>
         {/* CLÍNICA */}
-        <div style={{ background: '#132636', border: '1px solid #1e3d54', borderRadius: '12px', padding: '20px' }}>
+        <div style={{ background: '#132636', border: '1px solid #1e3d54', borderRadius: '14px', padding: '20px' }}>
           <h2 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '16px', color: '#e8edf2' }}>🏥 Clínica</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             <div>
@@ -31,7 +31,7 @@ export function Configuracoes() {
         </div>
 
         {/* NOTIFICAÇÕES */}
-        <div style={{ background: '#132636', border: '1px solid #1e3d54', borderRadius: '12px', padding: '20px' }}>
+        <div style={{ background: '#132636', border: '1px solid #1e3d54', borderRadius: '14px', padding: '20px' }}>
           <h2 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '16px', color: '#e8edf2' }}>🔔 Notificações</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             {[
@@ -49,7 +49,7 @@ export function Configuracoes() {
         </div>
 
         {/* HORÁRIO DE ATENDIMENTO */}
-        <div style={{ background: '#132636', border: '1px solid #1e3d54', borderRadius: '12px', padding: '20px' }}>
+        <div style={{ background: '#132636', border: '1px solid #1e3d54', borderRadius: '14px', padding: '20px' }}>
           <h2 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '16px', color: '#e8edf2' }}>⏰ Horário de Atendimento</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '12px', color: '#7a96aa' }}>
             <div>Segunda a Sexta: 08:00 - 18:00</div>
@@ -60,7 +60,7 @@ export function Configuracoes() {
         </div>
 
         {/* IA & AUTOMAÇÃO */}
-        <div style={{ background: '#132636', border: '1px solid #1e3d54', borderRadius: '12px', padding: '20px' }}>
+        <div style={{ background: '#132636', border: '1px solid #1e3d54', borderRadius: '14px', padding: '20px' }}>
           <h2 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '16px', color: '#e8edf2' }}>🤖 IA & Automação</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             {[

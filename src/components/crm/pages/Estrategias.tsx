@@ -8,14 +8,14 @@ export function Estrategias() {
     { id: 5, nome: 'Email Marketing Mensal', canal: 'Email', status: 'Ativa', investimento: 'R$ 300' },
   ];
   return (
-    <div style={{ padding: '32px', background: '#0d1f2d', minHeight: '100vh', color: '#e8edf2', fontFamily: "'Segoe UI', sans-serif" }}>
+    <div style={{ padding: '24px', background: '#0d1f2d', minHeight: '100vh', color: '#e8edf2', fontFamily: "'Segoe UI', sans-serif" }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '28px' }}>
         <h1 style={{ fontSize: '24px', fontWeight: 700, margin: 0 }}>Estratégias</h1>
         <button style={{ padding: '10px 16px', borderRadius: '8px', border: 'none', background: '#c9943a', color: '#0d1f2d', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}>+ Nova</button>
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '16px' }}>
         {estrategias.map((e) => (
-          <div key={e.id} style={{ background: '#132636', border: '1px solid #1e3d54', borderRadius: '12px', padding: '16px' }}>
+          <div key={e.id} style={{ background: '#132636', border: '1px solid #1e3d54', borderRadius: '14px', padding: '16px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '12px' }}>
               <h3 style={{ fontSize: '14px', fontWeight: 600, margin: 0, color: '#e8edf2' }}>{e.nome}</h3>
               <span style={{ fontSize: '10px', padding: '4px 8px', borderRadius: '4px', background: e.status === 'Ativa' ? 'rgba(46, 204, 113, 0.2)' : 'rgba(243, 156, 18, 0.2)', color: e.status === 'Ativa' ? '#2ecc71' : '#f39c12', fontWeight: 600 }}>{e.status}</span>

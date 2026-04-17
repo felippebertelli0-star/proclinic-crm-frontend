@@ -59,7 +59,7 @@ export function Dashboard() {
 
   return (
     <div style={{
-      padding: '32px',
+      padding: '24px',
       background: '#0d1f2d',
       minHeight: '100vh',
       color: '#e8edf2',
@@ -68,7 +68,7 @@ export function Dashboard() {
       <div style={{
         background: '#132636',
         border: '1px solid #1e3d54',
-        borderRadius: '12px',
+        borderRadius: '14px',
         padding: '16px 20px',
         marginBottom: '28px',
         display: 'flex',
@@ -148,7 +148,7 @@ export function Dashboard() {
         <h2 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '14px', letterSpacing: '-0.5px' }}>
           Status em Tempo Real
         </h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '14px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '18px' }}>
           {[
             { icon: '🟢', label: 'Atendendo', value: stats.atendendo, color: '#2ecc71', subtext: 'tickets em atendimento ativo' },
             { icon: '⏳', label: 'Aguardando', value: stats.aguardando, color: '#f39c12', subtext: 'tickets pendentes' },
@@ -159,10 +159,20 @@ export function Dashboard() {
               style={{
                 background: '#132636',
                 border: '1px solid #1e3d54',
-                borderRadius: '12px',
-                padding: '16px',
+                borderRadius: '16px',
+                padding: '24px',
                 display: 'flex',
                 gap: '12px',
+                transition: 'all 0.18s',
+                cursor: 'pointer',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.3)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'none';
               }}
             >
               <div style={{ fontSize: '20px' }}>{card.icon}</div>
@@ -181,7 +191,7 @@ export function Dashboard() {
         <h2 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '14px', letterSpacing: '-0.5px' }}>
           Atividade do Dia
         </h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '14px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '18px' }}>
           {[
             { icon: '👤', label: 'Novos Leads Chegaram', value: '47', color: '#c9943a', subtext: '↑ no período selecionado' },
             { icon: '📥', label: 'Mensagens Recebidas', value: '2.2k', color: '#3498db', subtext: '↑ WhatsApp + Instagram' },
@@ -192,10 +202,20 @@ export function Dashboard() {
               style={{
                 background: '#132636',
                 border: '1px solid #1e3d54',
-                borderRadius: '12px',
-                padding: '16px',
+                borderRadius: '16px',
+                padding: '24px',
                 display: 'flex',
                 gap: '12px',
+                transition: 'all 0.18s',
+                cursor: 'pointer',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.3)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'none';
               }}
             >
               <div style={{
@@ -225,7 +245,7 @@ export function Dashboard() {
         <h2 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '14px', letterSpacing: '-0.5px' }}>
           Indicadores de Performance
         </h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '14px' }}>
           {[
             { key: 'tickets', label: 'TOTAL DE TICKETS', value: stats.tickets, color: '#c9943a', subtext: 'Criados no período', bar: 70 },
             { key: 'agendamento', label: '% DE AGENDAMENTO', value: stats.agendamento, color: '#3498db', subtext: 'leads → agendados', bar: 18 },
@@ -244,9 +264,19 @@ export function Dashboard() {
               style={{
                 background: '#132636',
                 border: '1px solid #1e3d54',
-                borderRadius: '12px',
-                padding: '14px',
+                borderRadius: '14px',
+                padding: '18px 20px',
                 position: 'relative',
+                transition: 'all 0.18s',
+                cursor: 'pointer',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.3)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'none';
               }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '8px' }}>
@@ -282,7 +312,7 @@ export function Dashboard() {
                   )}
                 </div>
               </div>
-              <div style={{ fontSize: '20px', fontWeight: 700, color: kpi.color, marginBottom: '6px' }}>
+              <div style={{ fontSize: '20px', fontWeight: 800, color: kpi.color, marginBottom: '6px' }}>
                 {kpi.value}
               </div>
               {kpi.bar > 0 && (
@@ -362,7 +392,7 @@ export function Dashboard() {
         <div style={{
           background: '#132636',
           border: '1px solid #1e3d54',
-          borderRadius: '12px',
+          borderRadius: '14px',
           padding: '20px',
           height: '250px',
           display: 'flex',
@@ -386,7 +416,7 @@ export function Dashboard() {
           <div style={{
             background: '#132636',
             border: '1px solid #1e3d54',
-            borderRadius: '12px',
+            borderRadius: '14px',
             padding: '16px',
             display: 'flex',
             gap: '16px',
@@ -413,7 +443,7 @@ export function Dashboard() {
           <div style={{
             background: '#132636',
             border: '1px solid #1e3d54',
-            borderRadius: '12px',
+            borderRadius: '14px',
             padding: '16px',
             display: 'flex',
             flexDirection: 'column',
@@ -493,7 +523,7 @@ export function Dashboard() {
           <div style={{
             background: '#132636',
             border: '1px solid #1e3d54',
-            borderRadius: '8px',
+            borderRadius: '14px',
             overflow: 'auto',
             maxHeight: '300px',
           }}>

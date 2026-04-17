@@ -42,7 +42,7 @@ export function Contatos() {
 
   return (
     <div style={{
-      padding: '32px',
+      padding: '24px',
       background: '#0d1f2d',
       minHeight: '100vh',
       color: '#e8edf2',
@@ -56,7 +56,7 @@ export function Contatos() {
             style={{
               background: '#132636',
               border: '1px solid #1e3d54',
-              borderRadius: '12px',
+              borderRadius: '14px',
               padding: '16px',
             }}
           >
@@ -70,7 +70,7 @@ export function Contatos() {
       <div style={{
         background: '#132636',
         border: '1px solid #1e3d54',
-        borderRadius: '12px',
+        borderRadius: '14px',
         padding: '16px',
         marginBottom: '20px',
         display: 'flex',
@@ -180,7 +180,7 @@ export function Contatos() {
       <div style={{
         background: '#132636',
         border: '1px solid #1e3d54',
-        borderRadius: '12px',
+        borderRadius: '14px',
         overflow: 'hidden',
       }}>
         <table style={{

@@ -9,7 +9,7 @@ export function Arquivos() {
     { id: 6, nome: 'Foto_Depois_01.jpg', tipo: 'Imagem', tamanho: '2.9 MB', data: '2026-04-10' },
   ];
   return (
-    <div style={{ padding: '32px', background: '#0d1f2d', minHeight: '100vh', color: '#e8edf2', fontFamily: "'Segoe UI', sans-serif" }}>
+    <div style={{ padding: '24px', background: '#0d1f2d', minHeight: '100vh', color: '#e8edf2', fontFamily: "'Segoe UI', sans-serif" }}>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '28px' }}>
         {[
           { label: '248 Arquivos', cor: '#c9943a' },
@@ -17,7 +17,7 @@ export function Arquivos() {
           { label: '76 Documentos', cor: '#2ecc71' },
           { label: '2.4 GB Usados', cor: '#f39c12' },
         ].map((card, idx) => (
-          <div key={idx} style={{ background: '#132636', border: '1px solid #1e3d54', borderRadius: '12px', padding: '16px' }}>
+          <div key={idx} style={{ background: '#132636', border: '1px solid #1e3d54', borderRadius: '14px', padding: '16px' }}>
             <div style={{ fontSize: '20px', fontWeight: 700, color: card.cor }}>{card.label}</div>
           </div>
         ))}
@@ -28,7 +28,7 @@ export function Arquivos() {
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
         {arquivos.map((a) => (
-          <div key={a.id} style={{ background: '#132636', border: '1px solid #1e3d54', borderRadius: '12px', padding: '16px' }}>
+          <div key={a.id} style={{ background: '#132636', border: '1px solid #1e3d54', borderRadius: '14px', padding: '16px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
               <div style={{ width: '40px', height: '40px', borderRadius: '8px', background: a.tipo === 'PDF' ? 'rgba(231, 76, 60, 0.2)' : a.tipo === 'Imagem' ? 'rgba(52, 152, 219, 0.2)' : 'rgba(46, 204, 113, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>
                 {a.tipo === 'PDF' ? '📄' : a.tipo === 'Imagem' ? '🖼️' : '📋'}

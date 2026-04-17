@@ -8,14 +8,14 @@ export function Filas() {
     { id: 5, nome: 'Aguardando', tickets: 29, tmr: '—', taxa: '—', agentes: 0 },
   ];
   return (
-    <div style={{ padding: '32px', background: '#0d1f2d', minHeight: '100vh', color: '#e8edf2', fontFamily: "'Segoe UI', sans-serif" }}>
+    <div style={{ padding: '24px', background: '#0d1f2d', minHeight: '100vh', color: '#e8edf2', fontFamily: "'Segoe UI', sans-serif" }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '28px' }}>
         <h1 style={{ fontSize: '24px', fontWeight: 700, margin: 0 }}>Filas</h1>
         <button style={{ padding: '10px 16px', borderRadius: '8px', border: 'none', background: '#c9943a', color: '#0d1f2d', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}>+ Nova Fila</button>
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
         {filas.map((f) => (
-          <div key={f.id} style={{ background: '#132636', border: '1px solid #1e3d54', borderRadius: '12px', padding: '16px' }}>
+          <div key={f.id} style={{ background: '#132636', border: '1px solid #1e3d54', borderRadius: '14px', padding: '16px' }}>
             <h3 style={{ fontSize: '14px', fontWeight: 600, margin: '0 0 12px 0', color: '#e8edf2' }}>{f.nome}</h3>
             <div style={{ fontSize: '12px', color: '#7a96aa', display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '12px' }}>
               <div>Tickets: <span style={{ color: '#c9943a', fontWeight: 600 }}>{f.tickets}</span></div>
