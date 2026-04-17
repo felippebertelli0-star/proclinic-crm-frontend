@@ -69,21 +69,29 @@ export function LoginForm() {
   // ============================================================================
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">ProClinic CRM</h1>
-          <p className="text-blue-100">Login no seu sistema</p>
+          {/* Logo com ícone amarelo */}
+          <div className="flex justify-center mb-6">
+            <div className="bg-amber-400 rounded-full p-4 shadow-lg">
+              <svg className="w-8 h-8 text-slate-900" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+              </svg>
+            </div>
+          </div>
+          <h1 className="text-4xl font-bold text-white mb-2">Painel Administrativo</h1>
+          <p className="text-slate-400">Gestão de Sistemas Jarvis</p>
         </div>
 
         {/* Card */}
-        <div className="bg-white rounded-lg shadow-2xl p-8">
+        <div className="bg-slate-800 border border-slate-700 rounded-xl shadow-2xl p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Error Message */}
             {(localError || error) && (
-              <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-                <p className="text-sm text-red-700">
+              <div className="p-4 bg-red-950 border border-red-800 rounded-lg">
+                <p className="text-sm text-red-300">
                   ❌ {localError || error}
                 </p>
               </div>
@@ -91,8 +99,8 @@ export function LoginForm() {
 
             {/* Email Input */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                Email
+              <label htmlFor="email" className="block text-sm font-medium text-slate-300 mb-2">
+                EMAIL
               </label>
               <input
                 id="email"
@@ -101,15 +109,15 @@ export function LoginForm() {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="seu@email.com"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                className="w-full px-4 py-2 bg-slate-700 border border-slate-600 text-white placeholder-slate-500 rounded-lg focus:ring-2 focus:ring-amber-400 focus:border-amber-400 outline-none transition"
                 disabled={isLoading}
               />
             </div>
 
             {/* Password Input */}
             <div>
-              <label htmlFor="senha" className="block text-sm font-medium text-gray-700 mb-2">
-                Senha
+              <label htmlFor="senha" className="block text-sm font-medium text-slate-300 mb-2">
+                SENHA
               </label>
               <input
                 id="senha"
@@ -118,7 +126,7 @@ export function LoginForm() {
                 value={formData.senha}
                 onChange={handleChange}
                 placeholder="••••••••"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                className="w-full px-4 py-2 bg-slate-700 border border-amber-500 text-white placeholder-slate-500 rounded-lg focus:ring-2 focus:ring-amber-400 focus:border-amber-400 outline-none transition"
                 disabled={isLoading}
               />
             </div>
@@ -127,7 +135,7 @@ export function LoginForm() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold py-2 rounded-lg transition duration-200"
+              className="w-full bg-amber-400 hover:bg-amber-500 disabled:bg-amber-300 text-slate-900 font-bold py-3 rounded-lg transition duration-200 shadow-lg"
             >
               {isLoading ? (
                 <div className="flex items-center justify-center">
@@ -135,19 +143,20 @@ export function LoginForm() {
                   Entrando...
                 </div>
               ) : (
-                'Entrar'
+                'Entrar no Painel'
               )}
             </button>
 
             {/* Info */}
-            <div className="text-center text-xs text-gray-600 pt-4">
-              <p>Demo: admin@example.com / Admin123456</p>
+            <div className="text-center text-xs text-slate-500 pt-4 space-y-1">
+              <p>📧 {formData.email}</p>
+              <p>🔐 Jarvis@2025</p>
             </div>
           </form>
         </div>
 
         {/* Footer */}
-        <p className="text-center text-blue-100 mt-6 text-sm">
+        <p className="text-center text-slate-500 mt-6 text-sm">
           Sistema Premium AAA • v1.0.0
         </p>
       </div>

@@ -21,18 +21,18 @@ export function TableCard({
   children,
 }: TableCardProps) {
   return (
-    <div className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
+    <div className="bg-slate-800 border border-slate-700 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
       {/* Header */}
-      <div className="flex items-center justify-between p-6 border-b border-gray-200">
+      <div className="flex items-center justify-between p-6 border-b border-slate-700">
         <div>
-          <h2 className="text-xl font-bold text-gray-900">{title}</h2>
-          {subtitle && <p className="text-sm text-gray-600 mt-1">{subtitle}</p>}
+          <h2 className="text-xl font-bold text-white">{title}</h2>
+          {subtitle && <p className="text-sm text-slate-400 mt-1">{subtitle}</p>}
         </div>
 
         {actionLabel && onAction && (
           <button
             onClick={onAction}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-amber-400 text-slate-900 font-semibold rounded-lg hover:bg-amber-500 transition-colors shadow-lg"
             aria-label={actionLabel}
           >
             <Plus size={20} />

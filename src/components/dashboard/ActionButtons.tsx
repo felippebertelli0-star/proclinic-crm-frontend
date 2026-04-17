@@ -18,7 +18,7 @@ export function ActionButtons({ onEdit, onDelete, onView, compact = false }: Act
       {onView && (
         <button
           onClick={onView}
-          className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+          className="p-2 text-cyan-400 hover:bg-cyan-950 rounded-lg transition-colors"
           title="Visualizar"
           aria-label="Visualizar"
         >
@@ -29,7 +29,7 @@ export function ActionButtons({ onEdit, onDelete, onView, compact = false }: Act
       {onEdit && (
         <button
           onClick={onEdit}
-          className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+          className="p-2 text-slate-400 hover:bg-slate-700 hover:text-white rounded-lg transition-colors"
           title="Editar"
           aria-label="Editar"
         >
@@ -40,7 +40,7 @@ export function ActionButtons({ onEdit, onDelete, onView, compact = false }: Act
       {onDelete && (
         <button
           onClick={onDelete}
-          className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+          className="p-2 text-red-400 hover:bg-red-950 rounded-lg transition-colors"
           title="Deletar"
           aria-label="Deletar"
         >

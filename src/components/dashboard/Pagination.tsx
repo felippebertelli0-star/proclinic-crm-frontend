@@ -20,7 +20,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
       <button
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className="p-2 rounded-lg border border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        className="p-2 rounded-lg border border-slate-600 text-slate-400 hover:bg-slate-700 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         aria-label="Página anterior"
       >
         <ChevronLeft size={18} />
@@ -34,8 +34,8 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
             onClick={() => onPageChange(page)}
             className={`w-8 h-8 rounded-lg font-semibold transition-colors ${
               currentPage === page
-                ? 'bg-blue-600 text-white'
-                : 'border border-gray-300 text-gray-700 hover:bg-gray-50'
+                ? 'bg-amber-400 text-slate-900 font-bold'
+                : 'border border-slate-600 text-slate-400 hover:bg-slate-700 hover:text-white'
             }`}
             aria-label={`Página ${page}`}
             aria-current={currentPage === page ? 'page' : undefined}
@@ -47,13 +47,13 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
         {/* Reticências se houver mais páginas */}
         {totalPages > 5 && (
           <>
-            <span className="px-2 py-1 text-gray-500">...</span>
+            <span className="px-2 py-1 text-slate-500">...</span>
             <button
               onClick={() => onPageChange(totalPages)}
               className={`w-8 h-8 rounded-lg font-semibold transition-colors ${
                 currentPage === totalPages
-                  ? 'bg-blue-600 text-white'
-                  : 'border border-gray-300 text-gray-700 hover:bg-gray-50'
+                  ? 'bg-amber-400 text-slate-900 font-bold'
+                  : 'border border-slate-600 text-slate-400 hover:bg-slate-700 hover:text-white'
               }`}
               aria-label={`Página ${totalPages}`}
             >
@@ -67,14 +67,14 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
       <button
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className="p-2 rounded-lg border border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        className="p-2 rounded-lg border border-slate-600 text-slate-400 hover:bg-slate-700 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         aria-label="Próxima página"
       >
         <ChevronRight size={18} />
       </button>
 
       {/* Informação de página */}
-      <span className="ml-4 text-sm text-gray-600">
+      <span className="ml-4 text-sm text-slate-400">
         Página {currentPage} de {totalPages}
       </span>
     </div>

@@ -33,13 +33,13 @@ export function FilterBar({
     <div className="flex flex-col md:flex-row gap-4 mb-6">
       {/* Search Input */}
       <div className="flex-1 relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500" size={20} />
         <input
           type="text"
           value={searchValue}
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder={searchPlaceholder}
-          className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+          className="w-full pl-10 pr-4 py-2 bg-slate-700 border border-slate-600 text-white placeholder-slate-500 rounded-lg focus:ring-2 focus:ring-amber-400 focus:border-amber-400 transition-all"
           aria-label="Buscar"
         />
       </div>
@@ -50,12 +50,12 @@ export function FilterBar({
           key={filter.name}
           value={filter.value}
           onChange={(e) => filter.onChange(e.target.value)}
-          className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-white text-gray-700"
+          className="px-4 py-2 bg-slate-700 border border-slate-600 text-white rounded-lg focus:ring-2 focus:ring-amber-400 focus:border-amber-400 transition-all"
           aria-label={filter.label}
         >
-          <option value="">{filter.label}</option>
+          <option value="" className="bg-slate-700 text-white">{filter.label}</option>
           {filter.options.map((option) => (
-            <option key={option.value} value={option.value}>
+            <option key={option.value} value={option.value} className="bg-slate-700 text-white">
               {option.label}
             </option>
           ))}

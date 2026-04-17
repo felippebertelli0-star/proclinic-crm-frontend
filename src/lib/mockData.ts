@@ -388,23 +388,23 @@ export const formatarDataCurta = (data: string | Date): string => {
 export const obterCorStatus = (status: string): string => {
   const cores: Record<string, string> = {
     // Conversas
-    ativa: 'bg-green-100 text-green-800',
-    fechada: 'bg-gray-100 text-gray-800',
-    aguardando: 'bg-yellow-100 text-yellow-800',
+    ativa: 'bg-green-950 text-green-300 border border-green-800',
+    fechada: 'bg-slate-700 text-slate-300 border border-slate-600',
+    aguardando: 'bg-amber-950 text-amber-300 border border-amber-800',
 
     // Contatos
-    ativo: 'bg-green-100 text-green-800',
-    inativo: 'bg-gray-100 text-gray-800',
-    suspenso: 'bg-red-100 text-red-800',
+    ativo: 'bg-green-950 text-green-300 border border-green-800',
+    inativo: 'bg-slate-700 text-slate-300 border border-slate-600',
+    suspenso: 'bg-red-950 text-red-300 border border-red-800',
 
     // Pagamentos
-    confirmado: 'bg-green-100 text-green-800',
-    pendente: 'bg-yellow-100 text-yellow-800',
-    falhou: 'bg-red-100 text-red-800',
-    reembolsado: 'bg-blue-100 text-blue-800',
+    confirmado: 'bg-green-950 text-green-300 border border-green-800',
+    pendente: 'bg-amber-950 text-amber-300 border border-amber-800',
+    falhou: 'bg-red-950 text-red-300 border border-red-800',
+    reembolsado: 'bg-purple-950 text-purple-300 border border-purple-800',
   };
 
-  return cores[status] || 'bg-gray-100 text-gray-800';
+  return cores[status] || 'bg-slate-700 text-slate-300 border border-slate-600';
 };
 
 export const obterLabelStatus = (status: string): string => {
