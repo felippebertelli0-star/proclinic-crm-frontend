@@ -135,16 +135,36 @@ export function Dashboard() {
     }
   };
 
-  // =============== GRÁFICO DE LINHA MELHORADO ===============
+  // =============== GRÁFICO DINÂMICO COM MÚLTIPLOS INDICADORES ===============
+  const indicatorColors: Record<string, { color: string; light: string }> = {
+    tickets: { color: '#3498db', light: '#3498db' },
+    agendamento: { color: '#c9943a', light: '#c9943a' },
+    fechamento: { color: '#2ecc71', light: '#2ecc71' },
+    comparecimento: { color: '#f39c12', light: '#f39c12' },
+    followups: { color: '#9b59b6', light: '#9b59b6' },
+    reativados: { color: '#e74c3c', light: '#e74c3c' },
+    primeiraResposta: { color: '#1abc9c', light: '#1abc9c' },
+    tempoResposta: { color: '#34495e', light: '#34495e' },
+    tempoResolucao: { color: '#95a5a6', light: '#95a5a6' },
+    faturamento: { color: '#27ae60', light: '#27ae60' },
+    conversasFechadas: { color: '#d35400', light: '#d35400' },
+  };
+
   const generateChartData = () => {
     const hours = ['00h', '04h', '08h', '10h', '12h', '14h', '16h', '18h'];
-    const ticketValues = [3, 7, 12, 18, 24, 28, 35, 38];
-    const agendamentoValues = [2, 5, 8, 12, 16, 19, 24, 28];
-
     return hours.map((hour, i) => ({
       hour,
-      tickets: ticketValues[i],
-      agendamento: agendamentoValues[i],
+      tickets: 3 + i * 5,
+      agendamento: 2 + i * 3,
+      fechamento: 5 + i * 7,
+      comparecimento: 4 + i * 8,
+      followups: 1 + i * 1.5,
+      reativados: 0.2 + i * 0.4,
+      primeiraResposta: 20 - i * 1,
+      tempoResposta: 18 - i * 0.8,
+      tempoResolucao: 0.15 - i * 0.01,
+      faturamento: 100 + i * 50,
+      conversasFechadas: 2 + i * 2.5,
     }));
   };
 
@@ -157,24 +177,14 @@ export function Dashboard() {
   const graphWidth = chartWidth - padding * 2;
   const graphHeight = chartHeight - padding * 2;
 
-  const points = chartData.map((data, i) => ({
-    x: padding + (i / (chartData.length - 1)) * graphWidth,
-    y: chartHeight - padding - (data.tickets / maxValue) * graphHeight,
-    value: data.tickets,
-  }));
-
-  const points2 = chartData.map((data, i) => ({
-    x: padding + (i / (chartData.length - 1)) * graphWidth,
-    y: chartHeight - padding - (data.agendamento / maxValue) * graphHeight,
-    value: data.agendamento,
-  }));
-
-  // Criar paths para linhas com área preenchida
-  const pathD = 'M ' + points.map(p => `${p.x},${p.y}`).join(' L ');
-  const areaD = `M ${padding},${chartHeight - padding} ` + points.map(p => `L ${p.x},${p.y}`).join(' ') + ` L ${chartWidth - padding},${chartHeight - padding} Z`;
-
-  const pathD2 = 'M ' + points2.map(p => `${p.x},${p.y}`).join(' L ');
-  const areaD2 = `M ${padding},${chartHeight - padding} ` + points2.map(p => `L ${p.x},${p.y}`).join(' ') + ` L ${chartWidth - padding},${chartHeight - padding} Z`;
+  // Função para criar pontos de um indicador
+  const createPoints = (key: string) => {
+    return chartData.map((data, i) => ({
+      x: padding + (i / (chartData.length - 1)) * graphWidth,
+      y: chartHeight - padding - ((data[key as keyof typeof data] as number) / maxValue) * graphHeight,
+      value: data[key as keyof typeof data],
+    }));
+  };
 
   return (
     <div style={{
@@ -618,73 +628,49 @@ export function Dashboard() {
               </text>
             ))}
 
-            {/* Áreas preenchidas (gradientes) */}
-            {selectedIndicators.includes('tickets') && (
-              <path d={areaD} fill="url(#grad1)" />
-            )}
-            {selectedIndicators.includes('agendamento') && (
-              <path d={areaD2} fill="url(#grad2)" />
-            )}
-
-            {/* Linhas do gráfico (stroke) */}
-            {selectedIndicators.includes('tickets') && (
-              <path d={pathD} stroke="#3498db" strokeWidth="3" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-            )}
-            {selectedIndicators.includes('agendamento') && (
-              <path d={pathD2} stroke="#c9943a" strokeWidth="3" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-            )}
-
-            {/* Pontos nos dados */}
-            {selectedIndicators.includes('tickets') && points.map((p, i) => (
-              <circle key={`point1-${i}`} cx={p.x} cy={p.y} r="4" fill="#3498db" opacity="0.8" />
-            ))}
-            {selectedIndicators.includes('agendamento') && points2.map((p, i) => (
-              <circle key={`point2-${i}`} cx={p.x} cy={p.y} r="4" fill="#c9943a" opacity="0.8" />
-            ))}
-
-            {/* Legenda */}
-            <g>
-              {selectedIndicators.includes('tickets') && (
-                <g>
-                  <circle cx={20} cy={20} r="4" fill="#3498db" />
-                  <text x={35} y={24} fontSize="12" fill="#e8edf2" fontWeight="600">Total de Tickets</text>
+            {/* Renderizar linhas de todos os indicadores selecionados */}
+            {selectedIndicators.map((indicator) => {
+              const points = createPoints(indicator);
+              const pathD = 'M ' + points.map(p => `${p.x},${p.y}`).join(' L ');
+              const color = indicatorColors[indicator]?.color || '#ffffff';
+              return (
+                <g key={`line-${indicator}`}>
+                  <path d={pathD} stroke={color} strokeWidth="3" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                  {points.map((p, i) => (
+                    <circle key={`point-${indicator}-${i}`} cx={p.x} cy={p.y} r="4" fill={color} opacity="0.8" />
+                  ))}
                 </g>
-              )}
-              {selectedIndicators.includes('agendamento') && (
-                <g>
-                  <circle cx={220} cy={20} r="4" fill="#c9943a" />
-                  <text x={235} y={24} fontSize="12" fill="#e8edf2" fontWeight="600">% Agendamento</text>
-                </g>
-              )}
-            </g>
+              );
+            })}
+
+            {/* Legenda SVG (vazia - legenda abaixo do gráfico) */}
           </svg>
 
-          {/* LEGENDA */}
+          {/* LEGENDA DINÂMICA */}
           <div style={{ display: 'flex', gap: '32px', marginTop: '20px', justifyContent: 'center', flexWrap: 'wrap' }}>
-            {selectedIndicators.includes('tickets') && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <div style={{ width: '12px', height: '12px', borderRadius: '2px', background: '#3498db' }} />
-                <span style={{ fontSize: '13px', color: '#e8edf2', fontWeight: '500' }}>Total de Tickets</span>
-              </div>
-            )}
-            {selectedIndicators.includes('agendamento') && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <div style={{ width: '12px', height: '12px', borderRadius: '2px', background: '#c9943a' }} />
-                <span style={{ fontSize: '13px', color: '#e8edf2', fontWeight: '500' }}>% Agendamento</span>
-              </div>
-            )}
-            {selectedIndicators.includes('fechamento') && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <div style={{ width: '12px', height: '12px', borderRadius: '2px', background: '#2ecc71' }} />
-                <span style={{ fontSize: '13px', color: '#e8edf2', fontWeight: '500' }}>% Fechamento</span>
-              </div>
-            )}
-            {selectedIndicators.includes('comparecimento') && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <div style={{ width: '12px', height: '12px', borderRadius: '2px', background: '#f39c12' }} />
-                <span style={{ fontSize: '13px', color: '#e8edf2', fontWeight: '500' }}>% Comparecimento</span>
-              </div>
-            )}
+            {selectedIndicators.map((indicator) => {
+              const indicatorLabels: Record<string, string> = {
+                tickets: 'Total de Tickets',
+                agendamento: '% Agendamento',
+                fechamento: '% Fechamento',
+                comparecimento: '% Comparecimento',
+                followups: 'Follow-ups',
+                reativados: 'Reativados',
+                primeiraResposta: '1ª Resposta',
+                tempoResposta: 'T.M. Resposta',
+                tempoResolucao: 'T.M. Resolução',
+                faturamento: 'Faturamento',
+                conversasFechadas: 'Conv. Fechadas',
+              };
+
+              const color = indicatorColors[indicator]?.color || '#ffffff';
+              return (
+                <div key={`legend-${indicator}`} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <div style={{ width: '12px', height: '12px', borderRadius: '2px', background: color }} />
+                  <span style={{ fontSize: '13px', color: '#e8edf2', fontWeight: '500' }}>{indicatorLabels[indicator]}</span>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
