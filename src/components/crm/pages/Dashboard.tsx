@@ -57,13 +57,84 @@ export function Dashboard() {
     }
   };
 
+  // Gerar dados para gráfico de linha
+  const generateChartData = () => {
+    const hours = ['00h', '04h', '08h', '12h', '14h', '16h', '18h'];
+    const baseValues = [5, 8, 12, 18, 25, 32, 38];
+
+    return hours.map((hour, i) => ({
+      hour,
+      tickets: baseValues[i],
+      agendamento: baseValues[i] * 0.7,
+    }));
+  };
+
+  const chartData = generateChartData();
+  const chartWidth = 800;
+  const chartHeight = 200;
+  const padding = 40;
+
+  // Calcular pontos do gráfico
+  const maxValue = 40;
+  const graphWidth = chartWidth - padding * 2;
+  const graphHeight = chartHeight - padding * 2;
+
+  const points = chartData.map((data, i) => {
+    const x = padding + (i / (chartData.length - 1)) * graphWidth;
+    const y = chartHeight - padding - (data.tickets / maxValue) * graphHeight;
+    return { x, y, value: data.tickets };
+  });
+
+  const points2 = chartData.map((data, i) => {
+    const x = padding + (i / (chartData.length - 1)) * graphWidth;
+    const y = chartHeight - padding - (data.agendamento / maxValue) * graphHeight;
+    return { x, y, value: data.agendamento };
+  });
+
+  const pathD = 'M ' + points.map(p => `${p.x},${p.y}`).join(' L ');
+  const pathD2 = 'M ' + points2.map(p => `${p.x},${p.y}`).join(' L ');
+
   return (
     <div style={{
-      padding: '24px',
+      padding: '0',
       background: '#0d1f2d',
       minHeight: '100vh',
       color: '#e8edf2',
+      display: 'flex',
+      flexDirection: 'column',
     }}>
+      {/* =============== HEADER COM STATUS INDICATORS =============== */}
+      <div style={{
+        background: '#132636',
+        borderBottom: '1px solid #1e3d54',
+        padding: '12px 24px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+      }}>
+        <div style={{ fontSize: '14px', fontWeight: 700, color: '#c9943a', letterSpacing: '-0.3px' }}>
+          ProClinic — Inteligência Comercial
+        </div>
+        <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: '#7a96aa' }}>
+            <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#2ecc71' }} />
+            Clínica Dra. Andreassa Barbarolli
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: '#7a96aa' }}>
+            <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#2ecc71' }} />
+            WhatsApp Conectado
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: '#7a96aa' }}>
+            <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#2ecc71' }} />
+            Instagram Conectado
+          </div>
+          <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'linear-gradient(135deg, #c9943a, #e8b86d)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', fontWeight: 800, color: '#0d1f2d' }}>
+            A
+          </div>
+        </div>
+      </div>
+
+      <div style={{ padding: '24px', flex: 1, overflowY: 'auto' }}>
       {/* FILTER BAR */}
       <div style={{
         background: '#132636',
@@ -394,14 +465,52 @@ export function Dashboard() {
           border: '1px solid #1e3d54',
           borderRadius: '14px',
           padding: '20px',
-          height: '250px',
+          minHeight: '300px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          color: '#7a96aa',
-          fontSize: '13px',
         }}>
-          📊 Gráfico de Linha (indicadores selecionados: {selectedIndicators.length > 0 ? selectedIndicators.join(', ') : 'nenhum'})
+          <svg width={chartWidth} height={chartHeight} style={{ width: '100%', height: 'auto', maxWidth: '100%' }}>
+            {/* Grid */}
+            {[0, 1, 2, 3, 4].map(i => (
+              <line key={`grid-${i}`} x1={padding} y1={padding + (i / 4) * (chartHeight - padding * 2)} x2={chartWidth - padding} y2={padding + (i / 4) * (chartHeight - padding * 2)} stroke="#1a3347" strokeWidth="1" strokeDasharray="2,2" />
+            ))}
+            {/* Eixo X */}
+            <line x1={padding} y1={chartHeight - padding} x2={chartWidth - padding} y2={chartHeight - padding} stroke="#1e3d54" strokeWidth="1" />
+            {/* Eixo Y */}
+            <line x1={padding} y1={padding} x2={padding} y2={chartHeight - padding} stroke="#1e3d54" strokeWidth="1" />
+
+            {/* Labels X */}
+            {chartData.map((data, i) => (
+              <text key={`label-${i}`} x={padding + (i / (chartData.length - 1)) * (chartWidth - padding * 2)} y={chartHeight - 15} textAnchor="middle" fontSize="11" fill="#7a96aa">
+                {data.hour}
+              </text>
+            ))}
+
+            {/* Linhas do gráfico */}
+            {selectedIndicators.includes('tickets') && (
+              <path d={pathD} stroke="#3498db" strokeWidth="2" fill="none" />
+            )}
+            {selectedIndicators.includes('agendamento') && (
+              <path d={pathD2} stroke="#c9943a" strokeWidth="2" fill="none" />
+            )}
+
+            {/* Legenda */}
+            <g>
+              {selectedIndicators.includes('tickets') && (
+                <g>
+                  <rect x={10} y={10} width={12} height={12} fill="#3498db" />
+                  <text x={28} y={20} fontSize="11" fill="#e8edf2">Total de Tickets</text>
+                </g>
+              )}
+              {selectedIndicators.includes('agendamento') && (
+                <g>
+                  <rect x={200} y={10} width={12} height={12} fill="#c9943a" />
+                  <text x={218} y={20} fontSize="11" fill="#e8edf2">% Agendamento</text>
+                </g>
+              )}
+            </g>
+          </svg>
         </div>
       </div>
 
@@ -546,10 +655,13 @@ export function Dashboard() {
               </thead>
               <tbody>
                 {[
-                  { no: 1, nome: 'Havila', aval: 4, total: 87, and: 85, fin: 2, esp: '09h', at: '00h', status: 'Online' },
-                  { no: 2, nome: 'Camilly', aval: 4, total: 17, and: 16, fin: 1, esp: '15h', at: '00h', status: 'Online' },
-                  { no: 3, nome: 'Fernando', aval: 4, total: 1, and: 1, fin: 0, esp: '23h', at: '00h', status: 'Online' },
-                  { no: 4, nome: 'Deborah', aval: 4, total: 0, and: 0, fin: 0, esp: '00h', at: '00h', status: 'Offline' },
+                  { no: 1, nome: 'Hávila', aval: 4, total: 87, and: 85, fin: 2, esp: '09h10m', at: '00h07m', status: 'Online' },
+                  { no: 2, nome: 'Camilly', aval: 4, total: 17, and: 16, fin: 1, esp: '15h16m', at: '00h01m', status: 'Online' },
+                  { no: 3, nome: 'Fernando', aval: 4, total: 1, and: 1, fin: 0, esp: '23h06m', at: '00h00m', status: 'Online' },
+                  { no: 4, nome: 'Déborah', aval: 4, total: 0, and: 0, fin: 0, esp: '00h00m', at: '00h00m', status: 'Offline' },
+                  { no: 5, nome: 'Dra. Andressa', aval: 4, total: 12, and: 8, fin: 4, esp: '11h22m', at: '00h03m', status: 'Online' },
+                  { no: 6, nome: 'Gustavo', aval: 3, total: 5, and: 3, fin: 2, esp: '08h45m', at: '00h12m', status: 'Online' },
+                  { no: 7, nome: 'Beatriz', aval: 3, total: 3, and: 2, fin: 1, esp: '14h30m', at: '00h08m', status: 'Offline' },
                 ].map((a) => (
                   <tr key={a.nome} style={{ borderBottom: '1px solid #1e3d54' }}>
                     <td style={{ padding: '8px', color: '#7a96aa' }}>{a.no}</td>
@@ -574,6 +686,7 @@ export function Dashboard() {
             </table>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );
