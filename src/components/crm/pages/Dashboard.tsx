@@ -764,9 +764,12 @@ export function Dashboard() {
 
       {/* CHANNELS & FUNNEL */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '28px' }}>
-        {/* TICKETS POR CANAL */}
+        {/* DISTRIBUIÇÃO POR CANAL */}
         <div>
-          <h3 style={{ fontSize: '14px', fontWeight: 700, marginBottom: '16px' }}>Tickets por Canal</h3>
+          <h3 style={{ fontSize: '14px', fontWeight: 700, marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span>Distribuição por Canal</span>
+            <span style={{ fontSize: '11px', color: '#2ecc71', fontWeight: 600, background: 'rgba(46, 204, 113, 0.1)', padding: '4px 10px', borderRadius: '12px', border: '1px solid #2ecc71' }}>🟢 AO VIVO</span>
+          </h3>
           <div style={{
             background: '#132636',
             border: '1px solid #1e3d54',
@@ -792,7 +795,7 @@ export function Dashboard() {
             {/* LEGENDA COM BARRAS */}
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: '14px' }}>
               {[
-                { emoji: '💬', name: 'WhatsApp', pct: 78, count: 341, color: '#2ecc71' },
+                { emoji: '⚪', name: 'WhatsApp', pct: 78, count: 341, color: '#2ecc71' },
                 { emoji: '📸', name: 'Instagram', pct: 16, count: 70, color: '#e74c3c' },
                 { emoji: '🔗', name: 'Direto', pct: 6, count: 26, color: '#3498db' }
               ].map((c) => (
