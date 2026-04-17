@@ -14,26 +14,75 @@ export function Dashboard() {
   const [selectedIndicators, setSelectedIndicators] = useState<string[]>(['tickets']);
   const [tooltipVisible, setTooltipVisible] = useState<string | null>(null);
 
-  // Mock Data
-  const stats = {
-    atendendo: 366,
-    aguardando: 20,
-    fechados: 26,
-    leads: 47,
-    recebidas: '2.2k',
-    enviadas: '2.5k',
-    tickets: 141,
-    agendamento: '18.4%',
-    fechamento: '61.5%',
-    comparecimento: '72%',
-    followups: 12,
-    reativados: 3,
-    primeiraResposta: '13 min',
-    tempoResposta: '12.9 min',
-    tempoResolucao: '0.1h',
-    faturamento: 'R$ 4.2k',
-    conversasFechadas: 19,
+  // Mock Data por dia (últimos 30 dias + hoje)
+  const dailyData: Record<string, any> = {
+    '2026-03-19': { atendendo: 250, aguardando: 12, fechados: 16, leads: 30, recebidas: 1600, enviadas: 1700, tickets: 80, agendamento: 15, fechamento: 55, comparecimento: 65, followups: 6, reativados: 1, primeiraResposta: 16, tempoResposta: 15, tempoResolucao: 0.13, faturamento: 2800, conversasFechadas: 12 },
+    '2026-03-20': { atendendo: 270, aguardando: 13, fechados: 17, leads: 33, recebidas: 1700, enviadas: 1800, tickets: 88, agendamento: 15.5, fechamento: 56, comparecimento: 66, followups: 7, reativados: 1, primeiraResposta: 16, tempoResposta: 15, tempoResolucao: 0.13, faturamento: 3000, conversasFechadas: 13 },
+    '2026-04-10': { atendendo: 290, aguardando: 14, fechados: 19, leads: 38, recebidas: 1900, enviadas: 2000, tickets: 105, agendamento: 17, fechamento: 59, comparecimento: 69, followups: 9, reativados: 2, primeiraResposta: 14, tempoResposta: 13, tempoResolucao: 0.11, faturamento: 3600, conversasFechadas: 15 },
+    '2026-04-11': { atendendo: 305, aguardando: 15, fechados: 20, leads: 40, recebidas: 2000, enviadas: 2100, tickets: 110, agendamento: 17.2, fechamento: 59.5, comparecimento: 70, followups: 9, reativados: 2, primeiraResposta: 14, tempoResposta: 13, tempoResolucao: 0.115, faturamento: 3700, conversasFechadas: 16 },
+    '2026-04-12': { atendendo: 330, aguardando: 17, fechados: 23, leads: 44, recebidas: 2100, enviadas: 2300, tickets: 128, agendamento: 17.8, fechamento: 60, comparecimento: 70.5, followups: 11, reativados: 2, primeiraResposta: 13, tempoResposta: 12.9, tempoResolucao: 0.105, faturamento: 3900, conversasFechadas: 17 },
+    '2026-04-13': { atendendo: 315, aguardando: 16, fechados: 21, leads: 41, recebidas: 2050, enviadas: 2200, tickets: 120, agendamento: 17.5, fechamento: 59.8, comparecimento: 71, followups: 10, reativados: 2, primeiraResposta: 13.5, tempoResposta: 13, tempoResolucao: 0.11, faturamento: 3800, conversasFechadas: 16 },
+    '2026-04-14': { atendendo: 340, aguardando: 19, fechados: 24, leads: 45, recebidas: 2150, enviadas: 2400, tickets: 135, agendamento: 18.1, fechamento: 61, comparecimento: 71.5, followups: 11, reativados: 3, primeiraResposta: 13, tempoResposta: 12.8, tempoResolucao: 0.1, faturamento: 4000, conversasFechadas: 18 },
+    '2026-04-15': { atendendo: 280, aguardando: 15, fechados: 18, leads: 35, recebidas: 1800, enviadas: 1900, tickets: 95, agendamento: 16.5, fechamento: 58, comparecimento: 68, followups: 8, reativados: 2, primeiraResposta: 15, tempoResposta: 14, tempoResolucao: 0.12, faturamento: 3200, conversasFechadas: 14 },
+    '2026-04-16': { atendendo: 320, aguardando: 18, fechados: 22, leads: 42, recebidas: 2000, enviadas: 2200, tickets: 118, agendamento: 17.8, fechamento: 60, comparecimento: 70, followups: 10, reativados: 2, primeiraResposta: 14, tempoResposta: 13, tempoResolucao: 0.11, faturamento: 3800, conversasFechadas: 17 },
+    '2026-04-17': { atendendo: 366, aguardando: 20, fechados: 26, leads: 47, recebidas: 2200, enviadas: 2500, tickets: 141, agendamento: 18.4, fechamento: 61.5, comparecimento: 72, followups: 12, reativados: 3, primeiraResposta: 13, tempoResposta: 12.9, tempoResolucao: 0.1, faturamento: 4200, conversasFechadas: 19 },
   };
+
+  // Função para calcular stats baseado no período
+  const calculateStats = () => {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const dates: string[] = [];
+
+    // Gerar array de datas entre start e end
+    for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+      const dateStr = d.toISOString().split('T')[0];
+      dates.push(dateStr);
+    }
+
+    // Filtrar apenas datas que existem em dailyData
+    const validDates = dates.filter(d => dailyData[d]);
+
+    if (validDates.length === 0) {
+      return {
+        atendendo: 0, aguardando: 0, fechados: 0, leads: 0, recebidas: '0', enviadas: '0',
+        tickets: 0, agendamento: '0%', fechamento: '0%', comparecimento: '0%', followups: 0, reativados: 0,
+        primeiraResposta: '0 min', tempoResposta: '0 min', tempoResolucao: '0h', faturamento: 'R$ 0', conversasFechadas: 0,
+      };
+    }
+
+    // Somar valores
+    const sum = (key: string) => validDates.reduce((acc, d) => acc + (dailyData[d][key] || 0), 0);
+    const avg = (key: string) => {
+      const total = sum(key);
+      return Math.round((total / validDates.length) * 10) / 10;
+    };
+
+    // Formatar números grandes (1000 -> 1k)
+    const formatK = (num: number) => num >= 1000 ? `${(num / 1000).toFixed(1)}k` : num.toString();
+
+    return {
+      atendendo: sum('atendendo'),
+      aguardando: sum('aguardando'),
+      fechados: sum('fechados'),
+      leads: sum('leads'),
+      recebidas: formatK(sum('recebidas')),
+      enviadas: formatK(sum('enviadas')),
+      tickets: sum('tickets'),
+      agendamento: `${avg('agendamento').toFixed(1)}%`,
+      fechamento: `${avg('fechamento').toFixed(1)}%`,
+      comparecimento: `${Math.round(avg('comparecimento'))}%`,
+      followups: sum('followups'),
+      reativados: sum('reativados'),
+      primeiraResposta: `${Math.round(avg('primeiraResposta'))} min`,
+      tempoResposta: `${avg('tempoResposta').toFixed(1)} min`,
+      tempoResolucao: `${(sum('tempoResolucao') / validDates.length).toFixed(2)}h`,
+      faturamento: `R$ ${formatK(sum('faturamento'))}`,
+      conversasFechadas: sum('conversasFechadas'),
+    };
+  };
+
+  const stats = calculateStats();
 
   const KPI_TOOLTIPS = {
     tickets: 'Número total de conversas abertas (tickets criados) no período selecionado',
@@ -47,6 +96,35 @@ export function Dashboard() {
     tempoResolucao: 'Tempo médio para resolver completamente um ticket',
     faturamento: 'Receita gerada pelos atendimentos no período selecionado',
     conversasFechadas: 'Total de conversas encerradas com sucesso no período',
+  };
+
+  // Função para aplicar períodos pré-definidos
+  const applyPeriod = (period: string) => {
+    const today = new Date('2026-04-17');
+    let start = new Date(today);
+    let end = new Date(today);
+
+    switch (period) {
+      case 'Hoje':
+        break;
+      case 'Ontem':
+        start.setDate(start.getDate() - 1);
+        end.setDate(end.getDate() - 1);
+        break;
+      case 'Últimos 7 dias':
+        start.setDate(start.getDate() - 6);
+        break;
+      case 'Últimos 30 dias':
+        start.setDate(start.getDate() - 29);
+        break;
+      case 'Este mês':
+        start.setDate(1);
+        break;
+    }
+
+    setStartDate(start.toISOString().split('T')[0]);
+    setEndDate(end.toISOString().split('T')[0]);
+    setSelectedPeriod(period);
   };
 
   const toggleIndicador = (key: string) => {
@@ -155,7 +233,7 @@ export function Dashboard() {
         {['Hoje', 'Ontem', 'Últimos 7 dias', 'Últimos 30 dias', 'Este mês'].map((period) => (
           <button
             key={period}
-            onClick={() => setSelectedPeriod(period)}
+            onClick={() => applyPeriod(period)}
             style={{
               padding: '6px 14px',
               borderRadius: '8px',
@@ -202,6 +280,7 @@ export function Dashboard() {
             }}
           />
           <button
+            onClick={() => setSelectedPeriod('Personalizado')}
             style={{
               padding: '7px 16px',
               background: 'linear-gradient(135deg, #c9943a, #e8b86d, #c9943a)',
