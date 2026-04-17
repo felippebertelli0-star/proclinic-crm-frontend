@@ -81,8 +81,8 @@ export function LoginForm() {
               </svg>
             </div>
           </div>
-          <h1 className="text-4xl font-bold text-white mb-2">Painel Administrativo</h1>
-          <p className="text-slate-400">Gestão de Sistemas Jarvis</p>
+          <h1 className="text-4xl font-bold text-white mb-2">ProClinic CRM</h1>
+          <p className="text-slate-400">Sistema de Gestão para Clínicas</p>
         </div>
 
         {/* Card */}
@@ -143,7 +143,7 @@ export function LoginForm() {
                   Entrando...
                 </div>
               ) : (
-                'Entrar no Painel'
+                'Acessar Dashboard'
               )}
             </button>
 
