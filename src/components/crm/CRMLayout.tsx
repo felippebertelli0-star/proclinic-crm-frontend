@@ -20,8 +20,10 @@ import { Conexoes } from './pages/Conexoes';
 import { Arquivos } from './pages/Arquivos';
 import { Indicadores } from './pages/Indicadores';
 import { Configuracoes } from './pages/Configuracoes';
+import { Tarefas } from './pages/Tarefas';
+import { PedidoExames } from './pages/PedidoExames';
 
-type PageType = 'dashboard' | 'conversas' | 'contatos' | 'kanban' | 'pipeline' | 'calendario' | 'followups' | 'tarifas' | 'etiquetas' | 'respostas' | 'estrategias' | 'portal_ias' | 'flowbuilder' | 'webhooks' | 'filas' | 'equipe' | 'conexoes' | 'arquivos' | 'indicadores' | 'configuracoes';
+type PageType = 'sair' | 'dashboard' | 'conversas' | 'contatos' | 'kanban' | 'pipeline' | 'calendario' | 'followups' | 'tarefas' | 'etiquetas' | 'respostas' | 'estrategias' | 'portal_ias' | 'flowbuilder' | 'webhooks' | 'filas' | 'equipe' | 'conexoes' | 'arquivos' | 'indicadores' | 'pedido_exames' | 'configuracoes';
 
 const MENU_STRUCTURE = {
   atendimento: [
@@ -38,6 +40,7 @@ const MENU_STRUCTURE = {
   agenda: [
     { id: 'calendario', label: 'Calendário', icon: '📅', badge: undefined },
     { id: 'followups', label: 'Follow-ups', icon: '↩️', badge: undefined },
+    { id: 'tarefas', label: 'Tarefas', icon: '✓', badge: undefined },
   ],
   automacao: [
     { id: 'estrategias', label: 'Estratégias', icon: '🎯', badge: undefined },
@@ -45,15 +48,23 @@ const MENU_STRUCTURE = {
     { id: 'flowbuilder', label: 'FlowBuilder', icon: '⚙️', badge: undefined },
     { id: 'webhooks', label: 'Webhooks / Triggers', icon: '🔗', badge: undefined },
   ],
+  gestao: [
+    { id: 'filas', label: 'Filas', icon: '📋', badge: undefined },
+    { id: 'equipe', label: 'Equipe', icon: '👨‍💼', badge: undefined },
+    { id: 'conexoes', label: 'Conexões', icon: '🔌', badge: undefined },
+    { id: 'arquivos', label: 'Arquivos', icon: '📁', badge: undefined },
+  ],
+  relatorios: [
+    { id: 'indicadores', label: 'Indicadores', icon: '📊', badge: undefined },
+  ],
+  clinica: [
+    { id: 'pedido_exames', label: 'Pedido de Exames', icon: '🏥', badge: undefined },
+  ],
 };
 
 const FOOTER_MENU = [
-  { id: 'filas', label: 'Filas', icon: '📋' },
-  { id: 'equipe', label: 'Equipe', icon: '👨‍💼' },
-  { id: 'conexoes', label: 'Conexões', icon: '🔌' },
-  { id: 'arquivos', label: 'Arquivos', icon: '📁' },
-  { id: 'indicadores', label: 'Indicadores', icon: '📊' },
   { id: 'configuracoes', label: 'Configurações', icon: '⚙️' },
+  { id: 'sair', label: 'Sair', icon: '🚪' },
 ];
 
 export function CRMLayout() {
@@ -71,6 +82,7 @@ export function CRMLayout() {
       case 'etiquetas': return <Etiquetas />;
       case 'respostas': return <Respostas />;
       case 'followups': return <Followups />;
+      case 'tarefas': return <Tarefas />;
       case 'estrategias': return <Estrategias />;
       case 'portal_ias': return <PortalIas />;
       case 'flowbuilder': return <FlowBuilder />;
@@ -80,7 +92,13 @@ export function CRMLayout() {
       case 'conexoes': return <Conexoes />;
       case 'arquivos': return <Arquivos />;
       case 'indicadores': return <Indicadores />;
+      case 'pedido_exames': return <PedidoExames />;
       case 'configuracoes': return <Configuracoes />;
+      case 'sair': {
+        // Implementar logout aqui
+        console.log('Logout acionado');
+        return <div style={{ padding: '32px', color: '#7a96aa' }}>Saindo...</div>;
+      }
       default: return <div style={{ padding: '32px', color: '#7a96aa' }}>Página em desenvolvimento: {currentPage}</div>;
     }
   };
@@ -104,45 +122,48 @@ export function CRMLayout() {
     </>
   );
 
+  const SidebarButton = ({ item, isFooter }: { item: any; isFooter?: boolean }) => (
+    <button onClick={() => setCurrentPage(item.id as PageType)} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '0 10px', borderRadius: '10px', border: 'none', background: currentPage === item.id ? 'rgba(201, 148, 58, 0.15)' : 'transparent', color: currentPage === item.id ? '#c9943a' : item.id === 'sair' ? '#e74c3c' : '#7a96aa', fontSize: '13px', fontWeight: currentPage === item.id ? 600 : 500, cursor: 'pointer', transition: 'all 0.2s', width: '100%', textAlign: 'left', height: '36px' }} title={sidebarCollapsed ? item.label : ''}>
+      <span style={{ fontSize: '16px', minWidth: '16px' }}>{item.icon}</span>
+      {!sidebarCollapsed && <span>{item.label}</span>}
+    </button>
+  );
+
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: '#0d1f2d', color: '#e8edf2', fontFamily: "'Segoe UI', sans-serif" }}>
-      <div style={{ width: sidebarCollapsed ? '70px' : '214px', background: '#132636', borderRight: '1px solid #1e3d54', padding: '20px 0', display: 'flex', flexDirection: 'column', transition: 'width 0.3s ease', overflow: 'hidden' }}>
-        <div style={{ padding: '0 15px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '18px', fontWeight: 700, color: '#e8edf2' }}>
-          <span style={{ fontSize: '24px', background: 'linear-gradient(135deg, #c9943a, #e8b86d, #c9943a)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>P</span>
-          {!sidebarCollapsed && <><span>ProClinic</span><div style={{ fontSize: '10px', color: '#7a96aa', fontWeight: 600, marginTop: '4px' }}>Inteligência Comercial</div></> }
+    <div style={{ display: 'flex', height: '100vh', background: '#0d1f2d', color: '#e8edf2', fontFamily: "'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif" }}>
+      {/* SIDEBAR */}
+      <div style={{ width: sidebarCollapsed ? '70px' : '280px', background: '#0a1520', borderRight: '1px solid #1e3d54', display: 'flex', flexDirection: 'column', transition: 'width 0.3s', overflow: 'hidden' }}>
+        {/* LOGO */}
+        <div style={{ padding: '16px 12px', borderBottom: '1px solid #1e3d54', display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
+          <div style={{ width: '36px', height: '36px', borderRadius: '8px', background: 'linear-gradient(135deg, #c9943a, #e8b86d)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', fontWeight: 900, color: '#0d1f2d', flexShrink: 0 }}>P</div>
+          {!sidebarCollapsed && (
+            <div>
+              <div style={{ fontSize: '14px', fontWeight: 800, background: 'linear-gradient(135deg, #c9943a, #e8b86d)', backgroundClip: 'text', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>ProClinic</div>
+              <div style={{ fontSize: '9px', color: 'rgba(255, 255, 255, 0.3)', fontWeight: 500 }}>Inteligência Comercial</div>
+            </div>
+          )}
         </div>
-        <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0px', padding: '0 8px' }}>
+
+        {/* MENU */}
+        <div style={{ flex: 1, overflowY: 'auto', padding: '8px 6px', display: 'flex', flexDirection: 'column', gap: '4px', scrollbarWidth: 'none' }}>
           <SidebarSection title="ATENDIMENTO" items={MENU_STRUCTURE.atendimento} />
           <SidebarSection title="UTILITÁRIOS" items={MENU_STRUCTURE.utilitarios} />
           <SidebarSection title="AGENDA" items={MENU_STRUCTURE.agenda} />
           <SidebarSection title="AUTOMAÇÃO & IA" items={MENU_STRUCTURE.automacao} />
-        </nav>
-        <div style={{ padding: '12px 8px', borderTop: '1px solid #1e3d54', marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-          {!sidebarCollapsed && <div style={{ fontSize: '9px', fontWeight: 700, color: '#7a96aa', textTransform: 'uppercase', letterSpacing: '0.8px', padding: '12px 10px', marginBottom: '4px' }}>GESTÃO</div>}
-          {FOOTER_MENU.map((item) => (
-            <button key={item.id} onClick={() => setCurrentPage(item.id as PageType)} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '0 10px', borderRadius: '10px', border: 'none', background: currentPage === item.id ? 'rgba(201, 148, 58, 0.15)' : 'transparent', color: currentPage === item.id ? '#c9943a' : '#7a96aa', fontSize: '13px', fontWeight: currentPage === item.id ? 600 : 500, cursor: 'pointer', transition: 'all 0.2s', width: '100%', textAlign: 'left', height: '36px' }} title={sidebarCollapsed ? item.label : ''}>
-              <span style={{ fontSize: '16px', minWidth: '16px' }}>{item.icon}</span>
-              {!sidebarCollapsed && <span>{item.label}</span>}
-            </button>
-          ))}
+          <SidebarSection title="GESTÃO" items={MENU_STRUCTURE.gestao} />
+          <SidebarSection title="RELATÓRIOS" items={MENU_STRUCTURE.relatorios} />
+          <SidebarSection title="CLÍNICA" items={MENU_STRUCTURE.clinica} />
+        </div>
+
+        {/* FOOTER */}
+        <div style={{ padding: '12px 6px', borderTop: '1px solid #1e3d54', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+          {FOOTER_MENU.map((item) => <SidebarButton key={item.id} item={item} isFooter />)}
         </div>
       </div>
+
+      {/* CONTENT */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-        <div style={{ background: '#0d1f2d', borderBottom: '1px solid #1e3d54', padding: '12px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '58px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <button onClick={() => setSidebarCollapsed(!sidebarCollapsed)} style={{ background: 'none', border: 'none', color: '#c9943a', fontSize: '20px', cursor: 'pointer' }}>☰</button>
-            <h1 style={{ fontSize: '16px', fontWeight: 700, color: '#e8edf2', margin: 0 }}>ProClinic — Inteligência Comercial</h1>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '11px' }}>
-            <span style={{ color: '#7a96aa', display: 'flex', alignItems: 'center', gap: '4px' }}>🟢 Clínica Dra. Andressa Barbarotti</span>
-            <span style={{ color: '#7a96aa', display: 'flex', alignItems: 'center', gap: '4px' }}>🟢 WhatsApp Conectado</span>
-            <span style={{ color: '#7a96aa', display: 'flex', alignItems: 'center', gap: '4px' }}>🟢 Instagram Conectado</span>
-            <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#c9943a', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 700, color: '#0d1f2d', cursor: 'pointer' }}>H</div>
-          </div>
-        </div>
-        <div style={{ flex: 1, overflowY: 'auto', background: '#0d1f2d' }}>
-          {renderPage()}
-        </div>
+        {renderPage()}
       </div>
     </div>
   );
