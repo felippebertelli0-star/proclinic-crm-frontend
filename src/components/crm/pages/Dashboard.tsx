@@ -185,21 +185,88 @@ export function Dashboard() {
     conversasFechadas: { color: '#d35400', light: '#d35400' },
   };
 
+  // Detectar tipo de período e gerar dados dinâmicos
   const generateChartData = () => {
-    const hours = ['00h', '04h', '08h', '10h', '12h', '14h', '16h', '18h'];
-    return hours.map((hour, i) => ({
-      hour,
-      tickets: 3 + i * 5,
-      agendamento: 2 + i * 3,
-      fechamento: 5 + i * 7,
-      comparecimento: 4 + i * 8,
-      followups: 1 + i * 1.5,
-      reativados: 0.2 + i * 0.4,
-      primeiraResposta: 20 - i * 1,
-      tempoResposta: 18 - i * 0.8,
-      tempoResolucao: 0.15 - i * 0.01,
-      faturamento: 100 + i * 50,
-      conversasFechadas: 2 + i * 2.5,
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const diffDays = Math.floor((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+
+    // MODO 1: Hoje ou Ontem (por horas - 24h)
+    if (diffDays === 0) {
+      const hours = ['00h', '04h', '08h', '12h', '16h', '20h', '24h'];
+      return hours.map((hour, i) => ({
+        hour,
+        tickets: 3 + i * 5.5,
+        agendamento: 2 + i * 3,
+        fechamento: 5 + i * 7,
+        comparecimento: 4 + i * 8,
+        followups: 1 + i * 1.5,
+        reativados: 0.2 + i * 0.4,
+        primeiraResposta: 20 - i * 1.2,
+        tempoResposta: 18 - i * 0.9,
+        tempoResolucao: 0.15 - i * 0.01,
+        faturamento: 100 + i * 60,
+        conversasFechadas: 2 + i * 2.8,
+      }));
+    }
+
+    // MODO 2: Últimos 7 dias (por dias da semana)
+    if (diffDays === 6) {
+      const diasSemana = ['seg', 'ter', 'qua', 'qui', 'sex', 'sab', 'dom'];
+      return diasSemana.map((dia, i) => ({
+        hour: dia,
+        tickets: 25 + i * 8,
+        agendamento: 15 + i * 2,
+        fechamento: 35 + i * 5,
+        comparecimento: 40 + i * 6,
+        followups: 5 + i * 1,
+        reativados: 2 + i * 0.5,
+        primeiraResposta: 15 - i * 0.5,
+        tempoResposta: 14 - i * 0.3,
+        tempoResolucao: 0.12 - i * 0.005,
+        faturamento: 800 + i * 200,
+        conversasFechadas: 10 + i * 2,
+      }));
+    }
+
+    // MODO 3: Últimos 30 dias (por números 1-30)
+    if (diffDays >= 29 && diffDays <= 31) {
+      const days = Array.from({length: 30}, (_, i) => String(i + 1));
+      return days.map((day, i) => ({
+        hour: day,
+        tickets: 20 + (i % 20) * 3,
+        agendamento: 12 + (i % 15) * 2,
+        fechamento: 30 + (i % 25) * 3,
+        comparecimento: 35 + (i % 20) * 4,
+        followups: 4 + (i % 10) * 1,
+        reativados: 1 + (i % 5) * 0.5,
+        primeiraResposta: 14 + (i % 8) * 0.5,
+        tempoResposta: 13 + (i % 7) * 0.3,
+        tempoResolucao: 0.11 + (i % 5) * 0.01,
+        faturamento: 700 + (i % 30) * 100,
+        conversasFechadas: 8 + (i % 12) * 1,
+      }));
+    }
+
+    // FALLBACK: Use dados do período atual (último caso)
+    const dates: string[] = [];
+    for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+      dates.push(d.toISOString().split('T')[0]);
+    }
+
+    return dates.map((date, i) => ({
+      hour: new Date(date).toLocaleDateString('pt-BR', {day: '2-digit'}),
+      tickets: 20 + i * 3,
+      agendamento: 12 + i * 2,
+      fechamento: 30 + i * 3,
+      comparecimento: 35 + i * 4,
+      followups: 4 + i * 0.5,
+      reativados: 1 + i * 0.3,
+      primeiraResposta: 14 + i * 0.3,
+      tempoResposta: 13 + i * 0.2,
+      tempoResolucao: 0.11 + i * 0.001,
+      faturamento: 700 + i * 50,
+      conversasFechadas: 8 + i * 0.5,
     }));
   };
 
