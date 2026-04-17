@@ -13,6 +13,8 @@ export function Dashboard() {
   const [endDate, setEndDate] = useState('2026-04-17');
   const [selectedIndicators, setSelectedIndicators] = useState<string[]>(['tickets']);
   const [tooltipVisible, setTooltipVisible] = useState<string | null>(null);
+  const [hoveredPoint, setHoveredPoint] = useState<{ index: number; indicator: string } | null>(null);
+  const [tooltipPos, setTooltipPos] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
 
   // Mock Data por dia (últimos 30 dias + hoje)
   const dailyData: Record<string, any> = {
@@ -624,6 +626,7 @@ export function Dashboard() {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
+          position: 'relative',
         }}>
           <svg width={chartWidth} height={chartHeight} style={{ width: '100%', height: 'auto', maxWidth: '100%' }}>
             <defs>
@@ -670,7 +673,20 @@ export function Dashboard() {
                 <g key={`line-${indicator}`}>
                   <path d={pathD} stroke={color} strokeWidth="3" fill="none" strokeLinecap="round" strokeLinejoin="round" />
                   {points.map((p, i) => (
-                    <circle key={`point-${indicator}-${i}`} cx={p.x} cy={p.y} r="4" fill={color} opacity="0.8" />
+                    <circle
+                      key={`point-${indicator}-${i}`}
+                      cx={p.x}
+                      cy={p.y}
+                      r="6"
+                      fill={color}
+                      opacity={hoveredPoint?.index === i && hoveredPoint?.indicator === indicator ? 1 : 0.8}
+                      style={{ cursor: 'pointer', transition: 'all 0.2s' }}
+                      onMouseEnter={(e) => {
+                        setHoveredPoint({ index: i, indicator });
+                        setTooltipPos({ x: p.x, y: p.y - 30 });
+                      }}
+                      onMouseLeave={() => setHoveredPoint(null)}
+                    />
                   ))}
                 </g>
               );
@@ -678,6 +694,44 @@ export function Dashboard() {
 
             {/* Legenda SVG (vazia - legenda abaixo do gráfico) */}
           </svg>
+
+          {/* TOOLTIP DO GRÁFICO */}
+          {hoveredPoint && (
+            <div
+              style={{
+                position: 'absolute',
+                left: `${tooltipPos.x}px`,
+                top: `${tooltipPos.y}px`,
+                background: '#0a1218',
+                border: '2px solid #c9943a',
+                borderRadius: '8px',
+                padding: '10px 12px',
+                fontSize: '12px',
+                color: '#e8edf2',
+                fontWeight: '600',
+                zIndex: 10,
+                whiteSpace: 'nowrap',
+                boxShadow: '0 4px 16px rgba(0,0,0,0.5)',
+                transform: 'translateX(-50%)',
+                pointerEvents: 'none',
+              }}
+            >
+              <div>{chartData[hoveredPoint.index].hour}</div>
+              <div style={{ color: indicatorColors[hoveredPoint.indicator]?.color || '#ffffff', marginTop: '4px' }}>
+                {hoveredPoint.indicator === 'tickets' ? `Tickets: ${Math.round(chartData[hoveredPoint.index].tickets as number)}` : null}
+                {hoveredPoint.indicator === 'agendamento' ? `Agendamento: ${(chartData[hoveredPoint.index].agendamento as number).toFixed(1)}%` : null}
+                {hoveredPoint.indicator === 'fechamento' ? `Fechamento: ${(chartData[hoveredPoint.index].fechamento as number).toFixed(1)}%` : null}
+                {hoveredPoint.indicator === 'comparecimento' ? `Comparecimento: ${(chartData[hoveredPoint.index].comparecimento as number).toFixed(0)}%` : null}
+                {hoveredPoint.indicator === 'followups' ? `Follow-ups: ${Math.round(chartData[hoveredPoint.index].followups as number)}` : null}
+                {hoveredPoint.indicator === 'reativados' ? `Reativados: ${(chartData[hoveredPoint.index].reativados as number).toFixed(1)}` : null}
+                {hoveredPoint.indicator === 'primeiraResposta' ? `1ª Resposta: ${Math.round(chartData[hoveredPoint.index].primeiraResposta as number)} min` : null}
+                {hoveredPoint.indicator === 'tempoResposta' ? `T.M. Resposta: ${(chartData[hoveredPoint.index].tempoResposta as number).toFixed(1)} min` : null}
+                {hoveredPoint.indicator === 'tempoResolucao' ? `T.M. Resolução: ${(chartData[hoveredPoint.index].tempoResolucao as number).toFixed(2)}h` : null}
+                {hoveredPoint.indicator === 'faturamento' ? `Faturamento: R$ ${Math.round(chartData[hoveredPoint.index].faturamento as number)}` : null}
+                {hoveredPoint.indicator === 'conversasFechadas' ? `Conv. Fechadas: ${Math.round(chartData[hoveredPoint.index].conversasFechadas as number)}` : null}
+              </div>
+            </div>
+          )}
 
           {/* LEGENDA DINÂMICA */}
           <div style={{ display: 'flex', gap: '32px', marginTop: '20px', justifyContent: 'center', flexWrap: 'wrap' }}>
