@@ -72,8 +72,8 @@ export function Dashboard() {
 
   const chartData = generateChartData();
   const chartWidth = 1600;
-  const chartHeight = 650;
-  const padding = 80;
+  const chartHeight = 360;
+  const padding = 70;
 
   const maxValue = 40;
   const graphWidth = chartWidth - padding * 2;
@@ -496,9 +496,10 @@ export function Dashboard() {
           background: '#132636',
           border: '1px solid #1e3d54',
           borderRadius: '14px',
-          padding: '60px 70px',
-          minHeight: '780px',
+          padding: '40px 60px',
+          minHeight: '500px',
           display: 'flex',
+          flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
         }}>
@@ -578,6 +579,34 @@ export function Dashboard() {
               )}
             </g>
           </svg>
+
+          {/* LEGENDA */}
+          <div style={{ display: 'flex', gap: '32px', marginTop: '20px', justifyContent: 'center', flexWrap: 'wrap' }}>
+            {selectedIndicators.includes('tickets') && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{ width: '12px', height: '12px', borderRadius: '2px', background: '#3498db' }} />
+                <span style={{ fontSize: '13px', color: '#e8edf2', fontWeight: '500' }}>Total de Tickets</span>
+              </div>
+            )}
+            {selectedIndicators.includes('agendamento') && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{ width: '12px', height: '12px', borderRadius: '2px', background: '#c9943a' }} />
+                <span style={{ fontSize: '13px', color: '#e8edf2', fontWeight: '500' }}>% Agendamento</span>
+              </div>
+            )}
+            {selectedIndicators.includes('fechamento') && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{ width: '12px', height: '12px', borderRadius: '2px', background: '#2ecc71' }} />
+                <span style={{ fontSize: '13px', color: '#e8edf2', fontWeight: '500' }}>% Fechamento</span>
+              </div>
+            )}
+            {selectedIndicators.includes('comparecimento') && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{ width: '12px', height: '12px', borderRadius: '2px', background: '#f39c12' }} />
+                <span style={{ fontSize: '13px', color: '#e8edf2', fontWeight: '500' }}>% Comparecimento</span>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
