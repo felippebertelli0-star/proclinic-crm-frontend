@@ -57,42 +57,46 @@ export function Dashboard() {
     }
   };
 
-  // Gerar dados para gráfico de linha
+  // =============== GRÁFICO DE LINHA MELHORADO ===============
   const generateChartData = () => {
-    const hours = ['00h', '04h', '08h', '12h', '14h', '16h', '18h'];
-    const baseValues = [5, 8, 12, 18, 25, 32, 38];
+    const hours = ['00h', '04h', '08h', '10h', '12h', '14h', '16h', '18h'];
+    const ticketValues = [3, 7, 12, 18, 24, 28, 35, 38];
+    const agendamentoValues = [2, 5, 8, 12, 16, 19, 24, 28];
 
     return hours.map((hour, i) => ({
       hour,
-      tickets: baseValues[i],
-      agendamento: baseValues[i] * 0.7,
+      tickets: ticketValues[i],
+      agendamento: agendamentoValues[i],
     }));
   };
 
   const chartData = generateChartData();
-  const chartWidth = 800;
-  const chartHeight = 200;
-  const padding = 40;
+  const chartWidth = 900;
+  const chartHeight = 280;
+  const padding = 45;
 
-  // Calcular pontos do gráfico
   const maxValue = 40;
   const graphWidth = chartWidth - padding * 2;
   const graphHeight = chartHeight - padding * 2;
 
-  const points = chartData.map((data, i) => {
-    const x = padding + (i / (chartData.length - 1)) * graphWidth;
-    const y = chartHeight - padding - (data.tickets / maxValue) * graphHeight;
-    return { x, y, value: data.tickets };
-  });
+  const points = chartData.map((data, i) => ({
+    x: padding + (i / (chartData.length - 1)) * graphWidth,
+    y: chartHeight - padding - (data.tickets / maxValue) * graphHeight,
+    value: data.tickets,
+  }));
 
-  const points2 = chartData.map((data, i) => {
-    const x = padding + (i / (chartData.length - 1)) * graphWidth;
-    const y = chartHeight - padding - (data.agendamento / maxValue) * graphHeight;
-    return { x, y, value: data.agendamento };
-  });
+  const points2 = chartData.map((data, i) => ({
+    x: padding + (i / (chartData.length - 1)) * graphWidth,
+    y: chartHeight - padding - (data.agendamento / maxValue) * graphHeight,
+    value: data.agendamento,
+  }));
 
+  // Criar paths para linhas com área preenchida
   const pathD = 'M ' + points.map(p => `${p.x},${p.y}`).join(' L ');
+  const areaD = `M ${padding},${chartHeight - padding} ` + points.map(p => `L ${p.x},${p.y}`).join(' ') + ` L ${chartWidth - padding},${chartHeight - padding} Z`;
+
   const pathD2 = 'M ' + points2.map(p => `${p.x},${p.y}`).join(' L ');
+  const areaD2 = `M ${padding},${chartHeight - padding} ` + points2.map(p => `L ${p.x},${p.y}`).join(' ') + ` L ${chartWidth - padding},${chartHeight - padding} Z`;
 
   return (
     <div style={{
@@ -230,27 +234,42 @@ export function Dashboard() {
               style={{
                 background: '#132636',
                 border: '1px solid #1e3d54',
-                borderRadius: '16px',
+                borderLeft: `4px solid ${card.color}`,
+                borderRadius: '14px',
                 padding: '24px',
                 display: 'flex',
-                gap: '12px',
-                transition: 'all 0.18s',
+                gap: '16px',
+                transition: 'all 0.22s cubic-bezier(0.4, 0, 0.2, 1)',
                 cursor: 'pointer',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.3)';
+                e.currentTarget.style.transform = 'translateY(-3px)';
+                e.currentTarget.style.boxShadow = '0 12px 32px rgba(0,0,0,0.4)';
+                e.currentTarget.style.borderColor = '#c9943a';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = 'translateY(0)';
                 e.currentTarget.style.boxShadow = 'none';
+                e.currentTarget.style.borderColor = '#1e3d54';
               }}
             >
-              <div style={{ fontSize: '20px' }}>{card.icon}</div>
-              <div>
-                <div style={{ fontSize: '11px', color: '#7a96aa', marginBottom: '4px' }}>{card.label}</div>
-                <div style={{ fontSize: '24px', fontWeight: 700, color: card.color }}>{card.value}</div>
-                <div style={{ fontSize: '10px', color: '#7a96aa', marginTop: '4px' }}>{card.subtext}</div>
+              <div style={{
+                width: '52px',
+                height: '52px',
+                borderRadius: '12px',
+                background: `${card.color}15`,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '24px',
+                flexShrink: 0,
+              }}>
+                {card.icon}
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: '10px', color: '#7a96aa', marginBottom: '6px', fontWeight: 700, letterSpacing: '0.5px', textTransform: 'uppercase' }}>{card.label}</div>
+                <div style={{ fontSize: '28px', fontWeight: 900, color: card.color, marginBottom: '4px', lineHeight: '1' }}>{card.value}</div>
+                <div style={{ fontSize: '10px', color: '#7a96aa' }}>{card.subtext}</div>
               </div>
             </div>
           ))}
@@ -273,38 +292,41 @@ export function Dashboard() {
               style={{
                 background: '#132636',
                 border: '1px solid #1e3d54',
-                borderRadius: '16px',
+                borderRadius: '14px',
                 padding: '24px',
                 display: 'flex',
-                gap: '12px',
-                transition: 'all 0.18s',
+                gap: '16px',
+                transition: 'all 0.22s cubic-bezier(0.4, 0, 0.2, 1)',
                 cursor: 'pointer',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.3)';
+                e.currentTarget.style.transform = 'translateY(-3px)';
+                e.currentTarget.style.boxShadow = '0 12px 32px rgba(0,0,0,0.4)';
+                e.currentTarget.style.borderColor = '#c9943a';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = 'translateY(0)';
                 e.currentTarget.style.boxShadow = 'none';
+                e.currentTarget.style.borderColor = '#1e3d54';
               }}
             >
               <div style={{
-                width: '40px',
-                height: '40px',
-                borderRadius: '10px',
-                background: `${card.color}20`,
+                width: '52px',
+                height: '52px',
+                borderRadius: '12px',
+                background: `${card.color}18`,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: '18px',
+                fontSize: '22px',
+                flexShrink: 0,
               }}>
                 {card.icon}
               </div>
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: '11px', color: '#7a96aa', marginBottom: '4px' }}>{card.label}</div>
-                <div style={{ fontSize: '22px', fontWeight: 700, color: card.color }}>{card.value}</div>
-                <div style={{ fontSize: '11px', color: '#2ecc71', fontWeight: 600, marginTop: '4px' }}>{card.subtext}</div>
+                <div style={{ fontSize: '10px', color: '#7a96aa', marginBottom: '6px', fontWeight: 700, letterSpacing: '0.5px', textTransform: 'uppercase' }}>{card.label}</div>
+                <div style={{ fontSize: '28px', fontWeight: 900, color: card.color, marginBottom: '6px', lineHeight: '1' }}>{card.value}</div>
+                <div style={{ fontSize: '10px', color: '#2ecc71', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.3px' }}>{card.subtext}</div>
               </div>
             </div>
           ))}
@@ -336,68 +358,78 @@ export function Dashboard() {
                 background: '#132636',
                 border: '1px solid #1e3d54',
                 borderRadius: '14px',
-                padding: '18px 20px',
+                padding: '20px 22px',
                 position: 'relative',
-                transition: 'all 0.18s',
+                transition: 'all 0.22s cubic-bezier(0.4, 0, 0.2, 1)',
                 cursor: 'pointer',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.3)';
+                e.currentTarget.style.transform = 'translateY(-3px)';
+                e.currentTarget.style.boxShadow = '0 12px 32px rgba(0,0,0,0.4)';
+                e.currentTarget.style.borderColor = '#c9943a';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = 'translateY(0)';
                 e.currentTarget.style.boxShadow = 'none';
+                e.currentTarget.style.borderColor = '#1e3d54';
               }}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '8px' }}>
-                <div style={{ fontSize: '10px', color: '#7a96aa', fontWeight: 700 }}>{kpi.label}</div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '10px' }}>
+                <div style={{ fontSize: '9px', color: '#7a96aa', fontWeight: 800, letterSpacing: '0.8px', textTransform: 'uppercase' }}>{kpi.label}</div>
                 <div
-                  onMouseEnter={() => setTooltipVisible(kpi.key)}
-                  onMouseLeave={() => setTooltipVisible(null)}
+                  onMouseEnter={(e) => {
+                    setTooltipVisible(kpi.key);
+                    (e.currentTarget as HTMLElement).style.color = '#c9943a';
+                  }}
+                  onMouseLeave={(e) => {
+                    setTooltipVisible(null);
+                    (e.currentTarget as HTMLElement).style.color = '#7a96aa';
+                  }}
                   style={{
-                    fontSize: '12px',
+                    fontSize: '13px',
                     color: '#7a96aa',
                     cursor: 'pointer',
                     position: 'relative',
+                    transition: 'color 0.2s',
                   }}
                 >
                   ℹ️
                   {tooltipVisible === kpi.key && (
                     <div style={{
                       position: 'absolute',
-                      bottom: '120%',
+                      bottom: '140%',
                       right: 0,
                       background: '#0a1218',
-                      border: '1px solid #1e3d54',
-                      borderRadius: '6px',
-                      padding: '8px 10px',
+                      border: '2px solid #c9943a',
+                      borderRadius: '8px',
+                      padding: '10px 12px',
                       fontSize: '10px',
-                      color: '#b0b8c1',
+                      color: '#e8edf2',
                       zIndex: 10,
-                      whiteSpace: 'nowrap',
-                      minWidth: '200px',
+                      whiteSpace: 'normal',
+                      width: '220px',
+                      boxShadow: '0 4px 16px rgba(0,0,0,0.5)',
                     }}>
                       {KPI_TOOLTIPS[kpi.key as keyof typeof KPI_TOOLTIPS]}
                     </div>
                   )}
                 </div>
               </div>
-              <div style={{ fontSize: '20px', fontWeight: 800, color: kpi.color, marginBottom: '6px' }}>
+              <div style={{ fontSize: '24px', fontWeight: 900, color: kpi.color, marginBottom: '10px', lineHeight: '1' }}>
                 {kpi.value}
               </div>
               {kpi.bar > 0 && (
                 <div style={{
-                  height: '3px',
+                  height: '4px',
                   background: '#1a3347',
-                  borderRadius: '2px',
-                  marginBottom: '6px',
+                  borderRadius: '3px',
+                  marginBottom: '10px',
                   overflow: 'hidden',
                 }}>
-                  <div style={{ height: '100%', width: `${kpi.bar}%`, background: kpi.color }} />
+                  <div style={{ height: '100%', width: `${kpi.bar}%`, background: `linear-gradient(90deg, ${kpi.color}, ${kpi.color}aa)`, borderRadius: '3px', transition: 'width 0.5s ease' }} />
                 </div>
               )}
-              <div style={{ fontSize: '10px', color: '#7a96aa' }}>{kpi.subtext}</div>
+              <div style={{ fontSize: '11px', color: '#7a96aa', lineHeight: '1.4' }}>{kpi.subtext}</div>
             </div>
           ))}
         </div>
@@ -464,49 +496,84 @@ export function Dashboard() {
           background: '#132636',
           border: '1px solid #1e3d54',
           borderRadius: '14px',
-          padding: '20px',
-          minHeight: '300px',
+          padding: '24px',
+          minHeight: '350px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
         }}>
           <svg width={chartWidth} height={chartHeight} style={{ width: '100%', height: 'auto', maxWidth: '100%' }}>
-            {/* Grid */}
-            {[0, 1, 2, 3, 4].map(i => (
-              <line key={`grid-${i}`} x1={padding} y1={padding + (i / 4) * (chartHeight - padding * 2)} x2={chartWidth - padding} y2={padding + (i / 4) * (chartHeight - padding * 2)} stroke="#1a3347" strokeWidth="1" strokeDasharray="2,2" />
-            ))}
-            {/* Eixo X */}
-            <line x1={padding} y1={chartHeight - padding} x2={chartWidth - padding} y2={chartHeight - padding} stroke="#1e3d54" strokeWidth="1" />
-            {/* Eixo Y */}
-            <line x1={padding} y1={padding} x2={padding} y2={chartHeight - padding} stroke="#1e3d54" strokeWidth="1" />
+            <defs>
+              {/* Gradientes para áreas preenchidas */}
+              <linearGradient id="grad1" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" style={{ stopColor: '#3498db', stopOpacity: 0.3 }} />
+                <stop offset="100%" style={{ stopColor: '#3498db', stopOpacity: 0.05 }} />
+              </linearGradient>
+              <linearGradient id="grad2" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" style={{ stopColor: '#c9943a', stopOpacity: 0.3 }} />
+                <stop offset="100%" style={{ stopColor: '#c9943a', stopOpacity: 0.05 }} />
+              </linearGradient>
+            </defs>
 
-            {/* Labels X */}
+            {/* Grid background */}
+            {[0, 1, 2, 3, 4].map(i => (
+              <line key={`grid-${i}`} x1={padding} y1={padding + (i / 4) * (chartHeight - padding * 2)} x2={chartWidth - padding} y2={padding + (i / 4) * (chartHeight - padding * 2)} stroke="#1a3347" strokeWidth="1" strokeDasharray="3,3" opacity="0.6" />
+            ))}
+
+            {/* Eixos */}
+            <line x1={padding} y1={chartHeight - padding} x2={chartWidth - padding} y2={chartHeight - padding} stroke="#1e3d54" strokeWidth="2" />
+            <line x1={padding} y1={padding} x2={padding} y2={chartHeight - padding} stroke="#1e3d54" strokeWidth="2" />
+
+            {/* Labels Y (valores) */}
+            {[0, 10, 20, 30, 40].map((val) => (
+              <text key={`y-label-${val}`} x={padding - 10} y={chartHeight - padding - (val / maxValue) * graphHeight + 4} textAnchor="end" fontSize="10" fill="#7a96aa">
+                {val}
+              </text>
+            ))}
+
+            {/* Labels X (horas) */}
             {chartData.map((data, i) => (
-              <text key={`label-${i}`} x={padding + (i / (chartData.length - 1)) * (chartWidth - padding * 2)} y={chartHeight - 15} textAnchor="middle" fontSize="11" fill="#7a96aa">
+              <text key={`label-${i}`} x={padding + (i / (chartData.length - 1)) * (chartWidth - padding * 2)} y={chartHeight - padding + 20} textAnchor="middle" fontSize="11" fill="#7a96aa" fontWeight="500">
                 {data.hour}
               </text>
             ))}
 
-            {/* Linhas do gráfico */}
+            {/* Áreas preenchidas (gradientes) */}
             {selectedIndicators.includes('tickets') && (
-              <path d={pathD} stroke="#3498db" strokeWidth="2" fill="none" />
+              <path d={areaD} fill="url(#grad1)" />
             )}
             {selectedIndicators.includes('agendamento') && (
-              <path d={pathD2} stroke="#c9943a" strokeWidth="2" fill="none" />
+              <path d={areaD2} fill="url(#grad2)" />
             )}
+
+            {/* Linhas do gráfico (stroke) */}
+            {selectedIndicators.includes('tickets') && (
+              <path d={pathD} stroke="#3498db" strokeWidth="3" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+            )}
+            {selectedIndicators.includes('agendamento') && (
+              <path d={pathD2} stroke="#c9943a" strokeWidth="3" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+            )}
+
+            {/* Pontos nos dados */}
+            {selectedIndicators.includes('tickets') && points.map((p, i) => (
+              <circle key={`point1-${i}`} cx={p.x} cy={p.y} r="4" fill="#3498db" opacity="0.8" />
+            ))}
+            {selectedIndicators.includes('agendamento') && points2.map((p, i) => (
+              <circle key={`point2-${i}`} cx={p.x} cy={p.y} r="4" fill="#c9943a" opacity="0.8" />
+            ))}
 
             {/* Legenda */}
             <g>
               {selectedIndicators.includes('tickets') && (
                 <g>
-                  <rect x={10} y={10} width={12} height={12} fill="#3498db" />
-                  <text x={28} y={20} fontSize="11" fill="#e8edf2">Total de Tickets</text>
+                  <circle cx={20} cy={20} r="4" fill="#3498db" />
+                  <text x={35} y={24} fontSize="12" fill="#e8edf2" fontWeight="600">Total de Tickets</text>
                 </g>
               )}
               {selectedIndicators.includes('agendamento') && (
                 <g>
-                  <rect x={200} y={10} width={12} height={12} fill="#c9943a" />
-                  <text x={218} y={20} fontSize="11" fill="#e8edf2">% Agendamento</text>
+                  <circle cx={220} cy={20} r="4" fill="#c9943a" />
+                  <text x={235} y={24} fontSize="12" fill="#e8edf2" fontWeight="600">% Agendamento</text>
                 </g>
               )}
             </g>
@@ -589,33 +656,49 @@ export function Dashboard() {
             <span style={{ background: '#e74c3c', color: '#fff', fontSize: '10px', fontWeight: 700, padding: '2px 6px', borderRadius: '3px' }}>3</span>
           </h3>
           {[
-            { icon: '⚠️', title: 'SLA Próximo do Vencimento', desc: '357 ticket(s) próximos de vencer o SLA', color: '#f39c12' },
-            { icon: '👥', title: 'Atendentes Sobrecarregados', desc: '2 atendente(s) com mais de 10 tickets', color: '#3498db' },
-            { icon: '🎫', title: 'Tickets Sem Atendente', desc: '17 ticket(s) aguardando distribuição', color: '#f39c12' },
+            { icon: '⚠️', title: 'SLA Próximo do Vencimento', desc: '357 ticket(s) próximos de vencer o SLA', color: '#f39c12', action: 'Priorizar' },
+            { icon: '👥', title: 'Atendentes Sobrecarregados', desc: '2 atendente(s) com mais de 10 tickets', color: '#e74c3c', action: 'Redistribuir' },
+            { icon: '🎫', title: 'Tickets Sem Atendente', desc: '17 ticket(s) aguardando distribuição', color: '#3498db', action: 'Atribuir' },
           ].map((a) => (
             <div key={a.title} style={{
               background: '#132636',
-              border: `2px solid ${a.color}`,
-              borderLeft: `6px solid ${a.color}`,
-              borderRadius: '8px',
-              padding: '10px',
-              marginBottom: '8px',
+              border: `1px solid ${a.color}40`,
+              borderLeft: `5px solid ${a.color}`,
+              borderRadius: '10px',
+              padding: '14px 16px',
+              marginBottom: '10px',
+              transition: 'all 0.2s',
+            }} onMouseEnter={(e) => {
+              e.currentTarget.style.boxShadow = `0 4px 12px ${a.color}20`;
+              e.currentTarget.style.borderColor = `${a.color}70`;
+            }} onMouseLeave={(e) => {
+              e.currentTarget.style.boxShadow = 'none';
+              e.currentTarget.style.borderColor = `${a.color}40`;
             }}>
-              <div style={{ fontSize: '11px', fontWeight: 700, marginBottom: '4px' }}>
+              <div style={{ fontSize: '12px', fontWeight: 800, marginBottom: '6px', color: '#e8edf2' }}>
                 {a.icon} {a.title}
               </div>
-              <div style={{ fontSize: '10px', color: '#7a96aa', marginBottom: '6px' }}>{a.desc}</div>
+              <div style={{ fontSize: '11px', color: '#7a96aa', marginBottom: '10px', lineHeight: '1.4' }}>{a.desc}</div>
               <button style={{
-                background: 'transparent',
-                border: `1px solid ${a.color}`,
+                background: `${a.color}15`,
+                border: `1.5px solid ${a.color}`,
                 color: a.color,
-                fontSize: '9px',
-                fontWeight: 600,
-                padding: '3px 6px',
-                borderRadius: '3px',
+                fontSize: '10px',
+                fontWeight: 700,
+                padding: '6px 10px',
+                borderRadius: '6px',
                 cursor: 'pointer',
+                transition: 'all 0.2s',
+                textTransform: 'uppercase',
+                letterSpacing: '0.3px',
+              }} onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.background = `${a.color}25`;
+                (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)';
+              }} onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.background = `${a.color}15`;
+                (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
               }}>
-                Ação
+                {a.action}
               </button>
             </div>
           ))}
@@ -655,30 +738,33 @@ export function Dashboard() {
               </thead>
               <tbody>
                 {[
-                  { no: 1, nome: 'Hávila', aval: 4, total: 87, and: 85, fin: 2, esp: '09h10m', at: '00h07m', status: 'Online' },
-                  { no: 2, nome: 'Camilly', aval: 4, total: 17, and: 16, fin: 1, esp: '15h16m', at: '00h01m', status: 'Online' },
-                  { no: 3, nome: 'Fernando', aval: 4, total: 1, and: 1, fin: 0, esp: '23h06m', at: '00h00m', status: 'Online' },
-                  { no: 4, nome: 'Déborah', aval: 4, total: 0, and: 0, fin: 0, esp: '00h00m', at: '00h00m', status: 'Offline' },
-                  { no: 5, nome: 'Dra. Andressa', aval: 4, total: 12, and: 8, fin: 4, esp: '11h22m', at: '00h03m', status: 'Online' },
-                  { no: 6, nome: 'Gustavo', aval: 3, total: 5, and: 3, fin: 2, esp: '08h45m', at: '00h12m', status: 'Online' },
-                  { no: 7, nome: 'Beatriz', aval: 3, total: 3, and: 2, fin: 1, esp: '14h30m', at: '00h08m', status: 'Offline' },
+                  { no: 1, nome: 'Hávila', aval: 5, total: 127, and: 95, fin: 32, esp: '08h40m', at: '00h06m', status: 'Online' },
+                  { no: 2, nome: 'Camilly', aval: 5, total: 98, and: 67, fin: 31, esp: '12h05m', at: '00h08m', status: 'Online' },
+                  { no: 3, nome: 'Fernando', aval: 4, total: 76, and: 52, fin: 24, esp: '10h30m', at: '00h11m', status: 'Online' },
+                  { no: 4, nome: 'Déborah', aval: 4, total: 54, and: 38, fin: 16, esp: '14h15m', at: '00h09m', status: 'Offline' },
+                  { no: 5, nome: 'Dra. Andressa', aval: 5, total: 89, and: 61, fin: 28, esp: '09h50m', at: '00h05m', status: 'Online' },
+                  { no: 6, nome: 'Gustavo', aval: 4, total: 62, and: 44, fin: 18, esp: '11h20m', at: '00h10m', status: 'Online' },
+                  { no: 7, nome: 'Beatriz', aval: 4, total: 48, and: 32, fin: 16, esp: '13h40m', at: '00h12m', status: 'Offline' },
+                  { no: 8, nome: 'Lucas', aval: 4, total: 71, and: 50, fin: 21, esp: '10h15m', at: '00h08m', status: 'Online' },
                 ].map((a) => (
-                  <tr key={a.nome} style={{ borderBottom: '1px solid #1e3d54' }}>
-                    <td style={{ padding: '8px', color: '#7a96aa' }}>{a.no}</td>
-                    <td style={{ padding: '8px', color: '#e8edf2' }}>{a.nome}</td>
-                    <td style={{ padding: '8px', color: '#f39c12' }}>{'⭐'.repeat(a.aval)}</td>
-                    <td style={{ padding: '8px', color: '#e8edf2', fontWeight: 600 }}>{a.total}</td>
-                    <td style={{ padding: '8px', color: '#f39c12', fontWeight: 600 }}>{a.and}</td>
-                    <td style={{ padding: '8px', color: '#2ecc71', fontWeight: 600 }}>{a.fin}</td>
-                    <td style={{ padding: '8px', color: '#7a96aa' }}>{a.esp}</td>
-                    <td style={{ padding: '8px', color: '#7a96aa' }}>{a.at}</td>
+                  <tr key={a.nome} style={{ borderBottom: '1px solid #1e3d54', transition: 'background 0.2s', cursor: 'pointer' }} onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(201, 148, 58, 0.08)'; }} onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}>
+                    <td style={{ padding: '10px 8px', color: '#7a96aa', fontWeight: 600 }}>{a.no}</td>
+                    <td style={{ padding: '10px 8px', color: '#e8edf2', fontWeight: 600 }}>{a.nome}</td>
+                    <td style={{ padding: '10px 8px', color: a.aval === 5 ? '#f39c12' : '#c9943a', fontSize: '11px', letterSpacing: '2px' }}>{'⭐'.repeat(a.aval)}</td>
+                    <td style={{ padding: '10px 8px', color: '#e8edf2', fontWeight: 700, textAlign: 'center' }}>{a.total}</td>
+                    <td style={{ padding: '10px 8px', color: '#f39c12', fontWeight: 700, textAlign: 'center' }}>{a.and}</td>
+                    <td style={{ padding: '10px 8px', color: '#2ecc71', fontWeight: 700, textAlign: 'center' }}>{a.fin}</td>
+                    <td style={{ padding: '10px 8px', color: '#7a96aa', fontSize: '11px' }}>{a.esp}</td>
+                    <td style={{ padding: '10px 8px', color: '#7a96aa', fontSize: '11px' }}>{a.at}</td>
                     <td style={{
-                      padding: '8px',
+                      padding: '10px 8px',
                       color: a.status === 'Online' ? '#2ecc71' : '#e74c3c',
-                      fontWeight: 600,
-                      fontSize: '9px',
+                      fontWeight: 700,
+                      fontSize: '10px',
+                      textAlign: 'center',
                     }}>
-                      {a.status === 'Online' ? '🟢' : '🔴'} {a.status}
+                      <span style={{ display: 'inline-block', width: '6px', height: '6px', borderRadius: '50%', background: a.status === 'Online' ? '#2ecc71' : '#e74c3c', marginRight: '6px', verticalAlign: 'middle' }} />
+                      {a.status}
                     </td>
                   </tr>
                 ))}
