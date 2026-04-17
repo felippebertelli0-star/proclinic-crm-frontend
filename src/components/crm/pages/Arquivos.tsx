@@ -24,14 +24,14 @@ export function Arquivos() {
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
         <h2 style={{ fontSize: '18px', fontWeight: 700, margin: 0 }}>Arquivos Recentes</h2>
-        <button style={{ padding: '10px 16px', borderRadius: '8px', border: 'none', background: '#c9943a', color: '#0d1f2d', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}>📤 Upload</button>
+        <button style={{ padding: '10px 16px', borderRadius: '8px', border: 'none', background: '#c9943a', color: '#0d1f2d', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}>↗ Upload</button>
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
         {arquivos.map((a) => (
           <div key={a.id} style={{ background: '#132636', border: '1px solid #1e3d54', borderRadius: '14px', padding: '16px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
               <div style={{ width: '40px', height: '40px', borderRadius: '8px', background: a.tipo === 'PDF' ? 'rgba(231, 76, 60, 0.2)' : a.tipo === 'Imagem' ? 'rgba(52, 152, 219, 0.2)' : 'rgba(46, 204, 113, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>
-                {a.tipo === 'PDF' ? '📄' : a.tipo === 'Imagem' ? '🖼️' : '📋'}
+                {a.tipo === 'PDF' ? '▢' : a.tipo === 'Imagem' ? '▪' : '▭'}
               </div>
               <div style={{ flex: 1 }}>
                 <div style={{ fontSize: '12px', fontWeight: 600, color: '#e8edf2', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{a.nome}</div>

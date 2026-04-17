@@ -3,7 +3,7 @@ import { useState } from 'react';
 export function Configuracoes() {
   const [saveMsg, setSaveMsg] = useState('');
   const handleSave = () => {
-    setSaveMsg('✅ Configurações salvas com sucesso!');
+    setSaveMsg('✓ Configurações salvas com sucesso!');
     setTimeout(() => setSaveMsg(''), 3000);
   };
   return (
@@ -13,7 +13,7 @@ export function Configuracoes() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '24px', marginBottom: '28px' }}>
         {/* CLÍNICA */}
         <div style={{ background: '#132636', border: '1px solid #1e3d54', borderRadius: '14px', padding: '20px' }}>
-          <h2 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '16px', color: '#e8edf2' }}>🏥 Clínica</h2>
+          <h2 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '16px', color: '#e8edf2' }}>⚙ Clínica</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             <div>
               <label style={{ fontSize: '11px', color: '#7a96aa', fontWeight: 600, display: 'block', marginBottom: '6px' }}>Nome</label>
@@ -32,7 +32,7 @@ export function Configuracoes() {
 
         {/* NOTIFICAÇÕES */}
         <div style={{ background: '#132636', border: '1px solid #1e3d54', borderRadius: '14px', padding: '20px' }}>
-          <h2 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '16px', color: '#e8edf2' }}>🔔 Notificações</h2>
+          <h2 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '16px', color: '#e8edf2' }}>△ Notificações</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             {[
               { label: 'Novos leads', checked: true },
@@ -50,7 +50,7 @@ export function Configuracoes() {
 
         {/* HORÁRIO DE ATENDIMENTO */}
         <div style={{ background: '#132636', border: '1px solid #1e3d54', borderRadius: '14px', padding: '20px' }}>
-          <h2 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '16px', color: '#e8edf2' }}>⏰ Horário de Atendimento</h2>
+          <h2 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '16px', color: '#e8edf2' }}>◎ Horário de Atendimento</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '12px', color: '#7a96aa' }}>
             <div>Segunda a Sexta: 08:00 - 18:00</div>
             <div>Sábado: 08:00 - 13:00</div>
@@ -61,7 +61,7 @@ export function Configuracoes() {
 
         {/* IA & AUTOMAÇÃO */}
         <div style={{ background: '#132636', border: '1px solid #1e3d54', borderRadius: '14px', padding: '20px' }}>
-          <h2 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '16px', color: '#e8edf2' }}>🤖 IA & Automação</h2>
+          <h2 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '16px', color: '#e8edf2' }}>◆ IA & Automação</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             {[
               { label: 'IA Ativa', value: 'Sim' },

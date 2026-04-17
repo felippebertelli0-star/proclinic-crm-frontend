@@ -29,7 +29,7 @@ export function Webhooks() {
                 <td style={{ padding: '12px 16px', color: '#e8edf2' }}>{w.nome}</td>
                 <td style={{ padding: '12px 16px' }}><span style={{ fontSize: '10px', padding: '4px 8px', borderRadius: '4px', background: w.status === 'Ativo' ? 'rgba(46, 204, 113, 0.2)' : 'rgba(231, 76, 60, 0.2)', color: w.status === 'Ativo' ? '#2ecc71' : '#e74c3c', fontWeight: 600 }}>{w.status}</span></td>
                 <td style={{ padding: '12px 16px', color: '#7a96aa' }}>{w.chamadas}</td>
-                <td style={{ padding: '12px 16px', textAlign: 'center' }}><button style={{ background: 'none', border: 'none', color: '#c9943a', cursor: 'pointer', fontSize: '14px' }}>⚙️</button></td>
+                <td style={{ padding: '12px 16px', textAlign: 'center' }}><button style={{ background: 'none', border: 'none', color: '#c9943a', cursor: 'pointer', fontSize: '14px' }}>⚙</button></td>
               </tr>
             ))}
           </tbody>

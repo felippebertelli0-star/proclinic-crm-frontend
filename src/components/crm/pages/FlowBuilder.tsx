@@ -6,7 +6,7 @@ export function FlowBuilder() {
         <h1 style={{ fontSize: '24px', fontWeight: 700, margin: 0 }}>FlowBuilder</h1>
         <div style={{ display: 'flex', gap: '8px' }}>
           <button style={{ padding: '10px 16px', borderRadius: '8px', border: 'none', background: '#2ecc71', color: '#0d1f2d', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}>✓ Publicar</button>
-          <button style={{ padding: '10px 16px', borderRadius: '8px', border: 'none', background: '#3498db', color: '#fff', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}>💾 Salvar</button>
+          <button style={{ padding: '10px 16px', borderRadius: '8px', border: 'none', background: '#3498db', color: '#fff', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}>◼ Salvar</button>
         </div>
       </div>
       <div style={{ background: '#132636', border: '1px solid #1e3d54', borderRadius: '14px', padding: '32px', minHeight: '600px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '16px' }}>

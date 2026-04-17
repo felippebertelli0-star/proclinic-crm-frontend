@@ -21,7 +21,7 @@ export function Equipe() {
                 <h3 style={{ fontSize: '14px', fontWeight: 600, margin: '0 0 2px 0', color: '#e8edf2' }}>{m.nome}</h3>
                 <div style={{ fontSize: '10px', color: '#7a96aa' }}>{m.cargo}</div>
               </div>
-              <div style={{ marginLeft: 'auto', fontSize: '11px', fontWeight: 600, color: m.status === 'Online' ? '#2ecc71' : m.status === 'Ausente' ? '#f39c12' : '#e74c3c' }}>{m.status === 'Online' ? '🟢' : m.status === 'Ausente' ? '🟡' : '⚫'}</div>
+              <div style={{ marginLeft: 'auto', fontSize: '11px', fontWeight: 600, color: m.status === 'Online' ? '#2ecc71' : m.status === 'Ausente' ? '#f39c12' : '#e74c3c' }}>{m.status === 'Online' ? '◉' : m.status === 'Ausente' ? '◎' : '○'}</div>
             </div>
             <div style={{ fontSize: '11px', color: '#7a96aa', display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '12px' }}>
               <div>Tickets: {m.tickets}</div>
@@ -29,7 +29,7 @@ export function Equipe() {
               <div>TMR: {m.tmr}</div>
             </div>
             <div style={{ display: 'flex', gap: '8px' }}>
-              <button style={{ flex: 1, padding: '8px', borderRadius: '6px', border: '1px solid #c9943a', background: 'transparent', color: '#c9943a', fontSize: '11px', fontWeight: 600, cursor: 'pointer' }}>💬 Msg</button>
+              <button style={{ flex: 1, padding: '8px', borderRadius: '6px', border: '1px solid #c9943a', background: 'transparent', color: '#c9943a', fontSize: '11px', fontWeight: 600, cursor: 'pointer' }}>○ Msg</button>
               <button style={{ flex: 1, padding: '8px', borderRadius: '6px', border: '1px solid #1e3d54', background: 'transparent', color: '#7a96aa', fontSize: '11px', fontWeight: 600, cursor: 'pointer' }}>Editar</button>
             </div>
           </div>

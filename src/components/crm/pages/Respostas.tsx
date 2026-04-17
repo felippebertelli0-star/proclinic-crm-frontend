@@ -24,8 +24,8 @@ export function Respostas() {
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
               <div style={{ background: 'rgba(201, 148, 58, 0.2)', color: '#c9943a', padding: '4px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: 700 }}>{r.atalho}</div>
               <div style={{ display: 'flex', gap: '6px' }}>
-                <button style={{ background: 'none', border: 'none', color: '#7a96aa', cursor: 'pointer', fontSize: '14px' }}>✏️</button>
-                <button style={{ background: 'none', border: 'none', color: '#e74c3c', cursor: 'pointer', fontSize: '14px' }}>🗑️</button>
+                <button style={{ background: 'none', border: 'none', color: '#7a96aa', cursor: 'pointer', fontSize: '14px' }}>✎</button>
+                <button style={{ background: 'none', border: 'none', color: '#e74c3c', cursor: 'pointer', fontSize: '14px' }}>✕</button>
               </div>
             </div>
             <h3 style={{ fontSize: '14px', fontWeight: 600, margin: '0 0 8px 0', color: '#e8edf2' }}>{r.titulo}</h3>

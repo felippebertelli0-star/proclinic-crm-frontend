@@ -349,9 +349,9 @@ export function Dashboard() {
         </h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '18px' }}>
           {[
-            { icon: '🟢', label: 'Atendendo', value: stats.atendendo, color: '#2ecc71', subtext: 'tickets em atendimento ativo' },
-            { icon: '⏳', label: 'Aguardando', value: stats.aguardando, color: '#f39c12', subtext: 'tickets pendentes' },
-            { icon: '✅', label: 'Fechados no Período', value: stats.fechados, color: '#3498db', subtext: 'tickets finalizados' },
+            { icon: '◉', label: 'Atendendo', value: stats.atendendo, color: '#2ecc71', subtext: 'tickets em atendimento ativo' },
+            { icon: '◎', label: 'Aguardando', value: stats.aguardando, color: '#f39c12', subtext: 'tickets pendentes' },
+            { icon: '✓', label: 'Fechados no Período', value: stats.fechados, color: '#3498db', subtext: 'tickets finalizados' },
           ].map((card) => (
             <div
               key={card.label}
@@ -408,8 +408,8 @@ export function Dashboard() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '18px' }}>
           {[
             { icon: '👤', label: 'Novos Leads Chegaram', value: activity.leads.toString(), color: '#c9943a', subtext: '↑ no período selecionado' },
-            { icon: '📥', label: 'Mensagens Recebidas', value: activity.recebidas, color: '#3498db', subtext: '↑ WhatsApp + Instagram' },
-            { icon: '📤', label: 'Mensagens Enviadas', value: activity.enviadas, color: '#2ecc71', subtext: '↑ Pela equipe' },
+            { icon: '↙', label: 'Mensagens Recebidas', value: activity.recebidas, color: '#3498db', subtext: '↑ WhatsApp + Instagram' },
+            { icon: '↗', label: 'Mensagens Enviadas', value: activity.enviadas, color: '#2ecc71', subtext: '↑ Pela equipe' },
           ].map((card) => (
             <div
               key={card.label}
@@ -573,13 +573,13 @@ export function Dashboard() {
             { key: 'agendamento', label: '% Agendamento', color: '#3498db' },
             { key: 'fechamento', label: '% Fechamento', color: '#2ecc71' },
             { key: 'comparecimento', label: '% Comparecimento', color: '#f39c12' },
-            { key: 'followups', label: '🔁 Follow-ups', color: '#c9943a' },
-            { key: 'reativados', label: '⚡ Reativados', color: '#9b59b6' },
+            { key: 'followups', label: '↻ Follow-ups', color: '#c9943a' },
+            { key: 'reativados', label: '◆ Reativados', color: '#9b59b6' },
             { key: 'primeiraResposta', label: '1ª Resposta', color: '#2ecc71' },
-            { key: 'tempoResposta', label: '📊 T.M. Resposta', color: '#3498db' },
-            { key: 'tempoResolucao', label: '🔧 T.M. Resolução', color: '#f39c12' },
-            { key: 'faturamento', label: '💰 Faturamento', color: '#2ecc71' },
-            { key: 'conversasFechadas', label: '🔒 Conv. Fechadas', color: '#2ecc71' },
+            { key: 'tempoResposta', label: '▨ T.M. Resposta', color: '#3498db' },
+            { key: 'tempoResolucao', label: '⚙ T.M. Resolução', color: '#f39c12' },
+            { key: 'faturamento', label: '◆ Faturamento', color: '#2ecc71' },
+            { key: 'conversasFechadas', label: '□ Conv. Fechadas', color: '#2ecc71' },
           ].map((ind) => (
             <button
               key={ind.key}
@@ -768,7 +768,7 @@ export function Dashboard() {
         <div>
           <h3 style={{ fontSize: '14px', fontWeight: 700, marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span>Distribuição por Canal</span>
-            <span style={{ fontSize: '11px', color: '#2ecc71', fontWeight: 600, background: 'rgba(46, 204, 113, 0.1)', padding: '4px 10px', borderRadius: '12px', border: '1px solid #2ecc71' }}>🟢 AO VIVO</span>
+            <span style={{ fontSize: '11px', color: '#2ecc71', fontWeight: 600, background: 'rgba(46, 204, 113, 0.1)', padding: '4px 10px', borderRadius: '12px', border: '1px solid #2ecc71' }}>◉ AO VIVO</span>
           </h3>
           <div style={{
             background: '#132636',
@@ -878,9 +878,9 @@ export function Dashboard() {
             <span style={{ background: '#e74c3c', color: '#fff', fontSize: '10px', fontWeight: 700, padding: '2px 6px', borderRadius: '3px' }}>3</span>
           </h3>
           {[
-            { icon: '⚠️', title: 'SLA Próximo do Vencimento', desc: '357 ticket(s) próximos de vencer o SLA', color: '#f39c12', action: 'Priorizar' },
+            { icon: '△', title: 'SLA Próximo do Vencimento', desc: '357 ticket(s) próximos de vencer o SLA', color: '#f39c12', action: 'Priorizar' },
             { icon: '👥', title: 'Atendentes Sobrecarregados', desc: '2 atendente(s) com mais de 10 tickets', color: '#e74c3c', action: 'Redistribuir' },
-            { icon: '🎫', title: 'Tickets Sem Atendente', desc: '17 ticket(s) aguardando distribuição', color: '#3498db', action: 'Atribuir' },
+            { icon: '□', title: 'Tickets Sem Atendente', desc: '17 ticket(s) aguardando distribuição', color: '#3498db', action: 'Atribuir' },
           ].map((a) => (
             <div key={a.title} style={{
               background: '#132636',
@@ -931,7 +931,7 @@ export function Dashboard() {
           <h3 style={{ fontSize: '13px', fontWeight: 700, marginBottom: '12px', display: 'flex', justifyContent: 'space-between' }}>
             <span>Ranking de SDRs / Agentes</span>
             <button style={{ background: 'transparent', border: 'none', color: '#7a96aa', fontSize: '10px', cursor: 'pointer' }}>
-              📥 Exportar
+              ↗ Exportar
             </button>
           </h3>
           <div style={{
@@ -972,7 +972,7 @@ export function Dashboard() {
                   <tr key={a.nome} style={{ borderBottom: '1px solid #1e3d54', transition: 'background 0.2s', cursor: 'pointer' }} onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(201, 148, 58, 0.08)'; }} onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}>
                     <td style={{ padding: '10px 8px', color: '#7a96aa', fontWeight: 600 }}>{a.no}</td>
                     <td style={{ padding: '10px 8px', color: '#e8edf2', fontWeight: 600 }}>{a.nome}</td>
-                    <td style={{ padding: '10px 8px', color: a.aval === 5 ? '#f39c12' : '#c9943a', fontSize: '11px', letterSpacing: '2px' }}>{'⭐'.repeat(a.aval)}</td>
+                    <td style={{ padding: '10px 8px', color: a.aval === 5 ? '#f39c12' : '#c9943a', fontSize: '11px', letterSpacing: '2px' }}>{'★'.repeat(a.aval)}</td>
                     <td style={{ padding: '10px 8px', color: '#e8edf2', fontWeight: 700, textAlign: 'center' }}>{a.total}</td>
                     <td style={{ padding: '10px 8px', color: '#f39c12', fontWeight: 700, textAlign: 'center' }}>{a.and}</td>
                     <td style={{ padding: '10px 8px', color: '#2ecc71', fontWeight: 700, textAlign: 'center' }}>{a.fin}</td>
