@@ -185,14 +185,10 @@ export function Dashboard() {
     conversasFechadas: { color: '#d35400', light: '#d35400' },
   };
 
-  // Detectar tipo de período e gerar dados dinâmicos
+  // Detectar tipo de período e gerar dados dinâmicos - usa selectedPeriod para ser mais robusto
   const generateChartData = () => {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    const diffDays = Math.floor((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
-
-    // MODO 1: Hoje ou Ontem (por horas - 24h)
-    if (diffDays === 0) {
+    // MODO 1: Hoje ou Ontem (por horas - 24h completas)
+    if (selectedPeriod === 'Hoje' || selectedPeriod === 'Ontem') {
       const hours = ['00h', '04h', '08h', '12h', '16h', '20h', '24h'];
       return hours.map((hour, i) => ({
         hour,
@@ -211,7 +207,7 @@ export function Dashboard() {
     }
 
     // MODO 2: Últimos 7 dias (por dias da semana)
-    if (diffDays === 6) {
+    if (selectedPeriod === 'Últimos 7 dias') {
       const diasSemana = ['seg', 'ter', 'qua', 'qui', 'sex', 'sab', 'dom'];
       return diasSemana.map((dia, i) => ({
         hour: dia,
@@ -229,9 +225,12 @@ export function Dashboard() {
       }));
     }
 
-    // MODO 3: Últimos 30 dias (por números 1-30)
-    if (diffDays >= 29 && diffDays <= 31) {
-      const days = Array.from({length: 30}, (_, i) => String(i + 1));
+    // MODO 3: Últimos 30 dias ou Este mês (por números 1-30)
+    if (selectedPeriod === 'Últimos 30 dias' || selectedPeriod === 'Este mês') {
+      const days = Array.from({length: 30}, (_, i) => {
+        const day = String(i + 1).padStart(2, '0');
+        return day;
+      });
       return days.map((day, i) => ({
         hour: day,
         tickets: 20 + (i % 20) * 3,
@@ -249,6 +248,8 @@ export function Dashboard() {
     }
 
     // FALLBACK: Use dados do período atual (último caso)
+    const start = new Date(startDate);
+    const end = new Date(endDate);
     const dates: string[] = [];
     for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
       dates.push(d.toISOString().split('T')[0]);
