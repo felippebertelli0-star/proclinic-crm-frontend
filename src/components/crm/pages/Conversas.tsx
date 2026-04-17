@@ -200,9 +200,9 @@ export function Conversas() {
           </div>
           <div style={{ display: 'flex', gap: '12px', fontSize: '18px' }}>
             <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#c9943a' }}>⋮</button>
-            <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#c9943a' }}>📎</button>
-            <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#c9943a' }}>🔍</button>
-            <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#c9943a' }}>❌</button>
+            <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#c9943a' }}>🔗</button>
+            <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#c9943a' }}>⊙</button>
+            <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#c9943a' }}>✕</button>
           </div>
         </div>
 

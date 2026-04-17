@@ -12,8 +12,8 @@ export function Indicadores() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '28px' }}>
         <h1 style={{ fontSize: '24px', fontWeight: 700, margin: 0 }}>Indicadores</h1>
         <div style={{ display: 'flex', gap: '8px' }}>
-          <button style={{ padding: '10px 16px', borderRadius: '8px', border: 'none', background: '#3498db', color: '#fff', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}>🔄 Sincronizar</button>
-          <button style={{ padding: '10px 16px', borderRadius: '8px', border: 'none', background: '#2ecc71', color: '#fff', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}>📥 Exportar</button>
+          <button style={{ padding: '10px 16px', borderRadius: '8px', border: 'none', background: '#3498db', color: '#fff', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}>↻ Sincronizar</button>
+          <button style={{ padding: '10px 16px', borderRadius: '8px', border: 'none', background: '#2ecc71', color: '#fff', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}>↙ Exportar</button>
         </div>
       </div>
       <div style={{ background: '#132636', border: '1px solid #1e3d54', borderRadius: '14px', overflow: 'hidden' }}>

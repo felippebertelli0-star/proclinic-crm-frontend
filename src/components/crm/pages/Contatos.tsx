@@ -171,7 +171,7 @@ export function Contatos() {
               cursor: 'pointer',
             }}
           >
-            📥 Importar / Exportar
+            ↙ Importar / Exportar
           </button>
         </div>
       </div>
@@ -288,7 +288,7 @@ export function Contatos() {
                     fontSize: '12px',
                     fontWeight: 600,
                   }}>
-                    🟢 {contato.status}
+                    ◉ {contato.status}
                   </span>
                 </td>
                 <td style={{ padding: '12px 16px', textAlign: 'center' }}>
@@ -300,7 +300,7 @@ export function Contatos() {
                       cursor: 'pointer',
                       fontSize: '14px',
                     }}>
-                      👁️
+                      👁
                     </button>
                     <button style={{
                       background: 'none',
@@ -309,7 +309,7 @@ export function Contatos() {
                       cursor: 'pointer',
                       fontSize: '14px',
                     }}>
-                      ✏️
+                      ✎
                     </button>
                     <button style={{
                       background: 'none',
@@ -318,7 +318,7 @@ export function Contatos() {
                       cursor: 'pointer',
                       fontSize: '14px',
                     }}>
-                      🗑️
+                      ✕
                     </button>
                   </div>
                 </td>

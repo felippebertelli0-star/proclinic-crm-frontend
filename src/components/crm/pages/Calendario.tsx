@@ -185,7 +185,7 @@ export function Calendario() {
             onMouseEnter={(e) => (e.currentTarget.style.background = '#d9a344')}
             onMouseLeave={(e) => (e.currentTarget.style.background = '#c9943a')}
           >
-            🔄 Sincronizar
+            ↻ Sincronizar
           </button>
 
           <button

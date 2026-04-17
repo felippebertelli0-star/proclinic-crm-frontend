@@ -17,7 +17,7 @@ export function Conexoes() {
           <div key={c.id} style={{ background: '#132636', border: `2px solid ${c.cor}`, borderRadius: '14px', padding: '16px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
               <div style={{ width: '40px', height: '40px', borderRadius: '8px', background: c.cor, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>
-                {c.nome.includes('WhatsApp') ? '💬' : c.nome.includes('Instagram') ? '📸' : c.nome.includes('Telegram') ? '✈️' : '📧'}
+                {c.nome.includes('WhatsApp') ? '○' : c.nome.includes('Instagram') ? '📸' : c.nome.includes('Telegram') ? '▶' : '✉'}
               </div>
               <div>
                 <h3 style={{ fontSize: '14px', fontWeight: 600, margin: 0, color: '#e8edf2' }}>{c.nome}</h3>

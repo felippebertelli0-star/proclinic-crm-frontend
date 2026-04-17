@@ -20,15 +20,15 @@ export function Etiquetas() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
         {etiquetas.map((e) => (
           <div key={e.id} style={{ background: '#132636', border: `2px solid ${e.cor}`, borderRadius: '14px', padding: '16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{ width: '40px', height: '40px', borderRadius: '8px', background: e.cor, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', flexShrink: 0 }}>🏷️</div>
+            <div style={{ width: '40px', height: '40px', borderRadius: '8px', background: e.cor, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', flexShrink: 0 }}>▢</div>
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: '13px', fontWeight: 600, color: '#e8edf2', marginBottom: '4px' }}>{e.nome}</div>
               <div style={{ fontSize: '10px', color: '#7a96aa', marginBottom: '6px' }}>{e.categoria}</div>
               <div style={{ fontSize: '11px', fontWeight: 600, color: e.cor }}>{e.tickets} tickets</div>
             </div>
             <div style={{ display: 'flex', gap: '6px' }}>
-              <button style={{ background: 'none', border: 'none', color: '#7a96aa', cursor: 'pointer', fontSize: '14px' }}>✏️</button>
-              <button style={{ background: 'none', border: 'none', color: '#e74c3c', cursor: 'pointer', fontSize: '14px' }}>🗑️</button>
+              <button style={{ background: 'none', border: 'none', color: '#7a96aa', cursor: 'pointer', fontSize: '14px' }}>✎</button>
+              <button style={{ background: 'none', border: 'none', color: '#e74c3c', cursor: 'pointer', fontSize: '14px' }}>✕</button>
             </div>
           </div>
         ))}
