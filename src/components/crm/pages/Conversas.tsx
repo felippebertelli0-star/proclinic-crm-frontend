@@ -1318,7 +1318,7 @@ export function Conversas() {
                         <div style={{ fontSize: '11px', color: 'rgba(232, 237, 242, 0.8)' }}>{tempoFormatado}</div>
                       </div>
                       <div style={{ fontSize: '10px', color: 'rgba(232, 237, 242, 0.7)', whiteSpace: 'nowrap' }}>
-                        {msg.hora} ✓✓
+                        {msg.hora}
                       </div>
                     </div>
                   </div>
@@ -1344,7 +1344,7 @@ export function Conversas() {
                   }}>
                     {msg.texto}
                     <div style={{ fontSize: '10px', color: 'rgba(232, 237, 242, 0.7)', marginTop: '4px', textAlign: 'right' }}>
-                      {msg.hora} ✓✓
+                      {msg.hora}
                     </div>
                   </div>
                 </div>
@@ -1741,7 +1741,6 @@ export function Conversas() {
                   padding: '0',
                 }}
               >
-                ✕
               </button>
             </div>
 
@@ -1855,7 +1854,7 @@ export function Conversas() {
                     {conversaModal.nome}
                   </h3>
                   <div style={{ fontSize: '12px', color: '#7a96aa', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span style={{ color: conversaModal.unread > 0 ? '#e74c3c' : '#2ecc71', fontWeight: 600 }}>●</span>
+                    <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: conversaModal.unread > 0 ? '#e74c3c' : '#2ecc71', flexShrink: 0 }}></span>
                     {conversaModal.unread > 0 ? `${conversaModal.unread} mensagens não lidas` : 'Sem notificações'}
                   </div>
                 </div>
@@ -2002,7 +2001,7 @@ export function Conversas() {
                           </div>
                           <div style={{ fontSize: '9px', color: 'rgba(232, 237, 242, 0.7)', whiteSpace: 'nowrap', textAlign: 'right' }}>
                             <div>{msg.hora}</div>
-                            <div>✓✓</div>
+                            <div></div>
                           </div>
                         </div>
                       </div>
@@ -2025,7 +2024,7 @@ export function Conversas() {
                       }}>
                         {msg.texto}
                         <div style={{ fontSize: '10px', color: 'rgba(232, 237, 242, 0.7)', marginTop: '6px', textAlign: 'right', fontWeight: 500 }}>
-                          {msg.hora} ✓✓
+                          {msg.hora}
                         </div>
                       </div>
                     </div>
@@ -2240,7 +2239,6 @@ export function Conversas() {
                   (e.currentTarget as HTMLElement).style.color = PREMIUM_STYLES.colorTextSecondary;
                 }}
               >
-                ✕
               </button>
             </div>
 
@@ -2510,7 +2508,6 @@ export function Conversas() {
                   (e.currentTarget as HTMLElement).style.background = 'rgba(13, 31, 45, 0.2)';
                 }}
               >
-                ✕
               </button>
             </div>
 
@@ -2533,7 +2530,7 @@ export function Conversas() {
                 {conversa?.nome || 'Nenhuma conversa selecionada'}
               </div>
               <div style={{ fontSize: '11px', color: '#7a96aa', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                ● Digite pelo menos 3 letras para buscar contatos
+                Digite pelo menos 3 letras para buscar contatos
               </div>
             </div>
 
@@ -2729,7 +2726,7 @@ export function Conversas() {
                 gap: '8px',
                 padding: '8px 0',
               }}>
-                ⚙️ Configurações Avançadas
+                Configurações Avançadas
               </summary>
               <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid #1e3d54' }}>
                 <p style={{ fontSize: '12px', color: '#7a96aa', margin: 0 }}>
@@ -2893,7 +2890,6 @@ export function Conversas() {
                   fontWeight: 700,
                 }}
               >
-                ✕
               </button>
             </div>
 
@@ -3323,7 +3319,6 @@ export function Conversas() {
                   (e.currentTarget as HTMLElement).style.background = 'rgba(13, 31, 45, 0.2)';
                 }}
               >
-                ✕
               </button>
             </div>
 
@@ -3334,7 +3329,7 @@ export function Conversas() {
               {[
                 {
                   id: 1,
-                  icon: '●',
+                  icon: 'circle',
                   cor: '#2ecc71',
                   titulo: 'Ticket criado',
                   descricao: '',
@@ -3342,7 +3337,7 @@ export function Conversas() {
                 },
                 {
                   id: 2,
-                  icon: '●',
+                  icon: 'circle',
                   cor: '#f39c12',
                   titulo: 'Atribuído a Havila',
                   descricao: '',
@@ -3350,15 +3345,15 @@ export function Conversas() {
                 },
                 {
                   id: 3,
-                  icon: '●',
+                  icon: 'circle',
                   cor: '#3498db',
-                  titulo: 'Transferido de fila: Recepção → Comercial',
+                  titulo: 'Transferido de fila: Recepção / Comercial',
                   descricao: '',
                   data: '07/04/2026 · 18:28 · por Admin',
                 },
                 {
                   id: 4,
-                  icon: '●',
+                  icon: 'circle',
                   cor: '#f39c12',
                   titulo: 'Etiqueta aplicada: Follow-up 1',
                   descricao: '',
@@ -3366,7 +3361,7 @@ export function Conversas() {
                 },
                 {
                   id: 5,
-                  icon: '●',
+                  icon: 'circle',
                   cor: '#3498db',
                   titulo: 'Nota interna adicionada',
                   descricao: '',

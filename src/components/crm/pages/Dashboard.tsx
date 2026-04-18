@@ -464,9 +464,9 @@ export function Dashboard() {
         </h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '18px' }}>
           {[
-            { icon: 'users', label: 'Novos Leads Chegaram', value: activity.leads.toString(), color: '#3498db', subtext: '↑ no período selecionado' },
-            { icon: 'inbox', label: 'Mensagens Recebidas', value: activity.recebidas, color: '#3498db', subtext: '↑ WhatsApp + Instagram' },
-            { icon: 'send', label: 'Mensagens Enviadas', value: activity.enviadas, color: '#2ecc71', subtext: '↑ Pela equipe' },
+            { icon: 'users', label: 'Novos Leads Chegaram', value: activity.leads.toString(), color: '#3498db', subtext: 'no período selecionado' },
+            { icon: 'inbox', label: 'Mensagens Recebidas', value: activity.recebidas, color: '#3498db', subtext: 'WhatsApp + Instagram' },
+            { icon: 'send', label: 'Mensagens Enviadas', value: activity.enviadas, color: '#2ecc71', subtext: 'Pela equipe' },
           ].map((card) => (
             <div
               key={card.label}
@@ -528,10 +528,10 @@ export function Dashboard() {
             { key: 'followups', label: 'FOLLOW-UPS REALIZADOS', value: stats.followups, color: '#c9943a', subtext: 'no período', bar: 0 },
             { key: 'reativados', label: 'PACIENTES REATIVADOS', value: stats.reativados, color: '#3498db', subtext: 'no período', bar: 0 },
             { key: 'primeiraResposta', label: 'PRIMEIRA RESPOSTA', value: stats.primeiraResposta, color: '#2ecc71', subtext: 'Tempo médio inicial', bar: 0 },
-            { key: 'tempoResposta', label: 'TEMPO MÉDIO DE RESPOSTA', value: stats.tempoResposta, color: '#2ecc71', subtext: '↑ Média: 15min', bar: 0 },
+            { key: 'tempoResposta', label: 'TEMPO MÉDIO DE RESPOSTA', value: stats.tempoResposta, color: '#2ecc71', subtext: 'Média: 15min', bar: 0 },
             { key: 'tempoResolucao', label: 'T.M. DE RESOLUÇÃO DO TICKET', value: stats.tempoResolucao, color: '#f39c12', subtext: 'Média de resolução', bar: 0 },
             { key: 'faturamento', label: 'FATURAMENTO ATUAL', value: stats.faturamento, color: '#2ecc71', subtext: 'no período', bar: 0 },
-            { key: 'conversasFechadas', label: 'CONVERSAS FECHADAS', value: stats.conversasFechadas, color: '#2ecc71', subtext: '↑ Fechadas com sucesso', bar: 0 },
+            { key: 'conversasFechadas', label: 'CONVERSAS FECHADAS', value: stats.conversasFechadas, color: '#2ecc71', subtext: 'Fechadas com sucesso', bar: 0 },
           ].map((kpi) => (
             <div
               key={kpi.key}
@@ -670,7 +670,7 @@ export function Dashboard() {
               marginLeft: 'auto',
             }}
           >
-            ✕ Limpar
+            Limpar
           </button>
         </div>
         <div style={{
