@@ -276,14 +276,8 @@ export function Dashboard() {
   const chartHeight = 360;
   const padding = 70;
 
-  // Calcular maxValue dinamicamente baseado nos dados
-  const maxValue = Math.max(
-    ...chartData.flatMap(d => [
-      d.tickets, d.agendamento, d.fechamento, d.comparecimento,
-      d.followups, d.reativados, d.primeiraResposta, d.tempoResposta,
-      d.tempoResolucao, d.faturamento, d.conversasFechadas
-    ])
-  ) * 1.1; // +10% para margem visual
+  // Usar maxValue fixo que funciona bem para todos os períodos
+  const maxValue = 100;
 
   const graphWidth = chartWidth - padding * 2;
   const graphHeight = chartHeight - padding * 2;
