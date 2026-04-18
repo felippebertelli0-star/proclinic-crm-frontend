@@ -6,7 +6,7 @@
 'use client';
 
 import { useState } from 'react';
-import { X, RefreshCw, Settings, Calendar, DollarSign, FileText, Paperclip, Zap, BarChart3, User, Mic, Send } from 'lucide-react';
+import { X, RefreshCw, Settings, Calendar, DollarSign, FileText, Paperclip, Zap, BarChart3, User, Mic, Send, Smile } from 'lucide-react';
 
 export function Conversas() {
   const [selectedConversa, setSelectedConversa] = useState(0);
@@ -547,6 +547,28 @@ export function Conversas() {
           background: 'rgba(19, 38, 54, 0.5)',
         }}>
           {/* EMOJI PICKER */}
+          <button style={{
+            width: '32px',
+            height: '32px',
+            borderRadius: '6px',
+            background: 'transparent',
+            border: 'none',
+            cursor: 'pointer',
+            color: '#7a96aa',
+            transition: 'all 0.2s',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }} onMouseEnter={(e) => {
+            (e.currentTarget as HTMLElement).style.color = '#c9943a';
+          }}
+          onMouseLeave={(e) => {
+            (e.currentTarget as HTMLElement).style.color = '#7a96aa';
+          }}>
+            <Smile size={18} />
+          </button>
+
+          {/* MIC BUTTON */}
           <button style={{
             width: '32px',
             height: '32px',
