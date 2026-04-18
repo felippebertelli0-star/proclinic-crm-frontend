@@ -4,7 +4,7 @@
   "devCommand": "npm run dev",
   "installCommand": "npm ci",
   "env": {
-    "NEXT_PUBLIC_API_URL": "@proclinic_api_url"
+    "NEXT_PUBLIC_API_URL": "https://api.proclinic.com.br"
   },
   "regions": ["sfo1"],
   "functions": {
