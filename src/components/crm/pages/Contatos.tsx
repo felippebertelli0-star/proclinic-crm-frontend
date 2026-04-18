@@ -48,6 +48,52 @@ export function Contatos() {
       color: '#e8edf2',
       fontFamily: "'Segoe UI', sans-serif",
     }}>
+      {/* HEADER COM TÍTULO E BOTÕES */}
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: '28px',
+        gap: '16px',
+      }}>
+        <h1 style={{ fontSize: '24px', fontWeight: 700, margin: 0 }}>Contatos</h1>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          {/* BOTÃO IMPORTAR/EXPORTAR */}
+          <button
+            style={{
+              padding: '10px 16px',
+              borderRadius: '8px',
+              border: '1px solid #1e3d54',
+              background: 'transparent',
+              color: '#7a96aa',
+              fontSize: '12px',
+              fontWeight: 600,
+              cursor: 'pointer',
+            }}
+          >
+            ↙ Importar / Exportar
+          </button>
+          {/* BOTÃO ADICIONAR */}
+          <button
+            style={{
+              padding: '10px 16px',
+              borderRadius: '8px',
+              border: 'none',
+              background: '#c9943a',
+              color: '#0d1f2d',
+              fontSize: '12px',
+              fontWeight: 600,
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.background = '#d9a344'}
+            onMouseLeave={(e) => e.currentTarget.style.background = '#c9943a'}
+          >
+            + Adicionar Contato
+          </button>
+        </div>
+      </div>
+
       {/* RESUMO CARDS */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '28px' }}>
         {resumo.map((card) => (
@@ -172,43 +218,6 @@ export function Contatos() {
               minWidth: '200px',
             }}
           />
-        </div>
-
-        <div style={{ display: 'flex', gap: '8px', marginLeft: 'auto' }}>
-          {/* BOTÃO ADICIONAR */}
-          <button
-            style={{
-              padding: '8px 14px',
-              borderRadius: '8px',
-              border: 'none',
-              background: '#c9943a',
-              color: '#0d1f2d',
-              fontSize: '12px',
-              fontWeight: 600,
-              cursor: 'pointer',
-              transition: 'all 0.2s',
-            }}
-            onMouseEnter={(e) => e.currentTarget.style.background = '#d9a344'}
-            onMouseLeave={(e) => e.currentTarget.style.background = '#c9943a'}
-          >
-            + Adicionar Contato
-          </button>
-
-          {/* BOTÃO IMPORTAR/EXPORTAR */}
-          <button
-            style={{
-              padding: '8px 14px',
-              borderRadius: '8px',
-              border: '1px solid #1e3d54',
-              background: 'transparent',
-              color: '#7a96aa',
-              fontSize: '12px',
-              fontWeight: 600,
-              cursor: 'pointer',
-            }}
-          >
-            ↙ Importar / Exportar
-          </button>
         </div>
       </div>
 
