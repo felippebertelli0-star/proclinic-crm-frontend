@@ -106,39 +106,7 @@ export function Conversas() {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: '#0d1f2d', color: '#e8edf2', fontFamily: "'Segoe UI', sans-serif" }}>
-      {/* HEADER TOP */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '12px 24px',
-        background: '#0a1520',
-        borderBottom: '1px solid #1e3d54',
-        height: '60px',
-        flexShrink: 0,
-      }}>
-        <div style={{ fontSize: '14px', fontWeight: 700, color: '#c9943a' }}>
-          ProClinic — Inteligência Comercial
-        </div>
-        <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-          <div style={{ fontSize: '12px', color: '#7a96aa', display: 'flex', gap: '8px', alignItems: 'center' }}>
-            🏥 <span style={{ color: '#e8edf2' }}>Clínica Dra. Andressa Barbarotti</span>
-          </div>
-          <div style={{ fontSize: '12px', color: '#2ecc71', display: 'flex', gap: '8px', alignItems: 'center' }}>
-            💬 <span>WhatsApp Conectado</span>
-          </div>
-          <div style={{ fontSize: '12px', color: '#e1306c', display: 'flex', gap: '8px', alignItems: 'center' }}>
-            📸 <span>Instagram Conectado</span>
-          </div>
-          <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#c9943a', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#0d1f2d', fontWeight: 700, fontSize: '14px' }}>
-            H
-          </div>
-        </div>
-      </div>
-
-      {/* MAIN CONTENT */}
-      <div style={{ display: 'flex', height: 'calc(100vh - 60px)', background: '#0d1f2d', color: '#e8edf2' }}>
+    <div style={{ display: 'flex', height: 'calc(100vh - 60px)', background: '#0d1f2d', color: '#e8edf2', fontFamily: "'Segoe UI', sans-serif" }}>
       {/* SIDEBAR - LISTA DE CONVERSAS */}
       <div style={{
         width: '320px',
@@ -705,7 +673,6 @@ export function Conversas() {
             <Send size={18} />
           </button>
         </div>
-      </div>
       </div>
     </div>
   );
