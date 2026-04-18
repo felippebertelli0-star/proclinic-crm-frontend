@@ -958,6 +958,11 @@ export function Conversas() {
                               >
                                 <Eye size={14} />
                               </button>
+                              {/* Tempo entre olho e notificação */}
+                              <span style={{ fontSize: '9px', color: '#7a96aa', display: 'flex', alignItems: 'center', gap: '2px' }}>
+                                <Clock size={11} />
+                                {conv.hora}
+                              </span>
                               {conv.unread > 0 && (
                                 <div style={{
                                   background: '#e74c3c',
@@ -978,20 +983,15 @@ export function Conversas() {
                             </div>
                           )}
                         </div>
-                        <div style={{ fontSize: '10px', color: '#7a96aa', marginBottom: '3px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                          <Clock size={12} />
-                          {conv.hora}
+                        {/* Atribuído a - com cor diferente (roxo/vermelho) */}
+                        <div style={{ fontSize: '10px', color: '#9b59b6', fontWeight: 600, marginBottom: '3px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          👤 {conv.atribuidoA}
                         </div>
                         <div style={{ fontSize: '10px', color: '#7a96aa', marginBottom: '4px', lineHeight: '1.3' }}>
                           {conv.preview}
                         </div>
-                        <div style={{ fontSize: '10px', color: '#c9943a', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                          <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                            👤 {conv.atribuidoA}
-                          </span>
-                          <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                            ● {conv.origem}
-                          </span>
+                        <div style={{ fontSize: '10px', color: '#c9943a', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          ● {conv.origem}
                         </div>
                         <div style={{ display: 'flex', gap: '3px', flexWrap: 'wrap' }}>
                           {conv.tags.map((tag: string, i: number) => {
