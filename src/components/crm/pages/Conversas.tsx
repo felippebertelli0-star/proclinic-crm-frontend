@@ -369,7 +369,7 @@ export function Conversas() {
               Atribuído à 🤖 IA · {conversa.atribuidoA.split(' - ')[1]} · {conversa.data}
             </div>
           </div>
-          <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flex: 1, justifyContent: 'flex-end' }}>
             {/* ACTION BUTTONS */}
             {[
               { Icon: X, label: 'Fechar Ticket' },
