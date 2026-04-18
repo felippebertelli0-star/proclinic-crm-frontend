@@ -3345,44 +3345,74 @@ export function Conversas() {
           left: 0,
           right: 0,
           bottom: 0,
-          background: 'rgba(0, 0, 0, 0.5)',
+          background: 'rgba(0, 0, 0, 0.7)',
+          backdropFilter: 'blur(4px)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           zIndex: 10003,
         }}>
           <div style={{
-            background: '#0a1520',
-            borderRadius: '12px',
-            border: '1px solid #1e3d54',
-            padding: '32px',
-            minWidth: '450px',
+            background: PREMIUM_STYLES.gradientDark,
+            borderRadius: '16px',
+            border: `1px solid ${PREMIUM_STYLES.colorBorder}`,
+            padding: '0',
+            minWidth: '480px',
             maxHeight: '70vh',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.6)',
+            boxShadow: PREMIUM_STYLES.shadowXl,
             display: 'flex',
             flexDirection: 'column',
-            gap: '20px',
             overflowY: 'auto',
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 700, color: '#e8edf2', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                ≡ Histórico do Ticket
-              </h3>
+            {/* HEADER PREMIUM */}
+            <div style={{
+              background: PREMIUM_STYLES.gradientPrimary,
+              padding: '20px 32px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              justifyContent: 'space-between',
+              borderBottom: `1px solid ${PREMIUM_STYLES.colorBorder}`,
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{ fontSize: '24px' }}>📜</div>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 700, color: '#0d1f2d' }}>
+                    Histórico do Ticket
+                  </h3>
+                  <p style={{ margin: 0, fontSize: '11px', color: 'rgba(13, 31, 45, 0.8)', marginTop: '2px' }}>
+                    Timeline completa de eventos
+                  </p>
+                </div>
+              </div>
               <button
                 onClick={fecharHistorico}
                 style={{
-                  background: 'transparent',
+                  background: 'rgba(13, 31, 45, 0.2)',
                   border: 'none',
-                  color: '#7a96aa',
+                  color: '#0d1f2d',
                   cursor: 'pointer',
                   fontSize: '24px',
-                  padding: '4px 8px',
-                  fontWeight: 700,
+                  padding: '6px 10px',
+                  borderRadius: '8px',
+                  transition: PREMIUM_STYLES.transitionFast,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.background = 'rgba(13, 31, 45, 0.4)';
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.background = 'rgba(13, 31, 45, 0.2)';
                 }}
               >
                 ✕
               </button>
             </div>
+
+            {/* CONTEÚDO */}
+            <div style={{ padding: '32px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               {[
@@ -3452,6 +3482,7 @@ export function Conversas() {
                 </div>
               ))}
             </div>
+            </div>
           </div>
         </div>
       )}
@@ -3463,35 +3494,54 @@ export function Conversas() {
           top: 0,
           right: 0,
           bottom: 0,
-          width: '380px',
-          background: '#0a1520',
-          borderLeft: '1px solid #1e3d54',
-          boxShadow: '-2px 0 16px rgba(0, 0, 0, 0.4)',
+          width: '400px',
+          background: PREMIUM_STYLES.gradientDark,
+          borderLeft: `2px solid ${PREMIUM_STYLES.colorGold}`,
+          boxShadow: PREMIUM_STYLES.shadowXl,
           display: 'flex',
           flexDirection: 'column',
           zIndex: 10002,
           overflowY: 'auto',
         }}>
-          {/* HEADER */}
+          {/* HEADER PREMIUM */}
           <div style={{
             padding: '20px 24px',
-            borderBottom: '1px solid #1e3d54',
+            borderBottom: `1px solid ${PREMIUM_STYLES.colorBorder}`,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
+            background: 'rgba(201, 148, 58, 0.05)',
           }}>
-            <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 700, color: '#e8edf2' }}>
-              Informações
-            </h3>
+            <div>
+              <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 700, color: PREMIUM_STYLES.colorText }}>
+                Informações
+              </h3>
+              <p style={{ margin: 0, fontSize: '10px', color: PREMIUM_STYLES.colorTextSecondary, marginTop: '2px' }}>
+                Detalhes do contato
+              </p>
+            </div>
             <button
               onClick={fecharInfoContato}
               style={{
                 background: 'transparent',
                 border: 'none',
-                color: '#7a96aa',
+                color: PREMIUM_STYLES.colorTextSecondary,
                 cursor: 'pointer',
-                fontSize: '20px',
+                fontSize: '24px',
                 padding: '4px 8px',
+                borderRadius: '8px',
+                transition: PREMIUM_STYLES.transitionFast,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.background = 'rgba(201, 148, 58, 0.1)';
+                (e.currentTarget as HTMLElement).style.color = PREMIUM_STYLES.colorGold;
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.background = 'transparent';
+                (e.currentTarget as HTMLElement).style.color = PREMIUM_STYLES.colorTextSecondary;
               }}
             >
               ✕
