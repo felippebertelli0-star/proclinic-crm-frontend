@@ -73,7 +73,7 @@ export function Contatos() {
         marginBottom: '28px',
         gap: '16px',
       }}>
-        <h1 style={{ fontSize: '24px', fontWeight: 700, margin: 0 }}>Contatos</h1>
+        <h1 style={{ fontSize: '24px', fontWeight: 800, margin: 0 }}>Contatos</h1>
         <div style={{ display: 'flex', gap: '8px' }}>
           {/* BOTÃO IMPORTAR/EXPORTAR */}
           <button
@@ -84,11 +84,11 @@ export function Contatos() {
               background: 'transparent',
               color: '#7a96aa',
               fontSize: '12px',
-              fontWeight: 600,
+              fontWeight: 700,
               cursor: 'pointer',
             }}
           >
-            ↙ Importar / Exportar
+            Importar / Exportar
           </button>
           {/* BOTÃO ADICIONAR */}
           <button
@@ -99,14 +99,14 @@ export function Contatos() {
               background: '#c9943a',
               color: '#0d1f2d',
               fontSize: '12px',
-              fontWeight: 600,
+              fontWeight: 700,
               cursor: 'pointer',
               transition: 'all 0.2s',
             }}
             onMouseEnter={(e) => e.currentTarget.style.background = '#d9a344'}
             onMouseLeave={(e) => e.currentTarget.style.background = '#c9943a'}
           >
-            + Adicionar Contato
+            Adicionar Contato
           </button>
         </div>
       </div>
@@ -125,7 +125,7 @@ export function Contatos() {
               flexDirection: 'column',
               alignItems: 'flex-start',
               gap: '12px',
-              transition: 'all 0.2s',
+              transition: 'all 0.15s',
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.boxShadow = `0 4px 12px ${card.color}33`;
@@ -179,10 +179,10 @@ export function Contatos() {
                 letterSpacing: '0.2px',
                 WebkitFontSmoothing: 'antialiased',
               }}>
-                {card.label === 'Hoje' && '↳ Novos contatos'}
-                {card.label === 'Esta Semana' && '↳ Últimos 7 dias'}
-                {card.label === 'Este Mês' && '↳ Mês atual'}
-                {card.label === 'Total' && '↳ Todos os contatos'}
+                {card.label === 'Hoje' && 'Novos contatos'}
+                {card.label === 'Esta Semana' && 'Últimos 7 dias'}
+                {card.label === 'Este Mês' && 'Mês atual'}
+                {card.label === 'Total' && 'Todos os contatos'}
               </div>
             </div>
           </div>
@@ -208,13 +208,14 @@ export function Contatos() {
             value={filterCanal}
             onChange={(e) => setFilterCanal(e.target.value)}
             style={{
-              padding: '8px 12px',
+              padding: '12px 14px',
               borderRadius: '8px',
               border: '1px solid #1e3d54',
               background: '#0d1f2d',
               color: '#e8edf2',
               fontSize: '12px',
               cursor: 'pointer',
+              fontWeight: 500,
             }}
           >
             <option>Todos os canais</option>
@@ -228,13 +229,14 @@ export function Contatos() {
             value={filterPipeline}
             onChange={(e) => setFilterPipeline(e.target.value)}
             style={{
-              padding: '8px 12px',
+              padding: '12px 14px',
               borderRadius: '8px',
               border: '1px solid #1e3d54',
               background: '#0d1f2d',
               color: '#e8edf2',
               fontSize: '12px',
               cursor: 'pointer',
+              fontWeight: 500,
             }}
           >
             <option>Todos os pipelines</option>
@@ -250,13 +252,14 @@ export function Contatos() {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             style={{
-              padding: '8px 12px',
+              padding: '12px 14px',
               borderRadius: '8px',
               border: '1px solid #1e3d54',
               background: '#0d1f2d',
               color: '#e8edf2',
               fontSize: '12px',
               minWidth: '200px',
+              fontWeight: 500,
             }}
           />
         </div>
@@ -281,7 +284,7 @@ export function Contatos() {
               <th style={{
                 padding: '12px 16px',
                 textAlign: 'left',
-                fontWeight: 600,
+                fontWeight: 700,
                 color: '#7a96aa',
                 fontSize: '11px',
                 textTransform: 'uppercase',
@@ -291,7 +294,7 @@ export function Contatos() {
               <th style={{
                 padding: '12px 16px',
                 textAlign: 'left',
-                fontWeight: 600,
+                fontWeight: 700,
                 color: '#7a96aa',
                 fontSize: '11px',
                 textTransform: 'uppercase',
@@ -301,7 +304,7 @@ export function Contatos() {
               <th style={{
                 padding: '12px 16px',
                 textAlign: 'left',
-                fontWeight: 600,
+                fontWeight: 700,
                 color: '#7a96aa',
                 fontSize: '11px',
                 textTransform: 'uppercase',
@@ -311,7 +314,7 @@ export function Contatos() {
               <th style={{
                 padding: '12px 16px',
                 textAlign: 'left',
-                fontWeight: 600,
+                fontWeight: 700,
                 color: '#7a96aa',
                 fontSize: '11px',
                 textTransform: 'uppercase',
@@ -321,7 +324,7 @@ export function Contatos() {
               <th style={{
                 padding: '12px 16px',
                 textAlign: 'left',
-                fontWeight: 600,
+                fontWeight: 700,
                 color: '#7a96aa',
                 fontSize: '11px',
                 textTransform: 'uppercase',
@@ -343,7 +346,7 @@ export function Contatos() {
           <tbody>
             {contatosFiltrados.map((contato) => (
               <tr key={contato.id} style={{ borderBottom: '1px solid #1e3d54' }}>
-                <td style={{ padding: '12px 16px', color: '#e8edf2', fontWeight: 500 }}>
+                <td style={{ padding: '12px 16px', color: '#e8edf2', fontWeight: 600 }}>
                   <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
                     <div style={{
                       width: '40px',
@@ -367,15 +370,15 @@ export function Contatos() {
                       <span style={{
                         fontSize: '9px',
                         color: contato.badgeColor,
-                        fontWeight: 600,
+                        fontWeight: 700,
                         backgroundColor: `${contato.badgeColor}26`,
                         border: `0.5px solid ${contato.badgeColor}99`,
                         padding: '2px 6px',
-                        borderRadius: '8px',
+                        borderRadius: '10px',
                         display: 'inline-block',
                         width: 'fit-content',
                       }}>
-                        ● {contato.badge}
+                        {contato.badge}
                       </span>
                     </div>
                   </div>
@@ -391,15 +394,15 @@ export function Contatos() {
                     alignItems: 'center',
                     gap: '6px',
                     padding: '8px 12px',
-                    borderRadius: '12px',
+                    borderRadius: '8px',
                     background: '#2ecc7133',
                     border: '1px solid #2ecc71A6',
                     color: '#2ecc71',
                     fontSize: '12px',
-                    fontWeight: 600,
+                    fontWeight: 700,
                     cursor: 'default',
                   }}>
-                    ✓ {contato.status}
+                    {contato.status}
                   </button>
                 </td>
                 <td style={{ padding: '12px 16px', textAlign: 'center' }}>
