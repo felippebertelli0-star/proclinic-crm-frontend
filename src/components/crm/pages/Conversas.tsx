@@ -373,7 +373,7 @@ export function Conversas() {
             {/* ACTION BUTTONS */}
             {[
               { Icon: X, label: 'Fechar Ticket' },
-              { Icon: RefreshCw, label: 'Transferir Ticket' },
+              { Icon: RefreshCw, label: 'Devolver para a IA' },
               { Icon: User, label: 'Transferir Ticket' },
               { Icon: Calendar, label: 'Agendar Mensagem' },
               { Icon: DollarSign, label: 'Nova Oportunidade' },
