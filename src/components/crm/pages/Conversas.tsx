@@ -776,6 +776,8 @@ export function Conversas() {
               <button
                 key={btn.id}
                 onClick={() => handleFiltroChange(btn.id as any)}
+                aria-label={`${btn.label} conversas - ${btn.count} pendentes`}
+                aria-current={filtroStatus === btn.id ? 'page' : undefined}
                 style={{
                   flex: 1,
                   minWidth: '95px',
@@ -814,6 +816,7 @@ export function Conversas() {
           <input
             type="text"
             placeholder="Buscar contato ou ticket..."
+            aria-label="Buscar conversas por contato ou número de ticket"
             value={busca}
             onChange={(e) => setBusca(e.target.value)}
             style={{
@@ -1150,6 +1153,7 @@ export function Conversas() {
               <button
                 key={i}
                 title={label}
+                aria-label={label}
                 onClick={(e) => {
                   e.stopPropagation();
                   if (action === 'fechar' && conversa) {
@@ -1592,6 +1596,7 @@ export function Conversas() {
           <input
             type="text"
             placeholder="Digite uma mensagem..."
+            aria-label="Campo de digitação de mensagem"
             value={novaMensagem}
             onChange={(e) => setNovaMensagem(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleEnviarMensagem()}
