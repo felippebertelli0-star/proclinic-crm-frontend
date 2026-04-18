@@ -176,8 +176,18 @@ export function Conversas() {
 
         {/* FILA DA IA */}
         <div style={{ padding: '12px 16px', borderBottom: '1px solid #1e3d54', flexShrink: 0 }}>
-          <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
-            <div style={{ fontSize: '16px' }}>📞</div>
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
+            <div style={{
+              padding: '6px 8px',
+              borderRadius: '6px',
+              background: 'rgba(155, 89, 182, 0.2)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+            }}>
+              <Zap size={14} color="#9b59b6" strokeWidth={2.5} />
+            </div>
             <div>
               <div style={{ fontSize: '12px', fontWeight: 700, color: '#e8edf2', marginBottom: '2px' }}>Fila da IA</div>
               <div style={{ fontSize: '11px', color: '#7a96aa' }}>Leads sendo atendidos automaticamente</div>
