@@ -119,19 +119,13 @@ export function Contatos() {
               e.currentTarget.style.transform = 'translateY(0)';
             }}
           >
-            {/* ÍCONE MINIMALISTA - NO TOPO */}
+            {/* ÍCONE MINIMALISTA PREMIUM AAA - SEM FUNDO */}
             <div style={{
-              width: '56px',
-              height: '56px',
-              borderRadius: '12px',
-              background: card.bgIcon,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: '24px',
+              fontSize: '32px',
               flexShrink: 0,
-              color: '#7a96aa',
-              fontWeight: 600,
             }}>
               {card.label === 'Hoje' && '📆'}
               {card.label === 'Esta Semana' && '📊'}
@@ -141,12 +135,12 @@ export function Contatos() {
             {/* CONTEÚDO - ABAIXO DO ÍCONE */}
             <div style={{ width: '100%' }}>
               <div style={{
-                fontSize: '44px',
+                fontSize: '36px',
                 fontWeight: 900,
                 color: '#ffffff',
                 marginBottom: '2px',
                 lineHeight: '1',
-                letterSpacing: '-1px',
+                letterSpacing: '-0.5px',
                 WebkitFontSmoothing: 'antialiased',
               }}>
                 {card.value}
