@@ -186,10 +186,42 @@ export function CRMLayout() {
         <div style={{ fontSize: '14px', fontWeight: 700, color: '#c9943a' }}>
           ProClinic — Inteligência Comercial
         </div>
-        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
           <div style={{ fontSize: '12px', color: '#7a96aa', display: 'flex', gap: '8px', alignItems: 'center' }}>
             🏥 <span style={{ color: '#e8edf2' }}>Clínica Dra. Andressa Barbarotti</span>
           </div>
+
+          {/* STATUS DE CONEXÃO */}
+          <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+            {/* WhatsApp */}
+            <div style={{ display: 'flex', gap: '6px', alignItems: 'center', fontSize: '12px', color: '#2ecc71', fontWeight: 600 }}>
+              <div
+                style={{
+                  width: '8px',
+                  height: '8px',
+                  borderRadius: '50%',
+                  background: '#2ecc71',
+                  boxShadow: '0 0 4px rgba(46, 204, 113, 0.5)',
+                }}
+              />
+              WhatsApp Conectado
+            </div>
+
+            {/* Instagram */}
+            <div style={{ display: 'flex', gap: '6px', alignItems: 'center', fontSize: '12px', color: '#e1306c', fontWeight: 600 }}>
+              <div
+                style={{
+                  width: '8px',
+                  height: '8px',
+                  borderRadius: '50%',
+                  background: '#e1306c',
+                  boxShadow: '0 0 4px rgba(225, 48, 108, 0.5)',
+                }}
+              />
+              Instagram Conectado
+            </div>
+          </div>
+
           <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#c9943a', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#0d1f2d', fontWeight: 700, fontSize: '14px' }}>
             H
           </div>
