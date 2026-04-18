@@ -430,8 +430,8 @@ export function Dashboard() {
                 {card.icon}
               </div>
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: '10px', color: '#7a96aa', marginBottom: '6px', fontWeight: 700, letterSpacing: '0.5px', textTransform: 'uppercase' }}>{card.label}</div>
-                <div style={{ fontSize: '28px', fontWeight: 900, color: card.color, marginBottom: '4px', lineHeight: '1' }}>{card.value}</div>
+                <div style={{ fontSize: '10px', color: '#c9943a', marginBottom: '6px', fontWeight: 700, letterSpacing: '0.5px', textTransform: 'uppercase' }}>{card.label}</div>
+                <div style={{ fontSize: '28px', fontWeight: 900, color: '#c9943a', marginBottom: '4px', lineHeight: '1' }}>{card.value}</div>
                 <div style={{ fontSize: '10px', color: '#7a96aa' }}>{card.subtext}</div>
               </div>
             </div>
