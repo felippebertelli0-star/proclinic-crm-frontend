@@ -2532,47 +2532,74 @@ export function Conversas() {
           left: 0,
           right: 0,
           bottom: 0,
-          background: 'rgba(0, 0, 0, 0.5)',
+          background: 'rgba(0, 0, 0, 0.7)',
+          backdropFilter: 'blur(4px)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           zIndex: 10001,
         }}>
           <div style={{
-            background: '#0a1520',
-            borderRadius: '12px',
-            border: '1px solid #1e3d54',
-            padding: '32px',
-            minWidth: '480px',
+            background: PREMIUM_STYLES.gradientDark,
+            borderRadius: '16px',
+            border: `1px solid ${PREMIUM_STYLES.colorBorder}`,
+            padding: '0',
+            minWidth: '500px',
             maxHeight: '85vh',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.6)',
+            boxShadow: PREMIUM_STYLES.shadowXl,
             display: 'flex',
             flexDirection: 'column',
-            gap: '24px',
             overflowY: 'auto',
           }}>
-            {/* HEADER */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'space-between' }}>
+            {/* HEADER PREMIUM COM GRADIENT */}
+            <div style={{
+              background: PREMIUM_STYLES.gradientPrimary,
+              padding: '20px 32px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              justifyContent: 'space-between',
+              borderBottom: `1px solid ${PREMIUM_STYLES.colorBorder}`,
+            }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <Calendar size={20} style={{ color: '#c9943a' }} />
-                <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 700, color: '#e8edf2' }}>
-                  Novo Agendamento
-                </h3>
+                <Calendar size={24} style={{ color: '#0d1f2d' }} />
+                <div>
+                  <h3 style={{ margin: 0, fontSize: '17px', fontWeight: 700, color: '#0d1f2d' }}>
+                    Novo Agendamento
+                  </h3>
+                  <p style={{ margin: 0, fontSize: '11px', color: 'rgba(13, 31, 45, 0.8)', marginTop: '2px' }}>
+                    Agende uma mensagem para enviar depois
+                  </p>
+                </div>
               </div>
               <button
                 onClick={fecharAgendarModal}
                 style={{
-                  background: 'transparent',
+                  background: 'rgba(13, 31, 45, 0.2)',
                   border: 'none',
-                  color: '#7a96aa',
+                  color: '#0d1f2d',
                   cursor: 'pointer',
-                  fontSize: '20px',
-                  padding: '4px 8px',
+                  fontSize: '24px',
+                  padding: '6px 10px',
+                  borderRadius: '8px',
+                  transition: PREMIUM_STYLES.transitionFast,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.background = 'rgba(13, 31, 45, 0.4)';
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.background = 'rgba(13, 31, 45, 0.2)';
                 }}
               >
                 ✕
               </button>
             </div>
+
+            {/* CONTEÚDO */}
+            <div style={{ padding: '32px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
 
             {/* INFORMAÇÕES DO CONTATO */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -2883,6 +2910,7 @@ export function Conversas() {
               >
                 Adicionar
               </button>
+            </div>
             </div>
           </div>
         </div>
