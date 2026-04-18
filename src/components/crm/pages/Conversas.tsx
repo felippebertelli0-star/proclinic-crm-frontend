@@ -985,8 +985,13 @@ export function Conversas() {
                         <div style={{ fontSize: '10px', color: '#7a96aa', marginBottom: '4px', lineHeight: '1.3' }}>
                           {conv.preview}
                         </div>
-                        <div style={{ fontSize: '10px', color: '#c9943a', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                          ● {conv.origem}
+                        <div style={{ fontSize: '10px', color: '#c9943a', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                          <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            👤 {conv.atribuidoA}
+                          </span>
+                          <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            ● {conv.origem}
+                          </span>
                         </div>
                         <div style={{ display: 'flex', gap: '3px', flexWrap: 'wrap' }}>
                           {conv.tags.map((tag: string, i: number) => {
