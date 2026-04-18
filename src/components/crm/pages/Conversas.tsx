@@ -199,6 +199,19 @@ export function Conversas() {
     }
   };
 
+  const enviarAudio = () => {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+      mediaRecorderRef.current.stop();
+    }
+    setGravando(false);
+    clearInterval(timerRef.current);
+
+    // Aguarda um momento para o arquivo ser processado
+    setTimeout(() => {
+      handleEnviarMensagem();
+    }, 100);
+  };
+
   const cancelarGravacao = () => {
     if (mediaRecorderRef.current) {
       mediaRecorderRef.current.abort();
@@ -809,7 +822,7 @@ export function Conversas() {
                 Cancelar
               </button>
               <button
-                onClick={pararGravacao}
+                onClick={enviarAudio}
                 style={{
                   padding: '6px 14px',
                   borderRadius: '6px',
