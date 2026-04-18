@@ -19,6 +19,7 @@ export function Conversas() {
   const [gravando, setGravando] = useState(false);
   const [emojiMenuVisible, setEmojiMenuVisible] = useState(false);
   const [tempoGravacao, setTempoGravacao] = useState(0);
+  const [historicoMensagens, setHistoricoMensagens] = useState<any[]>([]);
   const mediaRecorderRef = useRef<any>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const streamRef = useRef<MediaStream | null>(null);
@@ -242,6 +243,13 @@ export function Conversas() {
   const handleEnviarMensagem = () => {
     if (novaMensagem.trim()) {
       // Adiciona mensagem ao histórico
+      const novaMens = {
+        tipo: 'enviada',
+        hora: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+        texto: novaMensagem,
+      };
+
+      setHistoricoMensagens([...historicoMensagens, novaMens]);
       console.log('📤 Mensagem enviada:', novaMensagem);
 
       // Aqui você faria a requisição para enviar via API
@@ -672,7 +680,7 @@ export function Conversas() {
           background: 'linear-gradient(180deg, #0a1520 0%, #0d1f2d 100%)',
           justifyContent: 'flex-end',
         }}>
-          {mensagensPrototipo.map((msg: any, index) => {
+          {[...mensagensPrototipo, ...historicoMensagens].map((msg: any, index) => {
             if (msg.tipo === 'evento') {
               return (
                 <div key={index} style={{ textAlign: 'center', margin: '16px 0 8px 0', color: '#7a96aa', fontSize: '12px', fontWeight: 600 }}>
@@ -1156,7 +1164,7 @@ export function Conversas() {
               justifyContent: 'flex-end',
               background: 'linear-gradient(180deg, #0d1f2d 0%, #0a1520 100%)',
             }}>
-              {mensagensPrototipo.map((msg: any, index) => {
+              {[...mensagensPrototipo, ...historicoMensagens].map((msg: any, index) => {
                 if (msg.tipo === 'evento') {
                   return (
                     <div key={index} style={{ textAlign: 'center', margin: '20px 0 10px 0', color: '#7a96aa', fontSize: '12px', fontWeight: 700, letterSpacing: '0.5px' }}>
