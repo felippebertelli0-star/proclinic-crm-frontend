@@ -278,7 +278,58 @@ export function Conversas() {
                       </div>
                     </div>
                     {conv.status === 'aguardando' && (
-                      <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: '#ffff00', flexShrink: 0 }} />
+                      <div style={{ display: 'flex', gap: '6px', flexShrink: 0 }}>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            console.log('ACEITAR:', conv.id);
+                          }}
+                          style={{
+                            padding: '4px 10px',
+                            borderRadius: '4px',
+                            border: 'none',
+                            background: '#2ecc71',
+                            color: '#ffffff',
+                            fontSize: '10px',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                            transition: 'all 0.2s',
+                          }}
+                          onMouseEnter={(e) => {
+                            (e.currentTarget as HTMLElement).style.opacity = '0.8';
+                          }}
+                          onMouseLeave={(e) => {
+                            (e.currentTarget as HTMLElement).style.opacity = '1';
+                          }}
+                        >
+                          ACEITAR
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            console.log('FINALIZAR:', conv.id);
+                          }}
+                          style={{
+                            padding: '4px 10px',
+                            borderRadius: '4px',
+                            border: 'none',
+                            background: '#e74c3c',
+                            color: '#ffffff',
+                            fontSize: '10px',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                            transition: 'all 0.2s',
+                          }}
+                          onMouseEnter={(e) => {
+                            (e.currentTarget as HTMLElement).style.opacity = '0.8';
+                          }}
+                          onMouseLeave={(e) => {
+                            (e.currentTarget as HTMLElement).style.opacity = '1';
+                          }}
+                        >
+                          FINALIZAR
+                        </button>
+                      </div>
                     )}
                   </div>
                 </div>
