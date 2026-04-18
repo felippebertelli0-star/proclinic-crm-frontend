@@ -437,7 +437,7 @@ export function Conversas() {
             ...conv,
             atribuidoA: membroSelecionado
               ? `${membroSelecionado.nome}`
-              : `Fila - ${filaSelecionada}`,
+              : filaSelecionada,
           }
         : conv
     );
