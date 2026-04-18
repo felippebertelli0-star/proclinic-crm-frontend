@@ -95,9 +95,17 @@ export function Conversas() {
     return matchStatus && matchBusca;
   });
 
-  const conversa = conversasFiltradas[selectedConversa];
+  // Resetar seleção quando mudar filtro
+  const validSelectedConversa = selectedConversa < conversasFiltradas.length ? selectedConversa : 0;
+  const conversa = conversasFiltradas[validSelectedConversa];
   const totalAtendendo = conversas.filter(c => c.status === 'atendendo').length;
   const totalAguardando = conversas.filter(c => c.status === 'aguardando').length;
+
+  // Handler para mudar filtro e resetar seleção
+  const handleFiltroChange = (status: 'atendendo' | 'aguardando') => {
+    setFiltroStatus(status);
+    setSelectedConversa(0);
+  };
 
   // ============ FUNÇÕES DE NEGÓCIO ============
   const abrirEspiar = (conv: any) => {
@@ -161,7 +169,7 @@ export function Conversas() {
             ].map((btn) => (
               <button
                 key={btn.id}
-                onClick={() => setFiltroStatus(btn.id as any)}
+                onClick={() => handleFiltroChange(btn.id as any)}
                 style={{
                   padding: '6px 12px',
                   borderRadius: '6px',
@@ -232,7 +240,7 @@ export function Conversas() {
         <div style={{ flex: 1, overflowY: 'auto', scrollbarWidth: 'thin' }}>
           {conversasFiltradas.length > 0 ? (
             conversasFiltradas.map((conv, index) => {
-              const isSelected = selectedConversa === index;
+              const isSelected = validSelectedConversa === index;
               const isAguardando = filtroStatus === 'aguardando';
 
               return (
@@ -436,6 +444,8 @@ export function Conversas() {
         flexDirection: 'column',
         borderLeft: '1px solid #1e3d54',
       }}>
+        {conversa ? (
+          <>
         {/* HEADER DA CONVERSA */}
         <div style={{
           padding: '16px 24px',
@@ -748,6 +758,22 @@ export function Conversas() {
             <Send size={18} />
           </button>
         </div>
+          </>
+        ) : (
+          <div style={{
+            flex: 1,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#7a96aa',
+            fontSize: '14px',
+            flexDirection: 'column',
+            gap: '12px',
+          }}>
+            <div style={{ fontSize: '48px', opacity: 0.3 }}>💬</div>
+            <div>Selecione uma conversa para começar</div>
+          </div>
+        )}
       </div>
 
       {/* MODAL DE ESPIAR - POP-UP PREMIUM */}
