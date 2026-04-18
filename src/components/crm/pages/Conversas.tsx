@@ -6,7 +6,7 @@
 'use client';
 
 import { useState } from 'react';
-import { X, RefreshCw, Settings, Calendar, DollarSign, FileText, Paperclip, Zap, BarChart3, User } from 'lucide-react';
+import { X, RefreshCw, Settings, Calendar, DollarSign, FileText, Paperclip, Zap, BarChart3, User, Mic, Send } from 'lucide-react';
 
 export function Conversas() {
   const [selectedConversa, setSelectedConversa] = useState(0);
@@ -555,15 +555,17 @@ export function Conversas() {
             border: 'none',
             cursor: 'pointer',
             color: '#7a96aa',
-            fontSize: '16px',
             transition: 'all 0.2s',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
           }} onMouseEnter={(e) => {
             (e.currentTarget as HTMLElement).style.color = '#c9943a';
           }}
           onMouseLeave={(e) => {
             (e.currentTarget as HTMLElement).style.color = '#7a96aa';
           }}>
-            😀
+            <Mic size={18} />
           </button>
 
           {/* INPUT */}
@@ -618,7 +620,7 @@ export function Conversas() {
               (e.currentTarget as HTMLElement).style.background = 'transparent';
             }}
           >
-            ↗
+            <Send size={18} />
           </button>
         </div>
       </div>
