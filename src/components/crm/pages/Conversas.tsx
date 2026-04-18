@@ -285,25 +285,22 @@ export function Conversas() {
                             console.log('ACEITAR:', conv.id);
                           }}
                           style={{
-                            padding: '8px 14px',
-                            borderRadius: '4px',
+                            padding: '4px 8px',
+                            borderRadius: '2px',
                             border: 'none',
                             background: '#2ecc71',
                             color: '#ffffff',
-                            fontSize: '12px',
-                            fontWeight: 800,
+                            fontSize: '10px',
+                            fontWeight: 700,
                             cursor: 'pointer',
                             transition: 'all 0.2s',
                             whiteSpace: 'nowrap',
-                            boxShadow: '0 2px 6px rgba(46, 204, 113, 0.3)',
                           }}
                           onMouseEnter={(e) => {
-                            (e.currentTarget as HTMLElement).style.transform = 'translateY(-1px)';
-                            (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 12px rgba(46, 204, 113, 0.5)';
+                            (e.currentTarget as HTMLElement).style.opacity = '0.85';
                           }}
                           onMouseLeave={(e) => {
-                            (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
-                            (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 6px rgba(46, 204, 113, 0.3)';
+                            (e.currentTarget as HTMLElement).style.opacity = '1';
                           }}
                         >
                           ACEITAR
@@ -314,25 +311,22 @@ export function Conversas() {
                             console.log('FINALIZAR:', conv.id);
                           }}
                           style={{
-                            padding: '8px 14px',
-                            borderRadius: '4px',
+                            padding: '4px 8px',
+                            borderRadius: '2px',
                             border: 'none',
                             background: '#e74c3c',
                             color: '#ffffff',
-                            fontSize: '12px',
-                            fontWeight: 800,
+                            fontSize: '10px',
+                            fontWeight: 700,
                             cursor: 'pointer',
                             transition: 'all 0.2s',
                             whiteSpace: 'nowrap',
-                            boxShadow: '0 2px 6px rgba(231, 76, 60, 0.3)',
                           }}
                           onMouseEnter={(e) => {
-                            (e.currentTarget as HTMLElement).style.transform = 'translateY(-1px)';
-                            (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 12px rgba(231, 76, 60, 0.5)';
+                            (e.currentTarget as HTMLElement).style.opacity = '0.85';
                           }}
                           onMouseLeave={(e) => {
-                            (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
-                            (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 6px rgba(231, 76, 60, 0.3)';
+                            (e.currentTarget as HTMLElement).style.opacity = '1';
                           }}
                         >
                           FINALIZAR
