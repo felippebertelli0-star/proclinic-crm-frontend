@@ -935,7 +935,7 @@ export function Conversas() {
                           </div>
                           {/* Eye icon sempre visível no atendendo, ou quando há notificações no aguardando */}
                           {(!isAguardando || conv.unread > 0) && (
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', height: '18px' }}>
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
@@ -947,6 +947,9 @@ export function Conversas() {
                                   transition: 'opacity 0.2s',
                                   display: 'flex',
                                   alignItems: 'center',
+                                  justifyContent: 'center',
+                                  height: '18px',
+                                  width: '18px',
                                   background: 'none',
                                   border: 'none',
                                   padding: 0,
@@ -962,7 +965,7 @@ export function Conversas() {
                                 <Eye size={14} />
                               </button>
                               {/* Tempo entre olho e notificação */}
-                              <span style={{ fontSize: '9px', color: '#7a96aa', display: 'flex', alignItems: 'center', gap: '2px' }}>
+                              <span style={{ fontSize: '9px', color: '#7a96aa', display: 'flex', alignItems: 'center', gap: '2px', height: '18px' }}>
                                 <Clock size={11} />
                                 {conv.hora}
                               </span>
