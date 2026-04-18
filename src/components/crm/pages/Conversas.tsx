@@ -6,7 +6,7 @@
 'use client';
 
 import { useState } from 'react';
-import { X, RefreshCw, Settings, Calendar, DollarSign, FileText, Paperclip, Zap, BarChart3, User, Mic, Send, Smile } from 'lucide-react';
+import { X, RefreshCw, Calendar, DollarSign, FileText, Paperclip, Zap, BarChart3, User, Mic, Send, Smile } from 'lucide-react';
 
 export function Conversas() {
   const [selectedConversa, setSelectedConversa] = useState(0);
@@ -370,16 +370,16 @@ export function Conversas() {
           <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
             {/* ACTION BUTTONS */}
             {[
-              { Icon: X, label: 'Fechar' },
-              { Icon: RefreshCw, label: 'Refresh' },
-              { Icon: Settings, label: 'Settings' },
-              { Icon: Calendar, label: 'Calendário' },
-              { Icon: DollarSign, label: 'Dólar' },
-              { Icon: FileText, label: 'Documento' },
-              { Icon: Paperclip, label: 'Clipe' },
-              { Icon: Zap, label: 'Raio' },
-              { Icon: BarChart3, label: 'Gráfico' },
-              { Icon: User, label: 'Pessoa' },
+              { Icon: X, label: 'Fechar Ticket' },
+              { Icon: RefreshCw, label: 'Transferir Ticket' },
+              { Icon: User, label: 'Transferir Ticket' },
+              { Icon: Calendar, label: 'Agendar Mensagem' },
+              { Icon: DollarSign, label: 'Nova Oportunidade' },
+              { Icon: FileText, label: 'Nota Interna' },
+              { Icon: Paperclip, label: 'Anexar Arquivo' },
+              { Icon: Zap, label: 'Respostas Rápidas' },
+              { Icon: BarChart3, label: 'Histórico' },
+              { Icon: User, label: 'Info do Contato' },
             ].map(({ Icon, label }, i) => (
               <button
                 key={i}
