@@ -432,7 +432,7 @@ export function Dashboard() {
               <div style={{ flex: 1 }}>
                 <div style={{ fontSize: '10px', color: '#c9943a', marginBottom: '6px', fontWeight: 700, letterSpacing: '0.5px', textTransform: 'uppercase' }}>{card.label}</div>
                 <div style={{ fontSize: '28px', fontWeight: 900, color: '#c9943a', marginBottom: '4px', lineHeight: '1' }}>{card.value}</div>
-                <div style={{ fontSize: '10px', color: '#7a96aa' }}>{card.subtext}</div>
+                <div style={{ fontSize: '10px', color: '#c9943a' }}>{card.subtext}</div>
               </div>
             </div>
           ))}
@@ -487,9 +487,9 @@ export function Dashboard() {
                 {card.icon}
               </div>
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: '10px', color: '#7a96aa', marginBottom: '6px', fontWeight: 700, letterSpacing: '0.5px', textTransform: 'uppercase' }}>{card.label}</div>
-                <div style={{ fontSize: '28px', fontWeight: 900, color: card.color, marginBottom: '6px', lineHeight: '1' }}>{card.value}</div>
-                <div style={{ fontSize: '10px', color: '#2ecc71', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.3px' }}>{card.subtext}</div>
+                <div style={{ fontSize: '10px', color: '#c9943a', marginBottom: '6px', fontWeight: 700, letterSpacing: '0.5px', textTransform: 'uppercase' }}>{card.label}</div>
+                <div style={{ fontSize: '28px', fontWeight: 900, color: '#c9943a', marginBottom: '6px', lineHeight: '1' }}>{card.value}</div>
+                <div style={{ fontSize: '10px', color: '#c9943a', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.3px' }}>{card.subtext}</div>
               </div>
             </div>
           ))}
@@ -538,7 +538,7 @@ export function Dashboard() {
               }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '10px' }}>
-                <div style={{ fontSize: '9px', color: '#7a96aa', fontWeight: 800, letterSpacing: '0.8px', textTransform: 'uppercase' }}>{kpi.label}</div>
+                <div style={{ fontSize: '9px', color: '#c9943a', fontWeight: 800, letterSpacing: '0.8px', textTransform: 'uppercase' }}>{kpi.label}</div>
                 <div
                   onMouseEnter={(e) => {
                     setTooltipVisible(kpi.key);
@@ -546,11 +546,11 @@ export function Dashboard() {
                   }}
                   onMouseLeave={(e) => {
                     setTooltipVisible(null);
-                    (e.currentTarget as HTMLElement).style.color = '#7a96aa';
+                    (e.currentTarget as HTMLElement).style.color = '#c9943a';
                   }}
                   style={{
                     fontSize: '13px',
-                    color: '#7a96aa',
+                    color: '#c9943a',
                     cursor: 'pointer',
                     position: 'relative',
                     transition: 'color 0.2s',
@@ -578,7 +578,7 @@ export function Dashboard() {
                   )}
                 </div>
               </div>
-              <div style={{ fontSize: '24px', fontWeight: 900, color: kpi.color, marginBottom: '10px', lineHeight: '1' }}>
+              <div style={{ fontSize: '24px', fontWeight: 900, color: '#c9943a', marginBottom: '10px', lineHeight: '1' }}>
                 {kpi.value}
               </div>
               {kpi.bar > 0 && (
@@ -592,7 +592,7 @@ export function Dashboard() {
                   <div style={{ height: '100%', width: `${kpi.bar}%`, background: `linear-gradient(90deg, ${kpi.color}, ${kpi.color}aa)`, borderRadius: '3px', transition: 'width 0.5s ease' }} />
                 </div>
               )}
-              <div style={{ fontSize: '11px', color: '#7a96aa', lineHeight: '1.4' }}>{kpi.subtext}</div>
+              <div style={{ fontSize: '11px', color: '#c9943a', lineHeight: '1.4' }}>{kpi.subtext}</div>
             </div>
           ))}
         </div>
