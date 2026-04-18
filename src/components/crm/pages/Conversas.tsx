@@ -357,44 +357,17 @@ export function Conversas() {
           padding: '16px 24px',
           borderBottom: '1px solid #1e3d54',
           display: 'flex',
-          flexDirection: 'column',
-          gap: '12px',
+          alignItems: 'center',
+          justifyContent: 'space-between',
           background: 'rgba(19, 38, 54, 0.5)',
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div>
-              <h2 style={{ margin: '0 0 6px 0', fontSize: '15px', fontWeight: 700, color: '#e8edf2' }}>
-                {conversa.nome} - #{conversa.id}
-              </h2>
-              <div style={{ fontSize: '12px', color: '#7a96aa', marginBottom: '8px' }}>
-                Atribuído à 🤖 IA · {conversa.atribuidoA.split(' - ')[1]} · {conversa.data}
-              </div>
+          <div>
+            <h2 style={{ margin: '0 0 6px 0', fontSize: '15px', fontWeight: 700, color: '#e8edf2' }}>
+              {conversa.nome} - #{conversa.id}
+            </h2>
+            <div style={{ fontSize: '12px', color: '#7a96aa', marginBottom: '8px' }}>
+              Atribuído à 🤖 IA · {conversa.atribuidoA.split(' - ')[1]} · {conversa.data}
             </div>
-            {/* BUSCA - AGORA ENCIMA DOS ÍCONES */}
-            <input
-              type="text"
-              placeholder="🔍 Buscar etiquetas..."
-              style={{
-                padding: '6px 12px',
-                background: 'rgba(26, 51, 71, 0.5)',
-                border: '1px solid #1e3d54',
-                borderRadius: '6px',
-                color: '#e8edf2',
-                fontSize: '12px',
-                transition: 'all 0.2s',
-                outline: 'none',
-                width: '200px',
-                height: '32px',
-              }}
-              onFocus={(e) => {
-                e.currentTarget.style.borderColor = '#c9943a';
-                e.currentTarget.style.background = 'rgba(26, 51, 71, 0.8)';
-              }}
-              onBlur={(e) => {
-                e.currentTarget.style.borderColor = '#1e3d54';
-                e.currentTarget.style.background = 'rgba(26, 51, 71, 0.5)';
-              }}
-            />
           </div>
           <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
             {/* ACTION BUTTONS */}
