@@ -8,6 +8,32 @@
 import { useState, useEffect, useRef } from 'react';
 import { X, RefreshCw, Calendar, DollarSign, FileText, Paperclip, Zap, BarChart3, User, Mic, Send, Smile, Clock, Eye } from 'lucide-react';
 
+// ============ ESTILOS PREMIUM AAA ============
+const PREMIUM_STYLES = {
+  // Gradients
+  gradientPrimary: 'linear-gradient(135deg, #c9943a 0%, #e8b86d 100%)',
+  gradientDark: 'linear-gradient(135deg, #0a1520 0%, #132636 100%)',
+
+  // Shadows Premium
+  shadowSm: '0 2px 8px rgba(0, 0, 0, 0.3)',
+  shadowMd: '0 4px 16px rgba(0, 0, 0, 0.4)',
+  shadowLg: '0 8px 32px rgba(0, 0, 0, 0.6)',
+  shadowXl: '0 16px 48px rgba(0, 0, 0, 0.8)',
+
+  // Colors
+  colorGold: '#c9943a',
+  colorGoldLight: '#e8b86d',
+  colorText: '#e8edf2',
+  colorTextSecondary: '#7a96aa',
+  colorBorder: '#1e3d54',
+  colorBg: '#0a1520',
+
+  // Transitions
+  transitionFast: 'all 0.15s ease-out',
+  transitionMedium: 'all 0.25s ease-out',
+  transitionSlow: 'all 0.35s ease-out',
+};
+
 export function Conversas() {
   const [selectedConversa, setSelectedConversa] = useState(0);
   const [filtroStatus, setFiltroStatus] = useState<'atendendo' | 'aguardando' | 'fechadas'>('atendendo');
@@ -2210,52 +2236,95 @@ export function Conversas() {
           left: 0,
           right: 0,
           bottom: 0,
-          background: 'rgba(0, 0, 0, 0.5)',
+          background: 'rgba(0, 0, 0, 0.7)',
+          backdropFilter: 'blur(4px)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           zIndex: 10000,
         }}>
           <div style={{
-            background: '#0a1520',
-            borderRadius: '12px',
-            border: '1px solid #1e3d54',
+            background: PREMIUM_STYLES.gradientDark,
+            borderRadius: '16px',
+            border: `1px solid ${PREMIUM_STYLES.colorBorder}`,
             padding: '32px',
-            minWidth: '420px',
+            minWidth: '450px',
             maxHeight: '80vh',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.6)',
+            boxShadow: PREMIUM_STYLES.shadowXl,
             display: 'flex',
             flexDirection: 'column',
             gap: '24px',
             overflowY: 'auto',
           }}>
-            {/* HEADER */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'space-between' }}>
+            {/* HEADER PREMIUM */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              justifyContent: 'space-between',
+              paddingBottom: '16px',
+              borderBottom: `1px solid ${PREMIUM_STYLES.colorBorder}`,
+            }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <User size={20} style={{ color: '#c9943a' }} />
-                <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 700, color: '#e8edf2' }}>
-                  Transferir Ticket
-                </h3>
+                <div style={{
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '10px',
+                  background: PREMIUM_STYLES.gradientPrimary,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                  <User size={20} style={{ color: '#0d1f2d' }} />
+                </div>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 700, color: PREMIUM_STYLES.colorText }}>
+                    Transferir Ticket
+                  </h3>
+                  <p style={{ margin: 0, fontSize: '11px', color: PREMIUM_STYLES.colorTextSecondary, marginTop: '2px' }}>
+                    Escolha um membro da equipe
+                  </p>
+                </div>
               </div>
               <button
                 onClick={fecharTransferirModal}
                 style={{
                   background: 'transparent',
                   border: 'none',
-                  color: '#7a96aa',
+                  color: PREMIUM_STYLES.colorTextSecondary,
                   cursor: 'pointer',
-                  fontSize: '20px',
+                  fontSize: '24px',
                   padding: '4px 8px',
+                  transition: PREMIUM_STYLES.transitionFast,
+                  borderRadius: '8px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.background = 'rgba(201, 148, 58, 0.1)';
+                  (e.currentTarget as HTMLElement).style.color = PREMIUM_STYLES.colorGold;
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.background = 'transparent';
+                  (e.currentTarget as HTMLElement).style.color = PREMIUM_STYLES.colorTextSecondary;
                 }}
               >
                 ✕
               </button>
             </div>
 
-            {/* TRANSFERIR PARA MEMBRO */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <label style={{ fontSize: '12px', fontWeight: 700, color: 'rgba(255, 255, 255, 0.4)', textTransform: 'uppercase', letterSpacing: '0.8px' }}>
-                Transferir para membro
+            {/* TRANSFERIR PARA MEMBRO PREMIUM */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <label style={{
+                fontSize: '11px',
+                fontWeight: 700,
+                color: PREMIUM_STYLES.colorGold,
+                textTransform: 'uppercase',
+                letterSpacing: '0.8px',
+                opacity: 0.9,
+              }}>
+                👤 Transferir para membro
               </label>
               <input
                 type="text"
@@ -2263,14 +2332,15 @@ export function Conversas() {
                 value={buscaMembro}
                 onChange={(e) => setBuscaMembro(e.target.value)}
                 style={{
-                  padding: '10px 14px',
-                  borderRadius: '6px',
-                  border: '1px solid #1e3d54',
-                  background: 'rgba(13, 31, 45, 0.5)',
-                  color: '#e8edf2',
+                  padding: '12px 16px',
+                  borderRadius: '10px',
+                  border: `1px solid ${PREMIUM_STYLES.colorBorder}`,
+                  background: 'rgba(19, 38, 54, 0.6)',
+                  color: PREMIUM_STYLES.colorText,
                   fontSize: '13px',
                   outline: 'none',
-                  transition: 'all 0.2s',
+                  transition: PREMIUM_STYLES.transitionFast,
+                  boxShadow: `inset 0 2px 8px rgba(0, 0, 0, 0.2)`,
                 }}
                 onFocus={(e) => {
                   (e.currentTarget as HTMLElement).style.borderColor = '#c9943a';
