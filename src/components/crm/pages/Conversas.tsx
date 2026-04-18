@@ -828,7 +828,7 @@ export function Conversas() {
     <div style={{ display: 'flex', height: 'calc(100vh - 60px)', background: '#0d1f2d', color: '#e8edf2', fontFamily: "'Segoe UI', sans-serif" }}>
       {/* SIDEBAR - LISTA DE CONVERSAS */}
       <div style={{
-        width: '500px',
+        width: '520px',
         background: '#0d1f2d',
         borderRight: '1px solid #1e3d54',
         display: 'flex',
@@ -854,7 +854,8 @@ export function Conversas() {
                 onClick={() => handleFiltroChange(btn.id as any)}
                 style={{
                   flex: 1,
-                  padding: '8px 10px',
+                  minWidth: '95px',
+                  padding: '8px 8px',
                   borderRadius: '8px',
                   border: filtroStatus === btn.id ? '2px solid #c9943a' : '1px solid #1e3d54',
                   background: filtroStatus === btn.id ? '#c9943a' : 'rgba(201, 148, 58, 0.08)',
@@ -865,8 +866,7 @@ export function Conversas() {
                   transition: 'all 0.25s ease',
                   textAlign: 'center',
                   whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
+                  overflow: 'visible',
                 }}
                 onMouseEnter={(e) => {
                   if (filtroStatus !== btn.id) {
