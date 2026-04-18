@@ -6,6 +6,7 @@
 'use client';
 
 import { useState } from 'react';
+import { X, RefreshCw, Settings, Calendar, DollarSign, FileText, Paperclip, Zap, BarChart3, User } from 'lucide-react';
 
 export function Conversas() {
   const [selectedConversa, setSelectedConversa] = useState(0);
@@ -323,9 +324,21 @@ export function Conversas() {
           </div>
           <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
             {/* ACTION BUTTONS */}
-            {['✕', '↻', '⚙', '📅', '$', '📄', '📎', '⚡', '📊', '👤'].map((icon, i) => (
+            {[
+              { Icon: X, label: 'Fechar' },
+              { Icon: RefreshCw, label: 'Refresh' },
+              { Icon: Settings, label: 'Settings' },
+              { Icon: Calendar, label: 'Calendário' },
+              { Icon: DollarSign, label: 'Dólar' },
+              { Icon: FileText, label: 'Documento' },
+              { Icon: Paperclip, label: 'Clipe' },
+              { Icon: Zap, label: 'Raio' },
+              { Icon: BarChart3, label: 'Gráfico' },
+              { Icon: User, label: 'Pessoa' },
+            ].map(({ Icon, label }, i) => (
               <button
                 key={i}
+                title={label}
                 style={{
                   width: '32px',
                   height: '32px',
@@ -334,11 +347,11 @@ export function Conversas() {
                   border: 'none',
                   cursor: 'pointer',
                   color: '#7a96aa',
-                  fontSize: '14px',
                   transition: 'all 0.2s',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
+                  padding: 0,
                 }}
                 onMouseEnter={(e) => {
                   (e.currentTarget as HTMLElement).style.background = 'rgba(201, 148, 58, 0.1)';
@@ -349,7 +362,7 @@ export function Conversas() {
                   (e.currentTarget as HTMLElement).style.color = '#7a96aa';
                 }}
               >
-                {icon}
+                <Icon size={18} />
               </button>
             ))}
             {/* STATUS ACTIVE */}
