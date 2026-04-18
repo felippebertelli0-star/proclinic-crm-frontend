@@ -2317,6 +2317,7 @@ export function Conversas() {
                 {membrosFiltrados.map((membro: any) => (
                   <button
                     key={membro.id}
+                    title={`Transferir para ${membro.nome}`}
                     onClick={() => {
                       setMembroSelecionado(membro);
                       setFilaSelecionada(null);
@@ -2378,6 +2379,7 @@ export function Conversas() {
                 Transferir para fila
               </label>
               <select
+                title="Selecionar fila para transferência"
                 value={filaSelecionada || ''}
                 onChange={(e) => {
                   setFilaSelecionada(e.target.value || null);
@@ -2414,6 +2416,7 @@ export function Conversas() {
             {/* BOTÕES */}
             <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
               <button
+                title="Cancelar transferência"
                 onClick={fecharTransferirModal}
                 style={{
                   padding: '10px 20px',
@@ -2438,6 +2441,7 @@ export function Conversas() {
                 Cancelar
               </button>
               <button
+                title="Transferir ticket para membro ou fila"
                 onClick={transferirTicket}
                 style={{
                   padding: '10px 20px',
