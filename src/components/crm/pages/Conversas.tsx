@@ -935,7 +935,7 @@ export function Conversas() {
                           </div>
                           {/* Eye icon sempre visível no atendendo, ou quando há notificações no aguardando */}
                           {(!isAguardando || conv.unread > 0) && (
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', height: '18px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', height: '16px' }}>
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
@@ -948,12 +948,14 @@ export function Conversas() {
                                   display: 'flex',
                                   alignItems: 'center',
                                   justifyContent: 'center',
-                                  height: '18px',
-                                  width: '18px',
+                                  height: '16px',
+                                  width: '16px',
                                   background: 'none',
                                   border: 'none',
                                   padding: 0,
+                                  margin: 0,
                                   color: '#7a96aa',
+                                  lineHeight: 1,
                                 }}
                                 onMouseEnter={(e) => {
                                   (e.currentTarget as HTMLElement).style.opacity = '1';
@@ -962,11 +964,11 @@ export function Conversas() {
                                   (e.currentTarget as HTMLElement).style.opacity = conv.unread > 0 ? '0.5' : '0.3';
                                 }}
                               >
-                                <Eye size={14} />
+                                <Eye size={12} />
                               </button>
                               {/* Tempo entre olho e notificação */}
-                              <span style={{ fontSize: '9px', color: '#7a96aa', display: 'flex', alignItems: 'center', gap: '2px', height: '18px' }}>
-                                <Clock size={11} />
+                              <span style={{ fontSize: '9px', color: '#7a96aa', display: 'flex', alignItems: 'center', gap: '2px', height: '16px', lineHeight: 1, margin: 0, padding: 0 }}>
+                                <Clock size={10} />
                                 {conv.hora}
                               </span>
                               {conv.unread > 0 && (
@@ -975,13 +977,14 @@ export function Conversas() {
                                   color: '#ffffff',
                                   fontSize: '9px',
                                   fontWeight: 800,
-                                  width: '18px',
-                                  height: '18px',
+                                  width: '16px',
+                                  height: '16px',
                                   borderRadius: '50%',
                                   display: 'flex',
                                   alignItems: 'center',
                                   justifyContent: 'center',
                                   flexShrink: 0,
+                                  lineHeight: 1,
                                 }}>
                                   {conv.unread}
                                 </div>
