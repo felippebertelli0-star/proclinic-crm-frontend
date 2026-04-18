@@ -266,10 +266,6 @@ export function CRMLayout() {
               Instagram Conectado
             </div>
           </div>
-
-          <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#c9943a', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#0d1f2d', fontWeight: 700, fontSize: '14px' }}>
-            H
-          </div>
         </div>
       </div>
 
