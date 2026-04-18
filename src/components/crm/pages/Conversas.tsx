@@ -750,7 +750,7 @@ export function Conversas() {
         </div>
       </div>
 
-      {/* MODAL DE ESPIAR - POP-UP */}
+      {/* MODAL DE ESPIAR - POP-UP PREMIUM */}
       {modalVisible && conversaModal && (
         <div
           onClick={fecharEspiar}
@@ -760,49 +760,69 @@ export function Conversas() {
             left: 0,
             right: 0,
             bottom: 0,
-            background: 'rgba(0, 0, 0, 0.6)',
+            background: 'rgba(0, 0, 0, 0.7)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             zIndex: 1000,
+            backdropFilter: 'blur(4px)',
           }}
         >
           <div
             onClick={(e) => e.stopPropagation()}
             style={{
               width: '90%',
-              maxWidth: '600px',
-              maxHeight: '80vh',
-              background: '#0d1f2d',
-              borderRadius: '12px',
-              border: '1px solid #1e3d54',
+              maxWidth: '680px',
+              maxHeight: '85vh',
+              background: 'linear-gradient(135deg, #0a1520 0%, #0d1f2d 100%)',
+              borderRadius: '14px',
+              border: '1px solid rgba(201, 148, 58, 0.15)',
               display: 'flex',
               flexDirection: 'column',
-              boxShadow: '0 20px 60px rgba(0, 0, 0, 0.8)',
+              boxShadow: '0 25px 80px rgba(0, 0, 0, 0.9), 0 0 40px rgba(201, 148, 58, 0.1)',
             }}
           >
-            {/* MODAL HEADER */}
+            {/* MODAL HEADER - PREMIUM */}
             <div style={{
-              padding: '16px 24px',
-              borderBottom: '1px solid #1e3d54',
+              padding: '20px 24px',
+              borderBottom: '1px solid rgba(30, 61, 84, 0.5)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
+              background: 'rgba(13, 31, 45, 0.4)',
             }}>
-              <div>
-                <h3 style={{ margin: '0 0 4px 0', fontSize: '15px', fontWeight: 700, color: '#e8edf2' }}>
-                  {conversaModal.nome} - #{conversaModal.id}
-                </h3>
-                <div style={{ fontSize: '11px', color: '#7a96aa' }}>
-                  Espiar conversa • {conversaModal.unread > 0 ? `${conversaModal.unread} mensagens não lidas` : 'Sem notificações'}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1 }}>
+                <div style={{
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '10px',
+                  background: 'linear-gradient(135deg, #c9943a, #e8b86d)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '16px',
+                  fontWeight: 800,
+                  color: '#0d1f2d',
+                  flexShrink: 0,
+                }}>
+                  {conversaModal.nome[0]}{conversaModal.nome[1]}
+                </div>
+                <div>
+                  <h3 style={{ margin: '0 0 6px 0', fontSize: '16px', fontWeight: 800, color: '#e8edf2' }}>
+                    {conversaModal.nome}
+                  </h3>
+                  <div style={{ fontSize: '12px', color: '#7a96aa', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ color: conversaModal.unread > 0 ? '#e74c3c' : '#2ecc71', fontWeight: 600 }}>●</span>
+                    {conversaModal.unread > 0 ? `${conversaModal.unread} mensagens não lidas` : 'Sem notificações'}
+                  </div>
                 </div>
               </div>
               <button
                 onClick={fecharEspiar}
                 style={{
-                  width: '32px',
-                  height: '32px',
-                  borderRadius: '6px',
+                  width: '36px',
+                  height: '36px',
+                  borderRadius: '8px',
                   background: 'transparent',
                   border: 'none',
                   cursor: 'pointer',
@@ -813,7 +833,7 @@ export function Conversas() {
                   justifyContent: 'center',
                 }}
                 onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLElement).style.background = 'rgba(201, 148, 58, 0.1)';
+                  (e.currentTarget as HTMLElement).style.background = 'rgba(201, 148, 58, 0.15)';
                   (e.currentTarget as HTMLElement).style.color = '#c9943a';
                 }}
                 onMouseLeave={(e) => {
@@ -821,24 +841,25 @@ export function Conversas() {
                   (e.currentTarget as HTMLElement).style.color = '#7a96aa';
                 }}
               >
-                <X size={18} />
+                <X size={20} />
               </button>
             </div>
 
-            {/* MODAL MESSAGES */}
+            {/* MODAL MESSAGES AREA */}
             <div style={{
               flex: 1,
               overflowY: 'auto',
-              padding: '20px 24px',
+              padding: '24px',
               display: 'flex',
               flexDirection: 'column',
-              gap: '12px',
+              gap: '14px',
               justifyContent: 'flex-end',
+              background: 'linear-gradient(180deg, #0d1f2d 0%, #0a1520 100%)',
             }}>
               {mensagensPrototipo.map((msg: any, index) => {
                 if (msg.tipo === 'evento') {
                   return (
-                    <div key={index} style={{ textAlign: 'center', margin: '16px 0 8px 0', color: '#7a96aa', fontSize: '11px', fontWeight: 600 }}>
+                    <div key={index} style={{ textAlign: 'center', margin: '20px 0 10px 0', color: '#7a96aa', fontSize: '12px', fontWeight: 700, letterSpacing: '0.5px' }}>
                       {msg.data}
                     </div>
                   );
@@ -846,52 +867,55 @@ export function Conversas() {
                 if (msg.tipo === 'sistema') {
                   return (
                     <div key={index} style={{
-                      padding: '10px 14px',
-                      borderRadius: '6px',
-                      border: '1px dashed #1e3d54',
-                      background: 'transparent',
+                      padding: '12px 16px',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(201, 148, 58, 0.2)',
+                      background: 'rgba(201, 148, 58, 0.08)',
                       color: '#c9943a',
-                      fontSize: '11px',
-                      marginTop: '8px',
+                      fontSize: '12px',
+                      lineHeight: '1.5',
+                      marginTop: '6px',
                     }}>
                       📋 {msg.texto}
-                      <div style={{ fontSize: '9px', color: '#7a96aa', marginTop: '4px' }}>{msg.hora}</div>
+                      <div style={{ fontSize: '10px', color: '#7a96aa', marginTop: '6px', fontWeight: 500 }}>{msg.hora}</div>
                     </div>
                   );
                 }
                 if (msg.tipo === 'recebida') {
                   return (
-                    <div key={index} style={{ display: 'flex', gap: '8px' }}>
+                    <div key={index} style={{ display: 'flex', gap: '10px', alignItems: 'flex-end' }}>
                       <div style={{
-                        width: '24px',
-                        height: '24px',
-                        borderRadius: '50%',
-                        background: 'transparent',
-                        border: '2px solid #c9943a',
+                        width: '32px',
+                        height: '32px',
+                        borderRadius: '8px',
+                        background: 'linear-gradient(135deg, rgba(201, 148, 58, 0.3), rgba(232, 184, 109, 0.2))',
+                        border: '1px solid rgba(201, 148, 58, 0.2)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        fontSize: '10px',
-                        fontWeight: 700,
+                        fontSize: '12px',
+                        fontWeight: 800,
                         color: '#c9943a',
                         flexShrink: 0,
                       }}>
                         {msg.nome[0]}
                       </div>
-                      <div>
-                        <div style={{ fontSize: '11px', fontWeight: 600, color: '#e8edf2', marginBottom: '2px' }}>{msg.nome}</div>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: '12px', fontWeight: 700, color: '#e8edf2', marginBottom: '4px' }}>{msg.nome}</div>
                         <div style={{
-                          maxWidth: '400px',
-                          padding: '8px 12px',
-                          borderRadius: '6px',
-                          background: '#1e3d54',
+                          maxWidth: '420px',
+                          padding: '12px 16px',
+                          borderRadius: '10px',
+                          background: 'linear-gradient(135deg, rgba(30, 61, 84, 0.6), rgba(30, 61, 84, 0.3))',
+                          border: '1px solid rgba(30, 61, 84, 0.8)',
                           color: '#e8edf2',
-                          fontSize: '12px',
-                          lineHeight: '1.4',
+                          fontSize: '13px',
+                          lineHeight: '1.5',
+                          backdropFilter: 'blur(10px)',
                         }}>
                           {msg.texto}
                         </div>
-                        <div style={{ fontSize: '9px', color: '#7a96aa', marginTop: '3px' }}>{msg.hora}</div>
+                        <div style={{ fontSize: '10px', color: '#7a96aa', marginTop: '4px', fontWeight: 500 }}>{msg.hora}</div>
                       </div>
                     </div>
                   );
@@ -900,16 +924,18 @@ export function Conversas() {
                   return (
                     <div key={index} style={{ display: 'flex', justifyContent: 'flex-end' }}>
                       <div style={{
-                        maxWidth: '400px',
-                        padding: '8px 12px',
-                        borderRadius: '6px',
-                        background: '#2c5282',
+                        maxWidth: '420px',
+                        padding: '12px 16px',
+                        borderRadius: '10px',
+                        background: 'linear-gradient(135deg, rgba(44, 82, 130, 0.7), rgba(44, 82, 130, 0.4))',
+                        border: '1px solid rgba(52, 110, 165, 0.5)',
                         color: '#e8edf2',
-                        fontSize: '12px',
-                        lineHeight: '1.4',
+                        fontSize: '13px',
+                        lineHeight: '1.5',
+                        backdropFilter: 'blur(10px)',
                       }}>
                         {msg.texto}
-                        <div style={{ fontSize: '9px', color: 'rgba(232, 237, 242, 0.7)', marginTop: '3px', textAlign: 'right' }}>
+                        <div style={{ fontSize: '10px', color: 'rgba(232, 237, 242, 0.7)', marginTop: '6px', textAlign: 'right', fontWeight: 500 }}>
                           {msg.hora} ✓✓
                         </div>
                       </div>
@@ -919,15 +945,21 @@ export function Conversas() {
               })}
             </div>
 
-            {/* MODAL FOOTER - INFO */}
+            {/* MODAL FOOTER - INFO BANNER */}
             <div style={{
-              padding: '12px 24px',
-              borderTop: '1px solid #1e3d54',
-              background: 'rgba(19, 38, 54, 0.3)',
-              fontSize: '11px',
-              color: '#7a96aa',
+              padding: '14px 24px',
+              borderTop: '1px solid rgba(30, 61, 84, 0.5)',
+              background: 'rgba(155, 89, 182, 0.1)',
+              fontSize: '12px',
+              color: '#9b59b6',
+              fontWeight: 600,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              letterSpacing: '0.3px',
             }}>
-              ℹ️ Você está espiando esta conversa. A notificação continua ativa. Feche para voltar.
+              <Eye size={16} />
+              Você está espiando • Notificação continua ativa • Feche para voltar
             </div>
           </div>
         </div>
