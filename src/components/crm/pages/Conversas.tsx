@@ -16,6 +16,9 @@ export function Conversas() {
   const [novaMensagem, setNovaMensagem] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [conversaModal, setConversaModal] = useState<any>(null);
+  const [gravando, setGravando] = useState(false);
+  const [emojiMenuVisible, setEmojiMenuVisible] = useState(false);
+  const mediaRecorderRef = useState<any>(null)[1];
   const [conversas, setConversas] = useState([
     {
       id: 87439, nome: 'Ida Santos', status: 'atendendo', canal: 'WHATSAPP',
@@ -142,6 +145,49 @@ export function Conversas() {
     setConversas(conversas.map(conv =>
       conv.id === convId ? { ...conv, unread: 0 } : conv
     ));
+  };
+
+  // ============ GRAVAÇÃO DE ÁUDIO ============
+  const iniciarGravacao = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+      let audioChunks: Blob[] = [];
+
+      mediaRecorder.ondataavailable = (event) => {
+        audioChunks.push(event.data);
+      };
+
+      mediaRecorder.onstop = () => {
+        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+        // Aqui você poderia salvar ou enviar o áudio
+        console.log('Áudio gravado:', audioBlob);
+        setNovaMensagem(`🎙️ Audio (${audioBlob.size} bytes)`);
+        stream.getTracks().forEach(track => track.stop());
+      };
+
+      mediaRecorder.start();
+      setGravando(true);
+      // Salvar referência do mediaRecorder
+      (mediaRecorderRef as any) = mediaRecorder;
+    } catch (error) {
+      console.error('Erro ao acessar microfone:', error);
+    }
+  };
+
+  const pararGravacao = () => {
+    if ((mediaRecorderRef as any)) {
+      (mediaRecorderRef as any).stop();
+      setGravando(false);
+    }
+  };
+
+  // ============ EMOJIS ============
+  const emojisPopulares = ['😀', '😂', '❤️', '👍', '🎉', '🔥', '✨', '👏', '💯', '😍', '🤔', '😎', '💪', '🚀', '⭐', '🌟', '😢', '😡', '🤗', '👋'];
+
+  const adicionarEmoji = (emoji: string) => {
+    setNovaMensagem(novaMensagem + emoji);
+    setEmojiMenuVisible(false);
   };
 
   const handleEnviarMensagem = () => {
@@ -668,48 +714,123 @@ export function Conversas() {
           gap: '12px',
           alignItems: 'center',
           background: 'rgba(19, 38, 54, 0.5)',
+          position: 'relative',
         }}>
           {/* EMOJI PICKER */}
-          <button style={{
-            width: '32px',
-            height: '32px',
-            borderRadius: '6px',
-            background: 'transparent',
-            border: 'none',
-            cursor: 'pointer',
-            color: '#7a96aa',
-            transition: 'all 0.2s',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }} onMouseEnter={(e) => {
-            (e.currentTarget as HTMLElement).style.color = '#c9943a';
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLElement).style.color = '#7a96aa';
-          }}>
-            <Smile size={18} />
-          </button>
+          <div style={{ position: 'relative' }}>
+            <button
+              onClick={() => setEmojiMenuVisible(!emojiMenuVisible)}
+              style={{
+                width: '32px',
+                height: '32px',
+                borderRadius: '6px',
+                background: emojiMenuVisible ? 'rgba(201, 148, 58, 0.15)' : 'transparent',
+                border: emojiMenuVisible ? '1px solid #c9943a' : 'none',
+                cursor: 'pointer',
+                color: emojiMenuVisible ? '#c9943a' : '#7a96aa',
+                transition: 'all 0.2s',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+              onMouseEnter={(e) => {
+                if (!emojiMenuVisible) {
+                  (e.currentTarget as HTMLElement).style.color = '#c9943a';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!emojiMenuVisible) {
+                  (e.currentTarget as HTMLElement).style.color = '#7a96aa';
+                }
+              }}
+            >
+              <Smile size={18} />
+            </button>
+
+            {/* EMOJI MENU FLUTUANTE */}
+            {emojiMenuVisible && (
+              <div
+                onClick={(e) => e.stopPropagation()}
+                style={{
+                  position: 'absolute',
+                  bottom: '100%',
+                  left: 0,
+                  marginBottom: '8px',
+                  background: 'linear-gradient(135deg, #0a1520 0%, #0d1f2d 100%)',
+                  border: '1px solid rgba(201, 148, 58, 0.2)',
+                  borderRadius: '12px',
+                  padding: '12px',
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(5, 1fr)',
+                  gap: '8px',
+                  boxShadow: '0 20px 60px rgba(0, 0, 0, 0.8)',
+                  zIndex: 100,
+                  minWidth: '260px',
+                }}
+              >
+                {emojisPopulares.map((emoji, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => adicionarEmoji(emoji)}
+                    style={{
+                      fontSize: '24px',
+                      background: 'transparent',
+                      border: 'none',
+                      cursor: 'pointer',
+                      padding: '6px',
+                      borderRadius: '6px',
+                      transition: 'all 0.2s',
+                    }}
+                    onMouseEnter={(e) => {
+                      (e.currentTarget as HTMLElement).style.background = 'rgba(201, 148, 58, 0.1)';
+                      (e.currentTarget as HTMLElement).style.transform = 'scale(1.3)';
+                    }}
+                    onMouseLeave={(e) => {
+                      (e.currentTarget as HTMLElement).style.background = 'transparent';
+                      (e.currentTarget as HTMLElement).style.transform = 'scale(1)';
+                    }}
+                  >
+                    {emoji}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
 
           {/* MIC BUTTON */}
-          <button style={{
-            width: '32px',
-            height: '32px',
-            borderRadius: '6px',
-            background: 'transparent',
-            border: 'none',
-            cursor: 'pointer',
-            color: '#7a96aa',
-            transition: 'all 0.2s',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }} onMouseEnter={(e) => {
-            (e.currentTarget as HTMLElement).style.color = '#c9943a';
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLElement).style.color = '#7a96aa';
-          }}>
+          <button
+            onClick={() => {
+              if (!gravando) {
+                iniciarGravacao();
+              } else {
+                pararGravacao();
+              }
+            }}
+            style={{
+              width: '32px',
+              height: '32px',
+              borderRadius: '6px',
+              background: gravando ? 'rgba(231, 76, 60, 0.2)' : 'transparent',
+              border: gravando ? '1px solid #e74c3c' : 'none',
+              cursor: 'pointer',
+              color: gravando ? '#e74c3c' : '#7a96aa',
+              transition: 'all 0.2s',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              animation: gravando ? 'pulse 1s infinite' : 'none',
+            }}
+            onMouseEnter={(e) => {
+              if (!gravando) {
+                (e.currentTarget as HTMLElement).style.color = '#c9943a';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!gravando) {
+                (e.currentTarget as HTMLElement).style.color = '#7a96aa';
+              }
+            }}
+          >
             <Mic size={18} />
           </button>
 
