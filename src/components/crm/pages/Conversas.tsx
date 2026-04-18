@@ -349,8 +349,14 @@ export function Conversas() {
   );
 
   const diminuirNotificacao = (convId: number) => {
+    // Atualizar notificações em conversas
     setConversas(conversas.map((conv: any) =>
       conv.id === convId ? { ...conv, unread: 0 } : conv
+    ));
+
+    // Atualizar notificações em grupos também
+    setGrupos(grupos.map((grupo: any) =>
+      grupo.id === convId ? { ...grupo, unread: 0 } : grupo
     ));
   };
 
