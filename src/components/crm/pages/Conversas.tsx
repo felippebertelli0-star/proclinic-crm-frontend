@@ -10,7 +10,7 @@ import { X, RefreshCw, Calendar, DollarSign, FileText, Paperclip, Zap, BarChart3
 
 export function Conversas() {
   const [selectedConversa, setSelectedConversa] = useState(0);
-  const [filtroStatus, setFiltroStatus] = useState<'atendendo' | 'aguardando'>('atendendo');
+  const [filtroStatus, setFiltroStatus] = useState<'atendendo' | 'aguardando' | 'fechadas'>('atendendo');
   const [busca, setBusca] = useState('');
   const [activeTab, setActiveTab] = useState<'ativa' | 'tags'>('ativa');
   const [novaMensagem, setNovaMensagem] = useState('');
@@ -24,7 +24,7 @@ export function Conversas() {
   const audioChunksRef = useRef<Blob[]>([]);
   const streamRef = useRef<MediaStream | null>(null);
   const timerRef = useRef<any>(null);
-  const [conversas, setConversas] = useState([
+  const [conversas, setConversas] = useState<any>([
     {
       id: 87439, nome: 'Ida Santos', status: 'atendendo', canal: 'WHATSAPP',
       atribuidoA: 'IA - WhatsApp', data: '08/04/2026', hora: '1 min',
@@ -98,12 +98,20 @@ export function Conversas() {
 
   // Filtrar conversas por status E ORDENAR: com notificações primeiro
   const conversasFiltradas = conversas
-    .filter(conv => {
-      const matchStatus = filtroStatus === 'atendendo' ? conv.status === 'atendendo' : conv.status === 'aguardando';
+    .filter((conv: any) => {
+      const matchStatus = filtroStatus === 'atendendo' ? conv.status === 'atendendo' :
+                         filtroStatus === 'aguardando' ? conv.status === 'aguardando' :
+                         conv.status === 'fechadas';
       const matchBusca = conv.nome.toLowerCase().includes(busca.toLowerCase()) || String(conv.id).includes(busca);
       return matchStatus && matchBusca;
     })
-    .sort((a, b) => {
+    .sort((a: any, b: any) => {
+      // Conversas aceitas recentemente ficam no topo em "atendendo"
+      if (filtroStatus === 'atendendo') {
+        const aAceitado = a.aceitadoEm || 0;
+        const bAceitado = b.aceitadoEm || 0;
+        if (aAceitado > 0 || bAceitado > 0) return (bAceitado || 0) - (aAceitado || 0);
+      }
       // Conversas com notificações sobem para o topo
       if (a.unread > 0 && b.unread === 0) return -1;
       if (a.unread === 0 && b.unread > 0) return 1;
@@ -113,11 +121,12 @@ export function Conversas() {
   // Resetar seleção quando mudar filtro
   const validSelectedConversa = selectedConversa < conversasFiltradas.length ? selectedConversa : 0;
   const conversa = conversasFiltradas[validSelectedConversa];
-  const totalAtendendo = conversas.filter(c => c.status === 'atendendo').length;
-  const totalAguardando = conversas.filter(c => c.status === 'aguardando').length;
+  const totalAtendendo = conversas.filter((c: any) => c.status === 'atendendo').length;
+  const totalAguardando = conversas.filter((c: any) => c.status === 'aguardando').length;
+  const totalFechadas = conversas.filter((c: any) => c.status === 'fechadas').length;
 
   // Handler para mudar filtro e resetar seleção
-  const handleFiltroChange = (status: 'atendendo' | 'aguardando') => {
+  const handleFiltroChange = (status: 'atendendo' | 'aguardando' | 'fechadas') => {
     setFiltroStatus(status);
     setSelectedConversa(0);
   };
@@ -134,20 +143,47 @@ export function Conversas() {
   };
 
   const aceitarConversa = (convId: number) => {
-    setConversas(conversas.map(conv =>
-      conv.id === convId ? { ...conv, status: 'atendendo', unread: 0 } : conv
-    ));
-    // Reset seleção
-    setSelectedConversa(0);
+    // Atualizar status e adicionar timestamp para ordenação
+    const novasConversas = conversas.map((conv: any) =>
+      conv.id === convId
+        ? { ...conv, status: 'atendendo', unread: 0, aceitadoEm: Date.now() }
+        : conv
+    );
+    setConversas(novasConversas);
+
+    // Mudar filtro para "atendendo" automaticamente
+    setFiltroStatus('atendendo');
+
+    // Encontrar a posição da conversa aceita na lista filtrada e selecionar
+    setTimeout(() => {
+      const conversasAtendendo = novasConversas
+        .filter((conv: any) => conv.status === 'atendendo')
+        .sort((a: any, b: any) => {
+          // Conversas aceitas recentemente ficam no topo
+          const aAceitado = a.aceitadoEm || 0;
+          const bAceitado = b.aceitadoEm || 0;
+          if (aAceitado > 0 || bAceitado > 0) return (bAceitado || 0) - (aAceitado || 0);
+          // Fallback para ordenação por notificações
+          if (a.unread > 0 && b.unread === 0) return -1;
+          if (a.unread === 0 && b.unread > 0) return 1;
+          return 0;
+        });
+
+      const indexSelecionada = conversasAtendendo.findIndex((conv: any) => conv.id === convId);
+      setSelectedConversa(indexSelecionada >= 0 ? indexSelecionada : 0);
+    }, 0);
   };
 
   const finalizarConversa = (convId: number) => {
-    setConversas(conversas.filter(conv => conv.id !== convId));
+    // Mover para "fechadas" em vez de deletar
+    setConversas(conversas.map((conv: any) =>
+      conv.id === convId ? { ...conv, status: 'fechadas' } : conv
+    ));
     setSelectedConversa(0);
   };
 
   const diminuirNotificacao = (convId: number) => {
-    setConversas(conversas.map(conv =>
+    setConversas(conversas.map((conv: any) =>
       conv.id === convId ? { ...conv, unread: 0 } : conv
     ));
   };
@@ -168,9 +204,15 @@ export function Conversas() {
 
       mediaRecorder.onstop = () => {
         const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
-        console.log('🎙️ Áudio gravado:', audioBlob);
-        // Aqui você integraria com API para enviar o áudio
-        setNovaMensagem(`🎙️ Áudio (${Math.round(audioBlob.size / 1024)}KB)`);
+        const duracao = tempoGravacao; // Duração em segundos
+        console.log('🎙️ Áudio gravado:', audioBlob, 'Duração:', duracao, 's');
+        // Armazenar áudio com metadados em JSON
+        const audioData = {
+          tipo: 'audio',
+          duracao: duracao,
+          tamanho: Math.round(audioBlob.size / 1024),
+        };
+        setNovaMensagem(JSON.stringify(audioData));
         if (streamRef.current) {
           streamRef.current.getTracks().forEach(track => track.stop());
         }
@@ -242,15 +284,34 @@ export function Conversas() {
 
   const handleEnviarMensagem = () => {
     if (novaMensagem.trim()) {
+      // Detectar se é áudio (JSON com tipo 'audio')
+      let isAudio = false;
+      let audioMetadata = null;
+      try {
+        const parsed = JSON.parse(novaMensagem);
+        if (parsed.tipo === 'audio') {
+          isAudio = true;
+          audioMetadata = parsed;
+        }
+      } catch (e) {
+        // Não é JSON, é uma mensagem de texto normal
+      }
+
       // Adiciona mensagem ao histórico
       const novaMens = {
         tipo: 'enviada',
         hora: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
-        texto: novaMensagem,
+        ...(isAudio ? {
+          audio: true,
+          duracao: audioMetadata.duracao,
+          tamanho: audioMetadata.tamanho,
+        } : {
+          texto: novaMensagem,
+        }),
       };
 
       setHistoricoMensagens([...historicoMensagens, novaMens]);
-      console.log('📤 Mensagem enviada:', novaMensagem);
+      console.log('📤 Mensagem enviada:', isAudio ? 'Áudio' : novaMensagem);
 
       // Aqui você faria a requisição para enviar via API
       // Por enquanto, apenas limpa o input e mostra no console
@@ -282,11 +343,12 @@ export function Conversas() {
             Conversas
           </h2>
 
-          {/* FILTROS - SÓ ATENDENDO E AGUARDANDO */}
+          {/* FILTROS - ATENDENDO, AGUARDANDO E FECHADAS */}
           <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
             {[
               { id: 'atendendo', label: 'Atendendo', count: totalAtendendo },
               { id: 'aguardando', label: 'Aguardando', count: totalAguardando },
+              { id: 'fechadas', label: 'Fechadas', count: totalFechadas },
             ].map((btn) => (
               <button
                 key={btn.id}
@@ -360,7 +422,7 @@ export function Conversas() {
         {/* LISTA DE CONVERSAS */}
         <div style={{ flex: 1, overflowY: 'auto', scrollbarWidth: 'thin' }}>
           {conversasFiltradas.length > 0 ? (
-            conversasFiltradas.map((conv, index) => {
+            conversasFiltradas.map((conv: any, index: number) => {
               const isSelected = validSelectedConversa === index;
               const isAguardando = filtroStatus === 'aguardando';
 
@@ -475,7 +537,7 @@ export function Conversas() {
                           ● {conv.origem}
                         </div>
                         <div style={{ display: 'flex', gap: '3px', flexWrap: 'wrap' }}>
-                          {conv.tags.map((tag, i) => {
+                          {conv.tags.map((tag: string, i: number) => {
                             const colors = getTagColor(tag);
                             return (
                               <span key={i} style={{
@@ -747,6 +809,55 @@ export function Conversas() {
               );
             }
             if (msg.tipo === 'enviada') {
+              // Renderizar áudio ou texto normal
+              if (msg.audio) {
+                const duracao = msg.duracao;
+                const minutos = Math.floor(duracao / 60);
+                const segundos = duracao % 60;
+                const tempoFormatado = `${minutos}:${String(segundos).padStart(2, '0')}`;
+
+                return (
+                  <div key={index} style={{
+                    display: 'flex',
+                    justifyContent: 'flex-end',
+                    marginBottom: '8px',
+                  }}>
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '10px',
+                      maxWidth: '220px',
+                      padding: '8px 14px',
+                      borderRadius: '18px',
+                      background: '#2c5282',
+                      color: '#e8edf2',
+                    }}>
+                      <div style={{
+                        width: '32px',
+                        height: '32px',
+                        borderRadius: '50%',
+                        background: 'rgba(255, 255, 255, 0.2)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0,
+                        fontSize: '16px',
+                      }}>
+                        ▶️
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: '12px', fontWeight: 600 }}>Áudio</div>
+                        <div style={{ fontSize: '11px', color: 'rgba(232, 237, 242, 0.8)' }}>{tempoFormatado}</div>
+                      </div>
+                      <div style={{ fontSize: '10px', color: 'rgba(232, 237, 242, 0.7)', whiteSpace: 'nowrap' }}>
+                        {msg.hora} ✓✓
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+
+              // Mensagem de texto normal
               return (
                 <div key={index} style={{
                   display: 'flex',
@@ -1229,6 +1340,53 @@ export function Conversas() {
                   );
                 }
                 if (msg.tipo === 'enviada') {
+                  // Renderizar áudio ou texto normal
+                  if (msg.audio) {
+                    const duracao = msg.duracao;
+                    const minutos = Math.floor(duracao / 60);
+                    const segundos = duracao % 60;
+                    const tempoFormatado = `${minutos}:${String(segundos).padStart(2, '0')}`;
+
+                    return (
+                      <div key={index} style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '8px' }}>
+                        <div style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '10px',
+                          maxWidth: '240px',
+                          padding: '10px 14px',
+                          borderRadius: '20px',
+                          background: 'linear-gradient(135deg, rgba(44, 82, 130, 0.8), rgba(44, 82, 130, 0.5))',
+                          border: '1px solid rgba(52, 110, 165, 0.5)',
+                          color: '#e8edf2',
+                        }}>
+                          <div style={{
+                            width: '36px',
+                            height: '36px',
+                            borderRadius: '50%',
+                            background: 'rgba(255, 255, 255, 0.15)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            flexShrink: 0,
+                            fontSize: '18px',
+                          }}>
+                            ▶️
+                          </div>
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ fontSize: '12px', fontWeight: 600 }}>Áudio</div>
+                            <div style={{ fontSize: '11px', color: 'rgba(232, 237, 242, 0.85)' }}>{tempoFormatado}</div>
+                          </div>
+                          <div style={{ fontSize: '9px', color: 'rgba(232, 237, 242, 0.7)', whiteSpace: 'nowrap', textAlign: 'right' }}>
+                            <div>{msg.hora}</div>
+                            <div>✓✓</div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  }
+
+                  // Mensagem de texto normal
                   return (
                     <div key={index} style={{ display: 'flex', justifyContent: 'flex-end' }}>
                       <div style={{
