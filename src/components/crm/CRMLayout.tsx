@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { LayoutDashboard, MessageCircle, Users, Grid3x3, TrendingUp, Tag, Zap, Calendar, RotateCw, CheckSquare, Cog, Brain, Sliders, List, Link, Folder, BarChart3, ClipboardList, LogOut } from 'lucide-react';
 import { Dashboard } from './pages/Dashboard';
 import { Conversas } from './pages/Conversas';
@@ -96,6 +96,7 @@ const PAGE_MAPPING: Record<PageType, React.ComponentType> = {
 
 export function CRMLayout() {
   const router = useRouter();
+  const pathname = usePathname();
   const [currentPage, setCurrentPage] = useState<PageType>('dashboard');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const menuScrollRef = useRef<HTMLDivElement>(null);
@@ -105,6 +106,14 @@ export function CRMLayout() {
       menuScrollRef.current.scrollTop = 0;
     }
   }, []);
+
+  useEffect(() => {
+    // Detectar a página atual pela URL
+    const pageName = pathname?.split('/')[1] || 'dashboard';
+    if (pageName && pageName !== 'admin') {
+      setCurrentPage(pageName as PageType);
+    }
+  }, [pathname]);
 
   const handleNavigation = (pageId: string) => {
     const id = pageId as PageType;
