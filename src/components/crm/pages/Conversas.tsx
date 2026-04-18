@@ -425,19 +425,22 @@ export function Conversas() {
   };
 
   const transferirTicket = () => {
+    // Prioridade: SEMPRE membro se selecionado
     if (!conversa || (!membroSelecionado && !filaSelecionada)) {
       alert('Por favor, selecione um membro ou fila para transferir');
       return;
     }
+
+    // Debug: verificar o que está selecionado
+    console.log('Membro selecionado:', membroSelecionado);
+    console.log('Fila selecionada:', filaSelecionada);
 
     // Atualizar a conversa com a nova atribuição
     const novasConversas = conversas.map((conv: any) =>
       conv.id === conversa.id
         ? {
             ...conv,
-            atribuidoA: membroSelecionado
-              ? `${membroSelecionado.nome}`
-              : filaSelecionada,
+            atribuidoA: membroSelecionado ? membroSelecionado.nome : filaSelecionada,
           }
         : conv
     );
@@ -2378,7 +2381,6 @@ export function Conversas() {
                 value={filaSelecionada || ''}
                 onChange={(e) => {
                   setFilaSelecionada(e.target.value || null);
-                  setMembroSelecionado(null);
                 }}
                 style={{
                   padding: '10px 14px',
