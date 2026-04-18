@@ -307,16 +307,20 @@ export function Conversas() {
   // Resetar seleção quando mudar filtro
   const validSelectedConversa = selectedConversa < conversasFiltradas.length ? selectedConversa : 0;
   const conversa = conversasFiltradas[validSelectedConversa];
-  const totalAtendendo = conversas.filter((c: any) => c.status === 'atendendo').length;
-  const totalAguardando = conversas.filter((c: any) => c.status === 'aguardando').length;
-  const totalGrupos = grupos.length;
-  const totalFechadas = conversas.filter((c: any) => c.status === 'fechadas').length;
+
+  // ============ CONTAGEM DE NOTIFICAÇÕES PENDENTES ============
+  // Contar apenas conversas com unread > 0 (notificações pendentes)
+  const totalAtendendo = conversas.filter((c: any) => c.status === 'atendendo' && c.unread > 0).length;
+  const totalAguardando = conversas.filter((c: any) => c.status === 'aguardando' && c.unread > 0).length;
+  const totalGrupos = grupos.filter((g: any) => g.unread > 0).length;
+  const totalFechadas = conversas.filter((c: any) => c.status === 'fechadas' && c.unread > 0).length;
 
   // ============ ATUALIZAR BADGE NO MENU LATERAL ============
   const { setConversasCounts } = useConversasStore();
 
   useEffect(() => {
-    // Atualizar o store com os totais (SEM incluir Fechadas)
+    // Atualizar o store com os totais de NOTIFICAÇÕES PENDENTES (SEM incluir Fechadas)
+    // Diminui automaticamente quando conversa é aberta (unread vira 0)
     setConversasCounts(totalAtendendo, totalAguardando, totalGrupos);
   }, [totalAtendendo, totalAguardando, totalGrupos, setConversasCounts]);
 
