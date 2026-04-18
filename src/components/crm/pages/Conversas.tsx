@@ -46,9 +46,9 @@ const PREMIUM_STYLES = {
   colorBg: '#0a1520',
 
   // Transitions
-  transitionFast: 'all 0.15s ease-out',
-  transitionMedium: 'all 0.25s ease-out',
-  transitionSlow: 'all 0.35s ease-out',
+  transitionFast: 'all 0.12s ease-out',
+  transitionMedium: 'all 0.15s ease-out',
+  transitionSlow: 'all 0.2s ease-out',
 };
 
 export function Conversas() {
@@ -737,7 +737,7 @@ export function Conversas() {
       }}>
         {/* TÍTULO */}
         <div style={{ padding: '16px', borderBottom: '1px solid #1e3d54', flexShrink: 0 }}>
-          <h2 style={{ margin: '0 0 16px 0', fontSize: '16px', fontWeight: 700, color: '#e8edf2' }}>
+          <h2 style={{ margin: '0 0 16px 0', fontSize: '18px', fontWeight: 800, color: '#e8edf2' }}>
             Conversas
           </h2>
 
@@ -760,8 +760,8 @@ export function Conversas() {
                   border: filtroStatus === btn.id ? '2px solid #c9943a' : '1px solid #1e3d54',
                   background: filtroStatus === btn.id ? '#c9943a' : 'rgba(201, 148, 58, 0.08)',
                   color: filtroStatus === btn.id ? '#0d1f2d' : '#c9943a',
-                  fontSize: '11px',
-                  fontWeight: filtroStatus === btn.id ? 700 : 600,
+                  fontSize: '12px',
+                  fontWeight: filtroStatus === btn.id ? 700 : 700,
                   cursor: 'pointer',
                   transition: 'all 0.25s ease',
                   textAlign: 'center',
@@ -794,13 +794,13 @@ export function Conversas() {
             onChange={(e) => setBusca(e.target.value)}
             style={{
               width: '100%',
-              padding: '10px 12px',
-              borderRadius: '6px',
+              padding: '12px 14px',
+              borderRadius: '8px',
               border: '1px solid #1e3d54',
               background: '#132636',
               color: '#e8edf2',
-              fontSize: '12px',
-              transition: 'all 0.2s',
+              fontSize: '13px',
+              transition: 'all 0.15s',
               boxSizing: 'border-box',
             }}
             onFocus={(e) => {
@@ -828,7 +828,7 @@ export function Conversas() {
                 <Zap size={14} color="#9b59b6" strokeWidth={2.5} />
               </div>
               <div>
-                <div style={{ fontSize: '12px', fontWeight: 700, color: '#e8edf2', marginBottom: '2px' }}>Fila da IA</div>
+                <div style={{ fontSize: '13px', fontWeight: 800, color: '#e8edf2', marginBottom: '2px' }}>Fila da IA</div>
                 <div style={{ fontSize: '11px', color: '#7a96aa' }}>Leads sendo atendidos automaticamente</div>
               </div>
             </div>
@@ -854,7 +854,7 @@ export function Conversas() {
                     }
                   }}
                   style={{
-                    padding: '10px 12px',
+                    padding: '12px 16px',
                     borderBottom: '1px solid #1e3d54',
                     cursor: isAguardando ? 'default' : 'pointer',
                     background: isSelected && !isAguardando ? '#1e3d54' : 'transparent',
@@ -876,7 +876,7 @@ export function Conversas() {
                     <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start', flex: 1, minWidth: 0 }}>
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', marginBottom: '2px' }}>
-                          <div style={{ fontSize: '12px', fontWeight: 600, color: '#e8edf2', flex: 1, minWidth: 0 }}>
+                          <div style={{ fontSize: '12px', fontWeight: 700, color: '#e8edf2', flex: 1, minWidth: 0 }}>
                             {conv.nome}
                           </div>
                           {/* Eye icon sempre visível no atendendo, ou quando há notificações no aguardando */}
@@ -888,9 +888,9 @@ export function Conversas() {
                                   abrirEspiar(conv);
                                 }}
                                 style={{
-                                  opacity: conv.unread > 0 ? 0.5 : 0.3,
+                                  opacity: conv.unread > 0 ? 0.7 : 0.5,
                                   cursor: 'pointer',
-                                  transition: 'opacity 0.2s',
+                                  transition: 'opacity 0.15s',
                                   display: 'flex',
                                   alignItems: 'center',
                                   justifyContent: 'center',
@@ -909,7 +909,7 @@ export function Conversas() {
                                   (e.currentTarget as HTMLElement).style.opacity = '1';
                                 }}
                                 onMouseLeave={(e) => {
-                                  (e.currentTarget as HTMLElement).style.opacity = conv.unread > 0 ? '0.5' : '0.3';
+                                  (e.currentTarget as HTMLElement).style.opacity = conv.unread > 0 ? '0.7' : '0.5';
                                 }}
                               >
                                 <Eye size={12} />
@@ -944,12 +944,12 @@ export function Conversas() {
                         </div>
                         {/* Atribuído a - com cor diferente (roxo/vermelho) - SÓ PARA CONVERSAS */}
                         {conv.atribuidoA && (
-                          <div style={{ fontSize: '10px', color: '#9b59b6', fontWeight: 600, marginBottom: '3px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <div style={{ fontSize: '11px', color: '#9b59b6', fontWeight: 700, marginBottom: '3px', display: 'flex', alignItems: 'center', gap: '4px' }}>
                             <UserCheck size={12} style={{ flexShrink: 0 }} /> {conv.atribuidoA}
                           </div>
                         )}
                         {conv.preview && (
-                          <div style={{ fontSize: '10px', color: '#7a96aa', marginBottom: '4px', lineHeight: '1.3' }}>
+                          <div style={{ fontSize: '12px', color: '#7a96aa', marginBottom: '4px', lineHeight: '1.3' }}>
                             {conv.preview}
                           </div>
                         )}
@@ -963,12 +963,12 @@ export function Conversas() {
                             const colors = getTagColor(tag);
                             return (
                               <span key={i} style={{
-                                fontSize: '8px',
-                                padding: '2px 5px',
-                                borderRadius: '3px',
+                                fontSize: '11px',
+                                padding: '4px 8px',
+                                borderRadius: '10px',
                                 background: colors.bg,
                                 color: colors.color,
-                                fontWeight: 600,
+                                fontWeight: 700,
                               }}>
                                 {tag}
                               </span>
@@ -985,12 +985,12 @@ export function Conversas() {
                             aceitarConversa(conv.id);
                           }}
                           style={{
-                            padding: '4px 8px',
-                            borderRadius: '2px',
+                            padding: '8px 12px',
+                            borderRadius: '8px',
                             border: 'none',
                             background: '#2ecc71',
                             color: '#ffffff',
-                            fontSize: '10px',
+                            fontSize: '12px',
                             fontWeight: 700,
                             cursor: 'pointer',
                             transition: 'all 0.2s',
@@ -1011,12 +1011,12 @@ export function Conversas() {
                             finalizarConversa(conv.id);
                           }}
                           style={{
-                            padding: '4px 8px',
-                            borderRadius: '2px',
+                            padding: '8px 12px',
+                            borderRadius: '8px',
                             border: 'none',
                             background: '#e74c3c',
                             color: '#ffffff',
-                            fontSize: '10px',
+                            fontSize: '12px',
                             fontWeight: 700,
                             cursor: 'pointer',
                             transition: 'all 0.2s',
@@ -1041,12 +1041,12 @@ export function Conversas() {
                             reabrirConversa(conv.id);
                           }}
                           style={{
-                            padding: '4px 8px',
-                            borderRadius: '2px',
+                            padding: '8px 12px',
+                            borderRadius: '8px',
                             border: 'none',
                             background: '#2ecc71',
                             color: '#ffffff',
-                            fontSize: '10px',
+                            fontSize: '12px',
                             fontWeight: 700,
                             cursor: 'pointer',
                             transition: 'all 0.2s',
@@ -1094,7 +1094,7 @@ export function Conversas() {
           background: 'rgba(19, 38, 54, 0.5)',
         }}>
           <div>
-            <h2 style={{ margin: '0 0 6px 0', fontSize: '15px', fontWeight: 700, color: '#e8edf2' }}>
+            <h2 style={{ margin: '0 0 6px 0', fontSize: '16px', fontWeight: 800, color: '#e8edf2' }}>
               {conversa.nome} - #{conversa.id}
             </h2>
             <div style={{ fontSize: '12px', color: '#7a96aa', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
