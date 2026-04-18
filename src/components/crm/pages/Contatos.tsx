@@ -57,10 +57,11 @@ export function Contatos() {
               background: '#132636',
               border: card.isTotal ? '2px solid #c9943a' : '1px solid #1e3d54',
               borderRadius: '14px',
-              padding: '16px',
+              padding: '20px 16px',
               display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'flex-start',
               gap: '12px',
-              alignItems: 'center',
               transition: 'all 0.2s',
             }}
             onMouseEnter={(e) => {
@@ -72,24 +73,30 @@ export function Contatos() {
               e.currentTarget.style.transform = 'translateY(0)';
             }}
           >
-            {/* ÍCONE COLORIDO */}
+            {/* ÍCONE COLORIDO - NO TOPO */}
             <div style={{
-              width: '52px',
-              height: '52px',
-              borderRadius: '12px',
+              width: '56px',
+              height: '56px',
+              borderRadius: '14px',
               background: card.bgIcon,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: '24px',
+              fontSize: '28px',
               flexShrink: 0,
             }}>
               {card.icon}
             </div>
-            {/* CONTEÚDO */}
-            <div>
+            {/* CONTEÚDO - ABAIXO DO ÍCONE */}
+            <div style={{ width: '100%' }}>
+              <div style={{ fontSize: '28px', fontWeight: 700, color: card.color, marginBottom: '4px', lineHeight: '1' }}>{card.value}</div>
               <div style={{ fontSize: '11px', color: '#7a96aa', marginBottom: '4px', fontWeight: 600 }}>{card.label}</div>
-              <div style={{ fontSize: '28px', fontWeight: 700, color: card.color }}>{card.value}</div>
+              <div style={{ fontSize: '10px', color: '#7a96aa', fontWeight: 500 }}>
+                {card.label === 'Hoje' && '↳ Novos contatos'}
+                {card.label === 'Esta Semana' && '↳ Últimos 7 dias'}
+                {card.label === 'Este Mês' && '↳ Mês atual'}
+                {card.label === 'Total' && '↳ Todos os contatos'}
+              </div>
             </div>
           </div>
         ))}

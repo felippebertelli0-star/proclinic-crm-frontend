@@ -1,10 +1,10 @@
 'use client';
 export function Equipe() {
   const membros = [
-    { id: 1, nome: 'Hávila Rodrigues', cargo: 'Gerente', status: 'Online', tickets: 87, conversas: 45, tmr: '5 min' },
-    { id: 2, nome: 'Camilly Nunes', cargo: 'Atendente', status: 'Online', tickets: 34, conversas: 22, tmr: '6 min' },
-    { id: 3, nome: 'Fernando Silva', cargo: 'Atendente', status: 'Offline', tickets: 12, conversas: 8, tmr: '8 min' },
-    { id: 4, nome: 'Luana Costa', cargo: 'Suporte', status: 'Ausente', tickets: 5, conversas: 3, tmr: '10 min' },
+    { id: 1, nome: 'Hávila Rodrigues', cargo: 'Gerente', status: 'Online', tickets: 87, conversas: 45, tmr: '5 min', avatarColor: '#e91e63' },
+    { id: 2, nome: 'Camilly Nunes', cargo: 'Atendente', status: 'Online', tickets: 34, conversas: 22, tmr: '6 min', avatarColor: '#9c27b0' },
+    { id: 3, nome: 'Fernando Silva', cargo: 'Atendente', status: 'Offline', tickets: 12, conversas: 8, tmr: '8 min', avatarColor: '#3f51b5' },
+    { id: 4, nome: 'Luana Costa', cargo: 'Suporte', status: 'Ausente', tickets: 5, conversas: 3, tmr: '10 min', avatarColor: '#00bcd4' },
   ];
   return (
     <div style={{ padding: '24px', background: '#0d1f2d', minHeight: '100vh', color: '#e8edf2', fontFamily: "'Segoe UI', sans-serif" }}>
@@ -16,7 +16,7 @@ export function Equipe() {
         {membros.map((m) => (
           <div key={m.id} style={{ background: '#132636', border: '1px solid #1e3d54', borderRadius: '14px', padding: '16px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-              <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#c9943a', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 700, color: '#0d1f2d' }}>{m.nome[0]}</div>
+              <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: m.avatarColor, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 700, color: '#fff' }}>{m.nome[0]}</div>
               <div>
                 <h3 style={{ fontSize: '14px', fontWeight: 600, margin: '0 0 2px 0', color: '#e8edf2' }}>{m.nome}</h3>
                 <div style={{ fontSize: '10px', color: '#7a96aa' }}>{m.cargo}</div>
