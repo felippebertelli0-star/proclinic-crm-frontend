@@ -138,7 +138,7 @@ export function Contatos() {
               <div style={{
                 fontSize: '36px',
                 fontWeight: 900,
-                color: 'rgba(201, 148, 58, 0.75)',
+                color: '#9ca3af',
                 marginBottom: '2px',
                 lineHeight: '1',
                 letterSpacing: '-0.5px',
@@ -148,7 +148,7 @@ export function Contatos() {
               </div>
               <div style={{
                 fontSize: '12px',
-                color: 'rgba(201, 148, 58, 0.75)',
+                color: '#9ca3af',
                 marginBottom: '4px',
                 fontWeight: 700,
                 letterSpacing: '0.3px',
@@ -158,7 +158,7 @@ export function Contatos() {
               </div>
               <div style={{
                 fontSize: '11px',
-                color: 'rgba(201, 148, 58, 0.75)',
+                color: '#9ca3af',
                 fontWeight: 500,
                 letterSpacing: '0.2px',
                 WebkitFontSmoothing: 'antialiased',
