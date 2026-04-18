@@ -21,9 +21,25 @@ export function Contatos() {
     { label: 'Total', value: 8, color: '#c9943a', isTotal: true },
   ];
 
+  // ============ FORMATADOR DE DATA E HORA ============
+  const formatarUltimaInteracao = (dataHora: string) => {
+    const [data, hora] = dataHora.split(' ');
+    const [ano, mes, dia] = data.split('-');
+
+    // Obter data de hoje
+    const hoje = new Date();
+    const hojeFormatado = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}-${String(hoje.getDate()).padStart(2, '0')}`;
+
+    if (data === hojeFormatado) {
+      return `Hoje, ${hora}`;
+    } else {
+      return `${dia}/${mes}/${ano} ${hora}`;
+    }
+  };
+
   // Mock data de contatos com badges e cores de avatar
   const contatos = [
-    { id: 1, nome: 'Ida Santos', whatsapp: '(11) 99999-0001', email: 'ida@email.com', ultimaInteracao: '2026-04-17 10:30', status: 'Ativo', badge: 'Trabalho Pago', badgeColor: '#ef5350', avatarColor: '#e91e63' },
+    { id: 1, nome: 'Ida Santos', whatsapp: '(11) 99999-0001', email: 'ida@email.com', ultimaInteracao: '2026-04-18 10:30', status: 'Ativo', badge: 'Trabalho Pago', badgeColor: '#ef5350', avatarColor: '#e91e63' },
     { id: 2, nome: 'Daniele Mantovani', whatsapp: '(11) 99999-0002', email: 'daniele@email.com', ultimaInteracao: '2026-04-16 15:45', status: 'Ativo', badge: 'Orgânico', badgeColor: '#66bb6a', avatarColor: '#9c27b0' },
     { id: 3, nome: 'Maria Rosa', whatsapp: '(11) 99999-0003', email: 'maria@email.com', ultimaInteracao: '2026-04-15 09:20', status: 'Ativo', badge: 'Trabalho Pago', badgeColor: '#ef5350', avatarColor: '#673ab7' },
     { id: 4, nome: 'Laura Ferreira', whatsapp: '(11) 99999-0004', email: 'laura@email.com', ultimaInteracao: '2026-04-14 14:10', status: 'Ativo', badge: 'Orgânico', badgeColor: '#66bb6a', avatarColor: '#3f51b5' },
@@ -367,7 +383,7 @@ export function Contatos() {
                 <td style={{ padding: '12px 16px', color: '#7a96aa' }}>{contato.whatsapp}</td>
                 <td style={{ padding: '12px 16px', color: '#7a96aa' }}>{contato.email}</td>
                 <td style={{ padding: '12px 16px', color: '#7a96aa', fontSize: '12px' }}>
-                  {contato.ultimaInteracao}
+                  {formatarUltimaInteracao(contato.ultimaInteracao)}
                 </td>
                 <td style={{ padding: '12px 16px' }}>
                   <button style={{
