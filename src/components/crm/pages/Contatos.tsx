@@ -6,6 +6,7 @@
 'use client';
 
 import { useState } from 'react';
+import { Calendar, TrendingUp, Users, BarChart3 } from 'lucide-react';
 
 export function Contatos() {
   const [filterCanal, setFilterCanal] = useState('Todos os canais');
@@ -119,18 +120,18 @@ export function Contatos() {
               e.currentTarget.style.transform = 'translateY(0)';
             }}
           >
-            {/* ÍCONE MINIMALISTA PREMIUM AAA - SEM FUNDO */}
+            {/* ÍCONE SVG MINIMALISTA PREMIUM AAA - SEM FUNDO */}
             <div style={{
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: '32px',
               flexShrink: 0,
+              color: '#7a96aa',
             }}>
-              {card.label === 'Hoje' && '📆'}
-              {card.label === 'Esta Semana' && '📊'}
-              {card.label === 'Este Mês' && '📈'}
-              {card.label === 'Total' && '👥'}
+              {card.label === 'Hoje' && <Calendar size={28} strokeWidth={1.5} />}
+              {card.label === 'Esta Semana' && <BarChart3 size={28} strokeWidth={1.5} />}
+              {card.label === 'Este Mês' && <TrendingUp size={28} strokeWidth={1.5} />}
+              {card.label === 'Total' && <Users size={28} strokeWidth={1.5} />}
             </div>
             {/* CONTEÚDO - ABAIXO DO ÍCONE */}
             <div style={{ width: '100%' }}>
