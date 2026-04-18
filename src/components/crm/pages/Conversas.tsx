@@ -7,6 +7,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { X, RefreshCw, Calendar, DollarSign, FileText, Paperclip, Zap, BarChart3, User, Mic, Send, Smile, Clock, Eye } from 'lucide-react';
+import { useAuthStore } from '@/store/authStore';
 
 // ============ ESTILOS PREMIUM AAA ============
 const PREMIUM_STYLES = {
@@ -35,6 +36,7 @@ const PREMIUM_STYLES = {
 };
 
 export function Conversas() {
+  const { usuario } = useAuthStore();
   const [selectedConversa, setSelectedConversa] = useState(0);
   const [filtroStatus, setFiltroStatus] = useState<'atendendo' | 'aguardando' | 'fechadas'>('atendendo');
   const [busca, setBusca] = useState('');
@@ -301,10 +303,10 @@ export function Conversas() {
   };
 
   const aceitarConversa = (convId: number) => {
-    // Atualizar status e adicionar timestamp para ordenação
+    // Atualizar status, atribuidoA e adicionar timestamp para ordenação
     const novasConversas = conversas.map((conv: any) =>
       conv.id === convId
-        ? { ...conv, status: 'atendendo', unread: 0, aceitadoEm: Date.now() }
+        ? { ...conv, status: 'atendendo', atribuidoA: usuario?.nome || 'Usuário', unread: 0, aceitadoEm: Date.now() }
         : conv
     );
     setConversas(novasConversas);
