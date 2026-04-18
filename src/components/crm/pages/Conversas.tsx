@@ -33,6 +33,16 @@ export function Conversas() {
   const [dataHoraAgendamento, setDataHoraAgendamento] = useState('');
   const [arquivoAnexado, setArquivoAnexado] = useState<File | null>(null);
   const [agendamentos, setAgendamentos] = useState<any[]>([]);
+  const [oportunidadeModalVisible, setOportunidadeModalVisible] = useState(false);
+  const [contatos, setContatos] = useState<any[]>([]);
+  const [contatoOportunidade, setContatoOportunidade] = useState<string | null>(null);
+  const [tagsOportunidade, setTagsOportunidade] = useState('');
+  const [etapaOportunidade, setEtapaOportunidade] = useState<string | null>(null);
+  const [itemUnico, setItemUnico] = useState(true);
+  const [produtoOportunidade, setProdutoOportunidade] = useState<string | null>(null);
+  const [valorOportunidade, setValorOportunidade] = useState('');
+  const [informacoesAdicionais, setInformacoesAdicionais] = useState('');
+  const [oportunidades, setOportunidades] = useState<any[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const mediaRecorderRef = useRef<any>(null);
   const audioChunksRef = useRef<Blob[]>([]);
@@ -104,6 +114,32 @@ export function Conversas() {
     { id: 2, nome: 'Instagram DM', tipo: 'instagram', ativa: true },
     { id: 3, nome: 'Telegram', tipo: 'telegram', ativa: true },
   ];
+
+  // ============ DADOS DO PIPELINE ============
+  const etapasPipeline = [
+    { id: 1, nome: 'Novo Lead', emoji: '🎯', cor: '#3498db' },
+    { id: 2, nome: 'Contato Realizado', emoji: '📞', cor: '#2ecc71' },
+    { id: 3, nome: 'Proposta Enviada', emoji: '📄', cor: '#f39c12' },
+    { id: 4, nome: 'Negociação', emoji: '💰', cor: '#e74c3c' },
+    { id: 5, nome: 'Fechado', emoji: '✅', cor: '#27ae60' },
+  ];
+
+  const produtosServicos = [
+    { id: 1, nome: 'Consulta Inicial' },
+    { id: 2, nome: 'Tratamento Básico' },
+    { id: 3, nome: 'Pacote Premium' },
+    { id: 4, nome: 'Acompanhamento Mensal' },
+    { id: 5, nome: 'Consultoria Especial' },
+  ];
+
+  const tagsCRM = ['lead-quente', 'agendamento', 'plano-saúde', 'desconto-30', 'vip', 'retorno', 'novo-cliente'];
+
+  // Inicializar contatos a partir das conversas
+  const contatosDisponiveis = conversas.map((conv: any) => ({
+    id: conv.id,
+    nome: conv.nome,
+    canal: conv.canal,
+  }));
 
   // Função para gerar cor de tag baseada no tipo
   const getTagColor = (tag: string) => {
@@ -392,6 +428,70 @@ export function Conversas() {
       fecharAgendarModal();
       alert('Mensagem agendada com sucesso! Ela aparecerá no Calendário na data e hora especificadas.');
     }
+  };
+
+  const abrirOportunidadeModal = () => {
+    setOportunidadeModalVisible(true);
+    setContatoOportunidade(conversa?.id.toString() || null);
+    setTagsOportunidade('');
+    setEtapaOportunidade('1');
+    setItemUnico(true);
+    setProdutoOportunidade(null);
+    setValorOportunidade('');
+    setInformacoesAdicionais('');
+  };
+
+  const fecharOportunidadeModal = () => {
+    setOportunidadeModalVisible(false);
+    setContatoOportunidade(null);
+    setTagsOportunidade('');
+    setEtapaOportunidade(null);
+    setItemUnico(true);
+    setProdutoOportunidade(null);
+    setValorOportunidade('');
+    setInformacoesAdicionais('');
+  };
+
+  const salvarOportunidade = () => {
+    if (!contatoOportunidade) {
+      alert('Por favor, selecione um contato');
+      return;
+    }
+    if (!etapaOportunidade) {
+      alert('Por favor, selecione uma etapa do funil');
+      return;
+    }
+    if (!produtoOportunidade || produtoOportunidade.trim() === '') {
+      alert('Por favor, selecione ou digite um produto/serviço');
+      return;
+    }
+    if (!valorOportunidade || parseFloat(valorOportunidade) <= 0) {
+      alert('Por favor, insira um valor válido');
+      return;
+    }
+
+    const contatoNome = contatosDisponiveis.find((c: any) => c.id.toString() === contatoOportunidade)?.nome;
+    const etapaNome = etapasPipeline.find((e: any) => e.id.toString() === etapaOportunidade)?.nome;
+
+    const novaOportunidade = {
+      id: Date.now(),
+      contatoId: contatoOportunidade,
+      contatoNome: contatoNome,
+      tags: tagsOportunidade,
+      etapa: etapaOportunidade,
+      etapaNome: etapaNome,
+      itemUnico: itemUnico,
+      produto: produtoOportunidade,
+      valor: parseFloat(valorOportunidade),
+      informacoes: informacoesAdicionais,
+      status: 'ativa',
+      criadoEm: new Date().toISOString(),
+      dataUltimaAtualizacao: new Date().toISOString(),
+    };
+
+    setOportunidades([...oportunidades, novaOportunidade]);
+    fecharOportunidadeModal();
+    alert('✅ Oportunidade criada com sucesso! Aparecerá automaticamente na etapa "' + etapaNome + '" do Pipeline.');
   };
 
   // ============ GRAVAÇÃO DE ÁUDIO ============
@@ -893,7 +993,7 @@ export function Conversas() {
               { Icon: RefreshCw, label: 'Devolver para a IA', action: 'devolver' },
               { Icon: User, label: 'Transferir Ticket', action: 'transferir' },
               { Icon: Calendar, label: 'Agendar Mensagem', action: 'agendar' },
-              { Icon: DollarSign, label: 'Nova Oportunidade' },
+              { Icon: DollarSign, label: 'Nova Oportunidade', action: 'oportunidade' },
               { Icon: FileText, label: 'Nota Interna' },
               { Icon: Paperclip, label: 'Anexar Arquivo' },
               { Icon: Zap, label: 'Respostas Rápidas' },
@@ -913,6 +1013,8 @@ export function Conversas() {
                     abrirTransferirModal();
                   } else if (action === 'agendar') {
                     abrirAgendarModal();
+                  } else if (action === 'oportunidade') {
+                    abrirOportunidadeModal();
                   }
                 }}
                 style={{
@@ -2394,6 +2496,427 @@ export function Conversas() {
                 }}
               >
                 Adicionar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL DE ADICIONAR OPORTUNIDADE */}
+      {oportunidadeModalVisible && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 10002,
+        }}>
+          <div style={{
+            background: '#0a1520',
+            borderRadius: '12px',
+            border: '1px solid #1e3d54',
+            padding: '32px',
+            minWidth: '500px',
+            maxHeight: '90vh',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.6)',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '24px',
+            overflowY: 'auto',
+          }}>
+            {/* HEADER COM FUNDO GOLD */}
+            <div style={{
+              background: 'linear-gradient(135deg, #c9943a, #e8b86d)',
+              borderRadius: '8px',
+              padding: '16px 20px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              justifyContent: 'space-between',
+              marginBottom: '8px',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{ fontSize: '24px' }}>💰</div>
+                <div>
+                  <h3 style={{ margin: '0 0 4px 0', fontSize: '16px', fontWeight: 700, color: '#0d1f2d' }}>
+                    Adicionar Oportunidade
+                  </h3>
+                  <p style={{ margin: 0, fontSize: '12px', color: 'rgba(13, 31, 45, 0.7)' }}>
+                    Preencha os dados para criar uma nova oportunidade
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={fecharOportunidadeModal}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: '#0d1f2d',
+                  cursor: 'pointer',
+                  fontSize: '24px',
+                  padding: '4px 8px',
+                  fontWeight: 700,
+                }}
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* CONTATO */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <label style={{ fontSize: '12px', fontWeight: 700, color: '#c9943a', textTransform: 'uppercase', letterSpacing: '0.8px' }}>
+                CONTATO *
+              </label>
+              <select
+                value={contatoOportunidade || ''}
+                onChange={(e) => setContatoOportunidade(e.target.value || null)}
+                style={{
+                  padding: '10px 14px',
+                  borderRadius: '6px',
+                  border: '1px solid #1e3d54',
+                  background: 'rgba(13, 31, 45, 0.5)',
+                  color: '#e8edf2',
+                  fontSize: '13px',
+                  outline: 'none',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                }}
+                onFocus={(e) => {
+                  (e.currentTarget as HTMLElement).style.borderColor = '#c9943a';
+                  (e.currentTarget as HTMLElement).style.background = 'rgba(13, 31, 45, 0.8)';
+                }}
+                onBlur={(e) => {
+                  (e.currentTarget as HTMLElement).style.borderColor = '#1e3d54';
+                  (e.currentTarget as HTMLElement).style.background = 'rgba(13, 31, 45, 0.5)';
+                }}
+              >
+                <option value="">Selecionar contato...</option>
+                {contatosDisponiveis.map((contato: any) => (
+                  <option key={contato.id} value={contato.id}>
+                    {contato.nome}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* TAGS CRM */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <label style={{ fontSize: '12px', fontWeight: 700, color: '#c9943a', textTransform: 'uppercase', letterSpacing: '0.8px' }}>
+                TAGS CRM
+              </label>
+              <input
+                type="text"
+                value={tagsOportunidade}
+                onChange={(e) => setTagsOportunidade(e.target.value)}
+                placeholder="Ex: lead-quente, agendamento, plano-saúde..."
+                style={{
+                  padding: '10px 14px',
+                  borderRadius: '6px',
+                  border: '1px solid #1e3d54',
+                  background: 'rgba(13, 31, 45, 0.5)',
+                  color: '#e8edf2',
+                  fontSize: '13px',
+                  outline: 'none',
+                  transition: 'all 0.2s',
+                }}
+                onFocus={(e) => {
+                  (e.currentTarget as HTMLElement).style.borderColor = '#c9943a';
+                  (e.currentTarget as HTMLElement).style.background = 'rgba(13, 31, 45, 0.8)';
+                }}
+                onBlur={(e) => {
+                  (e.currentTarget as HTMLElement).style.borderColor = '#1e3d54';
+                  (e.currentTarget as HTMLElement).style.background = 'rgba(13, 31, 45, 0.5)';
+                }}
+              />
+              <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                {tagsCRM.map((tag) => (
+                  <button
+                    key={tag}
+                    onClick={() => {
+                      if (!tagsOportunidade.includes(tag)) {
+                        setTagsOportunidade(
+                          tagsOportunidade ? `${tagsOportunidade}, ${tag}` : tag
+                        );
+                      }
+                    }}
+                    style={{
+                      padding: '4px 10px',
+                      borderRadius: '12px',
+                      border: '1px solid #1e3d54',
+                      background: 'rgba(201, 148, 58, 0.1)',
+                      color: '#c9943a',
+                      fontSize: '11px',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                    }}
+                    onMouseEnter={(e) => {
+                      (e.currentTarget as HTMLElement).style.background = 'rgba(201, 148, 58, 0.2)';
+                    }}
+                    onMouseLeave={(e) => {
+                      (e.currentTarget as HTMLElement).style.background = 'rgba(201, 148, 58, 0.1)';
+                    }}
+                  >
+                    {tag}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* ETAPA DO FUNIL */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <label style={{ fontSize: '12px', fontWeight: 700, color: '#c9943a', textTransform: 'uppercase', letterSpacing: '0.8px' }}>
+                ETAPA DO FUNIL
+              </label>
+              <select
+                value={etapaOportunidade || ''}
+                onChange={(e) => setEtapaOportunidade(e.target.value || null)}
+                style={{
+                  padding: '10px 14px',
+                  borderRadius: '6px',
+                  border: '1px solid #1e3d54',
+                  background: 'rgba(13, 31, 45, 0.5)',
+                  color: '#e8edf2',
+                  fontSize: '13px',
+                  outline: 'none',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                }}
+                onFocus={(e) => {
+                  (e.currentTarget as HTMLElement).style.borderColor = '#c9943a';
+                  (e.currentTarget as HTMLElement).style.background = 'rgba(13, 31, 45, 0.8)';
+                }}
+                onBlur={(e) => {
+                  (e.currentTarget as HTMLElement).style.borderColor = '#1e3d54';
+                  (e.currentTarget as HTMLElement).style.background = 'rgba(13, 31, 45, 0.5)';
+                }}
+              >
+                <option value="">Selecionar etapa...</option>
+                {etapasPipeline.map((etapa: any) => (
+                  <option key={etapa.id} value={etapa.id}>
+                    {etapa.emoji} {etapa.nome}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* ITEM ÚNICO / MÚLTIPLOS */}
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+              <button
+                onClick={() => setItemUnico(true)}
+                style={{
+                  padding: '10px 20px',
+                  borderRadius: '6px',
+                  border: itemUnico ? 'none' : '1px solid #1e3d54',
+                  background: itemUnico ? '#c9943a' : 'transparent',
+                  color: itemUnico ? '#0d1f2d' : '#7a96aa',
+                  fontSize: '12px',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  flex: 1,
+                }}
+                onMouseEnter={(e) => {
+                  if (!itemUnico) {
+                    (e.currentTarget as HTMLElement).style.background = 'rgba(30, 61, 84, 0.3)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!itemUnico) {
+                    (e.currentTarget as HTMLElement).style.background = 'transparent';
+                  }
+                }}
+              >
+                📦 ITEM ÚNICO
+              </button>
+              <button
+                onClick={() => setItemUnico(false)}
+                style={{
+                  padding: '10px 20px',
+                  borderRadius: '6px',
+                  border: !itemUnico ? 'none' : '1px solid #1e3d54',
+                  background: !itemUnico ? '#c9943a' : 'transparent',
+                  color: !itemUnico ? '#0d1f2d' : '#7a96aa',
+                  fontSize: '12px',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  flex: 1,
+                }}
+                onMouseEnter={(e) => {
+                  if (itemUnico) {
+                    (e.currentTarget as HTMLElement).style.background = 'rgba(30, 61, 84, 0.3)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (itemUnico) {
+                    (e.currentTarget as HTMLElement).style.background = 'transparent';
+                  }
+                }}
+              >
+                📦 MÚLTIPLOS ITENS
+              </button>
+            </div>
+
+            {/* PRODUTO / SERVIÇO */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <label style={{ fontSize: '12px', fontWeight: 700, color: '#c9943a', textTransform: 'uppercase', letterSpacing: '0.8px' }}>
+                PRODUTO / SERVIÇO
+              </label>
+              <select
+                value={produtoOportunidade || ''}
+                onChange={(e) => setProdutoOportunidade(e.target.value || null)}
+                style={{
+                  padding: '10px 14px',
+                  borderRadius: '6px',
+                  border: '1px solid #1e3d54',
+                  background: 'rgba(13, 31, 45, 0.5)',
+                  color: '#e8edf2',
+                  fontSize: '13px',
+                  outline: 'none',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                }}
+                onFocus={(e) => {
+                  (e.currentTarget as HTMLElement).style.borderColor = '#c9943a';
+                  (e.currentTarget as HTMLElement).style.background = 'rgba(13, 31, 45, 0.8)';
+                }}
+                onBlur={(e) => {
+                  (e.currentTarget as HTMLElement).style.borderColor = '#1e3d54';
+                  (e.currentTarget as HTMLElement).style.background = 'rgba(13, 31, 45, 0.5)';
+                }}
+              >
+                <option value="">Selecione ou digite um produto/serviço</option>
+                {produtosServicos.map((produto: any) => (
+                  <option key={produto.id} value={produto.nome}>
+                    {produto.nome}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* VALOR DA OPORTUNIDADE */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <label style={{ fontSize: '12px', fontWeight: 700, color: '#c9943a', textTransform: 'uppercase', letterSpacing: '0.8px' }}>
+                VALOR DA OPORTUNIDADE
+              </label>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ fontSize: '14px', fontWeight: 700, color: '#c9943a' }}>R$</span>
+                <input
+                  type="number"
+                  value={valorOportunidade}
+                  onChange={(e) => setValorOportunidade(e.target.value)}
+                  placeholder="0"
+                  style={{
+                    flex: 1,
+                    padding: '10px 14px',
+                    borderRadius: '6px',
+                    border: '1px solid #1e3d54',
+                    background: 'rgba(13, 31, 45, 0.5)',
+                    color: '#e8edf2',
+                    fontSize: '13px',
+                    outline: 'none',
+                    transition: 'all 0.2s',
+                  }}
+                  onFocus={(e) => {
+                    (e.currentTarget as HTMLElement).style.borderColor = '#c9943a';
+                    (e.currentTarget as HTMLElement).style.background = 'rgba(13, 31, 45, 0.8)';
+                  }}
+                  onBlur={(e) => {
+                    (e.currentTarget as HTMLElement).style.borderColor = '#1e3d54';
+                    (e.currentTarget as HTMLElement).style.background = 'rgba(13, 31, 45, 0.5)';
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* INFORMAÇÕES ADICIONAIS */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <label style={{ fontSize: '12px', fontWeight: 700, color: '#c9943a', textTransform: 'uppercase', letterSpacing: '0.8px' }}>
+                INFORMAÇÕES ADICIONAIS
+              </label>
+              <textarea
+                value={informacoesAdicionais}
+                onChange={(e) => setInformacoesAdicionais(e.target.value)}
+                placeholder="Observações sobre esta oportunidade..."
+                style={{
+                  padding: '12px 14px',
+                  borderRadius: '6px',
+                  border: '1px solid #1e3d54',
+                  background: 'rgba(13, 31, 45, 0.5)',
+                  color: '#e8edf2',
+                  fontSize: '13px',
+                  outline: 'none',
+                  transition: 'all 0.2s',
+                  resize: 'vertical',
+                  minHeight: '80px',
+                  fontFamily: 'inherit',
+                }}
+                onFocus={(e) => {
+                  (e.currentTarget as HTMLElement).style.borderColor = '#c9943a';
+                  (e.currentTarget as HTMLElement).style.background = 'rgba(13, 31, 45, 0.8)';
+                }}
+                onBlur={(e) => {
+                  (e.currentTarget as HTMLElement).style.borderColor = '#1e3d54';
+                  (e.currentTarget as HTMLElement).style.background = 'rgba(13, 31, 45, 0.5)';
+                }}
+              />
+            </div>
+
+            {/* BOTÕES */}
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+              <button
+                onClick={fecharOportunidadeModal}
+                style={{
+                  padding: '10px 20px',
+                  borderRadius: '6px',
+                  border: '1px solid #1e3d54',
+                  background: 'transparent',
+                  color: '#7a96aa',
+                  fontSize: '13px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.background = 'rgba(30, 61, 84, 0.3)';
+                  (e.currentTarget as HTMLElement).style.borderColor = '#7a96aa';
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.background = 'transparent';
+                  (e.currentTarget as HTMLElement).style.borderColor = '#1e3d54';
+                }}
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={salvarOportunidade}
+                style={{
+                  padding: '10px 20px',
+                  borderRadius: '6px',
+                  border: 'none',
+                  background: '#c9943a',
+                  color: '#0d1f2d',
+                  fontSize: '13px',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.background = '#e8b86d';
+                  (e.currentTarget as HTMLElement).style.transform = 'scale(1.05)';
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.background = '#c9943a';
+                  (e.currentTarget as HTMLElement).style.transform = 'scale(1)';
+                }}
+              >
+                Salvar
               </button>
             </div>
           </div>
