@@ -194,7 +194,7 @@ export function Conversas() {
                   key={conv.id}
                   onClick={() => setSelectedConversa(index)}
                   style={{
-                    padding: '14px 16px',
+                    padding: '10px 12px',
                     borderBottom: '1px solid #1e3d54',
                     cursor: 'pointer',
                     background: isSelected ? '#1e3d54' : 'transparent',
@@ -211,16 +211,16 @@ export function Conversas() {
                     }
                   }}
                 >
-                  <div style={{ display: 'flex', gap: '10px' }}>
+                  <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
                     <div style={{
-                      width: '36px',
-                      height: '36px',
+                      width: '32px',
+                      height: '32px',
                       borderRadius: '50%',
                       background: 'linear-gradient(135deg, #c9943a, #e8b86d)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      fontSize: '14px',
+                      fontSize: '12px',
                       fontWeight: 700,
                       color: '#0d1f2d',
                       flexShrink: 0,
@@ -228,19 +228,41 @@ export function Conversas() {
                       {conv.nome[0].toUpperCase()}{conv.nome[1].toUpperCase()}
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: '13px', fontWeight: 600, color: '#e8edf2', marginBottom: '2px' }}>
-                        {conv.nome} •{conv.id}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
+                        <div style={{ fontSize: '12px', fontWeight: 600, color: '#e8edf2' }}>
+                          {conv.nome}
+                        </div>
+                        {conv.unread > 0 && (
+                          <div style={{
+                            background: '#e74c3c',
+                            color: '#ffffff',
+                            fontSize: '9px',
+                            fontWeight: 800,
+                            width: '18px',
+                            height: '18px',
+                            borderRadius: '50%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            flexShrink: 0,
+                          }}>
+                            {conv.unread}
+                          </div>
+                        )}
                       </div>
-                      <div style={{ fontSize: '11px', color: '#7a96aa', marginBottom: '6px' }}>
+                      <div style={{ fontSize: '10px', color: '#7a96aa', marginBottom: '3px' }}>
                         👁 {conv.hora}
                       </div>
-                      <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+                      <div style={{ fontSize: '10px', color: '#7a96aa', marginBottom: '4px', lineHeight: '1.3' }}>
+                        {conv.preview}
+                      </div>
+                      <div style={{ display: 'flex', gap: '3px', flexWrap: 'wrap' }}>
                         {conv.tags.map((tag, i) => {
                           const colors = getTagColor(tag);
                           return (
                             <span key={i} style={{
-                              fontSize: '9px',
-                              padding: '2px 6px',
+                              fontSize: '8px',
+                              padding: '2px 5px',
                               borderRadius: '3px',
                               background: colors.bg,
                               color: colors.color,
@@ -252,23 +274,6 @@ export function Conversas() {
                         })}
                       </div>
                     </div>
-                    {conv.unread > 0 && (
-                      <div style={{
-                        background: '#e74c3c',
-                        color: '#ffffff',
-                        fontSize: '10px',
-                        fontWeight: 800,
-                        width: '20px',
-                        height: '20px',
-                        borderRadius: '50%',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        flexShrink: 0,
-                      }}>
-                        {conv.unread}
-                      </div>
-                    )}
                   </div>
                 </div>
               );
