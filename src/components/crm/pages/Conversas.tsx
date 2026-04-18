@@ -323,7 +323,7 @@ export function Conversas() {
           </div>
           <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
             {/* ACTION BUTTONS */}
-            {['⋮', '↗', '📋', '$', '📋', '🔗', '▲', '📊', '🔍'].map((icon, i) => (
+            {['✕', '↻', '⚙', '📅', '$', '📄', '📎', '⚡', '📊', '👤'].map((icon, i) => (
               <button
                 key={i}
                 style={{
