@@ -88,12 +88,19 @@ export function Conversas() {
     { tipo: 'sistema', hora: '09:25', texto: 'Ticket devolvido para a fila da IA — humano saiu do atendimento' },
   ];
 
-  // Filtrar conversas por status
-  const conversasFiltradas = conversas.filter(conv => {
-    const matchStatus = filtroStatus === 'atendendo' ? conv.status === 'atendendo' : conv.status === 'aguardando';
-    const matchBusca = conv.nome.toLowerCase().includes(busca.toLowerCase()) || String(conv.id).includes(busca);
-    return matchStatus && matchBusca;
-  });
+  // Filtrar conversas por status E ORDENAR: com notificações primeiro
+  const conversasFiltradas = conversas
+    .filter(conv => {
+      const matchStatus = filtroStatus === 'atendendo' ? conv.status === 'atendendo' : conv.status === 'aguardando';
+      const matchBusca = conv.nome.toLowerCase().includes(busca.toLowerCase()) || String(conv.id).includes(busca);
+      return matchStatus && matchBusca;
+    })
+    .sort((a, b) => {
+      // Conversas com notificações sobem para o topo
+      if (a.unread > 0 && b.unread === 0) return -1;
+      if (a.unread === 0 && b.unread > 0) return 1;
+      return 0;
+    });
 
   // Resetar seleção quando mudar filtro
   const validSelectedConversa = selectedConversa < conversasFiltradas.length ? selectedConversa : 0;
@@ -295,7 +302,8 @@ export function Conversas() {
                           <div style={{ fontSize: '12px', fontWeight: 600, color: '#e8edf2' }}>
                             {conv.nome}
                           </div>
-                          {conv.unread > 0 && (
+                          {/* Eye icon sempre visível no atendendo, ou quando há notificações no aguardando */}
+                          {(!isAguardando || conv.unread > 0) && (
                             <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                               <button
                                 onClick={(e) => {
@@ -303,7 +311,7 @@ export function Conversas() {
                                   abrirEspiar(conv);
                                 }}
                                 style={{
-                                  opacity: 0.5,
+                                  opacity: conv.unread > 0 ? 0.5 : 0.3,
                                   cursor: 'pointer',
                                   transition: 'opacity 0.2s',
                                   display: 'flex',
@@ -317,26 +325,28 @@ export function Conversas() {
                                   (e.currentTarget as HTMLElement).style.opacity = '1';
                                 }}
                                 onMouseLeave={(e) => {
-                                  (e.currentTarget as HTMLElement).style.opacity = '0.5';
+                                  (e.currentTarget as HTMLElement).style.opacity = conv.unread > 0 ? '0.5' : '0.3';
                                 }}
                               >
                                 <Eye size={14} />
                               </button>
-                              <div style={{
-                                background: '#e74c3c',
-                                color: '#ffffff',
-                                fontSize: '9px',
-                                fontWeight: 800,
-                                width: '18px',
-                                height: '18px',
-                                borderRadius: '50%',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                flexShrink: 0,
-                              }}>
-                                {conv.unread}
-                              </div>
+                              {conv.unread > 0 && (
+                                <div style={{
+                                  background: '#e74c3c',
+                                  color: '#ffffff',
+                                  fontSize: '9px',
+                                  fontWeight: 800,
+                                  width: '18px',
+                                  height: '18px',
+                                  borderRadius: '50%',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  flexShrink: 0,
+                                }}>
+                                  {conv.unread}
+                                </div>
+                              )}
                             </div>
                           )}
                         </div>
