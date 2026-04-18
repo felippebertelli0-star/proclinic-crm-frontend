@@ -38,7 +38,7 @@ const PREMIUM_STYLES = {
 export function Conversas() {
   const { usuario } = useAuthStore();
   const [selectedConversa, setSelectedConversa] = useState(0);
-  const [filtroStatus, setFiltroStatus] = useState<'atendendo' | 'aguardando' | 'fechadas'>('atendendo');
+  const [filtroStatus, setFiltroStatus] = useState<'atendendo' | 'aguardando' | 'grupos' | 'fechadas'>('atendendo');
   const [busca, setBusca] = useState('');
   const [activeTab, setActiveTab] = useState<'ativa' | 'tags'>('ativa');
   const [novaMensagem, setNovaMensagem] = useState('');
@@ -122,6 +122,24 @@ export function Conversas() {
       id: 87442, nome: 'Roberta Lima', status: 'aguardando', canal: 'INSTAGRAM',
       atribuidoA: 'IA - WhatsApp', data: '08/04/2026', hora: '25 min',
       origem: 'Instagram Orgânico', tags: ['INSTAGRAM', 'ORÇAMENTO'], unread: 3, preview: 'Preciso de orçamento...'
+    },
+  ]);
+
+  const [grupos, setGrupos] = useState<any>([
+    {
+      id: 1001, nome: 'Grupo de Consultas', canal: 'WHATSAPP',
+      data: '08/04/2026', hora: '2 min', membros: ['Dra. Andressa', 'Havila Rodrigues', 'Camiliy Nunes'],
+      unread: 0, preview: 'Dra. Andressa: Reunião de planejamento...'
+    },
+    {
+      id: 1002, nome: 'Pacientes VIP', canal: 'WHATSAPP',
+      data: '08/04/2026', hora: '15 min', membros: ['Havila Rodrigues', 'Camiliy Nunes', 'Luana Silva'],
+      unread: 2, preview: 'Cliente: Gostaria de agendar...'
+    },
+    {
+      id: 1003, nome: 'Suporte Administrativo', canal: 'WHATSAPP',
+      data: '08/04/2026', hora: '28 min', membros: ['Dra. Andressa', 'Luana Silva'],
+      unread: 0, preview: 'Luana: Documentos enviados'
     },
   ]);
 
@@ -257,13 +275,20 @@ export function Conversas() {
   ];
 
   // Filtrar conversas por status E ORDENAR: com notificações primeiro
-  const conversasFiltradas = conversas
-    .filter((conv: any) => {
-      const matchStatus = filtroStatus === 'atendendo' ? conv.status === 'atendendo' :
-                         filtroStatus === 'aguardando' ? conv.status === 'aguardando' :
-                         conv.status === 'fechadas';
-      const matchBusca = conv.nome.toLowerCase().includes(busca.toLowerCase()) || String(conv.id).includes(busca);
-      return matchStatus && matchBusca;
+  const conversasFiltradas = (filtroStatus === 'grupos' ? grupos : conversas)
+    .filter((item: any) => {
+      if (filtroStatus === 'grupos') {
+        // Para grupos, apenas filtrar por busca
+        const matchBusca = item.nome.toLowerCase().includes(busca.toLowerCase()) || String(item.id).includes(busca);
+        return matchBusca;
+      } else {
+        // Para conversas normais, filtrar por status e busca
+        const matchStatus = filtroStatus === 'atendendo' ? item.status === 'atendendo' :
+                           filtroStatus === 'aguardando' ? item.status === 'aguardando' :
+                           item.status === 'fechadas';
+        const matchBusca = item.nome.toLowerCase().includes(busca.toLowerCase()) || String(item.id).includes(busca);
+        return matchStatus && matchBusca;
+      }
     })
     .sort((a: any, b: any) => {
       // Conversas aceitas recentemente ficam no topo em "atendendo"
@@ -283,10 +308,11 @@ export function Conversas() {
   const conversa = conversasFiltradas[validSelectedConversa];
   const totalAtendendo = conversas.filter((c: any) => c.status === 'atendendo').length;
   const totalAguardando = conversas.filter((c: any) => c.status === 'aguardando').length;
+  const totalGrupos = grupos.length;
   const totalFechadas = conversas.filter((c: any) => c.status === 'fechadas').length;
 
   // Handler para mudar filtro e resetar seleção
-  const handleFiltroChange = (status: 'atendendo' | 'aguardando' | 'fechadas') => {
+  const handleFiltroChange = (status: 'atendendo' | 'aguardando' | 'grupos' | 'fechadas') => {
     setFiltroStatus(status);
     setSelectedConversa(0);
   };
@@ -820,6 +846,7 @@ export function Conversas() {
             {[
               { id: 'atendendo', label: 'Atendendo', count: totalAtendendo },
               { id: 'aguardando', label: 'Aguardando', count: totalAguardando },
+              { id: 'grupos', label: 'Grupos', count: totalGrupos },
               { id: 'fechadas', label: 'Fechadas', count: totalFechadas },
             ].map((btn) => (
               <button
