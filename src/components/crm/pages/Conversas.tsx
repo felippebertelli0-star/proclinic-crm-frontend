@@ -615,10 +615,8 @@ export function Conversas() {
     setGravando(false);
     clearInterval(timerRef.current);
 
-    // Aguarda um momento para o arquivo ser processado
-    setTimeout(() => {
-      handleEnviarMensagem();
-    }, 100);
+    // Envia imediatamente sem delay
+    handleEnviarMensagem();
   };
 
   const cancelarGravacao = () => {
