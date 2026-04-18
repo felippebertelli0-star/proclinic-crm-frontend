@@ -828,7 +828,7 @@ export function Conversas() {
     <div style={{ display: 'flex', height: 'calc(100vh - 60px)', background: '#0d1f2d', color: '#e8edf2', fontFamily: "'Segoe UI', sans-serif" }}>
       {/* SIDEBAR - LISTA DE CONVERSAS */}
       <div style={{
-        width: '550px',
+        width: '500px',
         background: '#0d1f2d',
         borderRight: '1px solid #1e3d54',
         display: 'flex',
