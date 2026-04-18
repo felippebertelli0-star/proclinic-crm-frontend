@@ -994,9 +994,6 @@ export function Conversas() {
                             </div>
                           )}
                         </div>
-                        <div style={{ fontSize: '9px', color: '#c9943a', marginBottom: '4px', fontWeight: 600 }}>
-                          👤 {conv.atribuidoA}
-                        </div>
                         <div style={{ fontSize: '10px', color: '#7a96aa', marginBottom: '3px', display: 'flex', alignItems: 'center', gap: '4px' }}>
                           <Clock size={12} />
                           {conv.hora}
