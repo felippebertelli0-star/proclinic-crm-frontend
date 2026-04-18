@@ -293,45 +293,14 @@ export function Dashboard() {
 
   return (
     <div style={{
-      padding: '0',
+      padding: '24px',
       background: '#0d1f2d',
-      minHeight: '100vh',
+      minHeight: '100%',
       color: '#e8edf2',
       display: 'flex',
       flexDirection: 'column',
+      overflowY: 'auto',
     }}>
-      {/* =============== HEADER COM STATUS INDICATORS =============== */}
-      <div style={{
-        background: '#132636',
-        borderBottom: '1px solid #1e3d54',
-        padding: '12px 24px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-      }}>
-        <div style={{ fontSize: '14px', fontWeight: 700, color: '#c9943a', letterSpacing: '-0.3px' }}>
-          ProClinic — Inteligência Comercial
-        </div>
-        <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: '#7a96aa' }}>
-            <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#2ecc71' }} />
-            Clínica Dra. Andreassa Barbarolli
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: '#7a96aa' }}>
-            <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#2ecc71' }} />
-            WhatsApp Conectado
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: '#7a96aa' }}>
-            <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#2ecc71' }} />
-            Instagram Conectado
-          </div>
-          <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'linear-gradient(135deg, #c9943a, #e8b86d)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', fontWeight: 800, color: '#0d1f2d' }}>
-            A
-          </div>
-        </div>
-      </div>
-
-      <div style={{ padding: '24px', flex: 1, overflowY: 'auto' }}>
       {/* FILTER BAR */}
       <div style={{
         background: '#132636',
@@ -1064,7 +1033,6 @@ export function Dashboard() {
             </table>
           </div>
         </div>
-      </div>
       </div>
     </div>
   );
