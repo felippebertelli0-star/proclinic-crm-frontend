@@ -98,6 +98,7 @@ export function Conversas() {
   const audioChunksRef = useRef<Blob[]>([]);
   const streamRef = useRef<MediaStream | null>(null);
   const timerRef = useRef<any>(null);
+  const isMountedRef = useRef(true); // Rastreia se componente está montado
   const [conversas, setConversas] = useState<any>(CONVERSAS_INICIAIS);
 
   const [grupos, setGrupos] = useState<any>(GRUPOS_INICIAIS);
@@ -183,6 +184,28 @@ export function Conversas() {
     // Diminui automaticamente quando conversa é aberta (unread vira 0)
     setConversasCounts(totalAtendendo, totalAguardando, totalGrupos);
   }, [totalAtendendo, totalAguardando, totalGrupos, setConversasCounts]);
+
+  // ============ CLEANUP DE REFS (Previne memory leaks) ============
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+      // Limpar timer se componente desmontar enquanto está gravando
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+      // Parar mediaRecorder se estiver ativo
+      if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+        mediaRecorderRef.current.stop();
+      }
+      // Parar stream de áudio
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+      }
+      // Limpar chunks de áudio
+      audioChunksRef.current = [];
+    };
+  }, []);
 
   // ============ CARREGAR MENSAGENS ESPECÍFICAS DA CONVERSA ============
   useEffect(() => {
@@ -338,9 +361,7 @@ export function Conversas() {
       return;
     }
 
-    // Debug: verificar o que está selecionado
-    console.log('Membro selecionado:', membroSelecionado);
-    console.log('Fila selecionada:', filaSelecionada);
+    // Validação de seleção para transferência
 
     // Atualizar a conversa com a nova atribuição
     const novasConversas = conversas.map((conv: any) =>
@@ -586,9 +607,10 @@ export function Conversas() {
       };
 
       mediaRecorder.onstop = () => {
+        if (!isMountedRef.current) return; // Não fazer nada se componente foi desmontado
+
         const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
         const duracao = tempoGravacao; // Duração em segundos
-        console.log('🎙️ Áudio gravado:', audioBlob, 'Duração:', duracao, 's');
         // Armazenar áudio com metadados em JSON
         const audioData = {
           tipo: 'audio',
@@ -605,7 +627,8 @@ export function Conversas() {
 
         // 🚀 ENVIAR DIRETO APÓS ÁUDIO SER PROCESSADO (sem segunda validação)
         // Usar setTimeout com 0 para garantir que a mensagem foi setada no estado
-        setTimeout(() => {
+        const timeoutId = setTimeout(() => {
+          if (!isMountedRef.current) return; // Verificar novamente se componente está montado
           // Criar a mensagem e enviar diretamente
           if (audioMessage.trim()) {
             const novaMens = {
@@ -617,9 +640,13 @@ export function Conversas() {
             };
             setHistoricoMensagens((prev) => [...prev, novaMens]);
             setNovaMensagem('');
-            console.log('📤 Áudio enviado direto!');
           }
         }, 0);
+
+        // Retornar função cleanup para limpar timeout se necessário
+        return () => {
+          clearTimeout(timeoutId);
+        };
       };
 
       mediaRecorder.start();
@@ -631,7 +658,6 @@ export function Conversas() {
         setTempoGravacao(prev => prev + 1);
       }, 1000);
     } catch (error) {
-      console.error('❌ Erro ao acessar microfone:', error);
       alert('Permissão de microfone negada ou microfone não disponível');
     }
   };
@@ -709,10 +735,8 @@ export function Conversas() {
       };
 
       setHistoricoMensagens([...historicoMensagens, novaMens]);
-      console.log('📤 Mensagem enviada:', isAudio ? 'Áudio' : novaMensagem);
 
       // Aqui você faria a requisição para enviar via API
-      // Por enquanto, apenas limpa o input e mostra no console
 
       // Feedback visual: limpar input
       setNovaMensagem('');
@@ -761,7 +785,7 @@ export function Conversas() {
                   background: filtroStatus === btn.id ? '#c9943a' : 'rgba(201, 148, 58, 0.08)',
                   color: filtroStatus === btn.id ? '#0d1f2d' : '#c9943a',
                   fontSize: '12px',
-                  fontWeight: filtroStatus === btn.id ? 700 : 700,
+                  fontWeight: filtroStatus === btn.id ? 700 : 600,
                   cursor: 'pointer',
                   transition: 'all 0.25s ease',
                   textAlign: 'center',

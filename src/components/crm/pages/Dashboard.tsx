@@ -300,10 +300,11 @@ export function Dashboard() {
   const graphWidth = chartWidth - padding * 2;
   const graphHeight = chartHeight - padding * 2;
 
-  // Função para criar pontos de um indicador
+  // Função para criar pontos de um indicador (com proteção contra divisão por zero)
   const createPoints = (key: string) => {
+    const divisor = Math.max(chartData.length - 1, 1); // Previne divisão por zero
     return chartData.map((data, i) => ({
-      x: padding + (i / (chartData.length - 1)) * graphWidth,
+      x: padding + (i / divisor) * graphWidth,
       y: chartHeight - padding - ((data[key as keyof typeof data] as number) / maxValue) * graphHeight,
       value: data[key as keyof typeof data],
     }));
@@ -358,6 +359,7 @@ export function Dashboard() {
             type="date"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
+            aria-label="Data de início do período"
             style={{
               padding: '7px 12px',
               background: '#1a3347',
@@ -372,6 +374,7 @@ export function Dashboard() {
             type="date"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
+            aria-label="Data de fim do período"
             style={{
               padding: '7px 12px',
               background: '#1a3347',
