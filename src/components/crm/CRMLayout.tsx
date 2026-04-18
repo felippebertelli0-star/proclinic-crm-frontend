@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
+import { useConversasStore } from '@/store/conversasStore';
 import { LayoutDashboard, MessageCircle, Users, Grid3x3, TrendingUp, Tag, Zap, Calendar, RotateCw, CheckSquare, Cog, Brain, Sliders, List, Link, Folder, BarChart3, ClipboardList, LogOut } from 'lucide-react';
 import { Dashboard } from './pages/Dashboard';
 import { Conversas } from './pages/Conversas';
@@ -27,43 +28,6 @@ import { Tarefas } from './pages/Tarefas';
 import { PedidoExames } from './pages/PedidoExames';
 
 type PageType = 'sair' | 'dashboard' | 'conversas' | 'contatos' | 'kanban' | 'pipeline' | 'calendario' | 'followups' | 'tarefas' | 'etiquetas' | 'respostas' | 'estrategias' | 'portal_ias' | 'flowbuilder' | 'webhooks' | 'filas' | 'equipe' | 'conexoes' | 'arquivos' | 'indicadores' | 'pedido_exames' | 'configuracoes';
-
-const MENU_STRUCTURE = {
-  atendimento: [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, badge: undefined },
-    { id: 'conversas', label: 'Conversas', icon: MessageCircle, badge: 97 },
-    { id: 'contatos', label: 'Contatos', icon: Users, badge: undefined },
-    { id: 'kanban', label: 'Kanban', icon: Grid3x3, badge: undefined },
-    { id: 'pipeline', label: 'Pipeline CRM', icon: TrendingUp, badge: undefined },
-  ],
-  utilitarios: [
-    { id: 'etiquetas', label: 'Etiquetas', icon: Tag, badge: undefined },
-    { id: 'respostas', label: 'Respostas Rápidas', icon: Zap, badge: undefined },
-  ],
-  agenda: [
-    { id: 'calendario', label: 'Calendário', icon: Calendar, badge: undefined },
-    { id: 'followups', label: 'Follow-ups', icon: RotateCw, badge: undefined },
-    { id: 'tarefas', label: 'Tarefas', icon: CheckSquare, badge: undefined },
-  ],
-  automacao: [
-    { id: 'estrategias', label: 'Estratégias', icon: Cog, badge: undefined },
-    { id: 'portal_ias', label: 'Portal das IAs', icon: Brain, badge: undefined },
-    { id: 'flowbuilder', label: 'FlowBuilder', icon: Sliders, badge: undefined },
-    { id: 'webhooks', label: 'Webhooks / Triggers', icon: Zap, badge: undefined },
-  ],
-  gestao: [
-    { id: 'filas', label: 'Filas', icon: List, badge: undefined },
-    { id: 'equipe', label: 'Equipe', icon: Users, badge: undefined },
-    { id: 'conexoes', label: 'Conexões', icon: Link, badge: undefined },
-    { id: 'arquivos', label: 'Arquivos', icon: Folder, badge: undefined },
-  ],
-  relatorios: [
-    { id: 'indicadores', label: 'Indicadores', icon: BarChart3, badge: undefined },
-  ],
-  clinica: [
-    { id: 'pedido_exames', label: 'Pedido de Exames', icon: ClipboardList, badge: undefined },
-  ],
-};
 
 const FOOTER_MENU = [
   { id: 'configuracoes', label: 'Configurações', icon: Cog },
@@ -99,9 +63,51 @@ export function CRMLayout() {
   const router = useRouter();
   const pathname = usePathname();
   const { usuario } = useAuthStore();
+  const { totalAtendendo, totalAguardando, totalGrupos } = useConversasStore();
   const [currentPage, setCurrentPage] = useState<PageType>('dashboard');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const menuScrollRef = useRef<HTMLDivElement>(null);
+
+  // ============ MENU DINÂMICO COM BADGE ============
+  // Badge para Conversas = totalAtendendo + totalAguardando + totalGrupos (SEM Fechadas)
+  const conversasBadge = totalAtendendo + totalAguardando + totalGrupos;
+
+  const MENU_STRUCTURE = {
+    atendimento: [
+      { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, badge: undefined },
+      { id: 'conversas', label: 'Conversas', icon: MessageCircle, badge: conversasBadge > 0 ? conversasBadge : undefined },
+      { id: 'contatos', label: 'Contatos', icon: Users, badge: undefined },
+      { id: 'kanban', label: 'Kanban', icon: Grid3x3, badge: undefined },
+      { id: 'pipeline', label: 'Pipeline CRM', icon: TrendingUp, badge: undefined },
+    ],
+    utilitarios: [
+      { id: 'etiquetas', label: 'Etiquetas', icon: Tag, badge: undefined },
+      { id: 'respostas', label: 'Respostas Rápidas', icon: Zap, badge: undefined },
+    ],
+    agenda: [
+      { id: 'calendario', label: 'Calendário', icon: Calendar, badge: undefined },
+      { id: 'followups', label: 'Follow-ups', icon: RotateCw, badge: undefined },
+      { id: 'tarefas', label: 'Tarefas', icon: CheckSquare, badge: undefined },
+    ],
+    automacao: [
+      { id: 'estrategias', label: 'Estratégias', icon: Cog, badge: undefined },
+      { id: 'portal_ias', label: 'Portal das IAs', icon: Brain, badge: undefined },
+      { id: 'flowbuilder', label: 'FlowBuilder', icon: Sliders, badge: undefined },
+      { id: 'webhooks', label: 'Webhooks / Triggers', icon: Zap, badge: undefined },
+    ],
+    gestao: [
+      { id: 'filas', label: 'Filas', icon: List, badge: undefined },
+      { id: 'equipe', label: 'Equipe', icon: Users, badge: undefined },
+      { id: 'conexoes', label: 'Conexões', icon: Link, badge: undefined },
+      { id: 'arquivos', label: 'Arquivos', icon: Folder, badge: undefined },
+    ],
+    relatorios: [
+      { id: 'indicadores', label: 'Indicadores', icon: BarChart3, badge: undefined },
+    ],
+    clinica: [
+      { id: 'pedido_exames', label: 'Pedido de Exames', icon: ClipboardList, badge: undefined },
+    ],
+  };
 
   // Formatar data/hora do último login
   const formatarUltimoLogin = (dataString?: string) => {

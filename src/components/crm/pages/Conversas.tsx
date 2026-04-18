@@ -8,6 +8,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { X, RefreshCw, Calendar, DollarSign, FileText, Paperclip, Zap, BarChart3, User, Mic, Send, Smile, Clock, Eye } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
+import { useConversasStore } from '@/store/conversasStore';
 
 // ============ ESTILOS PREMIUM AAA ============
 const PREMIUM_STYLES = {
@@ -310,6 +311,14 @@ export function Conversas() {
   const totalAguardando = conversas.filter((c: any) => c.status === 'aguardando').length;
   const totalGrupos = grupos.length;
   const totalFechadas = conversas.filter((c: any) => c.status === 'fechadas').length;
+
+  // ============ ATUALIZAR BADGE NO MENU LATERAL ============
+  const { setConversasCounts } = useConversasStore();
+
+  useEffect(() => {
+    // Atualizar o store com os totais (SEM incluir Fechadas)
+    setConversasCounts(totalAtendendo, totalAguardando, totalGrupos);
+  }, [totalAtendendo, totalAguardando, totalGrupos, setConversasCounts]);
 
   // Handler para mudar filtro e resetar seleção
   const handleFiltroChange = (status: 'atendendo' | 'aguardando' | 'grupos' | 'fechadas') => {
@@ -981,7 +990,7 @@ export function Conversas() {
                           </div>
                           {/* Eye icon sempre visível no atendendo, ou quando há notificações no aguardando */}
                           {(!isAguardando || conv.unread > 0) && (
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', height: '16px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', height: 'auto' }}>
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
@@ -994,14 +1003,15 @@ export function Conversas() {
                                   display: 'flex',
                                   alignItems: 'center',
                                   justifyContent: 'center',
-                                  height: '16px',
-                                  width: '16px',
                                   background: 'none',
                                   border: 'none',
                                   padding: 0,
                                   margin: 0,
                                   color: '#7a96aa',
                                   lineHeight: 1,
+                                  height: 'auto',
+                                  width: 'auto',
+                                  minWidth: '12px',
                                 }}
                                 onMouseEnter={(e) => {
                                   (e.currentTarget as HTMLElement).style.opacity = '1';
@@ -1013,7 +1023,7 @@ export function Conversas() {
                                 <Eye size={12} />
                               </button>
                               {/* Tempo entre olho e notificação */}
-                              <span style={{ fontSize: '9px', color: '#7a96aa', display: 'flex', alignItems: 'center', gap: '2px', height: '16px', lineHeight: 1, margin: 0, padding: 0 }}>
+                              <span style={{ fontSize: '9px', color: '#7a96aa', display: 'flex', alignItems: 'center', gap: '2px', height: 'auto', lineHeight: 1, margin: 0, padding: 0, whiteSpace: 'nowrap' }}>
                                 <Clock size={10} />
                                 {conv.hora}
                               </span>
@@ -1023,14 +1033,15 @@ export function Conversas() {
                                   color: '#ffffff',
                                   fontSize: '9px',
                                   fontWeight: 800,
-                                  width: '16px',
-                                  height: '16px',
+                                  width: '18px',
+                                  height: '18px',
                                   borderRadius: '50%',
                                   display: 'flex',
                                   alignItems: 'center',
                                   justifyContent: 'center',
                                   flexShrink: 0,
                                   lineHeight: 1,
+                                  padding: 0,
                                 }}>
                                   {conv.unread}
                                 </div>
@@ -1038,18 +1049,24 @@ export function Conversas() {
                             </div>
                           )}
                         </div>
-                        {/* Atribuído a - com cor diferente (roxo/vermelho) */}
-                        <div style={{ fontSize: '10px', color: '#9b59b6', fontWeight: 600, marginBottom: '3px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                          👤 {conv.atribuidoA}
-                        </div>
-                        <div style={{ fontSize: '10px', color: '#7a96aa', marginBottom: '4px', lineHeight: '1.3' }}>
-                          {conv.preview}
-                        </div>
-                        <div style={{ fontSize: '10px', color: '#c9943a', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                          ● {conv.origem}
-                        </div>
+                        {/* Atribuído a - com cor diferente (roxo/vermelho) - SÓ PARA CONVERSAS */}
+                        {conv.atribuidoA && (
+                          <div style={{ fontSize: '10px', color: '#9b59b6', fontWeight: 600, marginBottom: '3px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            👤 {conv.atribuidoA}
+                          </div>
+                        )}
+                        {conv.preview && (
+                          <div style={{ fontSize: '10px', color: '#7a96aa', marginBottom: '4px', lineHeight: '1.3' }}>
+                            {conv.preview}
+                          </div>
+                        )}
+                        {conv.origem && (
+                          <div style={{ fontSize: '10px', color: '#c9943a', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            ● {conv.origem}
+                          </div>
+                        )}
                         <div style={{ display: 'flex', gap: '3px', flexWrap: 'wrap' }}>
-                          {conv.tags.map((tag: string, i: number) => {
+                          {conv.tags && conv.tags.map((tag: string, i: number) => {
                             const colors = getTagColor(tag);
                             return (
                               <span key={i} style={{
