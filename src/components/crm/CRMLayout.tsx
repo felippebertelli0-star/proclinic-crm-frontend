@@ -186,15 +186,9 @@ export function CRMLayout() {
         <div style={{ fontSize: '14px', fontWeight: 700, color: '#c9943a' }}>
           ProClinic — Inteligência Comercial
         </div>
-        <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
           <div style={{ fontSize: '12px', color: '#7a96aa', display: 'flex', gap: '8px', alignItems: 'center' }}>
             🏥 <span style={{ color: '#e8edf2' }}>Clínica Dra. Andressa Barbarotti</span>
-          </div>
-          <div style={{ fontSize: '12px', color: '#2ecc71', display: 'flex', gap: '8px', alignItems: 'center' }}>
-            💬 <span>WhatsApp Conectado</span>
-          </div>
-          <div style={{ fontSize: '12px', color: '#e1306c', display: 'flex', gap: '8px', alignItems: 'center' }}>
-            📸 <span>Instagram Conectado</span>
           </div>
           <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#c9943a', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#0d1f2d', fontWeight: 700, fontSize: '14px' }}>
             H

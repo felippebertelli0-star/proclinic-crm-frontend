@@ -412,6 +412,38 @@ export function Conversas() {
                 <Icon size={18} />
               </button>
             ))}
+
+            {/* SEPARADOR */}
+            <div style={{ width: '1px', height: '24px', background: '#1e3d54' }} />
+
+            {/* STATUS DE CONEXÃO */}
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <div
+                title="WhatsApp Conectado"
+                style={{
+                  width: '12px',
+                  height: '12px',
+                  borderRadius: '50%',
+                  background: '#2ecc71',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  boxShadow: '0 0 6px rgba(46, 204, 113, 0.5)',
+                }}
+              />
+              <div
+                title="Instagram Conectado"
+                style={{
+                  width: '12px',
+                  height: '12px',
+                  borderRadius: '50%',
+                  background: '#e1306c',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  boxShadow: '0 0 6px rgba(225, 48, 108, 0.5)',
+                }}
+              />
+            </div>
+
             {/* STATUS ACTIVE */}
             <div style={{
               display: 'flex',
