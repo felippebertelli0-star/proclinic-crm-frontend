@@ -354,20 +354,51 @@ export function Conversas() {
                 <Icon size={18} />
               </button>
             ))}
-            {/* STATUS ACTIVE */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              padding: '6px 12px',
-              background: 'rgba(46, 204, 113, 0.2)',
-              borderRadius: '6px',
-              fontSize: '12px',
-              fontWeight: 700,
-              color: '#2ecc71',
-            }}>
-              ● Active
-            </div>
+            {/* STATUS ACTIVE OU BOTÕES ACEITAR/FINALIZAR */}
+            {conversa.status === 'aguardando' ? (
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                <button style={{
+                  padding: '6px 16px',
+                  background: '#2ecc71',
+                  border: 'none',
+                  borderRadius: '4px',
+                  color: '#ffffff',
+                  fontSize: '12px',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                }} onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.opacity = '0.8'; }} onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.opacity = '1'; }}>
+                  ACEITAR
+                </button>
+                <button style={{
+                  padding: '6px 16px',
+                  background: '#e74c3c',
+                  border: 'none',
+                  borderRadius: '4px',
+                  color: '#ffffff',
+                  fontSize: '12px',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                }} onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.opacity = '0.8'; }} onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.opacity = '1'; }}>
+                  FINALIZAR
+                </button>
+              </div>
+            ) : (
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '6px 12px',
+                background: 'rgba(46, 204, 113, 0.2)',
+                borderRadius: '6px',
+                fontSize: '12px',
+                fontWeight: 700,
+                color: '#2ecc71',
+              }}>
+                ● Active
+              </div>
+            )}
           </div>
         </div>
 
