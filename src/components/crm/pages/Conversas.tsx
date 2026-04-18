@@ -37,42 +37,42 @@ export function Conversas() {
     {
       id: 87439, nome: 'Ida Santos', status: 'atendendo', canal: 'WHATSAPP',
       atribuidoA: 'IA - WhatsApp', data: '08/04/2026', hora: '1 min',
-      tags: ['Trabalho Pago', 'IA'], unread: 0, preview: 'Havila deu oi...'
+      origem: 'Trafego Pago', tags: ['WHATSAPP', 'IA ATIVA'], unread: 0, preview: 'Havila deu oi...'
     },
     {
       id: 87443, nome: 'Marina Costa', status: 'atendendo', canal: 'WHATSAPP',
       atribuidoA: 'IA - WhatsApp', data: '08/04/2026', hora: '2 min',
-      tags: ['NOVO LEAD', 'IA'], unread: 0, preview: 'Primeira vez aqui'
+      origem: 'Organic', tags: ['WHATSAPP', 'NOVO LEAD'], unread: 0, preview: 'Primeira vez aqui'
     },
     {
       id: 87444, nome: 'Carlos Silva', status: 'atendendo', canal: 'WHATSAPP',
       atribuidoA: 'IA - WhatsApp', data: '08/04/2026', hora: '3 min',
-      tags: ['Trabalho Pago', 'IA', 'RETORNO'], unread: 0, preview: 'Qual o status?'
+      origem: 'Trafego Pago', tags: ['WHATSAPP', 'RETORNO'], unread: 0, preview: 'Qual o status?'
     },
     {
       id: 87445, nome: 'Ana Martins', status: 'atendendo', canal: 'INSTAGRAM',
       atribuidoA: 'IA - WhatsApp', data: '08/04/2026', hora: '4 min',
-      tags: ['Instagram Orgânico', 'IA', 'ORÇAMENTO'], unread: 0, preview: 'Gostei do seu trabalho'
+      origem: 'Instagram Orgânico', tags: ['INSTAGRAM', 'ORÇAMENTO'], unread: 0, preview: 'Gostei do seu trabalho'
     },
     {
       id: 87446, nome: 'João Pereira', status: 'atendendo', canal: 'WHATSAPP',
       atribuidoA: 'IA - WhatsApp', data: '08/04/2026', hora: '6 min',
-      tags: ['NOVO LEAD', 'IA'], unread: 0, preview: 'Pode agendar?'
+      origem: 'Indicação', tags: ['WHATSAPP', 'NOVO LEAD'], unread: 0, preview: 'Pode agendar?'
     },
     {
       id: 87440, nome: 'Sandra Oliveira', status: 'aguardando', canal: 'WHATSAPP',
       atribuidoA: 'IA - WhatsApp', data: '08/04/2026', hora: '5 min',
-      tags: ['Trabalho Pago', 'IA', 'WHATSAPP', 'NOVO LEAD'], unread: 1, preview: 'Aguardando atendente...'
+      origem: 'Trafego Pago', tags: ['WHATSAPP', 'NOVO LEAD', 'IA ATIVA'], unread: 1, preview: 'Aguardando atendente...'
     },
     {
       id: 87441, nome: 'Patricia Mendes', status: 'aguardando', canal: 'WHATSAPP',
       atribuidoA: 'IA - WhatsApp', data: '08/04/2026', hora: '12 min',
-      tags: ['Indicação', 'IA', 'WHATSAPP', 'RETORNO'], unread: 2, preview: 'Oi, jai foi paciente antes...'
+      origem: 'Indicação', tags: ['WHATSAPP', 'RETORNO'], unread: 2, preview: 'Oi, jai foi paciente antes...'
     },
     {
       id: 87442, nome: 'Roberta Lima', status: 'aguardando', canal: 'INSTAGRAM',
       atribuidoA: 'IA - WhatsApp', data: '08/04/2026', hora: '25 min',
-      tags: ['Instagram Orgânico', 'IA', 'ORÇAMENTO'], unread: 3, preview: 'Preciso de orçamento...'
+      origem: 'Instagram Orgânico', tags: ['INSTAGRAM', 'ORÇAMENTO'], unread: 3, preview: 'Preciso de orçamento...'
     },
   ];
 
@@ -258,6 +258,9 @@ export function Conversas() {
                         </div>
                         <div style={{ fontSize: '10px', color: '#7a96aa', marginBottom: '4px', lineHeight: '1.3' }}>
                           {conv.preview}
+                        </div>
+                        <div style={{ fontSize: '10px', color: '#c9943a', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          ● {conv.origem}
                         </div>
                         <div style={{ display: 'flex', gap: '3px', flexWrap: 'wrap' }}>
                           {conv.tags.map((tag, i) => {
