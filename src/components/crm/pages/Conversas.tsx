@@ -109,7 +109,7 @@ export function Conversas() {
     <div style={{ display: 'flex', height: 'calc(100vh - 60px)', background: '#0d1f2d', color: '#e8edf2', fontFamily: "'Segoe UI', sans-serif" }}>
       {/* SIDEBAR - LISTA DE CONVERSAS */}
       <div style={{
-        width: '280px',
+        width: '320px',
         background: '#0d1f2d',
         borderRight: '1px solid #1e3d54',
         display: 'flex',
@@ -278,22 +278,23 @@ export function Conversas() {
                       </div>
                     </div>
                     {conv.status === 'aguardando' && (
-                      <div style={{ display: 'flex', gap: '6px', flexShrink: 0 }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', flexShrink: 0 }}>
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
                             console.log('ACEITAR:', conv.id);
                           }}
                           style={{
-                            padding: '4px 10px',
+                            padding: '6px 12px',
                             borderRadius: '4px',
                             border: 'none',
                             background: '#2ecc71',
                             color: '#ffffff',
-                            fontSize: '10px',
+                            fontSize: '11px',
                             fontWeight: 700,
                             cursor: 'pointer',
                             transition: 'all 0.2s',
+                            whiteSpace: 'nowrap',
                           }}
                           onMouseEnter={(e) => {
                             (e.currentTarget as HTMLElement).style.opacity = '0.8';
@@ -310,15 +311,16 @@ export function Conversas() {
                             console.log('FINALIZAR:', conv.id);
                           }}
                           style={{
-                            padding: '4px 10px',
+                            padding: '6px 12px',
                             borderRadius: '4px',
                             border: 'none',
                             background: '#e74c3c',
                             color: '#ffffff',
-                            fontSize: '10px',
+                            fontSize: '11px',
                             fontWeight: 700,
                             cursor: 'pointer',
                             transition: 'all 0.2s',
+                            whiteSpace: 'nowrap',
                           }}
                           onMouseEnter={(e) => {
                             (e.currentTarget as HTMLElement).style.opacity = '0.8';
