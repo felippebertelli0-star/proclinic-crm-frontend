@@ -4,45 +4,55 @@
  */
 
 export const CONVERSAS_INICIAIS = [
+  // ====== ATENDENDO ======
   {
     id: 87439, nome: 'Ida Santos', status: 'atendendo', canal: 'WHATSAPP',
     atribuidoA: 'IA - WhatsApp', data: '08/04/2026', hora: '1 min',
-    origem: 'Trafego Pago', tags: ['WHATSAPP', 'IA ATIVA'], unread: 2, preview: 'Havila deu oi...'
+    origem: 'Trafego Pago', tags: ['WHATSAPP', 'IA ATIVA'], unread: 2, preview: 'Olá! Gostaria de agendar uma consulta...',
+    assunto: 'Consulta de Rotina', ticketId: '#87439'
   },
   {
     id: 87443, nome: 'Marina Costa', status: 'atendendo', canal: 'WHATSAPP',
     atribuidoA: 'IA - WhatsApp', data: '08/04/2026', hora: '2 min',
-    origem: 'Organic', tags: ['WHATSAPP', 'NOVO LEAD'], unread: 1, preview: 'Primeira vez aqui'
+    origem: 'Organic', tags: ['WHATSAPP', 'NOVO LEAD'], unread: 1, preview: 'Recebi uma indicação de uma amiga...',
+    assunto: 'Primeira Consulta - Indicação', ticketId: '#87443'
   },
   {
     id: 87444, nome: 'Carlos Silva', status: 'atendendo', canal: 'WHATSAPP',
-    atribuidoA: 'IA - WhatsApp', data: '08/04/2026', hora: '3 min',
-    origem: 'Trafego Pago', tags: ['WHATSAPP', 'RETORNO'], unread: 0, preview: 'Qual o status?'
+    atribuidoA: 'Havila Rodrigues', data: '08/04/2026', hora: '3 min',
+    origem: 'Trafego Pago', tags: ['WHATSAPP', 'RETORNO'], unread: 0, preview: 'Consegui os exames! Quando posso levar?',
+    assunto: 'Resultado de Exames - Agendamento', ticketId: '#87444'
   },
   {
     id: 87445, nome: 'Ana Martins', status: 'atendendo', canal: 'INSTAGRAM',
     atribuidoA: 'IA - WhatsApp', data: '08/04/2026', hora: '4 min',
-    origem: 'Instagram Orgânico', tags: ['INSTAGRAM', 'ORÇAMENTO'], unread: 3, preview: 'Gostei do seu trabalho'
+    origem: 'Instagram Orgânico', tags: ['INSTAGRAM', 'ORÇAMENTO'], unread: 3, preview: 'Adorei seus resultados! Preciso de orçamento...',
+    assunto: 'Orçamento - Procedimento Estético', ticketId: '#87445'
   },
   {
     id: 87446, nome: 'João Pereira', status: 'atendendo', canal: 'WHATSAPP',
     atribuidoA: 'IA - WhatsApp', data: '08/04/2026', hora: '6 min',
-    origem: 'Indicação', tags: ['WHATSAPP', 'NOVO LEAD'], unread: 1, preview: 'Pode agendar?'
+    origem: 'Indicação', tags: ['WHATSAPP', 'NOVO LEAD'], unread: 1, preview: 'Meu amigo falou muito bem de você...',
+    assunto: 'Consulta Inicial - Avaliação', ticketId: '#87446'
   },
+  // ====== AGUARDANDO ======
   {
     id: 87440, nome: 'Sandra Oliveira', status: 'aguardando', canal: 'WHATSAPP',
-    atribuidoA: 'IA - WhatsApp', data: '08/04/2026', hora: '5 min',
-    origem: 'Trafego Pago', tags: ['WHATSAPP', 'NOVO LEAD', 'IA ATIVA'], unread: 1, preview: 'Aguardando atendente...'
+    atribuidoA: 'Fila Geral', data: '08/04/2026', hora: '5 min',
+    origem: 'Trafego Pago', tags: ['WHATSAPP', 'NOVO LEAD', 'IA ATIVA'], unread: 1, preview: 'Qual é o valor da consulta inicial?',
+    assunto: 'Dúvida sobre Valores e Agendamento', ticketId: '#87440'
   },
   {
     id: 87441, nome: 'Patricia Mendes', status: 'aguardando', canal: 'WHATSAPP',
-    atribuidoA: 'IA - WhatsApp', data: '08/04/2026', hora: '12 min',
-    origem: 'Indicação', tags: ['WHATSAPP', 'RETORNO'], unread: 2, preview: 'Oi, jai foi paciente antes...'
+    atribuidoA: 'Fila de Retorno', data: '08/04/2026', hora: '12 min',
+    origem: 'Indicação', tags: ['WHATSAPP', 'RETORNO'], unread: 2, preview: 'Fui paciente há 2 anos, quero marcar retorno...',
+    assunto: 'Retorno: Acompanhamento Pós-Procedimento', ticketId: '#87441'
   },
   {
     id: 87442, nome: 'Roberta Lima', status: 'aguardando', canal: 'INSTAGRAM',
-    atribuidoA: 'IA - WhatsApp', data: '08/04/2026', hora: '25 min',
-    origem: 'Instagram Orgânico', tags: ['INSTAGRAM', 'ORÇAMENTO'], unread: 3, preview: 'Preciso de orçamento...'
+    atribuidoA: 'Fila de Suporte', data: '08/04/2026', hora: '25 min',
+    origem: 'Instagram Orgânico', tags: ['INSTAGRAM', 'ORÇAMENTO'], unread: 3, preview: 'Gostaria de saber sobre parcelamento...',
+    assunto: 'Informações sobre Plano de Saúde', ticketId: '#87442'
   },
 ];
 
@@ -50,17 +60,20 @@ export const GRUPOS_INICIAIS = [
   {
     id: 1001, nome: 'Grupo de Consultas', canal: 'WHATSAPP',
     data: '08/04/2026', hora: '2 min', membros: ['Dra. Andressa', 'Havila Rodrigues', 'Camiliy Nunes'],
-    unread: 0, preview: 'Dra. Andressa: Reunião de planejamento...'
+    unread: 0, preview: 'Dra. Andressa: Alguém pode confirmar agenda de quarta?',
+    assunto: 'Discussão: Confirmação de Agendas da Semana', ticketId: '#1001'
   },
   {
     id: 1002, nome: 'Pacientes VIP', canal: 'WHATSAPP',
     data: '08/04/2026', hora: '15 min', membros: ['Havila Rodrigues', 'Camiliy Nunes', 'Luana Silva'],
-    unread: 2, preview: 'Cliente: Gostaria de agendar...'
+    unread: 1, preview: 'Cliente Vanessa: Gostaria de agendar tratamento VIP...',
+    assunto: 'Atendimento VIP: Novo Cliente Premium', ticketId: '#1002'
   },
   {
     id: 1003, nome: 'Suporte Administrativo', canal: 'WHATSAPP',
     data: '08/04/2026', hora: '28 min', membros: ['Dra. Andressa', 'Luana Silva'],
-    unread: 0, preview: 'Luana: Documentos enviados'
+    unread: 0, preview: 'Luana: Todos os documentos estão na pasta compartilhada',
+    assunto: 'Documentação: Arquivos para Auditoria', ticketId: '#1003'
   },
 ];
 
@@ -165,6 +178,114 @@ export const MENSAGENS_PROTOTIPO = [
   { tipo: 'recebida', nome: 'Odili', hora: '09:24', texto: 'Bom dia! Tudo bem? 😊\n\nMeu nome é Havila, sou responsável pelos agendamentos da Dra. Andressa Barbarotti e a partir de agora vou cuidar do seu atendimento.' },
   { tipo: 'sistema', hora: '09:25', texto: 'Ticket devolvido para a fila da IA — humano saiu do atendimento' },
 ];
+
+// ============ MENSAGENS POR CONVERSA ============
+// Mapeia cada ID de conversa para suas mensagens específicas
+export const CONVERSAS_MESSAGES: Record<number, any[]> = {
+  // Ida Santos - Consulta de Rotina
+  87439: [
+    { tipo: 'evento', data: '08/04/2026' },
+    { tipo: 'recebida', nome: 'Ida Santos', hora: '14:32', texto: 'Olá! Gostaria de agendar uma consulta de rotina com a Dra. Andressa.' },
+    { tipo: 'enviada', hora: '14:33', texto: 'Olá Ida! Bem-vindo(a) à Clínica Dra. Andressa Barbarotti 😊\n\nFicarei feliz em ajudar com seu agendamento. Que tipo de consulta você procura?' },
+    { tipo: 'recebida', nome: 'Ida Santos', hora: '14:35', texto: 'Consulta de rotina mesmo, não é nada grave. Já sou paciente há alguns anos.' },
+    { tipo: 'enviada', hora: '14:36', texto: 'Ótimo! Temos disponibilidade nos seguintes horários:\n📅 Segunda a sexta: 8h às 18h\n📅 Sábado: 8h às 12h\n\nQual hora melhor para você?' },
+    { tipo: 'recebida', nome: 'Ida Santos', hora: '14:38', texto: 'Preferira segunda de manhã, tipo 9h30' },
+    { tipo: 'enviada', hora: '14:39', texto: 'Perfeito! 🎯\n\n📅 Segunda-feira, 11 de Abril de 2026\n⏰ 09:30\n👨‍⚕️ Dra. Andressa Barbarotti\n\nSua consulta foi confirmada! Aguardamos você!' },
+  ],
+  // Marina Costa - Indicação
+  87443: [
+    { tipo: 'evento', data: '08/04/2026' },
+    { tipo: 'recebida', nome: 'Marina Costa', hora: '15:12', texto: 'Oi! Recebi uma indicação de uma amiga que fez tratamento com você e gostei muito dos resultados!' },
+    { tipo: 'enviada', hora: '15:13', texto: 'Marina! Que legal saber que você conhece uma de nossas pacientes! 🎉\n\nFicarei feliz em te conhecer e esclarecer qualquer dúvida.' },
+    { tipo: 'recebida', nome: 'Marina Costa', hora: '15:15', texto: 'Sim! É a Carol. Ela falou muito bem de você. Eu estou pensando em fazer um procedimento estético também.' },
+    { tipo: 'enviada', hora: '15:16', texto: 'Que maravilha! A Carol é uma paciente incrível! ⭐\n\nPara o procedimento estético, gostaria que você comparecesse para uma avaliação inicial gratuita. Qual sua disponibilidade?' },
+    { tipo: 'recebida', nome: 'Marina Costa', hora: '15:20', texto: 'Posso ir amanhã à tarde? Tipo 16h?' },
+    { tipo: 'enviada', hora: '15:21', texto: 'Amanhã 16h está perfeito! ✅\n\nNos vemos em breve! Dica: leve documento de identidade e uma foto de rosto frontal se tiver.' },
+  ],
+  // Carlos Silva - Resultado de Exames
+  87444: [
+    { tipo: 'evento', data: '06/04/2026' },
+    { tipo: 'enviada', hora: '10:00', texto: 'Carlos! Sua consulta está marcada para o dia 12 de Abril. Os exames estão pendentes. Você consegue fazer antes?' },
+    { tipo: 'recebida', nome: 'Carlos Silva', hora: '16:45', texto: 'Oi Havila! Consegui fazer os exames ontem. Quando posso levar os resultados?' },
+    { tipo: 'enviada', hora: '16:46', texto: 'Ótimo, Carlos! 🎯\n\nVocê pode trazer os exames diretamente na consulta do dia 12, ou se preferir, pode enviar as fotos por aqui.' },
+    { tipo: 'recebida', nome: 'Carlos Silva', hora: '16:48', texto: 'Vou trazer na consulta mesmo. Já tem lugar pra mim?' },
+    { tipo: 'sistema', hora: '16:48', texto: 'Transferido para atendente: Havila Rodrigues' },
+    { tipo: 'enviada', nome: 'Havila', hora: '16:50', texto: 'Claro, Carlos! Sua vaga está reservada. 💯\n\nConfirme a consulta respondendo "SIM" quando estiver próximo.' },
+  ],
+  // Ana Martins - Orçamento
+  87445: [
+    { tipo: 'evento', data: '08/04/2026' },
+    { tipo: 'recebida', nome: 'Ana Martins', hora: '17:20', texto: 'Adorei os resultados que vocês compartilharam no Instagram! Gostaria de saber o preço de um procedimento.' },
+    { tipo: 'enviada', hora: '17:21', texto: 'Ana! Que feliz em saber que você adorou nossos resultados! 🌟\n\nPoderia me passar mais detalhes? Qual procedimento te interessou?' },
+    { tipo: 'recebida', nome: 'Ana Martins', hora: '17:25', texto: 'O de limpeza profunda com laser. Quanto custa?' },
+    { tipo: 'enviada', hora: '17:26', texto: 'Procedimento excelente! ✨\n\nO valor é R$ 450,00 na primeira sessão. Oferecemos pacotes com 3 ou 5 sessões com desconto.\n\nGostaria de agendar uma avaliação gratuita?' },
+    { tipo: 'recebida', nome: 'Ana Martins', hora: '17:28', texto: 'Sim! Qual é seu valor de 3 sessões?' },
+    { tipo: 'enviada', hora: '17:29', texto: 'Ótimo! 3 sessões saem por R$ 1.200,00 (desconto de 11%).\n\n💳 Parcelamos em até 3x sem juros.\n\nQual data você prefere?' },
+  ],
+  // João Pereira - Novo Lead
+  87446: [
+    { tipo: 'evento', data: '08/04/2026' },
+    { tipo: 'recebida', nome: 'João Pereira', hora: '13:45', texto: 'Oi! Meu amigo Pedro falou que você faz um ótimo trabalho. Eu queria consultar, mas tenho várias dúvidas antes.' },
+    { tipo: 'enviada', hora: '13:46', texto: 'João! Que bom ouvir uma indicação do Pedro! 🙌\n\nSou a IA assistente. Pode me fazer todas as perguntas que tiver, terei prazer em responder!' },
+    { tipo: 'recebida', nome: 'João Pereira', hora: '13:50', texto: 'Vocês aceitam plano de saúde? E qual é o valor da primeira consulta?' },
+    { tipo: 'enviada', hora: '13:51', texto: 'Ótimas perguntas! ✅\n\n💳 Aceitamos SIM planos de saúde (verifique cobertura)\n💰 Consulta inicial: R$ 250,00\n🏥 Parcelamos em até 2x\n\nTem mais alguma dúvida?' },
+    { tipo: 'recebida', nome: 'João Pereira', hora: '13:55', texto: 'Tá bom! Pode marcar para mim então? Prefiro segunda ou terça de tarde' },
+    { tipo: 'sistema', hora: '13:55', texto: 'Transferido para atendente: IA - WhatsApp' },
+    { tipo: 'enviada', hora: '13:56', texto: 'Perfeito! Segunda temos 14h ou 15h. Qual você prefere?' },
+  ],
+  // Sandra Oliveira - Aguardando (Dúvida sobre Valores)
+  87440: [
+    { tipo: 'evento', data: '08/04/2026' },
+    { tipo: 'recebida', nome: 'Sandra Oliveira', hora: '12:30', texto: 'Olá! Qual é o valor da consulta inicial com a Dra. Andressa?' },
+    { tipo: 'enviada', hora: '12:31', texto: 'Olá Sandra! 👋\n\n💰 Consulta Inicial com Dra. Andressa: R$ 350,00\n\nGostaria de agendar?' },
+    { tipo: 'recebida', nome: 'Sandra Oliveira', hora: '12:35', texto: 'Sim! Mas preciso saber se vocês aceitam plano de saúde também. Tenho Unimed.' },
+    { tipo: 'enviada', hora: '12:36', texto: 'Ótimo! A Unimed temos convênio! ✅\n\nVocê pagaria apenas a diferença se houver, ou nada se cobrir 100%.\n\nQual dia você prefere?' },
+    { tipo: 'recebida', nome: 'Sandra Oliveira', hora: '12:40', texto: 'Vocês têm disponibilidade para sexta à noite? Saio do trabalho por volta das 18h' },
+  ],
+  // Patricia Mendes - Retorno
+  87441: [
+    { tipo: 'evento', data: '04/04/2026' },
+    { tipo: 'recebida', nome: 'Patricia Mendes', hora: '10:15', texto: 'Oi Havila! Fui paciente aí há 2 anos. Gostaria de marcar um retorno para acompanhamento.' },
+    { tipo: 'enviada', hora: '10:16', texto: 'Patricia! Que alegria saber de você! 🎉\n\nCom prazer vamos agendar seu retorno. Como foi sua experiência conosco?' },
+    { tipo: 'recebida', nome: 'Patricia Mendes', hora: '10:20', texto: 'Adorei! O resultado foi excelente. Agora preciso de um acompanhamento pós-procedimento.' },
+    { tipo: 'enviada', hora: '10:21', texto: 'Que maravilha ouvir isso! 💙\n\n📅 Acompanhamento Pós-Procedimento: R$ 180,00\n\nQual é sua disponibilidade?' },
+    { tipo: 'evento', data: '08/04/2026' },
+    { tipo: 'recebida', nome: 'Patricia Mendes', hora: '14:45', texto: 'Oi, voltei a pensar... Qual horário tem de terça de manhã? Prefiro cedo.' },
+  ],
+  // Roberta Lima - Plano de Saúde
+  87442: [
+    { tipo: 'evento', data: '08/04/2026' },
+    { tipo: 'recebida', nome: 'Roberta Lima', hora: '16:00', texto: 'Oi! Tenho uma dúvida: vocês aceitam plano de saúde? Qual é a cobertura?' },
+    { tipo: 'enviada', hora: '16:01', texto: 'Olá Roberta! 👋\n\nSim! Aceitamos os principais planos de saúde:\n✅ Unimed\n✅ Bradesco Saúde\n✅ Sulamericana\n✅ Seguros e Previdência\n\nQual é o seu plano?' },
+    { tipo: 'recebida', nome: 'Roberta Lima', hora: '16:05', texto: 'Tenho Bradesco. Como funciona o pagamento então?' },
+    { tipo: 'enviada', hora: '16:06', texto: 'Com Bradesco é assim:\n\n1️⃣ Você paga conosco na consulta\n2️⃣ A Bradesco reembolsa você depois\n\nOu você pode enviar seus dados pra gente solicitar pré-autorização ao plano.\n\nTem interesse?' },
+    { tipo: 'recebida', nome: 'Roberta Lima', hora: '16:10', texto: 'Entendi! E qual é o valor então?' },
+  ],
+  // GRUPOS
+  1001: [
+    { tipo: 'evento', data: '08/04/2026' },
+    { tipo: 'sistema', hora: '10:30', texto: 'Dra. Andressa adicionada ao grupo' },
+    { tipo: 'enviada', nome: 'Dra. Andressa', hora: '10:31', texto: 'Bom dia a todos! 🌟 Como está a confirmação de consultas para esta semana?' },
+    { tipo: 'recebida', nome: 'Havila Rodrigues', hora: '10:33', texto: 'Dra, temos 12 confirmadas de manhã e 8 à tarde para segunda' },
+    { tipo: 'recebida', nome: 'Camiliy Nunes', hora: '10:35', texto: 'E terça temos 10 de manhã, 9 à tarde. Uma delas está com dúvida sobre plano de saúde' },
+    { tipo: 'enviada', nome: 'Dra. Andressa', hora: '10:37', texto: 'Excelente! Confirmar com a paciente qual é o plano e fazer a autorização necessária.' },
+  ],
+  1002: [
+    { tipo: 'evento', data: '08/04/2026' },
+    { tipo: 'sistema', hora: '09:00', texto: 'Luana Silva adicionada ao grupo' },
+    { tipo: 'enviada', nome: 'Cliente Vanessa', hora: '09:15', texto: 'Oi pessoal! Eu gostaria de fazer aquele procedimento premium que vocês anunciaram.' },
+    { tipo: 'recebida', nome: 'Havila Rodrigues', hora: '09:16', texto: 'Vanessa! Que legal! 🎉 Que procedimento exatamente?' },
+    { tipo: 'enviada', nome: 'Cliente Vanessa', hora: '09:20', texto: 'Aquele pacote completo de rejuvenescimento facial que saiu na promoção VIP. Quanto custa?' },
+    { tipo: 'recebida', nome: 'Camiliy Nunes', hora: '09:22', texto: 'Vanessa, esse pacote é exclusivo! São 5 sessões especializadas por R$ 2.500,00. Quer agendar?' },
+  ],
+  1003: [
+    { tipo: 'evento', data: '08/04/2026' },
+    { tipo: 'sistema', hora: '14:00', texto: 'Luana Silva criou este grupo' },
+    { tipo: 'enviada', nome: 'Luana Silva', hora: '14:05', texto: 'Pessoal, avisando que todos os documentos para auditoria foram enviados à pasta compartilhada.' },
+    { tipo: 'recebida', nome: 'Dra. Andressa', hora: '14:10', texto: 'Obrigada Luana! Recebi e revisei tudo. Está perfeito!' },
+    { tipo: 'enviada', nome: 'Luana Silva', hora: '14:15', texto: 'Perfeito! A auditoria está marcada para próxima segunda. Alguém quer revisar de novo antes?' },
+  ],
+};
 
 export const TAG_COLORS: Record<string, { bg: string; color: string }> = {
   'Trabalho Pago': { bg: '#c9943a', color: '#0d1f2d' },

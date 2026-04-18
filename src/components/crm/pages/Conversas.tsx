@@ -22,6 +22,7 @@ import {
   MENSAGENS_PROTOTIPO,
   TAG_COLORS,
   DEFAULT_TAG_COLOR,
+  CONVERSAS_MESSAGES,
 } from '@/lib/conversasMockData';
 
 // ============ ESTILOS PREMIUM AAA ============
@@ -127,9 +128,6 @@ export function Conversas() {
   };
 
 
-  // Mensagens com sistema de tickets/eventos
-  const mensagensPrototipo = MENSAGENS_PROTOTIPO;
-
   // Filtrar conversas por status E ORDENAR: com notificações primeiro
   const conversasFiltradas = (filtroStatus === 'grupos' ? grupos : conversas)
     .filter((item: any) => {
@@ -163,6 +161,13 @@ export function Conversas() {
   const validSelectedConversa = selectedConversa < conversasFiltradas.length ? selectedConversa : 0;
   const conversa = conversasFiltradas[validSelectedConversa];
 
+  // ============ CARREGAR MENSAGENS DA CONVERSA SELECIONADA ============
+  // Se existe conversa selecionada e há mensagens específicas para ela, usar essas
+  // Se não, usar mensagens padrão
+  const mensagensPrototipo = conversa && CONVERSAS_MESSAGES[conversa.id]
+    ? CONVERSAS_MESSAGES[conversa.id]
+    : MENSAGENS_PROTOTIPO;
+
   // ============ CONTAGEM DE NOTIFICAÇÕES PENDENTES ============
   // Contar apenas conversas com unread > 0 (notificações pendentes)
   const totalAtendendo = conversas.filter((c: any) => c.status === 'atendendo' && c.unread > 0).length;
@@ -178,6 +183,12 @@ export function Conversas() {
     // Diminui automaticamente quando conversa é aberta (unread vira 0)
     setConversasCounts(totalAtendendo, totalAguardando, totalGrupos);
   }, [totalAtendendo, totalAguardando, totalGrupos, setConversasCounts]);
+
+  // ============ CARREGAR MENSAGENS ESPECÍFICAS DA CONVERSA ============
+  useEffect(() => {
+    // Resetar histórico quando muda a conversa selecionada
+    setHistoricoMensagens([]);
+  }, [conversa?.id]);
 
   // Handler para mudar filtro e resetar seleção
   const handleFiltroChange = (status: 'atendendo' | 'aguardando' | 'grupos' | 'fechadas') => {
