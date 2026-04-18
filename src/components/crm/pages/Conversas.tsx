@@ -925,22 +925,6 @@ export function Conversas() {
                 >
                   <div style={{ display: 'flex', gap: '8px', alignItems: 'center', justifyContent: 'space-between' }}>
                     <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start', flex: 1 }}>
-                      <div style={{
-                        width: '32px',
-                        height: '32px',
-                        borderRadius: '50%',
-                        background: 'transparent',
-                        border: '2px solid #c9943a',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '12px',
-                        fontWeight: 700,
-                        color: '#c9943a',
-                        flexShrink: 0,
-                      }}>
-                        {conv.nome[0].toUpperCase()}{conv.nome[1].toUpperCase()}
-                      </div>
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
                           <div style={{ fontSize: '12px', fontWeight: 600, color: '#e8edf2' }}>
@@ -1295,22 +1279,6 @@ export function Conversas() {
                   gap: '10px',
                   marginBottom: '8px',
                 }}>
-                  <div style={{
-                    width: '28px',
-                    height: '28px',
-                    borderRadius: '50%',
-                    background: 'transparent',
-                    border: '2px solid #c9943a',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '12px',
-                    fontWeight: 700,
-                    color: '#c9943a',
-                    flexShrink: 0,
-                  }}>
-                    {msg.nome[0]}
-                  </div>
                   <div>
                     <div style={{ fontSize: '12px', fontWeight: 600, color: '#e8edf2', marginBottom: '2px' }}>{msg.nome}</div>
                     <div style={{
@@ -1904,21 +1872,6 @@ export function Conversas() {
               background: 'rgba(13, 31, 45, 0.4)',
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1 }}>
-                <div style={{
-                  width: '40px',
-                  height: '40px',
-                  borderRadius: '10px',
-                  background: 'linear-gradient(135deg, #c9943a, #e8b86d)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '16px',
-                  fontWeight: 800,
-                  color: '#0d1f2d',
-                  flexShrink: 0,
-                }}>
-                  {conversaModal.nome[0]}{conversaModal.nome[1]}
-                </div>
                 <div>
                   <h3 style={{ margin: '0 0 6px 0', fontSize: '16px', fontWeight: 800, color: '#e8edf2' }}>
                     {conversaModal.nome}
@@ -2010,7 +1963,6 @@ export function Conversas() {
                         color: '#c9943a',
                         flexShrink: 0,
                       }}>
-                        {msg.nome[0]}
                       </div>
                       <div style={{ flex: 1 }}>
                         <div style={{ fontSize: '12px', fontWeight: 700, color: '#e8edf2', marginBottom: '4px' }}>{msg.nome}</div>
@@ -2385,23 +2337,6 @@ export function Conversas() {
                       }
                     }}
                   >
-                    <div
-                      style={{
-                        width: '32px',
-                        height: '32px',
-                        borderRadius: '50%',
-                        background: `hsl(${membro.id * 60}, 70%, 50%)`,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: '#ffffff',
-                        fontSize: '12px',
-                        fontWeight: 700,
-                        flexShrink: 0,
-                      }}
-                    >
-                      {membro.nome.charAt(0)}
-                    </div>
                     <div style={{ flex: 1 }}>
                       <div style={{ fontSize: '13px', fontWeight: 600, color: '#e8edf2' }}>{membro.nome}</div>
                       <div style={{ fontSize: '11px', color: '#7a96aa' }}>
@@ -3562,21 +3497,6 @@ export function Conversas() {
               gap: '16px',
               boxShadow: PREMIUM_STYLES.shadowMd,
             }}>
-              <div style={{
-                width: '100px',
-                height: '100px',
-                borderRadius: '50%',
-                background: PREMIUM_STYLES.gradientPrimary,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '42px',
-                fontWeight: 700,
-                color: '#0d1f2d',
-                boxShadow: PREMIUM_STYLES.shadowLg,
-              }}>
-                {conversa?.nome?.substring(0, 2).toUpperCase()}
-              </div>
               <div style={{ textAlign: 'center', width: '100%' }}>
                 <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 700, color: PREMIUM_STYLES.colorText }}>
                   {conversa?.nome}
