@@ -452,33 +452,37 @@ export function Conversas() {
         {/* TABS E BUSCA */}
         <div style={{
           display: 'flex',
-          gap: '24px',
+          gap: '12px',
           padding: '12px 24px',
           borderBottom: '1px solid #1e3d54',
           background: 'rgba(19, 38, 54, 0.3)',
           alignItems: 'center',
         }}>
-          {[
-            { id: 'tags', label: 'Incluir etiqueta' },
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
-              style={{
-                padding: '8px 0',
-                border: 'none',
-                background: 'transparent',
-                color: activeTab === tab.id ? '#c9943a' : '#7a96aa',
-                fontSize: '12px',
-                fontWeight: activeTab === tab.id ? 700 : 500,
-                cursor: 'pointer',
-                borderBottom: activeTab === tab.id ? '2px solid #c9943a' : 'none',
-                transition: 'all 0.2s',
-              }}
-            >
-              {tab.label}
-            </button>
-          ))}
+          <input
+            type="text"
+            placeholder="Incluir etiqueta"
+            style={{
+              padding: '8px 12px',
+              border: '1px solid #1e3d54',
+              borderRadius: '6px',
+              background: 'rgba(13, 31, 45, 0.5)',
+              color: '#e8edf2',
+              fontSize: '12px',
+              fontWeight: 500,
+              outline: 'none',
+              transition: 'all 0.2s',
+              flex: 1,
+              maxWidth: '300px',
+            }}
+            onFocus={(e) => {
+              (e.currentTarget as HTMLElement).style.borderColor = '#c9943a';
+              (e.currentTarget as HTMLElement).style.background = 'rgba(13, 31, 45, 0.8)';
+            }}
+            onBlur={(e) => {
+              (e.currentTarget as HTMLElement).style.borderColor = '#1e3d54';
+              (e.currentTarget as HTMLElement).style.background = 'rgba(13, 31, 45, 0.5)';
+            }}
+          />
         </div>
 
         {/* HISTÓRICO DE MENSAGENS / TIMELINE */}
