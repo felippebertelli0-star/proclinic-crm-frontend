@@ -212,69 +212,74 @@ export function Conversas() {
                     }
                   }}
                 >
-                  <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
-                    <div style={{
-                      width: '32px',
-                      height: '32px',
-                      borderRadius: '50%',
-                      background: 'linear-gradient(135deg, #c9943a, #e8b86d)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '12px',
-                      fontWeight: 700,
-                      color: '#0d1f2d',
-                      flexShrink: 0,
-                    }}>
-                      {conv.nome[0].toUpperCase()}{conv.nome[1].toUpperCase()}
-                    </div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
-                        <div style={{ fontSize: '12px', fontWeight: 600, color: '#e8edf2' }}>
-                          {conv.nome}
-                        </div>
-                        {conv.unread > 0 && (
-                          <div style={{
-                            background: '#e74c3c',
-                            color: '#ffffff',
-                            fontSize: '9px',
-                            fontWeight: 800,
-                            width: '18px',
-                            height: '18px',
-                            borderRadius: '50%',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            flexShrink: 0,
-                          }}>
-                            {conv.unread}
+                  <div style={{ display: 'flex', gap: '8px', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start', flex: 1 }}>
+                      <div style={{
+                        width: '32px',
+                        height: '32px',
+                        borderRadius: '50%',
+                        background: 'linear-gradient(135deg, #c9943a, #e8b86d)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '12px',
+                        fontWeight: 700,
+                        color: '#0d1f2d',
+                        flexShrink: 0,
+                      }}>
+                        {conv.nome[0].toUpperCase()}{conv.nome[1].toUpperCase()}
+                      </div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
+                          <div style={{ fontSize: '12px', fontWeight: 600, color: '#e8edf2' }}>
+                            {conv.nome}
                           </div>
-                        )}
-                      </div>
-                      <div style={{ fontSize: '10px', color: '#7a96aa', marginBottom: '3px' }}>
-                        👁 {conv.hora}
-                      </div>
-                      <div style={{ fontSize: '10px', color: '#7a96aa', marginBottom: '4px', lineHeight: '1.3' }}>
-                        {conv.preview}
-                      </div>
-                      <div style={{ display: 'flex', gap: '3px', flexWrap: 'wrap' }}>
-                        {conv.tags.map((tag, i) => {
-                          const colors = getTagColor(tag);
-                          return (
-                            <span key={i} style={{
-                              fontSize: '8px',
-                              padding: '2px 5px',
-                              borderRadius: '3px',
-                              background: colors.bg,
-                              color: colors.color,
-                              fontWeight: 600,
+                          {conv.unread > 0 && (
+                            <div style={{
+                              background: '#e74c3c',
+                              color: '#ffffff',
+                              fontSize: '9px',
+                              fontWeight: 800,
+                              width: '18px',
+                              height: '18px',
+                              borderRadius: '50%',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              flexShrink: 0,
                             }}>
-                              {tag}
-                            </span>
-                          );
-                        })}
+                              {conv.unread}
+                            </div>
+                          )}
+                        </div>
+                        <div style={{ fontSize: '10px', color: '#7a96aa', marginBottom: '3px' }}>
+                          👁 {conv.hora}
+                        </div>
+                        <div style={{ fontSize: '10px', color: '#7a96aa', marginBottom: '4px', lineHeight: '1.3' }}>
+                          {conv.preview}
+                        </div>
+                        <div style={{ display: 'flex', gap: '3px', flexWrap: 'wrap' }}>
+                          {conv.tags.map((tag, i) => {
+                            const colors = getTagColor(tag);
+                            return (
+                              <span key={i} style={{
+                                fontSize: '8px',
+                                padding: '2px 5px',
+                                borderRadius: '3px',
+                                background: colors.bg,
+                                color: colors.color,
+                                fontWeight: 600,
+                              }}>
+                                {tag}
+                              </span>
+                            );
+                          })}
+                        </div>
                       </div>
                     </div>
+                    {conv.status === 'aguardando' && (
+                      <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: '#ffff00', flexShrink: 0 }} />
+                    )}
                   </div>
                 </div>
               );
@@ -354,51 +359,20 @@ export function Conversas() {
                 <Icon size={18} />
               </button>
             ))}
-            {/* STATUS ACTIVE OU BOTÕES ACEITAR/FINALIZAR */}
-            {conversa.status === 'aguardando' ? (
-              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                <button style={{
-                  padding: '6px 16px',
-                  background: '#2ecc71',
-                  border: 'none',
-                  borderRadius: '4px',
-                  color: '#ffffff',
-                  fontSize: '12px',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                }} onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.opacity = '0.8'; }} onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.opacity = '1'; }}>
-                  ACEITAR
-                </button>
-                <button style={{
-                  padding: '6px 16px',
-                  background: '#e74c3c',
-                  border: 'none',
-                  borderRadius: '4px',
-                  color: '#ffffff',
-                  fontSize: '12px',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                }} onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.opacity = '0.8'; }} onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.opacity = '1'; }}>
-                  FINALIZAR
-                </button>
-              </div>
-            ) : (
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                padding: '6px 12px',
-                background: 'rgba(46, 204, 113, 0.2)',
-                borderRadius: '6px',
-                fontSize: '12px',
-                fontWeight: 700,
-                color: '#2ecc71',
-              }}>
-                ● Active
-              </div>
-            )}
+            {/* STATUS ACTIVE */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '6px 12px',
+              background: 'rgba(46, 204, 113, 0.2)',
+              borderRadius: '6px',
+              fontSize: '12px',
+              fontWeight: 700,
+              color: '#2ecc71',
+            }}>
+              ● Active
+            </div>
           </div>
         </div>
 
