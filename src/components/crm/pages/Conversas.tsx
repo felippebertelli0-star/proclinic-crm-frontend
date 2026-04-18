@@ -46,6 +46,9 @@ export function Conversas() {
   const [notaInternaVisivel, setNotaInternaVisivel] = useState(false);
   const [notaInternaTexto, setNotaInternaTexto] = useState('');
   const [notasInternas, setNotasInternas] = useState<Record<number, string>>({});
+  const [respostasRapidasVisivel, setRespostasRapidasVisivel] = useState(false);
+  const [historicoVisivel, setHistoricoVisivel] = useState(false);
+  const [infoContatoVisivel, setInfoContatoVisivel] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const mediaRecorderRef = useRef<any>(null);
   const audioChunksRef = useRef<Blob[]>([]);
@@ -143,6 +146,58 @@ export function Conversas() {
     nome: conv.nome,
     canal: conv.canal,
   }));
+
+  // ============ RESPOSTAS RÁPIDAS ============
+  const respostasRapidas = [
+    {
+      id: 1,
+      gatilho: 'Boas-vindas',
+      titulo: 'Boas-vindas',
+      mensagem: 'Olá! Bem-vindo(a) à Clínica Dra. Andressa Barbarotti 😊 Em que posso ajudar você?',
+    },
+    {
+      id: 2,
+      gatilho: 'Confirmação de consulta',
+      titulo: 'Confirmação de consulta',
+      mensagem: 'Sua consulta está confirmada! Qualquer dúvida, estou à disposição.',
+    },
+    {
+      id: 3,
+      gatilho: 'Solicitar CPF',
+      titulo: 'Solicitar CPF',
+      mensagem: 'Para verificarmos a cobertura do seu plano, pode me informar seu CPF?',
+    },
+    {
+      id: 4,
+      gatilho: 'Horários disponíveis',
+      titulo: 'Horários disponíveis',
+      mensagem: 'Temos disponibilidade nos seguintes horários:\n\n📅 Segunda a sexta: 8h às 18h\n📅 Sábado: 8h às 12h\n\nQual hora melhor para você?',
+    },
+    {
+      id: 5,
+      gatilho: 'Valores e formas de pagamento',
+      titulo: 'Valores e formas de pagamento',
+      mensagem: 'Oferecemos as seguintes formas de pagamento:\n\n💳 Cartão de crédito\n💳 Débito\n🏦 Pix\n💰 Dinheiro\n📋 Parcelado (até 12x)\n\nDeseja mais informações sobre valores?',
+    },
+    {
+      id: 6,
+      gatilho: 'Localização',
+      titulo: 'Localização da clínica',
+      mensagem: '📍 Clínica Dra. Andressa Barbarotti\nRua das Flores, 123 - Centro\nTelefone: (11) 9999-9999\n\nEspero você em breve! 😊',
+    },
+    {
+      id: 7,
+      gatilho: 'Agradecimento final',
+      titulo: 'Agradecimento final',
+      mensagem: 'Obrigada por escolher nossa clínica! Qualquer dúvida, é só chamar. Tenha um ótimo dia! 🌟',
+    },
+    {
+      id: 8,
+      gatilho: 'Reagendamento',
+      titulo: 'Reagendamento de consulta',
+      mensagem: 'Sua consulta foi cancelada. Gostaria de agendar uma nova data? Temos vários horários disponíveis!',
+    },
+  ];
 
   // Função para gerar cor de tag baseada no tipo
   const getTagColor = (tag: string) => {
@@ -540,6 +595,38 @@ export function Conversas() {
       }
     };
     fileInput.click();
+  };
+
+  // ============ RESPOSTAS RÁPIDAS ============
+  const abrirRespostasRapidas = () => {
+    setRespostasRapidasVisivel(true);
+  };
+
+  const fecharRespostasRapidas = () => {
+    setRespostasRapidasVisivel(false);
+  };
+
+  const selecionarRespostaRapida = (mensagem: string) => {
+    setNovaMensagem(mensagem);
+    fecharRespostasRapidas();
+  };
+
+  // ============ HISTÓRICO DO TICKET ============
+  const abrirHistorico = () => {
+    setHistoricoVisivel(true);
+  };
+
+  const fecharHistorico = () => {
+    setHistoricoVisivel(false);
+  };
+
+  // ============ INFO DO CONTATO ============
+  const abrirInfoContato = () => {
+    setInfoContatoVisivel(true);
+  };
+
+  const fecharInfoContato = () => {
+    setInfoContatoVisivel(false);
   };
 
   // ============ GRAVAÇÃO DE ÁUDIO ============
@@ -1044,9 +1131,9 @@ export function Conversas() {
               { Icon: DollarSign, label: 'Nova Oportunidade', action: 'oportunidade' },
               { Icon: FileText, label: 'Nota Interna', action: 'nota_interna' },
               { Icon: Paperclip, label: 'Anexar Arquivo', action: 'anexar_arquivo' },
-              { Icon: Zap, label: 'Respostas Rápidas' },
-              { Icon: BarChart3, label: 'Histórico' },
-              { Icon: User, label: 'Info do Contato' },
+              { Icon: Zap, label: 'Respostas Rápidas', action: 'respostas_rapidas' },
+              { Icon: BarChart3, label: 'Histórico', action: 'historico' },
+              { Icon: User, label: 'Info do Contato', action: 'info_contato' },
             ].map(({ Icon, label, action }, i) => (
               <button
                 key={i}
@@ -1067,6 +1154,12 @@ export function Conversas() {
                     abrirNotaInterna();
                   } else if (action === 'anexar_arquivo') {
                     handleAnexarArquivoClick();
+                  } else if (action === 'respostas_rapidas') {
+                    abrirRespostasRapidas();
+                  } else if (action === 'historico') {
+                    abrirHistorico();
+                  } else if (action === 'info_contato') {
+                    abrirInfoContato();
                   }
                 }}
                 style={{
@@ -1642,6 +1735,86 @@ export function Conversas() {
               >
                 💾 Salvar Nota
               </button>
+            </div>
+          </div>
+        )}
+
+        {/* PAINEL DE RESPOSTAS RÁPIDAS */}
+        {respostasRapidasVisivel && (
+          <div style={{
+            background: 'rgba(19, 38, 54, 0.9)',
+            borderTop: '1px solid #1e3d54',
+            padding: '16px 24px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '12px',
+            maxHeight: '300px',
+            overflowY: 'auto',
+          }}>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: '8px',
+            }}>
+              <div style={{ fontSize: '14px', fontWeight: 700, color: '#c9943a' }}>⚡ Respostas Rápidas</div>
+              <button
+                onClick={fecharRespostasRapidas}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: '#7a96aa',
+                  cursor: 'pointer',
+                  fontSize: '18px',
+                  padding: '0',
+                }}
+              >
+                ✕
+              </button>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              {respostasRapidas.map((resposta: any) => (
+                <button
+                  key={resposta.id}
+                  onClick={() => selecionarRespostaRapida(resposta.mensagem)}
+                  style={{
+                    padding: '12px 14px',
+                    borderRadius: '6px',
+                    border: '1px solid #1e3d54',
+                    background: 'rgba(201, 148, 58, 0.05)',
+                    color: '#e8edf2',
+                    textAlign: 'left',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '4px',
+                  }}
+                  onMouseEnter={(e) => {
+                    (e.currentTarget as HTMLElement).style.background = 'rgba(201, 148, 58, 0.15)';
+                    (e.currentTarget as HTMLElement).style.borderColor = '#c9943a';
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLElement).style.background = 'rgba(201, 148, 58, 0.05)';
+                    (e.currentTarget as HTMLElement).style.borderColor = '#1e3d54';
+                  }}
+                >
+                  <div style={{ fontSize: '12px', fontWeight: 600, color: '#c9943a' }}>
+                    {resposta.titulo}
+                  </div>
+                  <div style={{
+                    fontSize: '11px',
+                    color: '#7a96aa',
+                    lineHeight: '1.4',
+                    whiteSpace: 'normal',
+                    textAlign: 'left',
+                  }}>
+                    {resposta.mensagem.substring(0, 60)}
+                    {resposta.mensagem.length > 60 ? '...' : ''}
+                  </div>
+                </button>
+              ))}
             </div>
           </div>
         )}
@@ -3062,6 +3235,357 @@ export function Conversas() {
                 Salvar
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL DE HISTÓRICO DO TICKET */}
+      {historicoVisivel && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 10003,
+        }}>
+          <div style={{
+            background: '#0a1520',
+            borderRadius: '12px',
+            border: '1px solid #1e3d54',
+            padding: '32px',
+            minWidth: '450px',
+            maxHeight: '70vh',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.6)',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '20px',
+            overflowY: 'auto',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 700, color: '#e8edf2', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                ≡ Histórico do Ticket
+              </h3>
+              <button
+                onClick={fecharHistorico}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: '#7a96aa',
+                  cursor: 'pointer',
+                  fontSize: '24px',
+                  padding: '4px 8px',
+                  fontWeight: 700,
+                }}
+              >
+                ✕
+              </button>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              {[
+                {
+                  id: 1,
+                  icon: '●',
+                  cor: '#2ecc71',
+                  titulo: 'Ticket criado',
+                  descricao: '',
+                  data: '07/04/2026 · 18:22 via WhatsApp',
+                },
+                {
+                  id: 2,
+                  icon: '●',
+                  cor: '#f39c12',
+                  titulo: 'Atribuído a Havila',
+                  descricao: '',
+                  data: '07/04/2026 · 18:25 · pelo sistema',
+                },
+                {
+                  id: 3,
+                  icon: '●',
+                  cor: '#3498db',
+                  titulo: 'Transferido de fila: Recepção → Comercial',
+                  descricao: '',
+                  data: '07/04/2026 · 18:28 · por Admin',
+                },
+                {
+                  id: 4,
+                  icon: '●',
+                  cor: '#f39c12',
+                  titulo: 'Etiqueta aplicada: Follow-up 1',
+                  descricao: '',
+                  data: '08/04/2026 · 09:30 · por Havila',
+                },
+                {
+                  id: 5,
+                  icon: '●',
+                  cor: '#3498db',
+                  titulo: 'Nota interna adicionada',
+                  descricao: '',
+                  data: '08/04/2026 · 09:35 · por Havila',
+                },
+              ].map((evento: any) => (
+                <div key={evento.id} style={{ display: 'flex', gap: '12px' }}>
+                  <div style={{
+                    fontSize: '16px',
+                    color: evento.cor,
+                    fontWeight: 700,
+                    minWidth: '20px',
+                  }}>
+                    {evento.icon}
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: '13px', fontWeight: 600, color: '#e8edf2' }}>
+                      {evento.titulo}
+                    </div>
+                    {evento.descricao && (
+                      <div style={{ fontSize: '12px', color: '#7a96aa', marginTop: '4px' }}>
+                        {evento.descricao}
+                      </div>
+                    )}
+                    <div style={{ fontSize: '11px', color: '#7a96aa', marginTop: '4px' }}>
+                      {evento.data}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* PAINEL LATERAL DE INFO DO CONTATO */}
+      {infoContatoVisivel && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          right: 0,
+          bottom: 0,
+          width: '380px',
+          background: '#0a1520',
+          borderLeft: '1px solid #1e3d54',
+          boxShadow: '-2px 0 16px rgba(0, 0, 0, 0.4)',
+          display: 'flex',
+          flexDirection: 'column',
+          zIndex: 10002,
+          overflowY: 'auto',
+        }}>
+          {/* HEADER */}
+          <div style={{
+            padding: '20px 24px',
+            borderBottom: '1px solid #1e3d54',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}>
+            <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 700, color: '#e8edf2' }}>
+              Informações
+            </h3>
+            <button
+              onClick={fecharInfoContato}
+              style={{
+                background: 'transparent',
+                border: 'none',
+                color: '#7a96aa',
+                cursor: 'pointer',
+                fontSize: '20px',
+                padding: '4px 8px',
+              }}
+            >
+              ✕
+            </button>
+          </div>
+
+          {/* CONTEÚDO */}
+          <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px', flex: 1 }}>
+            {/* AVATAR E NOME */}
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
+              <div style={{
+                width: '80px',
+                height: '80px',
+                borderRadius: '50%',
+                background: '#c9943a',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '32px',
+                fontWeight: 700,
+                color: '#0d1f2d',
+              }}>
+                {conversa?.nome?.substring(0, 2).toUpperCase()}
+              </div>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: '14px', fontWeight: 700, color: '#e8edf2' }}>
+                  {conversa?.nome} 👤
+                </div>
+                <div style={{ fontSize: '12px', color: '#7a96aa', marginTop: '4px' }}>
+                  {conversa?.canal} · #{conversa?.id}
+                </div>
+              </div>
+            </div>
+
+            {/* TELEFONE E DADOS */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div>
+                <div style={{ fontSize: '11px', fontWeight: 700, color: '#c9943a', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  Telefone
+                </div>
+                <div style={{ fontSize: '13px', color: '#e8edf2', marginTop: '6px', fontWeight: 600 }}>
+                  (11) 97765-3421
+                </div>
+              </div>
+              <div>
+                <div style={{ fontSize: '11px', fontWeight: 700, color: '#c9943a', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  LID
+                </div>
+                <div style={{ fontSize: '12px', color: '#7a96aa', marginTop: '6px', fontFamily: 'monospace' }}>
+                  551197765342​1
+                </div>
+              </div>
+              <div>
+                <div style={{ fontSize: '11px', fontWeight: 700, color: '#c9943a', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  JID
+                </div>
+                <div style={{ fontSize: '12px', color: '#7a96aa', marginTop: '6px', fontFamily: 'monospace' }}>
+                  551197765342​1@s.whatsapp.net
+                </div>
+              </div>
+            </div>
+
+            {/* BOTÃO EDITAR */}
+            <button style={{
+              padding: '10px 16px',
+              borderRadius: '6px',
+              border: '2px solid #c9943a',
+              background: 'transparent',
+              color: '#c9943a',
+              fontSize: '12px',
+              fontWeight: 700,
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+              textTransform: 'uppercase',
+              letterSpacing: '0.5px',
+            }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLElement).style.background = 'rgba(201, 148, 58, 0.1)';
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLElement).style.background = 'transparent';
+            }}
+            >
+              Editar Contato
+            </button>
+
+            {/* SEÇÃO TICKET */}
+            <div style={{ borderTop: '1px solid #1e3d54', paddingTop: '20px' }}>
+              <div style={{ fontSize: '11px', fontWeight: 700, color: '#c9943a', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '12px' }}>
+                Ticket
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '12px', color: '#7a96aa' }}>📋 Fila</span>
+                  <span style={{ fontSize: '12px', fontWeight: 600, color: '#e8edf2' }}>Secretária</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '12px', color: '#7a96aa' }}>👤 Agente</span>
+                  <span style={{ fontSize: '12px', fontWeight: 600, color: '#e8edf2' }}>Camiliy</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '12px', color: '#7a96aa' }}>📅 Abertura</span>
+                  <span style={{ fontSize: '12px', fontWeight: 600, color: '#e8edf2' }}>08/04/2026</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '12px', color: '#7a96aa' }}>⏱ T.M. Resp.</span>
+                  <span style={{ fontSize: '12px', fontWeight: 600, color: '#e8edf2' }}>3 min</span>
+                </div>
+              </div>
+            </div>
+
+            {/* ETIQUETAS */}
+            <div style={{ borderTop: '1px solid #1e3d54', paddingTop: '20px' }}>
+              <div style={{ fontSize: '11px', fontWeight: 700, color: '#c9943a', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '12px' }}>
+                Etiquetas
+              </div>
+              <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                <span style={{
+                  padding: '4px 10px',
+                  borderRadius: '4px',
+                  background: 'rgba(52, 152, 219, 0.2)',
+                  color: '#3498db',
+                  fontSize: '11px',
+                  fontWeight: 600,
+                }}>
+                  WHATSAPP
+                </span>
+                <span style={{
+                  padding: '4px 10px',
+                  borderRadius: '4px',
+                  background: 'rgba(155, 89, 182, 0.2)',
+                  color: '#9b59b6',
+                  fontSize: '11px',
+                  fontWeight: 600,
+                }}>
+                  SECRETÁRIA
+                </span>
+              </div>
+            </div>
+
+            {/* OBSERVAÇÕES */}
+            <div style={{ borderTop: '1px solid #1e3d54', paddingTop: '20px' }}>
+              <div style={{ fontSize: '11px', fontWeight: 700, color: '#c9943a', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '12px' }}>
+                Observações do Contato
+              </div>
+              <textarea
+                placeholder="Observação"
+                style={{
+                  width: '100%',
+                  padding: '10px 12px',
+                  borderRadius: '6px',
+                  border: '1px solid #1e3d54',
+                  background: 'rgba(13, 31, 45, 0.5)',
+                  color: '#e8edf2',
+                  fontSize: '12px',
+                  resize: 'vertical',
+                  minHeight: '60px',
+                  fontFamily: 'inherit',
+                  outline: 'none',
+                  transition: 'all 0.2s',
+                }}
+                onFocus={(e) => {
+                  (e.currentTarget as HTMLElement).style.borderColor = '#c9943a';
+                }}
+                onBlur={(e) => {
+                  (e.currentTarget as HTMLElement).style.borderColor = '#1e3d54';
+                }}
+              />
+            </div>
+
+            {/* BOTÃO OPORTUNIDADE */}
+            <button style={{
+              padding: '10px 16px',
+              borderRadius: '6px',
+              border: 'none',
+              background: 'rgba(201, 148, 58, 0.15)',
+              color: '#c9943a',
+              fontSize: '12px',
+              fontWeight: 600,
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+              marginTop: 'auto',
+            }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLElement).style.background = 'rgba(201, 148, 58, 0.25)';
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLElement).style.background = 'rgba(201, 148, 58, 0.15)';
+            }}
+            >
+              💰 Criar Oportunidade no Pipeline
+            </button>
           </div>
         </div>
       )}
