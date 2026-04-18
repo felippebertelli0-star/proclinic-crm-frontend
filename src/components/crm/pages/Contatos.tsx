@@ -23,14 +23,14 @@ export function Contatos() {
 
   // Mock data de contatos com badges e cores de avatar
   const contatos = [
-    { id: 1, nome: 'Ida Santos', whatsapp: '(11) 99999-0001', email: 'ida@email.com', ultimaInteracao: '2026-04-17 10:30', status: 'Vivo', badge: 'Trabalho Pago', badgeColor: '#ef5350', avatarColor: '#e91e63' },
-    { id: 2, nome: 'Daniele Mantovani', whatsapp: '(11) 99999-0002', email: 'daniele@email.com', ultimaInteracao: '2026-04-16 15:45', status: 'Vivo', badge: 'Orgânico', badgeColor: '#66bb6a', avatarColor: '#9c27b0' },
-    { id: 3, nome: 'Maria Rosa', whatsapp: '(11) 99999-0003', email: 'maria@email.com', ultimaInteracao: '2026-04-15 09:20', status: 'Vivo', badge: 'Trabalho Pago', badgeColor: '#ef5350', avatarColor: '#673ab7' },
-    { id: 4, nome: 'Laura Ferreira', whatsapp: '(11) 99999-0004', email: 'laura@email.com', ultimaInteracao: '2026-04-14 14:10', status: 'Vivo', badge: 'Orgânico', badgeColor: '#66bb6a', avatarColor: '#3f51b5' },
-    { id: 5, nome: 'Patricia Lima', whatsapp: '(11) 99999-0005', email: 'patricia@email.com', ultimaInteracao: '2026-04-13 11:55', status: 'Vivo', badge: 'Trabalho Pago', badgeColor: '#ef5350', avatarColor: '#2196f3' },
-    { id: 6, nome: 'Ana Beatriz', whatsapp: '(11) 99999-0006', email: 'ana@email.com', ultimaInteracao: '2026-04-12 16:30', status: 'Vivo', badge: 'Orgânico', badgeColor: '#66bb6a', avatarColor: '#00bcd4' },
-    { id: 7, nome: 'Larissa Alcântara', whatsapp: '(11) 99999-0007', email: 'larissa@email.com', ultimaInteracao: '2026-04-11 13:15', status: 'Vivo', badge: 'Trabalho Pago', badgeColor: '#ef5350', avatarColor: '#009688' },
-    { id: 8, nome: 'Carlota Mendes', whatsapp: '(11) 99999-0008', email: 'carlota@email.com', ultimaInteracao: '2026-04-10 10:45', status: 'Vivo', badge: 'Orgânico', badgeColor: '#66bb6a', avatarColor: '#4caf50' },
+    { id: 1, nome: 'Ida Santos', whatsapp: '(11) 99999-0001', email: 'ida@email.com', ultimaInteracao: '2026-04-17 10:30', status: 'Ativo', badge: 'Trabalho Pago', badgeColor: '#ef5350', avatarColor: '#e91e63' },
+    { id: 2, nome: 'Daniele Mantovani', whatsapp: '(11) 99999-0002', email: 'daniele@email.com', ultimaInteracao: '2026-04-16 15:45', status: 'Ativo', badge: 'Orgânico', badgeColor: '#66bb6a', avatarColor: '#9c27b0' },
+    { id: 3, nome: 'Maria Rosa', whatsapp: '(11) 99999-0003', email: 'maria@email.com', ultimaInteracao: '2026-04-15 09:20', status: 'Ativo', badge: 'Trabalho Pago', badgeColor: '#ef5350', avatarColor: '#673ab7' },
+    { id: 4, nome: 'Laura Ferreira', whatsapp: '(11) 99999-0004', email: 'laura@email.com', ultimaInteracao: '2026-04-14 14:10', status: 'Ativo', badge: 'Orgânico', badgeColor: '#66bb6a', avatarColor: '#3f51b5' },
+    { id: 5, nome: 'Patricia Lima', whatsapp: '(11) 99999-0005', email: 'patricia@email.com', ultimaInteracao: '2026-04-13 11:55', status: 'Ativo', badge: 'Trabalho Pago', badgeColor: '#ef5350', avatarColor: '#2196f3' },
+    { id: 6, nome: 'Ana Beatriz', whatsapp: '(11) 99999-0006', email: 'ana@email.com', ultimaInteracao: '2026-04-12 16:30', status: 'Ativo', badge: 'Orgânico', badgeColor: '#66bb6a', avatarColor: '#00bcd4' },
+    { id: 7, nome: 'Larissa Alcântara', whatsapp: '(11) 99999-0007', email: 'larissa@email.com', ultimaInteracao: '2026-04-11 13:15', status: 'Ativo', badge: 'Trabalho Pago', badgeColor: '#ef5350', avatarColor: '#009688' },
+    { id: 8, nome: 'Carlota Mendes', whatsapp: '(11) 99999-0008', email: 'carlota@email.com', ultimaInteracao: '2026-04-10 10:45', status: 'Ativo', badge: 'Orgânico', badgeColor: '#66bb6a', avatarColor: '#4caf50' },
   ];
 
   // Filtrar contatos
@@ -370,16 +370,21 @@ export function Contatos() {
                   {contato.ultimaInteracao}
                 </td>
                 <td style={{ padding: '12px 16px' }}>
-                  <span style={{
+                  <button style={{
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '6px',
+                    padding: '8px 12px',
+                    borderRadius: '12px',
+                    background: '#2ecc7133',
+                    border: '1px solid #2ecc71A6',
                     color: '#2ecc71',
                     fontSize: '12px',
                     fontWeight: 600,
+                    cursor: 'default',
                   }}>
-                    ◉ {contato.status}
-                  </span>
+                    ✓ {contato.status}
+                  </button>
                 </td>
                 <td style={{ padding: '12px 16px', textAlign: 'center' }}>
                   <div style={{ display: 'flex', gap: '6px', justifyContent: 'center' }}>
