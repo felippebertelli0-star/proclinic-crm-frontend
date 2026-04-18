@@ -842,7 +842,7 @@ export function Conversas() {
           </h2>
 
           {/* FILTROS - ATENDENDO, AGUARDANDO E FECHADAS */}
-          <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+          <div style={{ display: 'flex', gap: '8px', marginBottom: '14px', flexWrap: 'wrap' }}>
             {[
               { id: 'atendendo', label: 'Atendendo', count: totalAtendendo },
               { id: 'aguardando', label: 'Aguardando', count: totalAguardando },
@@ -853,15 +853,32 @@ export function Conversas() {
                 key={btn.id}
                 onClick={() => handleFiltroChange(btn.id as any)}
                 style={{
-                  padding: '6px 12px',
-                  borderRadius: '6px',
-                  border: 'none',
-                  background: filtroStatus === btn.id ? '#c9943a' : 'transparent',
+                  flex: 1,
+                  padding: '8px 10px',
+                  borderRadius: '8px',
+                  border: filtroStatus === btn.id ? '2px solid #c9943a' : '1px solid #1e3d54',
+                  background: filtroStatus === btn.id ? '#c9943a' : 'rgba(201, 148, 58, 0.08)',
                   color: filtroStatus === btn.id ? '#0d1f2d' : '#c9943a',
-                  fontSize: '12px',
-                  fontWeight: filtroStatus === btn.id ? 700 : 500,
+                  fontSize: '11px',
+                  fontWeight: filtroStatus === btn.id ? 700 : 600,
                   cursor: 'pointer',
-                  transition: 'all 0.2s',
+                  transition: 'all 0.25s ease',
+                  textAlign: 'center',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                }}
+                onMouseEnter={(e) => {
+                  if (filtroStatus !== btn.id) {
+                    (e.currentTarget as HTMLElement).style.background = 'rgba(201, 148, 58, 0.15)';
+                    (e.currentTarget as HTMLElement).style.borderColor = '#c9943a';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (filtroStatus !== btn.id) {
+                    (e.currentTarget as HTMLElement).style.background = 'rgba(201, 148, 58, 0.08)';
+                    (e.currentTarget as HTMLElement).style.borderColor = '#1e3d54';
+                  }
                 }}
               >
                 {btn.label} ({btn.count})
