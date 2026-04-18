@@ -129,6 +129,15 @@ export const IconSVG = {
       <line x1="14" y1="11" x2="14" y2="17"></line>
     </svg>
   ),
+
+  whatsapp: () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+      <circle cx="9" cy="10" r="1"></circle>
+      <circle cx="12" cy="10" r="1"></circle>
+      <circle cx="15" cy="10" r="1"></circle>
+    </svg>
+  ),
 };
 
 // ============ Helper to render icon with styling ============
