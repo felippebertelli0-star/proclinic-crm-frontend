@@ -474,7 +474,7 @@ export function Conversas() {
           alignItems: 'center',
         }}>
           {[
-            { id: 'tags', label: 'Etiqueta' },
+            { id: 'tags', label: 'Incluir etiqueta' },
           ].map((tab) => (
             <button
               key={tab.id}
