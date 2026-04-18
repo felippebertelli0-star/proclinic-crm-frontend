@@ -6,6 +6,7 @@
 'use client';
 
 import { useState } from 'react';
+import { IconSVG } from '@/lib/icons';
 
 export function Dashboard() {
   const [selectedPeriod, setSelectedPeriod] = useState('Hoje');
@@ -15,6 +16,23 @@ export function Dashboard() {
   const [tooltipVisible, setTooltipVisible] = useState<string | null>(null);
   const [hoveredPoint, setHoveredPoint] = useState<{ index: number; indicator: string } | null>(null);
   const [tooltipPos, setTooltipPos] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+
+  // ============ Helper: Get Icon by Key ============
+  const getIcon = (iconKey: string) => {
+    const iconMap: Record<string, React.ReactNode> = {
+      'active': IconSVG.active(),
+      'pending': IconSVG.pending(),
+      'completed': IconSVG.completed(),
+      'users': IconSVG.users(),
+      'inbox': IconSVG.inbox(),
+      'send': IconSVG.send(),
+      'alertTriangle': IconSVG.alertTriangle(),
+      'alertOverload': IconSVG.alertOverload(),
+      'tickets': IconSVG.tickets(),
+      'info': IconSVG.info(),
+    };
+    return iconMap[iconKey] || null;
+  };
 
   // Mock Data por dia (últimos 30 dias + hoje)
   const dailyData: Record<string, any> = {
@@ -388,9 +406,9 @@ export function Dashboard() {
         </h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '18px' }}>
           {[
-            { icon: '◉', label: 'Atendendo', value: stats.atendendo, color: '#2ecc71', subtext: 'tickets em atendimento ativo' },
-            { icon: '◎', label: 'Aguardando', value: stats.aguardando, color: '#f39c12', subtext: 'tickets pendentes' },
-            { icon: '✓', label: 'Fechados no Período', value: stats.fechados, color: '#3498db', subtext: 'tickets finalizados' },
+            { icon: 'active', label: 'Atendendo', value: stats.atendendo, color: '#2ecc71', subtext: 'tickets em atendimento ativo' },
+            { icon: 'pending', label: 'Aguardando', value: stats.aguardando, color: '#f39c12', subtext: 'tickets pendentes' },
+            { icon: 'completed', label: 'Fechados no Período', value: stats.fechados, color: '#3498db', subtext: 'tickets finalizados' },
           ].map((card) => (
             <div
               key={card.label}
@@ -424,15 +442,15 @@ export function Dashboard() {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: '24px',
+                color: card.color,
                 flexShrink: 0,
               }}>
-                {card.icon}
+                {getIcon(card.icon as string)}
               </div>
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: '10px', color: '#c9943a', marginBottom: '6px', fontWeight: 700, letterSpacing: '0.5px', textTransform: 'uppercase' }}>{card.label}</div>
-                <div style={{ fontSize: '28px', fontWeight: 900, color: '#c9943a', marginBottom: '4px', lineHeight: '1' }}>{card.value}</div>
-                <div style={{ fontSize: '10px', color: '#c9943a' }}>{card.subtext}</div>
+                <div style={{ fontSize: '10px', color: '#7a96aa', marginBottom: '6px', fontWeight: 700, letterSpacing: '0.5px', textTransform: 'uppercase' }}>{card.label}</div>
+                <div style={{ fontSize: '28px', fontWeight: 900, color: card.color, marginBottom: '4px', lineHeight: '1' }}>{card.value}</div>
+                <div style={{ fontSize: '10px', color: '#7a96aa' }}>{card.subtext}</div>
               </div>
             </div>
           ))}
@@ -446,9 +464,9 @@ export function Dashboard() {
         </h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '18px' }}>
           {[
-            { icon: '👤', label: 'Novos Leads Chegaram', value: activity.leads.toString(), color: '#c9943a', subtext: '↑ no período selecionado' },
-            { icon: '↙', label: 'Mensagens Recebidas', value: activity.recebidas, color: '#3498db', subtext: '↑ WhatsApp + Instagram' },
-            { icon: '↗', label: 'Mensagens Enviadas', value: activity.enviadas, color: '#2ecc71', subtext: '↑ Pela equipe' },
+            { icon: 'users', label: 'Novos Leads Chegaram', value: activity.leads.toString(), color: '#3498db', subtext: '↑ no período selecionado' },
+            { icon: 'inbox', label: 'Mensagens Recebidas', value: activity.recebidas, color: '#3498db', subtext: '↑ WhatsApp + Instagram' },
+            { icon: 'send', label: 'Mensagens Enviadas', value: activity.enviadas, color: '#2ecc71', subtext: '↑ Pela equipe' },
           ].map((card) => (
             <div
               key={card.label}
@@ -481,15 +499,15 @@ export function Dashboard() {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: '22px',
+                color: card.color,
                 flexShrink: 0,
               }}>
-                {card.icon}
+                {getIcon(card.icon as string)}
               </div>
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: '10px', color: '#c9943a', marginBottom: '6px', fontWeight: 700, letterSpacing: '0.5px', textTransform: 'uppercase' }}>{card.label}</div>
-                <div style={{ fontSize: '28px', fontWeight: 900, color: '#c9943a', marginBottom: '6px', lineHeight: '1' }}>{card.value}</div>
-                <div style={{ fontSize: '10px', color: '#c9943a', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.3px' }}>{card.subtext}</div>
+                <div style={{ fontSize: '10px', color: '#7a96aa', marginBottom: '6px', fontWeight: 700, letterSpacing: '0.5px', textTransform: 'uppercase' }}>{card.label}</div>
+                <div style={{ fontSize: '28px', fontWeight: 900, color: card.color, marginBottom: '6px', lineHeight: '1' }}>{card.value}</div>
+                <div style={{ fontSize: '10px', color: '#7a96aa', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.3px' }}>{card.subtext}</div>
               </div>
             </div>
           ))}
@@ -538,7 +556,7 @@ export function Dashboard() {
               }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '10px' }}>
-                <div style={{ fontSize: '9px', color: '#c9943a', fontWeight: 800, letterSpacing: '0.8px', textTransform: 'uppercase' }}>{kpi.label}</div>
+                <div style={{ fontSize: '9px', color: '#7a96aa', fontWeight: 800, letterSpacing: '0.8px', textTransform: 'uppercase' }}>{kpi.label}</div>
                 <div
                   onMouseEnter={(e) => {
                     setTooltipVisible(kpi.key);
@@ -546,17 +564,17 @@ export function Dashboard() {
                   }}
                   onMouseLeave={(e) => {
                     setTooltipVisible(null);
-                    (e.currentTarget as HTMLElement).style.color = '#c9943a';
+                    (e.currentTarget as HTMLElement).style.color = '#7a96aa';
                   }}
                   style={{
                     fontSize: '13px',
-                    color: '#c9943a',
+                    color: '#7a96aa',
                     cursor: 'pointer',
                     position: 'relative',
                     transition: 'color 0.2s',
                   }}
                 >
-                  ℹ️
+                  {getIcon('info')}
                   {tooltipVisible === kpi.key && (
                     <div style={{
                       position: 'absolute',
@@ -578,7 +596,7 @@ export function Dashboard() {
                   )}
                 </div>
               </div>
-              <div style={{ fontSize: '24px', fontWeight: 900, color: '#c9943a', marginBottom: '10px', lineHeight: '1' }}>
+              <div style={{ fontSize: '24px', fontWeight: 900, color: kpi.color, marginBottom: '10px', lineHeight: '1' }}>
                 {kpi.value}
               </div>
               {kpi.bar > 0 && (
@@ -592,7 +610,7 @@ export function Dashboard() {
                   <div style={{ height: '100%', width: `${kpi.bar}%`, background: `linear-gradient(90deg, ${kpi.color}, ${kpi.color}aa)`, borderRadius: '3px', transition: 'width 0.5s ease' }} />
                 </div>
               )}
-              <div style={{ fontSize: '11px', color: '#c9943a', lineHeight: '1.4' }}>{kpi.subtext}</div>
+              <div style={{ fontSize: '11px', color: '#7a96aa', lineHeight: '1.4' }}>{kpi.subtext}</div>
             </div>
           ))}
         </div>
@@ -917,9 +935,9 @@ export function Dashboard() {
             <span style={{ background: '#e74c3c', color: '#fff', fontSize: '10px', fontWeight: 700, padding: '2px 6px', borderRadius: '3px' }}>3</span>
           </h3>
           {[
-            { icon: '△', title: 'SLA Próximo do Vencimento', desc: '357 ticket(s) próximos de vencer o SLA', color: '#f39c12', action: 'Priorizar' },
-            { icon: '👥', title: 'Atendentes Sobrecarregados', desc: '2 atendente(s) com mais de 10 tickets', color: '#e74c3c', action: 'Redistribuir' },
-            { icon: '□', title: 'Tickets Sem Atendente', desc: '17 ticket(s) aguardando distribuição', color: '#3498db', action: 'Atribuir' },
+            { icon: 'alertTriangle', title: 'SLA Próximo do Vencimento', desc: '357 ticket(s) próximos de vencer o SLA', color: '#f39c12', action: 'Priorizar' },
+            { icon: 'alertOverload', title: 'Atendentes Sobrecarregados', desc: '2 atendente(s) com mais de 10 tickets', color: '#e74c3c', action: 'Redistribuir' },
+            { icon: 'tickets', title: 'Tickets Sem Atendente', desc: '17 ticket(s) aguardando distribuição', color: '#3498db', action: 'Atribuir' },
           ].map((a) => (
             <div key={a.title} style={{
               background: '#132636',
@@ -936,8 +954,9 @@ export function Dashboard() {
               e.currentTarget.style.boxShadow = 'none';
               e.currentTarget.style.borderColor = `${a.color}40`;
             }}>
-              <div style={{ fontSize: '12px', fontWeight: 800, marginBottom: '6px', color: '#e8edf2' }}>
-                {a.icon} {a.title}
+              <div style={{ fontSize: '12px', fontWeight: 800, marginBottom: '6px', color: '#e8edf2', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: a.color }}>{getIcon(a.icon)}</span>
+                {a.title}
               </div>
               <div style={{ fontSize: '11px', color: '#7a96aa', marginBottom: '10px', lineHeight: '1.4' }}>{a.desc}</div>
               <button style={{
