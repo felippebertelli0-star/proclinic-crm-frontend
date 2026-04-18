@@ -994,6 +994,9 @@ export function Conversas() {
                             </div>
                           )}
                         </div>
+                        <div style={{ fontSize: '9px', color: '#c9943a', marginBottom: '4px', fontWeight: 600 }}>
+                          👤 {conv.atribuidoA}
+                        </div>
                         <div style={{ fontSize: '10px', color: '#7a96aa', marginBottom: '3px', display: 'flex', alignItems: 'center', gap: '4px' }}>
                           <Clock size={12} />
                           {conv.hora}
@@ -2931,13 +2934,13 @@ export function Conversas() {
           zIndex: 10002,
         }}>
           <div style={{
-            background: '#0a1520',
-            borderRadius: '12px',
-            border: '1px solid #1e3d54',
-            padding: '32px',
-            minWidth: '500px',
+            background: PREMIUM_STYLES.gradientDark,
+            borderRadius: '16px',
+            border: `1px solid ${PREMIUM_STYLES.colorBorder}`,
+            padding: '0',
+            minWidth: '520px',
             maxHeight: '90vh',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.6)',
+            boxShadow: PREMIUM_STYLES.shadowXl,
             display: 'flex',
             flexDirection: 'column',
             gap: '24px',
