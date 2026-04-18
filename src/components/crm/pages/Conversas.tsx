@@ -22,6 +22,10 @@ export function Conversas() {
   const [historicoMensagens, setHistoricoMensagens] = useState<any[]>([]);
   const [confirmFinalizarVisible, setConfirmFinalizarVisible] = useState(false);
   const [conversaParaFinalizar, setConversaParaFinalizar] = useState<number | null>(null);
+  const [transferirModalVisible, setTransferirModalVisible] = useState(false);
+  const [buscaMembro, setBuscaMembro] = useState('');
+  const [membroSelecionado, setMembroSelecionado] = useState<any>(null);
+  const [filaSelecionada, setFilaSelecionada] = useState<string | null>(null);
   const mediaRecorderRef = useRef<any>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const streamRef = useRef<MediaStream | null>(null);
@@ -68,6 +72,24 @@ export function Conversas() {
       origem: 'Instagram Orgânico', tags: ['INSTAGRAM', 'ORÇAMENTO'], unread: 3, preview: 'Preciso de orçamento...'
     },
   ]);
+
+  // ============ DADOS DE MEMBROS E FILAS ============
+  const membros = [
+    { id: 1, nome: 'Havila Rodrigues', role: 'SDR / Atendente', tickets: 42, status: 'online' },
+    { id: 2, nome: 'Camiliy Nunes', role: 'SDR / Atendente', tickets: 38, status: 'online' },
+    { id: 3, nome: 'IA Hávila', role: 'Agente IA', tickets: 87, status: 'online' },
+    { id: 4, nome: 'IA Camiliy', role: 'Agente IA', tickets: 61, status: 'online' },
+    { id: 5, nome: 'Dra. Andressa', role: 'Médica Responsável', tickets: 0, status: 'ausente' },
+    { id: 6, nome: 'Luana Silva', role: 'Recepcionista', tickets: 12, status: 'offline' },
+  ];
+
+  const filas = [
+    { id: 1, nome: 'Fila Geral' },
+    { id: 2, nome: 'Fila de Agendamentos' },
+    { id: 3, nome: 'Fila de Suporte' },
+    { id: 4, nome: 'Fila VIP' },
+    { id: 5, nome: 'Fila de Retorno' },
+  ];
 
   // Função para gerar cor de tag baseada no tipo
   const getTagColor = (tag: string) => {
@@ -253,6 +275,45 @@ export function Conversas() {
     // Resetar seleção
     setSelectedConversa(0);
   };
+
+  const abrirTransferirModal = () => {
+    setTransferirModalVisible(true);
+    setBuscaMembro('');
+    setMembroSelecionado(null);
+    setFilaSelecionada(null);
+  };
+
+  const fecharTransferirModal = () => {
+    setTransferirModalVisible(false);
+    setMembroSelecionado(null);
+    setFilaSelecionada(null);
+    setBuscaMembro('');
+  };
+
+  const transferirTicket = () => {
+    if (!conversa || (!membroSelecionado && !filaSelecionada)) {
+      alert('Por favor, selecione um membro ou fila para transferir');
+      return;
+    }
+
+    // Atualizar a conversa com a nova atribuição
+    const novasConversas = conversas.map((conv: any) =>
+      conv.id === conversa.id
+        ? {
+            ...conv,
+            atribuidoA: membroSelecionado
+              ? `${membroSelecionado.nome}`
+              : `Fila - ${filaSelecionada}`,
+          }
+        : conv
+    );
+    setConversas(novasConversas);
+    fecharTransferirModal();
+  };
+
+  const membrosFiltrados = membros.filter((m: any) =>
+    m.nome.toLowerCase().includes(buscaMembro.toLowerCase())
+  );
 
   const diminuirNotificacao = (convId: number) => {
     setConversas(conversas.map((conv: any) =>
@@ -755,9 +816,9 @@ export function Conversas() {
           <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flex: 1, justifyContent: 'flex-end' }}>
             {/* ACTION BUTTONS */}
             {[
-              { Icon: X, label: 'Fechar Ticket', action: (convId: number) => finalizarConversa(convId) },
-              { Icon: RefreshCw, label: 'Devolver para a IA', action: (convId: number) => devolverParaIA(convId) },
-              { Icon: User, label: 'Transferir Ticket' },
+              { Icon: X, label: 'Fechar Ticket', action: 'fechar' },
+              { Icon: RefreshCw, label: 'Devolver para a IA', action: 'devolver' },
+              { Icon: User, label: 'Transferir Ticket', action: 'transferir' },
               { Icon: Calendar, label: 'Agendar Mensagem' },
               { Icon: DollarSign, label: 'Nova Oportunidade' },
               { Icon: FileText, label: 'Nota Interna' },
@@ -771,8 +832,12 @@ export function Conversas() {
                 title={label}
                 onClick={(e) => {
                   e.stopPropagation();
-                  if (action && conversa) {
-                    action(conversa.id);
+                  if (action === 'fechar' && conversa) {
+                    finalizarConversa(conversa.id);
+                  } else if (action === 'devolver' && conversa) {
+                    devolverParaIA(conversa.id);
+                  } else if (action === 'transferir') {
+                    abrirTransferirModal();
                   }
                 }}
                 style={{
@@ -1638,6 +1703,258 @@ export function Conversas() {
                 }}
               >
                 Sim, encerrar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL DE TRANSFERÊNCIA */}
+      {transferirModalVisible && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 10000,
+        }}>
+          <div style={{
+            background: '#0a1520',
+            borderRadius: '12px',
+            border: '1px solid #1e3d54',
+            padding: '32px',
+            minWidth: '420px',
+            maxHeight: '80vh',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.6)',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '24px',
+            overflowY: 'auto',
+          }}>
+            {/* HEADER */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <User size={20} style={{ color: '#c9943a' }} />
+                <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 700, color: '#e8edf2' }}>
+                  Transferir Ticket
+                </h3>
+              </div>
+              <button
+                onClick={fecharTransferirModal}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: '#7a96aa',
+                  cursor: 'pointer',
+                  fontSize: '20px',
+                  padding: '4px 8px',
+                }}
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* TRANSFERIR PARA MEMBRO */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <label style={{ fontSize: '12px', fontWeight: 700, color: 'rgba(255, 255, 255, 0.4)', textTransform: 'uppercase', letterSpacing: '0.8px' }}>
+                Transferir para membro
+              </label>
+              <input
+                type="text"
+                placeholder="Buscar membro..."
+                value={buscaMembro}
+                onChange={(e) => setBuscaMembro(e.target.value)}
+                style={{
+                  padding: '10px 14px',
+                  borderRadius: '6px',
+                  border: '1px solid #1e3d54',
+                  background: 'rgba(13, 31, 45, 0.5)',
+                  color: '#e8edf2',
+                  fontSize: '13px',
+                  outline: 'none',
+                  transition: 'all 0.2s',
+                }}
+                onFocus={(e) => {
+                  (e.currentTarget as HTMLElement).style.borderColor = '#c9943a';
+                  (e.currentTarget as HTMLElement).style.background = 'rgba(13, 31, 45, 0.8)';
+                }}
+                onBlur={(e) => {
+                  (e.currentTarget as HTMLElement).style.borderColor = '#1e3d54';
+                  (e.currentTarget as HTMLElement).style.background = 'rgba(13, 31, 45, 0.5)';
+                }}
+              />
+
+              {/* LISTA DE MEMBROS */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '300px', overflowY: 'auto' }}>
+                {membrosFiltrados.map((membro: any) => (
+                  <button
+                    key={membro.id}
+                    onClick={() => {
+                      setMembroSelecionado(membro);
+                      setFilaSelecionada(null);
+                    }}
+                    style={{
+                      padding: '12px 14px',
+                      borderRadius: '8px',
+                      border: membroSelecionado?.id === membro.id ? '1px solid #c9943a' : '1px solid transparent',
+                      background: membroSelecionado?.id === membro.id ? 'rgba(201, 148, 58, 0.1)' : 'rgba(30, 61, 84, 0.3)',
+                      color: '#e8edf2',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '12px',
+                      textAlign: 'left',
+                    }}
+                    onMouseEnter={(e) => {
+                      if (membroSelecionado?.id !== membro.id) {
+                        (e.currentTarget as HTMLElement).style.background = 'rgba(30, 61, 84, 0.5)';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (membroSelecionado?.id !== membro.id) {
+                        (e.currentTarget as HTMLElement).style.background = 'rgba(30, 61, 84, 0.3)';
+                      }
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: '32px',
+                        height: '32px',
+                        borderRadius: '50%',
+                        background: `hsl(${membro.id * 60}, 70%, 50%)`,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: '#ffffff',
+                        fontSize: '12px',
+                        fontWeight: 700,
+                        flexShrink: 0,
+                      }}
+                    >
+                      {membro.nome.charAt(0)}
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: '13px', fontWeight: 600, color: '#e8edf2' }}>{membro.nome}</div>
+                      <div style={{ fontSize: '11px', color: '#7a96aa' }}>
+                        {membro.role} · {membro.tickets} tickets
+                      </div>
+                    </div>
+                    <div
+                      style={{
+                        padding: '4px 10px',
+                        borderRadius: '12px',
+                        fontSize: '10px',
+                        fontWeight: 700,
+                        background: membro.status === 'online' ? 'rgba(46, 204, 113, 0.2)' : membro.status === 'ausente' ? 'rgba(243, 156, 18, 0.2)' : 'rgba(122, 150, 170, 0.2)',
+                        color: membro.status === 'online' ? '#2ecc71' : membro.status === 'ausente' ? '#f39c12' : '#7a96aa',
+                        textTransform: 'capitalize',
+                      }}
+                    >
+                      {membro.status}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* DIVISOR */}
+            <div style={{ height: '1px', background: 'rgba(30, 61, 84, 0.5)' }} />
+
+            {/* TRANSFERIR PARA FILA */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <label style={{ fontSize: '12px', fontWeight: 700, color: 'rgba(255, 255, 255, 0.4)', textTransform: 'uppercase', letterSpacing: '0.8px' }}>
+                Transferir para fila
+              </label>
+              <select
+                value={filaSelecionada || ''}
+                onChange={(e) => {
+                  setFilaSelecionada(e.target.value || null);
+                  setMembroSelecionado(null);
+                }}
+                style={{
+                  padding: '10px 14px',
+                  borderRadius: '6px',
+                  border: '1px solid #1e3d54',
+                  background: 'rgba(13, 31, 45, 0.5)',
+                  color: '#e8edf2',
+                  fontSize: '13px',
+                  outline: 'none',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                }}
+                onFocus={(e) => {
+                  (e.currentTarget as HTMLElement).style.borderColor = '#c9943a';
+                  (e.currentTarget as HTMLElement).style.background = 'rgba(13, 31, 45, 0.8)';
+                }}
+                onBlur={(e) => {
+                  (e.currentTarget as HTMLElement).style.borderColor = '#1e3d54';
+                  (e.currentTarget as HTMLElement).style.background = 'rgba(13, 31, 45, 0.5)';
+                }}
+              >
+                <option value="">Selecionar fila...</option>
+                {filas.map((fila: any) => (
+                  <option key={fila.id} value={fila.nome}>
+                    {fila.nome}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* BOTÕES */}
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+              <button
+                onClick={fecharTransferirModal}
+                style={{
+                  padding: '10px 20px',
+                  borderRadius: '6px',
+                  border: '1px solid #1e3d54',
+                  background: 'transparent',
+                  color: '#7a96aa',
+                  fontSize: '13px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.background = 'rgba(30, 61, 84, 0.3)';
+                  (e.currentTarget as HTMLElement).style.borderColor = '#7a96aa';
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.background = 'transparent';
+                  (e.currentTarget as HTMLElement).style.borderColor = '#1e3d54';
+                }}
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={transferirTicket}
+                style={{
+                  padding: '10px 20px',
+                  borderRadius: '6px',
+                  border: 'none',
+                  background: '#c9943a',
+                  color: '#0d1f2d',
+                  fontSize: '13px',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.background = '#e8b86d';
+                  (e.currentTarget as HTMLElement).style.transform = 'scale(1.05)';
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.background = '#c9943a';
+                  (e.currentTarget as HTMLElement).style.transform = 'scale(1)';
+                }}
+              >
+                Transferir
               </button>
             </div>
           </div>
