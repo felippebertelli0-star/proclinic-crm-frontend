@@ -5,7 +5,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { X, RefreshCw, Calendar, DollarSign, FileText, Paperclip, Zap, BarChart3, User, Mic, Send, Smile, Clock, Eye } from 'lucide-react';
 
 export function Conversas() {
@@ -18,7 +18,11 @@ export function Conversas() {
   const [conversaModal, setConversaModal] = useState<any>(null);
   const [gravando, setGravando] = useState(false);
   const [emojiMenuVisible, setEmojiMenuVisible] = useState(false);
-  const mediaRecorderRef = useState<any>(null)[1];
+  const [tempoGravacao, setTempoGravacao] = useState(0);
+  const mediaRecorderRef = useRef<any>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
+  const streamRef = useRef<MediaStream | null>(null);
+  const timerRef = useRef<any>(null);
   const [conversas, setConversas] = useState([
     {
       id: 87439, nome: 'Ida Santos', status: 'atendendo', canal: 'WHATSAPP',
@@ -151,35 +155,67 @@ export function Conversas() {
   const iniciarGravacao = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      streamRef.current = stream;
+      audioChunksRef.current = [];
+
       const mediaRecorder = new MediaRecorder(stream);
-      let audioChunks: Blob[] = [];
+      mediaRecorderRef.current = mediaRecorder;
 
       mediaRecorder.ondataavailable = (event) => {
-        audioChunks.push(event.data);
+        audioChunksRef.current.push(event.data);
       };
 
       mediaRecorder.onstop = () => {
-        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-        // Aqui você poderia salvar ou enviar o áudio
-        console.log('Áudio gravado:', audioBlob);
-        setNovaMensagem(`🎙️ Audio (${audioBlob.size} bytes)`);
-        stream.getTracks().forEach(track => track.stop());
+        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        console.log('🎙️ Áudio gravado:', audioBlob);
+        // Aqui você integraria com API para enviar o áudio
+        setNovaMensagem(`🎙️ Áudio (${Math.round(audioBlob.size / 1024)}KB)`);
+        if (streamRef.current) {
+          streamRef.current.getTracks().forEach(track => track.stop());
+        }
+        setTempoGravacao(0);
+        clearInterval(timerRef.current);
       };
 
       mediaRecorder.start();
       setGravando(true);
-      // Salvar referência do mediaRecorder
-      (mediaRecorderRef as any) = mediaRecorder;
+      setTempoGravacao(0);
+
+      // Timer para contar tempo de gravação
+      timerRef.current = setInterval(() => {
+        setTempoGravacao(prev => prev + 1);
+      }, 1000);
     } catch (error) {
-      console.error('Erro ao acessar microfone:', error);
+      console.error('❌ Erro ao acessar microfone:', error);
+      alert('Permissão de microfone negada ou microfone não disponível');
     }
   };
 
   const pararGravacao = () => {
-    if ((mediaRecorderRef as any)) {
-      (mediaRecorderRef as any).stop();
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+      mediaRecorderRef.current.stop();
       setGravando(false);
+      clearInterval(timerRef.current);
     }
+  };
+
+  const cancelarGravacao = () => {
+    if (mediaRecorderRef.current) {
+      mediaRecorderRef.current.abort();
+      setGravando(false);
+      setTempoGravacao(0);
+      clearInterval(timerRef.current);
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+      }
+    }
+  };
+
+  // Formatar tempo em MM:SS
+  const formatarTempo = (segundos: number) => {
+    const min = Math.floor(segundos / 60);
+    const seg = segundos % 60;
+    return `${min.toString().padStart(2, '0')}:${seg.toString().padStart(2, '0')}`;
   };
 
   // ============ EMOJIS ============
@@ -716,6 +752,89 @@ export function Conversas() {
             }
           })}
         </div>
+
+        {/* GRAVAÇÃO DE ÁUDIO - BANNER */}
+        {gravando && (
+          <div style={{
+            padding: '12px 24px',
+            borderTop: '1px solid rgba(231, 76, 60, 0.3)',
+            background: 'rgba(231, 76, 60, 0.1)',
+            display: 'flex',
+            gap: '16px',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1 }}>
+              <div style={{
+                width: '8px',
+                height: '8px',
+                borderRadius: '50%',
+                background: '#e74c3c',
+                animation: 'pulse 1s infinite',
+              }} />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                <div style={{ fontSize: '13px', fontWeight: 700, color: '#e74c3c' }}>
+                  🎙️ Gravando áudio...
+                </div>
+                <div style={{ fontSize: '12px', color: '#e8edf2', fontWeight: 600 }}>
+                  {formatarTempo(tempoGravacao)}
+                </div>
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button
+                onClick={cancelarGravacao}
+                style={{
+                  padding: '6px 14px',
+                  borderRadius: '6px',
+                  background: 'transparent',
+                  border: '1px solid #7a96aa',
+                  color: '#7a96aa',
+                  fontSize: '12px',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.background = 'rgba(122, 150, 170, 0.1)';
+                  (e.currentTarget as HTMLElement).style.borderColor = '#e8edf2';
+                  (e.currentTarget as HTMLElement).style.color = '#e8edf2';
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.background = 'transparent';
+                  (e.currentTarget as HTMLElement).style.borderColor = '#7a96aa';
+                  (e.currentTarget as HTMLElement).style.color = '#7a96aa';
+                }}
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={pararGravacao}
+                style={{
+                  padding: '6px 14px',
+                  borderRadius: '6px',
+                  background: '#e74c3c',
+                  border: 'none',
+                  color: '#ffffff',
+                  fontSize: '12px',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.background = '#c0392b';
+                  (e.currentTarget as HTMLElement).style.transform = 'scale(1.05)';
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.background = '#e74c3c';
+                  (e.currentTarget as HTMLElement).style.transform = 'scale(1)';
+                }}
+              >
+                Enviar
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* INPUT DE MENSAGEM */}
         <div style={{
