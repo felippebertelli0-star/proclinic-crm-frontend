@@ -101,7 +101,7 @@ export function Contatos() {
           <div
             key={card.label}
             style={{
-              background: '#132636',
+              background: `linear-gradient(135deg, ${card.color}4d, #132636)`,
               border: `2px solid ${card.color}`,
               borderRadius: '14px',
               padding: '20px 16px',
