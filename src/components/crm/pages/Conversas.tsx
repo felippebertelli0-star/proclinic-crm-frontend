@@ -20,6 +20,8 @@ export function Conversas() {
   const [emojiMenuVisible, setEmojiMenuVisible] = useState(false);
   const [tempoGravacao, setTempoGravacao] = useState(0);
   const [historicoMensagens, setHistoricoMensagens] = useState<any[]>([]);
+  const [confirmFinalizarVisible, setConfirmFinalizarVisible] = useState(false);
+  const [conversaParaFinalizar, setConversaParaFinalizar] = useState<number | null>(null);
   const mediaRecorderRef = useRef<any>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const streamRef = useRef<MediaStream | null>(null);
@@ -174,12 +176,34 @@ export function Conversas() {
     }, 0);
   };
 
+  const abrirConfirmFinalizar = (convId: number) => {
+    // Mostrar modal de confirmação
+    setConversaParaFinalizar(convId);
+    setConfirmFinalizarVisible(true);
+  };
+
+  const confirmarFinalizar = () => {
+    // Realmente finalizar a conversa
+    if (conversaParaFinalizar) {
+      setConversas(conversas.map((conv: any) =>
+        conv.id === conversaParaFinalizar ? { ...conv, status: 'fechadas' } : conv
+      ));
+      setSelectedConversa(0);
+    }
+    // Fechar o modal
+    setConfirmFinalizarVisible(false);
+    setConversaParaFinalizar(null);
+  };
+
+  const cancelarFinalizar = () => {
+    // Fechar o modal sem fazer nada
+    setConfirmFinalizarVisible(false);
+    setConversaParaFinalizar(null);
+  };
+
   const finalizarConversa = (convId: number) => {
-    // Mover para "fechadas" em vez de deletar
-    setConversas(conversas.map((conv: any) =>
-      conv.id === convId ? { ...conv, status: 'fechadas' } : conv
-    ));
-    setSelectedConversa(0);
+    // Abrir popup de confirmação em vez de finalizar direto
+    abrirConfirmFinalizar(convId);
   };
 
   const diminuirNotificacao = (convId: number) => {
@@ -1426,6 +1450,110 @@ export function Conversas() {
             }}>
               <Eye size={16} />
               Você está espiando • Notificação continua ativa • Feche para voltar
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL DE CONFIRMAÇÃO PARA FINALIZAR CONVERSA */}
+      {confirmFinalizarVisible && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 9999,
+        }}>
+          <div style={{
+            background: '#0a1520',
+            borderRadius: '12px',
+            border: '1px solid #1e3d54',
+            padding: '32px',
+            minWidth: '380px',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.6)',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '24px',
+          }}>
+            {/* CABEÇALHO DO MODAL */}
+            <div>
+              <h3 style={{
+                margin: '0 0 8px 0',
+                fontSize: '18px',
+                fontWeight: 700,
+                color: '#e8edf2',
+              }}>
+                Encerrar Conversa?
+              </h3>
+              <p style={{
+                margin: 0,
+                fontSize: '14px',
+                color: '#7a96aa',
+                lineHeight: '1.5',
+              }}>
+                Tem certeza que deseja encerrar esta conversa? A conversa será movida para a área de "Conversas Fechadas" e poderá ser consultada depois.
+              </p>
+            </div>
+
+            {/* BOTÕES */}
+            <div style={{
+              display: 'flex',
+              gap: '12px',
+              justifyContent: 'flex-end',
+            }}>
+              <button
+                onClick={cancelarFinalizar}
+                style={{
+                  padding: '10px 20px',
+                  borderRadius: '6px',
+                  border: '1px solid #1e3d54',
+                  background: 'transparent',
+                  color: '#7a96aa',
+                  fontSize: '13px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.background = 'rgba(30, 61, 84, 0.3)';
+                  (e.currentTarget as HTMLElement).style.borderColor = '#7a96aa';
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.background = 'transparent';
+                  (e.currentTarget as HTMLElement).style.borderColor = '#1e3d54';
+                }}
+              >
+                Não, continuar
+              </button>
+              <button
+                onClick={confirmarFinalizar}
+                style={{
+                  padding: '10px 20px',
+                  borderRadius: '6px',
+                  border: 'none',
+                  background: '#e74c3c',
+                  color: '#ffffff',
+                  fontSize: '13px',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.background = '#c0392b';
+                  (e.currentTarget as HTMLElement).style.transform = 'scale(1.05)';
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.background = '#e74c3c';
+                  (e.currentTarget as HTMLElement).style.transform = 'scale(1)';
+                }}
+              >
+                Sim, encerrar
+              </button>
             </div>
           </div>
         </div>
