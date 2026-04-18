@@ -412,55 +412,6 @@ export function Conversas() {
                 <Icon size={18} />
               </button>
             ))}
-
-            {/* SEPARADOR */}
-            <div style={{ width: '1px', height: '24px', background: '#1e3d54' }} />
-
-            {/* STATUS DE CONEXÃO COM NOMES */}
-            <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-              {/* WhatsApp */}
-              <div style={{ display: 'flex', gap: '6px', alignItems: 'center', fontSize: '12px', color: '#2ecc71', fontWeight: 600 }}>
-                <div
-                  style={{
-                    width: '10px',
-                    height: '10px',
-                    borderRadius: '50%',
-                    background: '#2ecc71',
-                    boxShadow: '0 0 6px rgba(46, 204, 113, 0.5)',
-                  }}
-                />
-                💬 WhatsApp
-              </div>
-
-              {/* Instagram */}
-              <div style={{ display: 'flex', gap: '6px', alignItems: 'center', fontSize: '12px', color: '#e1306c', fontWeight: 600 }}>
-                <div
-                  style={{
-                    width: '10px',
-                    height: '10px',
-                    borderRadius: '50%',
-                    background: '#e1306c',
-                    boxShadow: '0 0 6px rgba(225, 48, 108, 0.5)',
-                  }}
-                />
-                📸 Instagram
-              </div>
-            </div>
-
-            {/* STATUS ACTIVE */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              padding: '6px 12px',
-              background: 'rgba(46, 204, 113, 0.2)',
-              borderRadius: '6px',
-              fontSize: '12px',
-              fontWeight: 700,
-              color: '#2ecc71',
-            }}>
-              ● Ativo
-            </div>
           </div>
         </div>
 
