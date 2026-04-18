@@ -216,12 +216,24 @@ export function CRMLayout() {
         height: '60px',
         flexShrink: 0,
       }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-          <div style={{ fontSize: '14px', fontWeight: 700, color: '#c9943a' }}>
-            👤 {usuario?.nome || 'Usuário'}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          {/* Avatar com inicial */}
+          <div style={{ width: '40px', height: '40px', borderRadius: '8px', background: 'linear-gradient(135deg, #c9943a, #e8b86d)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', fontWeight: 900, color: '#0d1f2d', flexShrink: 0 }}>
+            {usuario?.nome?.charAt(0).toUpperCase() || 'U'}
           </div>
-          <div style={{ fontSize: '11px', color: '#7a96aa' }}>
-            🕐 Último acesso: {formatarUltimoLogin((usuario as any)?.ultimoAcesso)}
+
+          {/* Nome e último acesso na mesma linha */}
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
+            <div style={{ fontSize: '14px', fontWeight: 700, color: '#c9943a' }}>
+              {usuario?.nome || 'Usuário'}
+            </div>
+            <div style={{ fontSize: '12px', color: '#7a96aa', fontStyle: 'italic', display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+              Último acesso: {formatarUltimoLogin((usuario as any)?.ultimoAcesso)}
+            </div>
           </div>
         </div>
         <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
