@@ -18,13 +18,15 @@ export function Conversas() {
   const getTagColor = (tag: string) => {
     const tagColors: Record<string, { bg: string; color: string }> = {
       'Trabalho Pago': { bg: '#c9943a', color: '#0d1f2d' },
+      'IA': { bg: '#9b59b6', color: '#ffffff' },
       'IA ATIVA': { bg: '#9b59b6', color: '#ffffff' },
       'WHATSAPP': { bg: '#3498db', color: '#ffffff' },
       'NOVO LEAD': { bg: '#2ecc71', color: '#ffffff' },
       'INSTAGRAM': { bg: '#e1306c', color: '#ffffff' },
+      'Instagram Orgânico': { bg: '#e1306c', color: '#ffffff' },
       'ORÇAMENTO': { bg: '#f39c12', color: '#ffffff' },
       'RETORNO': { bg: '#f39c12', color: '#ffffff' },
-      'Indicação': { bg: '#c9943a', color: '#0d1f2d' },
+      'Indicação': { bg: '#2ecc71', color: '#ffffff' },
     };
     return tagColors[tag] || { bg: 'rgba(201, 148, 58, 0.3)', color: '#c9943a' };
   };
@@ -34,42 +36,22 @@ export function Conversas() {
     {
       id: 87439, nome: 'Ida Santos', status: 'atendendo', canal: 'WHATSAPP',
       atribuidoA: 'IA - WhatsApp', data: '08/04/2026', hora: '1 min',
-      tags: ['Trabalho Pago', 'IA ATIVA'], unread: 0, preview: 'Havila deu oi...'
+      tags: ['Trabalho Pago', 'IA'], unread: 0, preview: 'Havila deu oi...'
     },
     {
-      id: 87440, nome: 'Sandra Oliveira', status: 'atendendo', canal: 'WHATSAPP',
-      atribuidoA: 'IA - WhatsApp', data: '08/04/2026', hora: '2 min',
-      tags: ['WHATSAPP', 'NOVO LEAD', 'IA ATIVA'], unread: 0, preview: 'Agendamento confirmado'
-    },
-    {
-      id: 87441, nome: 'Patricia Mendes', status: 'atendendo', canal: 'WHATSAPP',
-      atribuidoA: 'IA - WhatsApp', data: '08/04/2026', hora: '3 min',
-      tags: ['Indicação', 'IA ATIVA', 'WHATSAPP', 'RETORNO'], unread: 0, preview: 'Qual o melhor horário?'
-    },
-    {
-      id: 87442, nome: 'Roberta Lima', status: 'atendendo', canal: 'INSTAGRAM',
-      atribuidoA: 'IA - WhatsApp', data: '08/04/2026', hora: '4 min',
-      tags: ['INSTAGRAM', 'ORÇAMENTO', 'IA ATIVA'], unread: 0, preview: 'Preciso de orçamento'
-    },
-    {
-      id: 87443, nome: 'Marina Costa', status: 'atendendo', canal: 'WHATSAPP',
-      atribuidoA: 'IA - WhatsApp', data: '08/04/2026', hora: '6 min',
-      tags: ['NOVO LEAD', 'IA ATIVA'], unread: 0, preview: 'Primeira vez aqui'
-    },
-    {
-      id: 87444, nome: 'Sandra Oliveira', status: 'aguardando', canal: 'WHATSAPP',
+      id: 87440, nome: 'Sandra Oliveira', status: 'aguardando', canal: 'WHATSAPP',
       atribuidoA: 'IA - WhatsApp', data: '08/04/2026', hora: '5 min',
-      tags: ['Trabalho Pago', 'WHATSAPP', 'NOVO LEAD', 'IA ATIVA'], unread: 1, preview: 'Aguardando cliente...'
+      tags: ['Trabalho Pago', 'IA', 'WHATSAPP', 'NOVO LEAD'], unread: 1, preview: 'Aguardando atendente...'
     },
     {
-      id: 87445, nome: 'Patricia Mendes', status: 'aguardando', canal: 'WHATSAPP',
+      id: 87441, nome: 'Patricia Mendes', status: 'aguardando', canal: 'WHATSAPP',
       atribuidoA: 'IA - WhatsApp', data: '08/04/2026', hora: '12 min',
-      tags: ['Indicação', 'IA ATIVA', 'WHATSAPP', 'RETORNO'], unread: 2, preview: 'Oi, tudo bem?'
+      tags: ['Indicação', 'IA', 'WHATSAPP', 'RETORNO'], unread: 2, preview: 'Oi, jai foi paciente antes...'
     },
     {
-      id: 87446, nome: 'Roberta Lima', status: 'aguardando', canal: 'INSTAGRAM',
+      id: 87442, nome: 'Roberta Lima', status: 'aguardando', canal: 'INSTAGRAM',
       atribuidoA: 'IA - WhatsApp', data: '08/04/2026', hora: '25 min',
-      tags: ['INSTAGRAM', 'ORÇAMENTO', 'IA ATIVA'], unread: 3, preview: 'Preciso de informações'
+      tags: ['Instagram Orgânico', 'IA', 'ORÇAMENTO'], unread: 3, preview: 'Preciso de orçamento...'
     },
   ];
 
@@ -237,9 +219,9 @@ export function Conversas() {
                           const colors = getTagColor(tag);
                           return (
                             <span key={i} style={{
-                              fontSize: '10px',
-                              padding: '3px 8px',
-                              borderRadius: '4px',
+                              fontSize: '9px',
+                              padding: '2px 6px',
+                              borderRadius: '3px',
                               background: colors.bg,
                               color: colors.color,
                               fontWeight: 600,
