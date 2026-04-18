@@ -218,13 +218,14 @@ export function Conversas() {
                         width: '32px',
                         height: '32px',
                         borderRadius: '50%',
-                        background: 'linear-gradient(135deg, #c9943a, #e8b86d)',
+                        background: 'transparent',
+                        border: '2px solid #c9943a',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         fontSize: '12px',
                         fontWeight: 700,
-                        color: '#0d1f2d',
+                        color: '#c9943a',
                         flexShrink: 0,
                       }}>
                         {conv.nome[0].toUpperCase()}{conv.nome[1].toUpperCase()}
@@ -493,13 +494,14 @@ export function Conversas() {
                     width: '28px',
                     height: '28px',
                     borderRadius: '50%',
-                    background: 'linear-gradient(135deg, #c9943a, #e8b86d)',
+                    background: 'transparent',
+                    border: '2px solid #c9943a',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     fontSize: '12px',
                     fontWeight: 700,
-                    color: '#0d1f2d',
+                    color: '#c9943a',
                     flexShrink: 0,
                   }}>
                     {msg.nome[0]}
