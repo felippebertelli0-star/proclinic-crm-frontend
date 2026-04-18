@@ -331,7 +331,7 @@ export function Dashboard() {
         gap: '12px',
         flexWrap: 'wrap',
       }}>
-        <span style={{ fontSize: '13px', fontWeight: 600, color: '#7a96aa' }}>📅 Período:</span>
+        <span style={{ fontSize: '13px', fontWeight: 600, color: '#7a96aa' }}>Período:</span>
         {['Hoje', 'Ontem', 'Últimos 7 dias', 'Últimos 30 dias', 'Este mês'].map((period) => (
           <button
             key={period}
@@ -420,11 +420,11 @@ export function Dashboard() {
                 padding: '24px',
                 display: 'flex',
                 gap: '16px',
-                transition: 'all 0.22s cubic-bezier(0.4, 0, 0.2, 1)',
+                transition: 'all 0.15s cubic-bezier(0.4, 0, 0.2, 1)',
                 cursor: 'pointer',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-3px)';
+                e.currentTarget.style.transform = 'translateY(-2px)';
                 e.currentTarget.style.boxShadow = '0 12px 32px rgba(0,0,0,0.4)';
                 e.currentTarget.style.borderColor = '#c9943a';
               }}
@@ -477,11 +477,11 @@ export function Dashboard() {
                 padding: '24px',
                 display: 'flex',
                 gap: '16px',
-                transition: 'all 0.22s cubic-bezier(0.4, 0, 0.2, 1)',
+                transition: 'all 0.15s cubic-bezier(0.4, 0, 0.2, 1)',
                 cursor: 'pointer',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-3px)';
+                e.currentTarget.style.transform = 'translateY(-2px)';
                 e.currentTarget.style.boxShadow = '0 12px 32px rgba(0,0,0,0.4)';
                 e.currentTarget.style.borderColor = '#c9943a';
               }}
@@ -541,11 +541,11 @@ export function Dashboard() {
                 borderRadius: '14px',
                 padding: '20px 22px',
                 position: 'relative',
-                transition: 'all 0.22s cubic-bezier(0.4, 0, 0.2, 1)',
+                transition: 'all 0.15s cubic-bezier(0.4, 0, 0.2, 1)',
                 cursor: 'pointer',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-3px)';
+                e.currentTarget.style.transform = 'translateY(-2px)';
                 e.currentTarget.style.boxShadow = '0 12px 32px rgba(0,0,0,0.4)';
                 e.currentTarget.style.borderColor = '#c9943a';
               }}
@@ -601,7 +601,7 @@ export function Dashboard() {
               </div>
               {kpi.bar > 0 && (
                 <div style={{
-                  height: '4px',
+                  height: '3px',
                   background: '#1a3347',
                   borderRadius: '3px',
                   marginBottom: '10px',
@@ -630,13 +630,13 @@ export function Dashboard() {
             { key: 'agendamento', label: '% Agendamento', color: '#3498db' },
             { key: 'fechamento', label: '% Fechamento', color: '#2ecc71' },
             { key: 'comparecimento', label: '% Comparecimento', color: '#f39c12' },
-            { key: 'followups', label: '↻ Follow-ups', color: '#c9943a' },
-            { key: 'reativados', label: '◆ Reativados', color: '#9b59b6' },
+            { key: 'followups', label: 'Follow-ups', color: '#c9943a' },
+            { key: 'reativados', label: 'Reativados', color: '#9b59b6' },
             { key: 'primeiraResposta', label: '1ª Resposta', color: '#2ecc71' },
-            { key: 'tempoResposta', label: '▨ T.M. Resposta', color: '#3498db' },
-            { key: 'tempoResolucao', label: '⚙ T.M. Resolução', color: '#f39c12' },
-            { key: 'faturamento', label: '◆ Faturamento', color: '#2ecc71' },
-            { key: 'conversasFechadas', label: '□ Conv. Fechadas', color: '#2ecc71' },
+            { key: 'tempoResposta', label: 'T.M. Resposta', color: '#3498db' },
+            { key: 'tempoResolucao', label: 'T.M. Resolução', color: '#f39c12' },
+            { key: 'faturamento', label: 'Faturamento', color: '#2ecc71' },
+            { key: 'conversasFechadas', label: 'Conv. Fechadas', color: '#2ecc71' },
           ].map((ind) => (
             <button
               key={ind.key}
@@ -830,7 +830,7 @@ export function Dashboard() {
           <div style={{
             background: '#132636',
             border: '1px solid #1e3d54',
-            borderRadius: '16px',
+            borderRadius: '14px',
             padding: '24px',
             display: 'flex',
             gap: '24px',
@@ -852,28 +852,28 @@ export function Dashboard() {
             {/* LEGENDA COM BARRAS */}
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: '14px' }}>
               {[
-                { emoji: '⚪', name: 'WhatsApp', pct: 78, count: 341, color: '#2ecc71' },
-                { emoji: '📸', name: 'Instagram', pct: 16, count: 70, color: '#e74c3c' },
-                { emoji: '🔗', name: 'Direto', pct: 6, count: 26, color: '#3498db' }
+                { name: 'WhatsApp', pct: 78, count: 341, color: '#2ecc71' },
+                { name: 'Instagram', pct: 16, count: 70, color: '#e74c3c' },
+                { name: 'Direto', pct: 6, count: 26, color: '#3498db' }
               ].map((c) => (
                 <div key={c.name}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '5px' }}>
                     <span style={{ fontSize: '11px', fontWeight: 600, color: '#e8edf2' }}>
-                      {c.emoji} {c.name}
+                      {c.name}
                     </span>
                     <span style={{ fontSize: '11px', fontWeight: 700, color: c.color }}>{c.pct}%</span>
                   </div>
                   <div style={{
                     height: '5px',
                     background: 'rgba(255, 255, 255, 0.05)',
-                    borderRadius: '2px',
+                    borderRadius: '3px',
                     overflow: 'hidden',
                   }}>
                     <div style={{
                       height: '100%',
                       width: `${c.pct}%`,
                       background: c.color,
-                      borderRadius: '2px',
+                      borderRadius: '3px',
                       transition: 'width 0.5s ease',
                     }} />
                   </div>
@@ -889,7 +889,7 @@ export function Dashboard() {
           <div style={{
             background: '#132636',
             border: '1px solid #1e3d54',
-            borderRadius: '16px',
+            borderRadius: '14px',
             padding: '24px',
             display: 'flex',
             flexDirection: 'column',
@@ -943,7 +943,7 @@ export function Dashboard() {
               background: '#132636',
               border: `1px solid ${a.color}40`,
               borderLeft: `5px solid ${a.color}`,
-              borderRadius: '10px',
+              borderRadius: '8px',
               padding: '14px 16px',
               marginBottom: '10px',
               transition: 'all 0.2s',
@@ -1006,7 +1006,7 @@ export function Dashboard() {
                     <th key={h} style={{
                       padding: '8px',
                       textAlign: 'left',
-                      fontWeight: 600,
+                      fontWeight: 700,
                       color: '#7a96aa',
                       fontSize: '9px',
                       textTransform: 'uppercase',
