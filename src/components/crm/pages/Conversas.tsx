@@ -305,21 +305,10 @@ export function Conversas() {
         }}>
           <div>
             <h2 style={{ margin: '0 0 6px 0', fontSize: '15px', fontWeight: 700, color: '#e8edf2' }}>
-              {conversa.nome} • #{conversa.id}
+              {conversa.nome} - #{conversa.id}
             </h2>
             <div style={{ fontSize: '12px', color: '#7a96aa', marginBottom: '8px' }}>
-              Atribuído a {conversa.atribuidoA} • {conversa.data}
-            </div>
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <span style={{
-                fontSize: '11px',
-                padding: '3px 8px',
-                borderRadius: '4px',
-                background: 'rgba(139, 69, 19, 0.2)',
-                color: '#c9943a',
-              }}>
-                {conversa.canal}
-              </span>
+              Atribuído à 🤖 {conversa.atribuidoA.replace('IA - ', '')} · {conversa.canal} · {conversa.data}
             </div>
           </div>
           <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
