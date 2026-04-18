@@ -389,8 +389,14 @@ export function Contatos() {
                 <td style={{ padding: '12px 16px', textAlign: 'center' }}>
                   <div style={{ display: 'flex', gap: '6px', justifyContent: 'center' }}>
                     <button
-                      onMouseEnter={(e) => e.currentTarget.style.color = '#00d4ff'}
-                      onMouseLeave={(e) => e.currentTarget.style.color = '#6b7280'}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.color = '#00d4ff';
+                        e.currentTarget.style.borderColor = '#00d4ff';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.color = '#6b7280';
+                        e.currentTarget.style.borderColor = '#475569';
+                      }}
                       style={{
                       background: 'transparent',
                       border: '1px solid #475569',
@@ -401,7 +407,7 @@ export function Contatos() {
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      transition: 'color 0.2s ease',
+                      transition: 'color 0.2s ease, border-color 0.2s ease',
                     }}>
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M3 21l1.65-3.66a9 9 0 1 1 14.142-14.142A9 9 0 0 1 3.21 21z" />
@@ -410,8 +416,14 @@ export function Contatos() {
                       </svg>
                     </button>
                     <button
-                      onMouseEnter={(e) => e.currentTarget.style.color = '#00d4ff'}
-                      onMouseLeave={(e) => e.currentTarget.style.color = '#6b7280'}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.color = '#00d4ff';
+                        e.currentTarget.style.borderColor = '#00d4ff';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.color = '#6b7280';
+                        e.currentTarget.style.borderColor = '#475569';
+                      }}
                       style={{
                       background: 'transparent',
                       border: '1px solid #475569',
@@ -422,7 +434,7 @@ export function Contatos() {
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      transition: 'color 0.2s ease',
+                      transition: 'color 0.2s ease, border-color 0.2s ease',
                     }}>
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
@@ -430,8 +442,14 @@ export function Contatos() {
                       </svg>
                     </button>
                     <button
-                      onMouseEnter={(e) => e.currentTarget.style.color = '#00d4ff'}
-                      onMouseLeave={(e) => e.currentTarget.style.color = '#6b7280'}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.color = '#00d4ff';
+                        e.currentTarget.style.borderColor = '#00d4ff';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.color = '#6b7280';
+                        e.currentTarget.style.borderColor = '#475569';
+                      }}
                       style={{
                       background: 'transparent',
                       border: '1px solid #475569',
@@ -442,7 +460,7 @@ export function Contatos() {
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      transition: 'color 0.2s ease',
+                      transition: 'color 0.2s ease, border-color 0.2s ease',
                     }}>
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <polyline points="3 6 5 6 21 6"></polyline>
