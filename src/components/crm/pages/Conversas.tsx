@@ -14,26 +14,9 @@ export function Conversas() {
   const [busca, setBusca] = useState('');
   const [activeTab, setActiveTab] = useState<'ativa' | 'tags'>('ativa');
   const [novaMensagem, setNovaMensagem] = useState('');
-
-  // Função para gerar cor de tag baseada no tipo
-  const getTagColor = (tag: string) => {
-    const tagColors: Record<string, { bg: string; color: string }> = {
-      'Trabalho Pago': { bg: '#c9943a', color: '#0d1f2d' },
-      'IA': { bg: '#9b59b6', color: '#ffffff' },
-      'IA ATIVA': { bg: '#9b59b6', color: '#ffffff' },
-      'WHATSAPP': { bg: '#3498db', color: '#ffffff' },
-      'NOVO LEAD': { bg: '#2ecc71', color: '#ffffff' },
-      'INSTAGRAM': { bg: '#e1306c', color: '#ffffff' },
-      'Instagram Orgânico': { bg: '#e1306c', color: '#ffffff' },
-      'ORÇAMENTO': { bg: '#f39c12', color: '#ffffff' },
-      'RETORNO': { bg: '#f39c12', color: '#ffffff' },
-      'Indicação': { bg: '#2ecc71', color: '#ffffff' },
-    };
-    return tagColors[tag] || { bg: 'rgba(201, 148, 58, 0.3)', color: '#c9943a' };
-  };
-
-  // Mock data de conversas com IDs e tags múltiplas
-  const todasAsConversas = [
+  const [modalVisible, setModalVisible] = useState(false);
+  const [conversaModal, setConversaModal] = useState<any>(null);
+  const [conversas, setConversas] = useState([
     {
       id: 87439, nome: 'Ida Santos', status: 'atendendo', canal: 'WHATSAPP',
       atribuidoA: 'IA - WhatsApp', data: '08/04/2026', hora: '1 min',
@@ -74,7 +57,25 @@ export function Conversas() {
       atribuidoA: 'IA - WhatsApp', data: '08/04/2026', hora: '25 min',
       origem: 'Instagram Orgânico', tags: ['INSTAGRAM', 'ORÇAMENTO'], unread: 3, preview: 'Preciso de orçamento...'
     },
-  ];
+  ]);
+
+  // Função para gerar cor de tag baseada no tipo
+  const getTagColor = (tag: string) => {
+    const tagColors: Record<string, { bg: string; color: string }> = {
+      'Trabalho Pago': { bg: '#c9943a', color: '#0d1f2d' },
+      'IA': { bg: '#9b59b6', color: '#ffffff' },
+      'IA ATIVA': { bg: '#9b59b6', color: '#ffffff' },
+      'WHATSAPP': { bg: '#3498db', color: '#ffffff' },
+      'NOVO LEAD': { bg: '#2ecc71', color: '#ffffff' },
+      'INSTAGRAM': { bg: '#e1306c', color: '#ffffff' },
+      'Instagram Orgânico': { bg: '#e1306c', color: '#ffffff' },
+      'ORÇAMENTO': { bg: '#f39c12', color: '#ffffff' },
+      'RETORNO': { bg: '#f39c12', color: '#ffffff' },
+      'Indicação': { bg: '#2ecc71', color: '#ffffff' },
+    };
+    return tagColors[tag] || { bg: 'rgba(201, 148, 58, 0.3)', color: '#c9943a' };
+  };
+
 
   // Mensagens com sistema de tickets/eventos
   const mensagensPrototipo = [
@@ -87,16 +88,46 @@ export function Conversas() {
     { tipo: 'sistema', hora: '09:25', texto: 'Ticket devolvido para a fila da IA — humano saiu do atendimento' },
   ];
 
-  // Filtrar conversas
-  const conversas = todasAsConversas.filter(conv => {
+  // Filtrar conversas por status
+  const conversasFiltradas = conversas.filter(conv => {
     const matchStatus = filtroStatus === 'atendendo' ? conv.status === 'atendendo' : conv.status === 'aguardando';
     const matchBusca = conv.nome.toLowerCase().includes(busca.toLowerCase()) || String(conv.id).includes(busca);
     return matchStatus && matchBusca;
   });
 
-  const conversa = conversas[selectedConversa] || todasAsConversas[0];
-  const totalAtendendo = todasAsConversas.filter(c => c.status === 'atendendo').length;
-  const totalAguardando = todasAsConversas.filter(c => c.status === 'aguardando').length;
+  const conversa = conversasFiltradas[selectedConversa];
+  const totalAtendendo = conversas.filter(c => c.status === 'atendendo').length;
+  const totalAguardando = conversas.filter(c => c.status === 'aguardando').length;
+
+  // ============ FUNÇÕES DE NEGÓCIO ============
+  const abrirEspiar = (conv: any) => {
+    setConversaModal(conv);
+    setModalVisible(true);
+  };
+
+  const fecharEspiar = () => {
+    setModalVisible(false);
+    setConversaModal(null);
+  };
+
+  const aceitarConversa = (convId: number) => {
+    setConversas(conversas.map(conv =>
+      conv.id === convId ? { ...conv, status: 'atendendo', unread: 0 } : conv
+    ));
+    // Reset seleção
+    setSelectedConversa(0);
+  };
+
+  const finalizarConversa = (convId: number) => {
+    setConversas(conversas.filter(conv => conv.id !== convId));
+    setSelectedConversa(0);
+  };
+
+  const diminuirNotificacao = (convId: number) => {
+    setConversas(conversas.map(conv =>
+      conv.id === convId ? { ...conv, unread: 0 } : conv
+    ));
+  };
 
   const handleEnviarMensagem = () => {
     if (novaMensagem.trim()) {
@@ -174,50 +205,61 @@ export function Conversas() {
           />
         </div>
 
-        {/* FILA DA IA */}
-        <div style={{ padding: '12px 16px', borderBottom: '1px solid #1e3d54', flexShrink: 0 }}>
-          <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
-            <div style={{
-              padding: '6px 8px',
-              borderRadius: '6px',
-              background: 'rgba(155, 89, 182, 0.2)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0,
-            }}>
-              <Zap size={14} color="#9b59b6" strokeWidth={2.5} />
-            </div>
-            <div>
-              <div style={{ fontSize: '12px', fontWeight: 700, color: '#e8edf2', marginBottom: '2px' }}>Fila da IA</div>
-              <div style={{ fontSize: '11px', color: '#7a96aa' }}>Leads sendo atendidos automaticamente</div>
+        {/* FILA DA IA - APENAS EM AGUARDANDO */}
+        {filtroStatus === 'aguardando' && (
+          <div style={{ padding: '12px 16px', borderBottom: '1px solid #1e3d54', flexShrink: 0 }}>
+            <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
+              <div style={{
+                padding: '6px 8px',
+                borderRadius: '6px',
+                background: 'rgba(155, 89, 182, 0.2)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+              }}>
+                <Zap size={14} color="#9b59b6" strokeWidth={2.5} />
+              </div>
+              <div>
+                <div style={{ fontSize: '12px', fontWeight: 700, color: '#e8edf2', marginBottom: '2px' }}>Fila da IA</div>
+                <div style={{ fontSize: '11px', color: '#7a96aa' }}>Leads sendo atendidos automaticamente</div>
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* LISTA DE CONVERSAS */}
         <div style={{ flex: 1, overflowY: 'auto', scrollbarWidth: 'thin' }}>
-          {conversas.length > 0 ? (
-            conversas.map((conv, index) => {
+          {conversasFiltradas.length > 0 ? (
+            conversasFiltradas.map((conv, index) => {
               const isSelected = selectedConversa === index;
+              const isAguardando = filtroStatus === 'aguardando';
+
               return (
                 <div
                   key={conv.id}
-                  onClick={() => setSelectedConversa(index)}
+                  onClick={() => {
+                    // Bloqueio: em aguardando só pode clicar no olho
+                    if (!isAguardando) {
+                      setSelectedConversa(index);
+                      diminuirNotificacao(conv.id);
+                    }
+                  }}
                   style={{
                     padding: '10px 12px',
                     borderBottom: '1px solid #1e3d54',
-                    cursor: 'pointer',
-                    background: isSelected ? '#1e3d54' : 'transparent',
+                    cursor: isAguardando ? 'default' : 'pointer',
+                    background: isSelected && !isAguardando ? '#1e3d54' : 'transparent',
+                    opacity: isAguardando ? 0.85 : 1,
                     transition: 'all 0.2s',
                   }}
                   onMouseEnter={(e) => {
-                    if (!isSelected) {
+                    if (!isSelected && !isAguardando) {
                       (e.currentTarget as HTMLElement).style.background = 'rgba(255, 255, 255, 0.02)';
                     }
                   }}
                   onMouseLeave={(e) => {
-                    if (!isSelected) {
+                    if (!isSelected && !isAguardando) {
                       (e.currentTarget as HTMLElement).style.background = 'transparent';
                     }
                   }}
@@ -247,13 +289,21 @@ export function Conversas() {
                           </div>
                           {conv.unread > 0 && (
                             <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                              <div
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  abrirEspiar(conv);
+                                }}
                                 style={{
                                   opacity: 0.5,
                                   cursor: 'pointer',
                                   transition: 'opacity 0.2s',
                                   display: 'flex',
                                   alignItems: 'center',
+                                  background: 'none',
+                                  border: 'none',
+                                  padding: 0,
+                                  color: '#7a96aa',
                                 }}
                                 onMouseEnter={(e) => {
                                   (e.currentTarget as HTMLElement).style.opacity = '1';
@@ -262,8 +312,8 @@ export function Conversas() {
                                   (e.currentTarget as HTMLElement).style.opacity = '0.5';
                                 }}
                               >
-                                <Eye size={14} color="#7a96aa" />
-                              </div>
+                                <Eye size={14} />
+                              </button>
                               <div style={{
                                 background: '#e74c3c',
                                 color: '#ffffff',
@@ -311,12 +361,12 @@ export function Conversas() {
                         </div>
                       </div>
                     </div>
-                    {conv.status === 'aguardando' && (
+                    {isAguardando && (
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', flexShrink: 0 }}>
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            console.log('ACEITAR:', conv.id);
+                            aceitarConversa(conv.id);
                           }}
                           style={{
                             padding: '4px 8px',
@@ -342,7 +392,7 @@ export function Conversas() {
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            console.log('FINALIZAR:', conv.id);
+                            finalizarConversa(conv.id);
                           }}
                           style={{
                             padding: '4px 8px',
@@ -699,6 +749,189 @@ export function Conversas() {
           </button>
         </div>
       </div>
+
+      {/* MODAL DE ESPIAR - POP-UP */}
+      {modalVisible && conversaModal && (
+        <div
+          onClick={fecharEspiar}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0, 0, 0, 0.6)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              width: '90%',
+              maxWidth: '600px',
+              maxHeight: '80vh',
+              background: '#0d1f2d',
+              borderRadius: '12px',
+              border: '1px solid #1e3d54',
+              display: 'flex',
+              flexDirection: 'column',
+              boxShadow: '0 20px 60px rgba(0, 0, 0, 0.8)',
+            }}
+          >
+            {/* MODAL HEADER */}
+            <div style={{
+              padding: '16px 24px',
+              borderBottom: '1px solid #1e3d54',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}>
+              <div>
+                <h3 style={{ margin: '0 0 4px 0', fontSize: '15px', fontWeight: 700, color: '#e8edf2' }}>
+                  {conversaModal.nome} - #{conversaModal.id}
+                </h3>
+                <div style={{ fontSize: '11px', color: '#7a96aa' }}>
+                  Espiar conversa • {conversaModal.unread > 0 ? `${conversaModal.unread} mensagens não lidas` : 'Sem notificações'}
+                </div>
+              </div>
+              <button
+                onClick={fecharEspiar}
+                style={{
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '6px',
+                  background: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  color: '#7a96aa',
+                  transition: 'all 0.2s',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.background = 'rgba(201, 148, 58, 0.1)';
+                  (e.currentTarget as HTMLElement).style.color = '#c9943a';
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.background = 'transparent';
+                  (e.currentTarget as HTMLElement).style.color = '#7a96aa';
+                }}
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* MODAL MESSAGES */}
+            <div style={{
+              flex: 1,
+              overflowY: 'auto',
+              padding: '20px 24px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '12px',
+              justifyContent: 'flex-end',
+            }}>
+              {mensagensPrototipo.map((msg: any, index) => {
+                if (msg.tipo === 'evento') {
+                  return (
+                    <div key={index} style={{ textAlign: 'center', margin: '16px 0 8px 0', color: '#7a96aa', fontSize: '11px', fontWeight: 600 }}>
+                      {msg.data}
+                    </div>
+                  );
+                }
+                if (msg.tipo === 'sistema') {
+                  return (
+                    <div key={index} style={{
+                      padding: '10px 14px',
+                      borderRadius: '6px',
+                      border: '1px dashed #1e3d54',
+                      background: 'transparent',
+                      color: '#c9943a',
+                      fontSize: '11px',
+                      marginTop: '8px',
+                    }}>
+                      📋 {msg.texto}
+                      <div style={{ fontSize: '9px', color: '#7a96aa', marginTop: '4px' }}>{msg.hora}</div>
+                    </div>
+                  );
+                }
+                if (msg.tipo === 'recebida') {
+                  return (
+                    <div key={index} style={{ display: 'flex', gap: '8px' }}>
+                      <div style={{
+                        width: '24px',
+                        height: '24px',
+                        borderRadius: '50%',
+                        background: 'transparent',
+                        border: '2px solid #c9943a',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '10px',
+                        fontWeight: 700,
+                        color: '#c9943a',
+                        flexShrink: 0,
+                      }}>
+                        {msg.nome[0]}
+                      </div>
+                      <div>
+                        <div style={{ fontSize: '11px', fontWeight: 600, color: '#e8edf2', marginBottom: '2px' }}>{msg.nome}</div>
+                        <div style={{
+                          maxWidth: '400px',
+                          padding: '8px 12px',
+                          borderRadius: '6px',
+                          background: '#1e3d54',
+                          color: '#e8edf2',
+                          fontSize: '12px',
+                          lineHeight: '1.4',
+                        }}>
+                          {msg.texto}
+                        </div>
+                        <div style={{ fontSize: '9px', color: '#7a96aa', marginTop: '3px' }}>{msg.hora}</div>
+                      </div>
+                    </div>
+                  );
+                }
+                if (msg.tipo === 'enviada') {
+                  return (
+                    <div key={index} style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                      <div style={{
+                        maxWidth: '400px',
+                        padding: '8px 12px',
+                        borderRadius: '6px',
+                        background: '#2c5282',
+                        color: '#e8edf2',
+                        fontSize: '12px',
+                        lineHeight: '1.4',
+                      }}>
+                        {msg.texto}
+                        <div style={{ fontSize: '9px', color: 'rgba(232, 237, 242, 0.7)', marginTop: '3px', textAlign: 'right' }}>
+                          {msg.hora} ✓✓
+                        </div>
+                      </div>
+                    </div>
+                  );
+                }
+              })}
+            </div>
+
+            {/* MODAL FOOTER - INFO */}
+            <div style={{
+              padding: '12px 24px',
+              borderTop: '1px solid #1e3d54',
+              background: 'rgba(19, 38, 54, 0.3)',
+              fontSize: '11px',
+              color: '#7a96aa',
+            }}>
+              ℹ️ Você está espiando esta conversa. A notificação continua ativa. Feche para voltar.
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
