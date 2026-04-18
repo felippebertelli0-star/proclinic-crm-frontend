@@ -206,6 +206,54 @@ export function Conversas() {
     abrirConfirmFinalizar(convId);
   };
 
+  const reabrirConversa = (convId: number) => {
+    // Reabrir conversa e mover para atendendo
+    const novasConversas = conversas.map((conv: any) =>
+      conv.id === convId
+        ? { ...conv, status: 'atendendo', unread: 0, aceitadoEm: Date.now() }
+        : conv
+    );
+    setConversas(novasConversas);
+
+    // Mudar filtro para "atendendo" automaticamente
+    setFiltroStatus('atendendo');
+
+    // Encontrar a posição da conversa reabierta na lista filtrada e selecionar
+    setTimeout(() => {
+      const conversasAtendendo = novasConversas
+        .filter((conv: any) => conv.status === 'atendendo')
+        .sort((a: any, b: any) => {
+          // Conversas aceitas/reabertas recentemente ficam no topo
+          const aAceitado = a.aceitadoEm || 0;
+          const bAceitado = b.aceitadoEm || 0;
+          if (aAceitado > 0 || bAceitado > 0) return (bAceitado || 0) - (aAceitado || 0);
+          // Fallback para ordenação por notificações
+          if (a.unread > 0 && b.unread === 0) return -1;
+          if (a.unread === 0 && b.unread > 0) return 1;
+          return 0;
+        });
+
+      const indexSelecionada = conversasAtendendo.findIndex((conv: any) => conv.id === convId);
+      setSelectedConversa(indexSelecionada >= 0 ? indexSelecionada : 0);
+    }, 0);
+  };
+
+  const devolverParaIA = (convId: number) => {
+    // Devolver conversa para a IA - mover status para aguardando
+    const novasConversas = conversas.map((conv: any) =>
+      conv.id === convId
+        ? { ...conv, status: 'aguardando', unread: 0 }
+        : conv
+    );
+    setConversas(novasConversas);
+
+    // Mudar filtro para "aguardando" automaticamente
+    setFiltroStatus('aguardando');
+
+    // Resetar seleção
+    setSelectedConversa(0);
+  };
+
   const diminuirNotificacao = (convId: number) => {
     setConversas(conversas.map((conv: any) =>
       conv.id === convId ? { ...conv, unread: 0 } : conv
@@ -449,6 +497,7 @@ export function Conversas() {
             conversasFiltradas.map((conv: any, index: number) => {
               const isSelected = validSelectedConversa === index;
               const isAguardando = filtroStatus === 'aguardando';
+              const isFechadas = filtroStatus === 'fechadas';
 
               return (
                 <div
@@ -635,6 +684,36 @@ export function Conversas() {
                         </button>
                       </div>
                     )}
+                    {isFechadas && (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', flexShrink: 0 }}>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            reabrirConversa(conv.id);
+                          }}
+                          style={{
+                            padding: '4px 8px',
+                            borderRadius: '2px',
+                            border: 'none',
+                            background: '#2ecc71',
+                            color: '#ffffff',
+                            fontSize: '10px',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                            transition: 'all 0.2s',
+                            whiteSpace: 'nowrap',
+                          }}
+                          onMouseEnter={(e) => {
+                            (e.currentTarget as HTMLElement).style.opacity = '0.85';
+                          }}
+                          onMouseLeave={(e) => {
+                            (e.currentTarget as HTMLElement).style.opacity = '1';
+                          }}
+                        >
+                          REABRIR
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               );
@@ -676,8 +755,8 @@ export function Conversas() {
           <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flex: 1, justifyContent: 'flex-end' }}>
             {/* ACTION BUTTONS */}
             {[
-              { Icon: X, label: 'Fechar Ticket' },
-              { Icon: RefreshCw, label: 'Devolver para a IA' },
+              { Icon: X, label: 'Fechar Ticket', action: (convId: number) => finalizarConversa(convId) },
+              { Icon: RefreshCw, label: 'Devolver para a IA', action: (convId: number) => devolverParaIA(convId) },
               { Icon: User, label: 'Transferir Ticket' },
               { Icon: Calendar, label: 'Agendar Mensagem' },
               { Icon: DollarSign, label: 'Nova Oportunidade' },
@@ -686,10 +765,16 @@ export function Conversas() {
               { Icon: Zap, label: 'Respostas Rápidas' },
               { Icon: BarChart3, label: 'Histórico' },
               { Icon: User, label: 'Info do Contato' },
-            ].map(({ Icon, label }, i) => (
+            ].map(({ Icon, label, action }, i) => (
               <button
                 key={i}
                 title={label}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (action && conversa) {
+                    action(conversa.id);
+                  }
+                }}
                 style={{
                   width: '32px',
                   height: '32px',
