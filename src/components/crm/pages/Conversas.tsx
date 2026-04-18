@@ -308,7 +308,7 @@ export function Conversas() {
               {conversa.nome} - #{conversa.id}
             </h2>
             <div style={{ fontSize: '12px', color: '#7a96aa', marginBottom: '8px' }}>
-              Atribuído à 🤖 IA · {conversa.canal} · {conversa.data}
+              Atribuído à 🤖 IA · {conversa.atribuidoA.split(' - ')[1]} · {conversa.data}
             </div>
           </div>
           <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
