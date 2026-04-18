@@ -39,6 +39,26 @@ export function Conversas() {
       tags: ['Trabalho Pago', 'IA'], unread: 0, preview: 'Havila deu oi...'
     },
     {
+      id: 87443, nome: 'Marina Costa', status: 'atendendo', canal: 'WHATSAPP',
+      atribuidoA: 'IA - WhatsApp', data: '08/04/2026', hora: '2 min',
+      tags: ['NOVO LEAD', 'IA'], unread: 0, preview: 'Primeira vez aqui'
+    },
+    {
+      id: 87444, nome: 'Carlos Silva', status: 'atendendo', canal: 'WHATSAPP',
+      atribuidoA: 'IA - WhatsApp', data: '08/04/2026', hora: '3 min',
+      tags: ['Trabalho Pago', 'IA', 'RETORNO'], unread: 0, preview: 'Qual o status?'
+    },
+    {
+      id: 87445, nome: 'Ana Martins', status: 'atendendo', canal: 'INSTAGRAM',
+      atribuidoA: 'IA - WhatsApp', data: '08/04/2026', hora: '4 min',
+      tags: ['Instagram Orgânico', 'IA', 'ORÇAMENTO'], unread: 0, preview: 'Gostei do seu trabalho'
+    },
+    {
+      id: 87446, nome: 'João Pereira', status: 'atendendo', canal: 'WHATSAPP',
+      atribuidoA: 'IA - WhatsApp', data: '08/04/2026', hora: '6 min',
+      tags: ['NOVO LEAD', 'IA'], unread: 0, preview: 'Pode agendar?'
+    },
+    {
       id: 87440, nome: 'Sandra Oliveira', status: 'aguardando', canal: 'WHATSAPP',
       atribuidoA: 'IA - WhatsApp', data: '08/04/2026', hora: '5 min',
       tags: ['Trabalho Pago', 'IA', 'WHATSAPP', 'NOVO LEAD'], unread: 1, preview: 'Aguardando atendente...'
