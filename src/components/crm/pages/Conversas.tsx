@@ -595,12 +595,31 @@ export function Conversas() {
           duracao: duracao,
           tamanho: Math.round(audioBlob.size / 1024),
         };
-        setNovaMensagem(JSON.stringify(audioData));
+        const audioMessage = JSON.stringify(audioData);
+        setNovaMensagem(audioMessage);
         if (streamRef.current) {
           streamRef.current.getTracks().forEach(track => track.stop());
         }
         setTempoGravacao(0);
         clearInterval(timerRef.current);
+
+        // 🚀 ENVIAR DIRETO APÓS ÁUDIO SER PROCESSADO (sem segunda validação)
+        // Usar setTimeout com 0 para garantir que a mensagem foi setada no estado
+        setTimeout(() => {
+          // Criar a mensagem e enviar diretamente
+          if (audioMessage.trim()) {
+            const novaMens = {
+              tipo: 'enviada',
+              hora: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+              audio: true,
+              duracao: duracao,
+              tamanho: Math.round(audioBlob.size / 1024),
+            };
+            setHistoricoMensagens((prev) => [...prev, novaMens]);
+            setNovaMensagem('');
+            console.log('📤 Áudio enviado direto!');
+          }
+        }, 0);
       };
 
       mediaRecorder.start();
@@ -626,14 +645,12 @@ export function Conversas() {
   };
 
   const enviarAudio = () => {
+    // Parar a gravação (o envio é feito automaticamente no callback onstop)
     if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
       mediaRecorderRef.current.stop();
     }
     setGravando(false);
     clearInterval(timerRef.current);
-
-    // Envia imediatamente sem delay
-    handleEnviarMensagem();
   };
 
   const cancelarGravacao = () => {
