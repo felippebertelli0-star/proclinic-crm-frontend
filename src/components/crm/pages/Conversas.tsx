@@ -6,7 +6,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { X, RefreshCw, Calendar, DollarSign, FileText, Paperclip, Zap, BarChart3, User, Mic, Send, Smile, Clock, Eye } from 'lucide-react';
+import { X, RefreshCw, Calendar, DollarSign, FileText, Paperclip, Zap, BarChart3, User, Mic, Send, Smile, Clock, Eye, Inbox, UserCheck } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import { useConversasStore } from '@/store/conversasStore';
 import {
@@ -911,7 +911,7 @@ export function Conversas() {
                         {/* Atribuído a - com cor diferente (roxo/vermelho) - SÓ PARA CONVERSAS */}
                         {conv.atribuidoA && (
                           <div style={{ fontSize: '10px', color: '#9b59b6', fontWeight: 600, marginBottom: '3px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                            👤 {conv.atribuidoA}
+                            <UserCheck size={12} style={{ flexShrink: 0 }} /> {conv.atribuidoA}
                           </div>
                         )}
                         {conv.preview && (
@@ -921,7 +921,7 @@ export function Conversas() {
                         )}
                         {conv.origem && (
                           <div style={{ fontSize: '10px', color: '#c9943a', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                            ● {conv.origem}
+                            <Zap size={10} style={{ flexShrink: 0 }} /> {conv.origem}
                           </div>
                         )}
                         <div style={{ display: 'flex', gap: '3px', flexWrap: 'wrap' }}>
@@ -1063,8 +1063,16 @@ export function Conversas() {
             <h2 style={{ margin: '0 0 6px 0', fontSize: '15px', fontWeight: 700, color: '#e8edf2' }}>
               {conversa.nome} - #{conversa.id}
             </h2>
-            <div style={{ fontSize: '12px', color: '#7a96aa', marginBottom: '8px' }}>
-              Atribuído à {membros.some((m: any) => m.nome === conversa.atribuidoA) ? '👤' : '📁'} {conversa.atribuidoA} · {conversa.data}
+            <div style={{ fontSize: '12px', color: '#7a96aa', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span>Atribuído à</span>
+              {membros.some((m: any) => m.nome === conversa.atribuidoA) ? (
+                <UserCheck size={13} style={{ color: '#9b59b6' }} />
+              ) : (
+                <Inbox size={13} style={{ color: '#c9943a' }} />
+              )}
+              <span>{conversa.atribuidoA}</span>
+              <span>·</span>
+              <span>{conversa.data}</span>
             </div>
           </div>
           <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flex: 1, justifyContent: 'flex-end' }}>
@@ -1331,8 +1339,8 @@ export function Conversas() {
                 animation: 'pulse 1s infinite',
               }} />
               <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                <div style={{ fontSize: '13px', fontWeight: 700, color: '#e74c3c' }}>
-                  🎙️ Gravando áudio...
+                <div style={{ fontSize: '13px', fontWeight: 700, color: '#e74c3c', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <Mic size={14} /> Gravando áudio...
                 </div>
                 <div style={{ fontSize: '12px', color: '#e8edf2', fontWeight: 600 }}>
                   {formatarTempo(tempoGravacao)}
