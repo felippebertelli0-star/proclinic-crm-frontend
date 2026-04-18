@@ -416,32 +416,35 @@ export function Conversas() {
             {/* SEPARADOR */}
             <div style={{ width: '1px', height: '24px', background: '#1e3d54' }} />
 
-            {/* STATUS DE CONEXÃO */}
-            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-              <div
-                title="WhatsApp Conectado"
-                style={{
-                  width: '12px',
-                  height: '12px',
-                  borderRadius: '50%',
-                  background: '#2ecc71',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  boxShadow: '0 0 6px rgba(46, 204, 113, 0.5)',
-                }}
-              />
-              <div
-                title="Instagram Conectado"
-                style={{
-                  width: '12px',
-                  height: '12px',
-                  borderRadius: '50%',
-                  background: '#e1306c',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  boxShadow: '0 0 6px rgba(225, 48, 108, 0.5)',
-                }}
-              />
+            {/* STATUS DE CONEXÃO COM NOMES */}
+            <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+              {/* WhatsApp */}
+              <div style={{ display: 'flex', gap: '6px', alignItems: 'center', fontSize: '12px', color: '#2ecc71', fontWeight: 600 }}>
+                <div
+                  style={{
+                    width: '10px',
+                    height: '10px',
+                    borderRadius: '50%',
+                    background: '#2ecc71',
+                    boxShadow: '0 0 6px rgba(46, 204, 113, 0.5)',
+                  }}
+                />
+                💬 WhatsApp
+              </div>
+
+              {/* Instagram */}
+              <div style={{ display: 'flex', gap: '6px', alignItems: 'center', fontSize: '12px', color: '#e1306c', fontWeight: 600 }}>
+                <div
+                  style={{
+                    width: '10px',
+                    height: '10px',
+                    borderRadius: '50%',
+                    background: '#e1306c',
+                    boxShadow: '0 0 6px rgba(225, 48, 108, 0.5)',
+                  }}
+                />
+                📸 Instagram
+              </div>
             </div>
 
             {/* STATUS ACTIVE */}
