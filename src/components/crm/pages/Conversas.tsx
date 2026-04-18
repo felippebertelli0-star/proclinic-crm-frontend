@@ -461,23 +461,23 @@ export function Conversas() {
           </div>
         </div>
 
-        {/* TABS */}
+        {/* TABS E BUSCA */}
         <div style={{
           display: 'flex',
           gap: '24px',
-          padding: '0 24px',
+          padding: '12px 24px',
           borderBottom: '1px solid #1e3d54',
           background: 'rgba(19, 38, 54, 0.3)',
+          alignItems: 'center',
         }}>
           {[
-            { id: 'ativa', label: 'IA ATIVA' },
-            { id: 'tags', label: 'Tags' },
+            { id: 'tags', label: 'Etiqueta' },
           ].map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
               style={{
-                padding: '12px 0',
+                padding: '8px 0',
                 border: 'none',
                 background: 'transparent',
                 color: activeTab === tab.id ? '#c9943a' : '#7a96aa',
@@ -491,6 +491,32 @@ export function Conversas() {
               {tab.label}
             </button>
           ))}
+
+          {/* BUSCA */}
+          <input
+            type="text"
+            placeholder="🔍 Buscar etiquetas..."
+            style={{
+              marginLeft: 'auto',
+              padding: '6px 12px',
+              background: 'rgba(26, 51, 71, 0.5)',
+              border: '1px solid #1e3d54',
+              borderRadius: '6px',
+              color: '#e8edf2',
+              fontSize: '12px',
+              transition: 'all 0.2s',
+              outline: 'none',
+              width: '200px',
+            }}
+            onFocus={(e) => {
+              e.currentTarget.style.borderColor = '#c9943a';
+              e.currentTarget.style.background = 'rgba(26, 51, 71, 0.8)';
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.borderColor = '#1e3d54';
+              e.currentTarget.style.background = 'rgba(26, 51, 71, 0.5)';
+            }}
+          />
         </div>
 
         {/* HISTÓRICO DE MENSAGENS / TIMELINE */}
