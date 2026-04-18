@@ -389,11 +389,12 @@ export function Contatos() {
                 <td style={{ padding: '12px 16px', textAlign: 'center' }}>
                   <div style={{ display: 'flex', gap: '6px', justifyContent: 'center' }}>
                     <button style={{
-                      background: 'none',
-                      border: 'none',
+                      background: 'transparent',
+                      border: '1px solid #475569',
+                      borderRadius: '6px',
                       color: '#00d4ff',
                       cursor: 'pointer',
-                      padding: '4px',
+                      padding: '6px 8px',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -403,11 +404,12 @@ export function Contatos() {
                       </svg>
                     </button>
                     <button style={{
-                      background: 'none',
-                      border: 'none',
-                      color: '#94a3b8',
+                      background: 'transparent',
+                      border: '1px solid #475569',
+                      borderRadius: '6px',
+                      color: '#00d4ff',
                       cursor: 'pointer',
-                      padding: '4px',
+                      padding: '6px 8px',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -418,11 +420,12 @@ export function Contatos() {
                       </svg>
                     </button>
                     <button style={{
-                      background: 'none',
-                      border: 'none',
-                      color: '#f87171',
+                      background: 'transparent',
+                      border: '1px solid #475569',
+                      borderRadius: '6px',
+                      color: '#00d4ff',
                       cursor: 'pointer',
-                      padding: '4px',
+                      padding: '6px 8px',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
