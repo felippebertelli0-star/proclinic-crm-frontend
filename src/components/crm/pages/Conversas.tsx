@@ -6,7 +6,7 @@
 'use client';
 
 import { useState } from 'react';
-import { X, RefreshCw, Calendar, DollarSign, FileText, Paperclip, Zap, BarChart3, User, Mic, Send, Smile } from 'lucide-react';
+import { X, RefreshCw, Calendar, DollarSign, FileText, Paperclip, Zap, BarChart3, User, Mic, Send, Smile, Clock } from 'lucide-react';
 
 export function Conversas() {
   const [selectedConversa, setSelectedConversa] = useState(0);
@@ -253,8 +253,9 @@ export function Conversas() {
                             </div>
                           )}
                         </div>
-                        <div style={{ fontSize: '10px', color: '#7a96aa', marginBottom: '3px' }}>
-                          👁 {conv.hora}
+                        <div style={{ fontSize: '10px', color: '#7a96aa', marginBottom: '3px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <Clock size={12} />
+                          {conv.hora}
                         </div>
                         <div style={{ fontSize: '10px', color: '#7a96aa', marginBottom: '4px', lineHeight: '1.3' }}>
                           {conv.preview}
