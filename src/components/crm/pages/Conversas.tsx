@@ -6,7 +6,7 @@
 'use client';
 
 import { useState } from 'react';
-import { X, RefreshCw, Calendar, DollarSign, FileText, Paperclip, Zap, BarChart3, User, Mic, Send, Smile, Clock } from 'lucide-react';
+import { X, RefreshCw, Calendar, DollarSign, FileText, Paperclip, Zap, BarChart3, User, Mic, Send, Smile, Clock, Eye } from 'lucide-react';
 
 export function Conversas() {
   const [selectedConversa, setSelectedConversa] = useState(0);
@@ -236,20 +236,39 @@ export function Conversas() {
                             {conv.nome}
                           </div>
                           {conv.unread > 0 && (
-                            <div style={{
-                              background: '#e74c3c',
-                              color: '#ffffff',
-                              fontSize: '9px',
-                              fontWeight: 800,
-                              width: '18px',
-                              height: '18px',
-                              borderRadius: '50%',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              flexShrink: 0,
-                            }}>
-                              {conv.unread}
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                              <div
+                                style={{
+                                  opacity: 0.5,
+                                  cursor: 'pointer',
+                                  transition: 'opacity 0.2s',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                }}
+                                onMouseEnter={(e) => {
+                                  (e.currentTarget as HTMLElement).style.opacity = '1';
+                                }}
+                                onMouseLeave={(e) => {
+                                  (e.currentTarget as HTMLElement).style.opacity = '0.5';
+                                }}
+                              >
+                                <Eye size={14} color="#7a96aa" />
+                              </div>
+                              <div style={{
+                                background: '#e74c3c',
+                                color: '#ffffff',
+                                fontSize: '9px',
+                                fontWeight: 800,
+                                width: '18px',
+                                height: '18px',
+                                borderRadius: '50%',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                flexShrink: 0,
+                              }}>
+                                {conv.unread}
+                              </div>
                             </div>
                           )}
                         </div>
