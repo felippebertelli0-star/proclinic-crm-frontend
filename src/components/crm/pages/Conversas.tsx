@@ -192,8 +192,19 @@ export function Conversas() {
 
   const handleEnviarMensagem = () => {
     if (novaMensagem.trim()) {
-      // Mock: adiciona mensagem
+      // Adiciona mensagem ao histórico
+      console.log('📤 Mensagem enviada:', novaMensagem);
+
+      // Aqui você faria a requisição para enviar via API
+      // Por enquanto, apenas limpa o input e mostra no console
+
+      // Feedback visual: limpar input
       setNovaMensagem('');
+
+      // Parar gravação se estiver em andamento
+      if (gravando) {
+        pararGravacao();
+      }
     }
   };
 
