@@ -15,10 +15,10 @@ export function Contatos() {
 
   // Mock data de resumo
   const resumo = [
-    { label: 'Hoje', value: 5, bgIcon: '#1e3d54', isTotal: false },
-    { label: 'Esta Semana', value: 8, bgIcon: '#1e3d54', isTotal: false },
-    { label: 'Este Mês', value: 8, bgIcon: '#1e3d54', isTotal: false },
-    { label: 'Total', value: 8, bgIcon: '#1e3d54', isTotal: true },
+    { label: 'Hoje', value: 5, color: '#a855f7', isTotal: false },
+    { label: 'Esta Semana', value: 8, color: '#10b981', isTotal: false },
+    { label: 'Este Mês', value: 8, color: '#3b82f6', isTotal: false },
+    { label: 'Total', value: 8, color: '#c9943a', isTotal: true },
   ];
 
   // Mock data de contatos com badges e cores de avatar
@@ -102,7 +102,7 @@ export function Contatos() {
             key={card.label}
             style={{
               background: '#132636',
-              border: card.isTotal ? '2px solid #c9943a' : '1px solid #1e3d54',
+              border: `2px solid ${card.color}`,
               borderRadius: '14px',
               padding: '20px 16px',
               display: 'flex',
@@ -112,7 +112,7 @@ export function Contatos() {
               transition: 'all 0.2s',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.boxShadow = '0 4px 12px rgba(201, 148, 58, 0.2)';
+              e.currentTarget.style.boxShadow = `0 4px 12px ${card.color}33`;
               e.currentTarget.style.transform = 'translateY(-2px)';
             }}
             onMouseLeave={(e) => {
@@ -120,13 +120,13 @@ export function Contatos() {
               e.currentTarget.style.transform = 'translateY(0)';
             }}
           >
-            {/* ÍCONE SVG MINIMALISTA PREMIUM AAA - SEM FUNDO */}
+            {/* ÍCONE SVG MINIMALISTA PREMIUM AAA - COLORIDO */}
             <div style={{
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               flexShrink: 0,
-              color: '#7a96aa',
+              color: card.color,
             }}>
               {card.label === 'Hoje' && <Calendar size={28} strokeWidth={1.5} />}
               {card.label === 'Esta Semana' && <BarChart3 size={28} strokeWidth={1.5} />}
