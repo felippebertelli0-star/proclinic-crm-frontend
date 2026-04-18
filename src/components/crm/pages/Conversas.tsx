@@ -365,10 +365,10 @@ export function Conversas() {
   };
 
   const reabrirConversa = (convId: number) => {
-    // Reabrir conversa e mover para atendendo
+    // Reabrir conversa e mover para atendendo, atribuindo ao usuário logado
     const novasConversas = conversas.map((conv: any) =>
       conv.id === convId
-        ? { ...conv, status: 'atendendo', unread: 0, aceitadoEm: Date.now() }
+        ? { ...conv, status: 'atendendo', atribuidoA: usuario?.nome || 'Usuário', unread: 0, aceitadoEm: Date.now() }
         : conv
     );
     setConversas(novasConversas);
