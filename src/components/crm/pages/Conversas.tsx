@@ -1133,7 +1133,7 @@ export function Conversas() {
               {conversa.nome} - #{conversa.id}
             </h2>
             <div style={{ fontSize: '12px', color: '#7a96aa', marginBottom: '8px' }}>
-              Atribuído à 🤖 IA · {conversa.atribuidoA.split(' - ')[1]} · {conversa.data}
+              Atribuído à {membros.some((m: any) => m.nome === conversa.atribuidoA) ? '👤' : '📁'} {conversa.atribuidoA} · {conversa.data}
             </div>
           </div>
           <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flex: 1, justifyContent: 'flex-end' }}>
