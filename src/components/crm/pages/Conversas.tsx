@@ -43,6 +43,9 @@ export function Conversas() {
   const [valorOportunidade, setValorOportunidade] = useState('');
   const [informacoesAdicionais, setInformacoesAdicionais] = useState('');
   const [oportunidades, setOportunidades] = useState<any[]>([]);
+  const [notaInternaVisivel, setNotaInternaVisivel] = useState(false);
+  const [notaInternaTexto, setNotaInternaTexto] = useState('');
+  const [notasInternas, setNotasInternas] = useState<Record<number, string>>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
   const mediaRecorderRef = useRef<any>(null);
   const audioChunksRef = useRef<Blob[]>([]);
@@ -492,6 +495,51 @@ export function Conversas() {
     setOportunidades([...oportunidades, novaOportunidade]);
     fecharOportunidadeModal();
     alert('✅ Oportunidade criada com sucesso! Aparecerá automaticamente na etapa "' + etapaNome + '" do Pipeline.');
+  };
+
+  // ============ NOTA INTERNA ============
+  const abrirNotaInterna = () => {
+    if (conversa) {
+      setNotaInternaVisivel(true);
+      setNotaInternaTexto(notasInternas[conversa.id] || '');
+    }
+  };
+
+  const fecharNotaInterna = () => {
+    setNotaInternaVisivel(false);
+    setNotaInternaTexto('');
+  };
+
+  const salvarNotaInterna = () => {
+    if (conversa) {
+      setNotasInternas({
+        ...notasInternas,
+        [conversa.id]: notaInternaTexto,
+      });
+      fecharNotaInterna();
+    }
+  };
+
+  // ============ ANEXAR ARQUIVO ============
+  const handleAnexarArquivoClick = () => {
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.onchange = (e: any) => {
+      const file = e.target.files?.[0];
+      if (file) {
+        // Simular envio do arquivo como mensagem
+        const novaMsg = {
+          tipo: 'enviada',
+          hora: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+          arquivo: true,
+          nomeArquivo: file.name,
+          tamanho: Math.round(file.size / 1024),
+          tipo_arquivo: file.type.split('/')[0], // 'image', 'document', 'video', etc
+        };
+        setHistoricoMensagens([...historicoMensagens, novaMsg]);
+      }
+    };
+    fileInput.click();
   };
 
   // ============ GRAVAÇÃO DE ÁUDIO ============
@@ -994,8 +1042,8 @@ export function Conversas() {
               { Icon: User, label: 'Transferir Ticket', action: 'transferir' },
               { Icon: Calendar, label: 'Agendar Mensagem', action: 'agendar' },
               { Icon: DollarSign, label: 'Nova Oportunidade', action: 'oportunidade' },
-              { Icon: FileText, label: 'Nota Interna' },
-              { Icon: Paperclip, label: 'Anexar Arquivo' },
+              { Icon: FileText, label: 'Nota Interna', action: 'nota_interna' },
+              { Icon: Paperclip, label: 'Anexar Arquivo', action: 'anexar_arquivo' },
               { Icon: Zap, label: 'Respostas Rápidas' },
               { Icon: BarChart3, label: 'Histórico' },
               { Icon: User, label: 'Info do Contato' },
@@ -1015,6 +1063,10 @@ export function Conversas() {
                     abrirAgendarModal();
                   } else if (action === 'oportunidade') {
                     abrirOportunidadeModal();
+                  } else if (action === 'nota_interna') {
+                    abrirNotaInterna();
+                  } else if (action === 'anexar_arquivo') {
+                    handleAnexarArquivoClick();
                   }
                 }}
                 style={{
@@ -1502,6 +1554,97 @@ export function Conversas() {
             <Send size={18} />
           </button>
         </div>
+
+        {/* CAMPO DE NOTA INTERNA */}
+        {notaInternaVisivel && (
+          <div style={{
+            background: 'rgba(201, 148, 58, 0.08)',
+            borderTop: '2px solid #c9943a',
+            padding: '16px 24px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '12px',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ fontSize: '14px', fontWeight: 700, color: '#c9943a' }}>📝 Nota Interna</div>
+              <div style={{ fontSize: '11px', color: '#7a96aa' }}>— não enviada ao contato</div>
+            </div>
+            <textarea
+              value={notaInternaTexto}
+              onChange={(e) => setNotaInternaTexto(e.target.value)}
+              placeholder="Digite uma nota interna para esta conversa..."
+              style={{
+                padding: '10px 12px',
+                borderRadius: '6px',
+                border: '1px solid #1e3d54',
+                background: '#132636',
+                color: '#e8edf2',
+                fontSize: '13px',
+                resize: 'vertical',
+                minHeight: '60px',
+                fontFamily: 'inherit',
+                outline: 'none',
+                transition: 'all 0.2s',
+              }}
+              onFocus={(e) => {
+                (e.currentTarget as HTMLElement).style.borderColor = '#c9943a';
+                (e.currentTarget as HTMLElement).style.background = 'rgba(19, 38, 54, 0.8)';
+              }}
+              onBlur={(e) => {
+                (e.currentTarget as HTMLElement).style.borderColor = '#1e3d54';
+                (e.currentTarget as HTMLElement).style.background = '#132636';
+              }}
+            />
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+              <button
+                onClick={fecharNotaInterna}
+                style={{
+                  padding: '8px 16px',
+                  borderRadius: '6px',
+                  border: '1px solid #1e3d54',
+                  background: 'transparent',
+                  color: '#7a96aa',
+                  fontSize: '12px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.background = 'rgba(30, 61, 84, 0.3)';
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.background = 'transparent';
+                }}
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={salvarNotaInterna}
+                style={{
+                  padding: '8px 16px',
+                  borderRadius: '6px',
+                  border: 'none',
+                  background: '#c9943a',
+                  color: '#0d1f2d',
+                  fontSize: '12px',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.background = '#e8b86d';
+                  (e.currentTarget as HTMLElement).style.transform = 'scale(1.05)';
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.background = '#c9943a';
+                  (e.currentTarget as HTMLElement).style.transform = 'scale(1)';
+                }}
+              >
+                💾 Salvar Nota
+              </button>
+            </div>
+          </div>
+        )}
           </>
         ) : (
           <div style={{
