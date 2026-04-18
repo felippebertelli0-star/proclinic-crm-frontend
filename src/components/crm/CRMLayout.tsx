@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
+import { useAuthStore } from '@/store/authStore';
 import { LayoutDashboard, MessageCircle, Users, Grid3x3, TrendingUp, Tag, Zap, Calendar, RotateCw, CheckSquare, Cog, Brain, Sliders, List, Link, Folder, BarChart3, ClipboardList, LogOut } from 'lucide-react';
 import { Dashboard } from './pages/Dashboard';
 import { Conversas } from './pages/Conversas';
@@ -97,9 +98,41 @@ const PAGE_MAPPING: Record<PageType, React.ComponentType> = {
 export function CRMLayout() {
   const router = useRouter();
   const pathname = usePathname();
+  const { usuario } = useAuthStore();
   const [currentPage, setCurrentPage] = useState<PageType>('dashboard');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const menuScrollRef = useRef<HTMLDivElement>(null);
+
+  // Formatar data/hora do último login
+  const formatarUltimoLogin = (dataString?: string) => {
+    if (!dataString) return 'Primeiro acesso';
+
+    try {
+      const data = new Date(dataString);
+      const agora = new Date();
+      const diffMs = agora.getTime() - data.getTime();
+      const diffMins = Math.floor(diffMs / 60000);
+      const diffHours = Math.floor(diffMs / 3600000);
+      const diffDays = Math.floor(diffMs / 86400000);
+
+      if (diffMins < 1) return 'Agora mesmo';
+      if (diffMins < 60) return `${diffMins}m atrás`;
+      if (diffHours < 24) return `${diffHours}h atrás`;
+      if (diffDays === 1) return 'Ontem';
+      if (diffDays < 7) return `${diffDays}d atrás`;
+
+      // Formato: DD/MM/YYYY HH:MM
+      const dia = String(data.getDate()).padStart(2, '0');
+      const mes = String(data.getMonth() + 1).padStart(2, '0');
+      const ano = data.getFullYear();
+      const horas = String(data.getHours()).padStart(2, '0');
+      const mins = String(data.getMinutes()).padStart(2, '0');
+
+      return `${dia}/${mes}/${ano} ${horas}:${mins}`;
+    } catch {
+      return dataString;
+    }
+  };
 
   useEffect(() => {
     if (menuScrollRef.current) {
@@ -183,8 +216,13 @@ export function CRMLayout() {
         height: '60px',
         flexShrink: 0,
       }}>
-        <div style={{ fontSize: '14px', fontWeight: 700, color: '#c9943a' }}>
-          ProClinic — Inteligência Comercial
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+          <div style={{ fontSize: '14px', fontWeight: 700, color: '#c9943a' }}>
+            👤 {usuario?.nome || 'Usuário'}
+          </div>
+          <div style={{ fontSize: '11px', color: '#7a96aa' }}>
+            🕐 Último acesso: {formatarUltimoLogin((usuario as any)?.ultimoAcesso)}
+          </div>
         </div>
         <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
           <div style={{ fontSize: '12px', color: '#7a96aa', display: 'flex', gap: '8px', alignItems: 'center' }}>
