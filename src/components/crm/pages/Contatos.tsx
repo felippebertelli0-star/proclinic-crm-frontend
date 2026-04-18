@@ -23,14 +23,14 @@ export function Contatos() {
 
   // Mock data de contatos com badges e cores de avatar
   const contatos = [
-    { id: 1, nome: 'Ida Santos', whatsapp: '(11) 99999-0001', email: 'ida@email.com', ultimaInteracao: '2026-04-17 10:30', status: 'Vivo', badge: 'Trabalho Pago', avatarColor: '#e91e63' },
-    { id: 2, nome: 'Daniele Mantovani', whatsapp: '(11) 99999-0002', email: 'daniele@email.com', ultimaInteracao: '2026-04-16 15:45', status: 'Vivo', badge: 'Orgânico', avatarColor: '#9c27b0' },
-    { id: 3, nome: 'Maria Rosa', whatsapp: '(11) 99999-0003', email: 'maria@email.com', ultimaInteracao: '2026-04-15 09:20', status: 'Vivo', badge: 'Trabalho Pago', avatarColor: '#673ab7' },
-    { id: 4, nome: 'Laura Ferreira', whatsapp: '(11) 99999-0004', email: 'laura@email.com', ultimaInteracao: '2026-04-14 14:10', status: 'Vivo', badge: 'Orgânico', avatarColor: '#3f51b5' },
-    { id: 5, nome: 'Patricia Lima', whatsapp: '(11) 99999-0005', email: 'patricia@email.com', ultimaInteracao: '2026-04-13 11:55', status: 'Vivo', badge: 'Trabalho Pago', avatarColor: '#2196f3' },
-    { id: 6, nome: 'Ana Beatriz', whatsapp: '(11) 99999-0006', email: 'ana@email.com', ultimaInteracao: '2026-04-12 16:30', status: 'Vivo', badge: 'Orgânico', avatarColor: '#00bcd4' },
-    { id: 7, nome: 'Larissa Alcântara', whatsapp: '(11) 99999-0007', email: 'larissa@email.com', ultimaInteracao: '2026-04-11 13:15', status: 'Vivo', badge: 'Trabalho Pago', avatarColor: '#009688' },
-    { id: 8, nome: 'Carlota Mendes', whatsapp: '(11) 99999-0008', email: 'carlota@email.com', ultimaInteracao: '2026-04-10 10:45', status: 'Vivo', badge: 'Orgânico', avatarColor: '#4caf50' },
+    { id: 1, nome: 'Ida Santos', whatsapp: '(11) 99999-0001', email: 'ida@email.com', ultimaInteracao: '2026-04-17 10:30', status: 'Vivo', badge: 'Trabalho Pago', badgeColor: '#c9943a', avatarColor: '#e91e63' },
+    { id: 2, nome: 'Daniele Mantovani', whatsapp: '(11) 99999-0002', email: 'daniele@email.com', ultimaInteracao: '2026-04-16 15:45', status: 'Vivo', badge: 'Orgânico', badgeColor: '#c9943a', avatarColor: '#9c27b0' },
+    { id: 3, nome: 'Maria Rosa', whatsapp: '(11) 99999-0003', email: 'maria@email.com', ultimaInteracao: '2026-04-15 09:20', status: 'Vivo', badge: 'Trabalho Pago', badgeColor: '#c9943a', avatarColor: '#673ab7' },
+    { id: 4, nome: 'Laura Ferreira', whatsapp: '(11) 99999-0004', email: 'laura@email.com', ultimaInteracao: '2026-04-14 14:10', status: 'Vivo', badge: 'Orgânico', badgeColor: '#c9943a', avatarColor: '#3f51b5' },
+    { id: 5, nome: 'Patricia Lima', whatsapp: '(11) 99999-0005', email: 'patricia@email.com', ultimaInteracao: '2026-04-13 11:55', status: 'Vivo', badge: 'Trabalho Pago', badgeColor: '#c9943a', avatarColor: '#2196f3' },
+    { id: 6, nome: 'Ana Beatriz', whatsapp: '(11) 99999-0006', email: 'ana@email.com', ultimaInteracao: '2026-04-12 16:30', status: 'Vivo', badge: 'Orgânico', badgeColor: '#c9943a', avatarColor: '#00bcd4' },
+    { id: 7, nome: 'Larissa Alcântara', whatsapp: '(11) 99999-0007', email: 'larissa@email.com', ultimaInteracao: '2026-04-11 13:15', status: 'Vivo', badge: 'Trabalho Pago', badgeColor: '#c9943a', avatarColor: '#009688' },
+    { id: 8, nome: 'Carlota Mendes', whatsapp: '(11) 99999-0008', email: 'carlota@email.com', ultimaInteracao: '2026-04-10 10:45', status: 'Vivo', badge: 'Orgânico', badgeColor: '#c9943a', avatarColor: '#4caf50' },
   ];
 
   // Filtrar contatos
@@ -331,14 +331,15 @@ export function Contatos() {
                       width: '32px',
                       height: '32px',
                       borderRadius: '50%',
-                      background: contato.avatarColor,
+                      background: `${contato.avatarColor}33`,
+                      border: `2px solid ${contato.avatarColor}B3`,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       fontSize: '12px',
                       fontWeight: 700,
                       flexShrink: 0,
-                      color: '#fff',
+                      color: '#e8b86d',
                     }}>
                       {contato.nome[0]}
                     </div>
@@ -346,11 +347,12 @@ export function Contatos() {
                       <span>{contato.nome}</span>
                       <span style={{
                         fontSize: '10px',
-                        color: '#f39c12',
+                        color: contato.badgeColor,
                         fontWeight: 600,
-                        backgroundColor: 'rgba(243, 156, 18, 0.15)',
-                        padding: '2px 6px',
-                        borderRadius: '4px',
+                        backgroundColor: `${contato.badgeColor}33`,
+                        border: `1px solid ${contato.badgeColor}A6`,
+                        padding: '4px 8px',
+                        borderRadius: '12px',
                         display: 'inline-block',
                         width: 'fit-content',
                       }}>
