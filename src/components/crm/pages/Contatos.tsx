@@ -14,10 +14,10 @@ export function Contatos() {
 
   // Mock data de resumo
   const resumo = [
-    { label: 'Hoje', value: 5, color: '#3498db', icon: '📅', bgIcon: '#9966cc', isTotal: false },
-    { label: 'Esta Semana', value: 8, color: '#2ecc71', icon: '📅', bgIcon: '#ff5fa0', isTotal: false },
-    { label: 'Este Mês', value: 8, color: '#f39c12', icon: '📅', bgIcon: '#00bcd4', isTotal: false },
-    { label: 'Total', value: 8, color: '#c9943a', icon: '👤', bgIcon: '#6699ff', isTotal: true },
+    { label: 'Hoje', value: 5, bgIcon: '#1e3d54', isTotal: false },
+    { label: 'Esta Semana', value: 8, bgIcon: '#1e3d54', isTotal: false },
+    { label: 'Este Mês', value: 8, bgIcon: '#1e3d54', isTotal: false },
+    { label: 'Total', value: 8, bgIcon: '#1e3d54', isTotal: true },
   ];
 
   // Mock data de contatos com badges e cores de avatar
@@ -119,25 +119,55 @@ export function Contatos() {
               e.currentTarget.style.transform = 'translateY(0)';
             }}
           >
-            {/* ÍCONE COLORIDO - NO TOPO */}
+            {/* ÍCONE MINIMALISTA - NO TOPO */}
             <div style={{
               width: '56px',
               height: '56px',
-              borderRadius: '14px',
+              borderRadius: '12px',
               background: card.bgIcon,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: '28px',
+              fontSize: '24px',
               flexShrink: 0,
+              color: '#7a96aa',
+              fontWeight: 600,
             }}>
-              {card.icon}
+              {card.label === 'Hoje' && '📆'}
+              {card.label === 'Esta Semana' && '📊'}
+              {card.label === 'Este Mês' && '📈'}
+              {card.label === 'Total' && '👥'}
             </div>
             {/* CONTEÚDO - ABAIXO DO ÍCONE */}
             <div style={{ width: '100%' }}>
-              <div style={{ fontSize: '28px', fontWeight: 700, color: card.color, marginBottom: '4px', lineHeight: '1' }}>{card.value}</div>
-              <div style={{ fontSize: '11px', color: '#7a96aa', marginBottom: '4px', fontWeight: 600 }}>{card.label}</div>
-              <div style={{ fontSize: '10px', color: '#7a96aa', fontWeight: 500 }}>
+              <div style={{
+                fontSize: '44px',
+                fontWeight: 900,
+                color: '#ffffff',
+                marginBottom: '2px',
+                lineHeight: '1',
+                letterSpacing: '-1px',
+                WebkitFontSmoothing: 'antialiased',
+              }}>
+                {card.value}
+              </div>
+              <div style={{
+                fontSize: '12px',
+                color: '#e8edf2',
+                marginBottom: '4px',
+                fontWeight: 700,
+                letterSpacing: '0.3px',
+                WebkitFontSmoothing: 'antialiased',
+              }}>
+                {card.label}
+              </div>
+              <div style={{
+                fontSize: '11px',
+                color: '#7a96aa',
+                fontWeight: 500,
+                letterSpacing: '0.2px',
+                WebkitFontSmoothing: 'antialiased',
+              }}>
                 {card.label === 'Hoje' && '↳ Novos contatos'}
                 {card.label === 'Esta Semana' && '↳ Últimos 7 dias'}
                 {card.label === 'Este Mês' && '↳ Mês atual'}
