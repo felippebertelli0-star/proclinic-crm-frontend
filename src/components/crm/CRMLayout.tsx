@@ -272,7 +272,7 @@ export function CRMLayout() {
       {/* MAIN LAYOUT */}
       <div style={{ display: 'flex', height: 'calc(100vh - 60px)', background: '#0d1f2d', color: '#e8edf2' }}>
       {/* SIDEBAR */}
-      <div style={{ width: sidebarCollapsed ? '70px' : '380px', background: '#0a1520', borderRight: '1px solid #1e3d54', display: 'flex', flexDirection: 'column', transition: 'width 0.3s', overflow: 'hidden' }}>
+      <div style={{ width: sidebarCollapsed ? '70px' : '300px', background: '#0a1520', borderRight: '1px solid #1e3d54', display: 'flex', flexDirection: 'column', transition: 'width 0.3s', overflow: 'hidden' }}>
         {/* LOGO */}
         <div style={{ padding: '16px 12px', borderBottom: '1px solid #1e3d54', display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
           <div style={{ width: '36px', height: '36px', borderRadius: '8px', background: 'linear-gradient(135deg, #c9943a, #e8b86d)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', fontWeight: 900, color: '#0d1f2d', flexShrink: 0 }}>P</div>
