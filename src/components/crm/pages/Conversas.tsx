@@ -840,16 +840,16 @@ export function Conversas() {
                     }
                   }}
                 >
-                  <div style={{ display: 'flex', gap: '8px', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start', flex: 1 }}>
+                  <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start', flex: 1, minWidth: 0 }}>
                       <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
-                          <div style={{ fontSize: '12px', fontWeight: 600, color: '#e8edf2' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', marginBottom: '2px' }}>
+                          <div style={{ fontSize: '12px', fontWeight: 600, color: '#e8edf2', flex: 1, minWidth: 0 }}>
                             {conv.nome}
                           </div>
                           {/* Eye icon sempre visível no atendendo, ou quando há notificações no aguardando */}
                           {(!isAguardando || conv.unread > 0) && (
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', height: 'auto' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', height: '16px', flexShrink: 0, whiteSpace: 'nowrap' }}>
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
@@ -867,10 +867,11 @@ export function Conversas() {
                                   padding: 0,
                                   margin: 0,
                                   color: '#7a96aa',
-                                  lineHeight: 1,
-                                  height: 'auto',
-                                  width: 'auto',
-                                  minWidth: '12px',
+                                  lineHeight: '16px',
+                                  height: '16px',
+                                  width: '16px',
+                                  minWidth: '16px',
+                                  flexShrink: 0,
                                 }}
                                 onMouseEnter={(e) => {
                                   (e.currentTarget as HTMLElement).style.opacity = '1';
@@ -882,8 +883,8 @@ export function Conversas() {
                                 <Eye size={12} />
                               </button>
                               {/* Tempo entre olho e notificação */}
-                              <span style={{ fontSize: '9px', color: '#7a96aa', display: 'flex', alignItems: 'center', gap: '2px', height: 'auto', lineHeight: 1, margin: 0, padding: 0, whiteSpace: 'nowrap' }}>
-                                <Clock size={10} />
+                              <span style={{ fontSize: '9px', color: '#7a96aa', display: 'flex', alignItems: 'center', gap: '2px', height: '16px', lineHeight: '16px', margin: 0, padding: 0, whiteSpace: 'nowrap', flexShrink: 0 }}>
+                                <Clock size={10} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }} />
                                 {conv.hora}
                               </span>
                               {conv.unread > 0 && (
@@ -892,15 +893,16 @@ export function Conversas() {
                                   color: '#ffffff',
                                   fontSize: '9px',
                                   fontWeight: 800,
-                                  width: '18px',
-                                  height: '18px',
+                                  width: '16px',
+                                  height: '16px',
                                   borderRadius: '50%',
                                   display: 'flex',
                                   alignItems: 'center',
                                   justifyContent: 'center',
                                   flexShrink: 0,
-                                  lineHeight: 1,
+                                  lineHeight: '16px',
                                   padding: 0,
+                                  minWidth: '16px',
                                 }}>
                                   {conv.unread}
                                 </div>
