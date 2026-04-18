@@ -285,19 +285,19 @@ export function Conversas() {
                             console.log('ACEITAR:', conv.id);
                           }}
                           style={{
-                            padding: '6px 12px',
-                            borderRadius: '4px',
+                            padding: '4px 8px',
+                            borderRadius: '2px',
                             border: 'none',
                             background: '#2ecc71',
                             color: '#ffffff',
-                            fontSize: '11px',
+                            fontSize: '10px',
                             fontWeight: 700,
                             cursor: 'pointer',
                             transition: 'all 0.2s',
                             whiteSpace: 'nowrap',
                           }}
                           onMouseEnter={(e) => {
-                            (e.currentTarget as HTMLElement).style.opacity = '0.8';
+                            (e.currentTarget as HTMLElement).style.opacity = '0.85';
                           }}
                           onMouseLeave={(e) => {
                             (e.currentTarget as HTMLElement).style.opacity = '1';
@@ -311,19 +311,19 @@ export function Conversas() {
                             console.log('FINALIZAR:', conv.id);
                           }}
                           style={{
-                            padding: '6px 12px',
-                            borderRadius: '4px',
+                            padding: '4px 8px',
+                            borderRadius: '2px',
                             border: 'none',
                             background: '#e74c3c',
                             color: '#ffffff',
-                            fontSize: '11px',
+                            fontSize: '10px',
                             fontWeight: 700,
                             cursor: 'pointer',
                             transition: 'all 0.2s',
                             whiteSpace: 'nowrap',
                           }}
                           onMouseEnter={(e) => {
-                            (e.currentTarget as HTMLElement).style.opacity = '0.8';
+                            (e.currentTarget as HTMLElement).style.opacity = '0.85';
                           }}
                           onMouseLeave={(e) => {
                             (e.currentTarget as HTMLElement).style.opacity = '1';
