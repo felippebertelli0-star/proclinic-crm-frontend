@@ -15,9 +15,9 @@ export function Contatos() {
 
   // Mock data de resumo
   const resumo = [
-    { label: 'Hoje', value: 5, color: '#a855f7', isTotal: false },
-    { label: 'Esta Semana', value: 8, color: '#10b981', isTotal: false },
-    { label: 'Este Mês', value: 8, color: '#3b82f6', isTotal: false },
+    { label: 'Hoje', value: 5, color: '#c9943a', isTotal: false },
+    { label: 'Esta Semana', value: 8, color: '#c9943a', isTotal: false },
+    { label: 'Este Mês', value: 8, color: '#c9943a', isTotal: false },
     { label: 'Total', value: 8, color: '#c9943a', isTotal: true },
   ];
 
@@ -252,6 +252,8 @@ export function Contatos() {
         border: '1px solid #1e3d54',
         borderRadius: '14px',
         overflow: 'hidden',
+        maxHeight: '600px',
+        overflowY: 'auto',
       }}>
         <table style={{
           width: '100%',
@@ -343,16 +345,16 @@ export function Contatos() {
                     }}>
                       {contato.nome[0]}
                     </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                      <span>{contato.nome}</span>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                      <span style={{ fontSize: '14px', fontWeight: 700, color: '#e8edf2' }}>{contato.nome}</span>
                       <span style={{
-                        fontSize: '10px',
+                        fontSize: '9px',
                         color: contato.badgeColor,
                         fontWeight: 600,
-                        backgroundColor: `${contato.badgeColor}33`,
-                        border: `1px solid ${contato.badgeColor}A6`,
-                        padding: '4px 8px',
-                        borderRadius: '12px',
+                        backgroundColor: `${contato.badgeColor}26`,
+                        border: `0.5px solid ${contato.badgeColor}99`,
+                        padding: '2px 6px',
+                        borderRadius: '8px',
                         display: 'inline-block',
                         width: 'fit-content',
                       }}>
