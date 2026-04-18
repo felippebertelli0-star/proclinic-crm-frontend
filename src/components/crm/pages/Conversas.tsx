@@ -26,6 +26,14 @@ export function Conversas() {
   const [buscaMembro, setBuscaMembro] = useState('');
   const [membroSelecionado, setMembroSelecionado] = useState<any>(null);
   const [filaSelecionada, setFilaSelecionada] = useState<string | null>(null);
+  const [agendarModalVisible, setAgendarModalVisible] = useState(false);
+  const [mensagemAgendada, setMensagemAgendada] = useState('');
+  const [conexaoSelecionada, setConexaoSelecionada] = useState<string | null>(null);
+  const [filaSelecionadaAgenda, setFilaSelecionadaAgenda] = useState<string | null>(null);
+  const [dataHoraAgendamento, setDataHoraAgendamento] = useState('');
+  const [arquivoAnexado, setArquivoAnexado] = useState<File | null>(null);
+  const [agendamentos, setAgendamentos] = useState<any[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const mediaRecorderRef = useRef<any>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const streamRef = useRef<MediaStream | null>(null);
@@ -89,6 +97,12 @@ export function Conversas() {
     { id: 3, nome: 'Fila de Suporte' },
     { id: 4, nome: 'Fila VIP' },
     { id: 5, nome: 'Fila de Retorno' },
+  ];
+
+  const conexoesAtivas = [
+    { id: 1, nome: 'WhatsApp Oficial', tipo: 'whatsapp', ativa: true },
+    { id: 2, nome: 'Instagram DM', tipo: 'instagram', ativa: true },
+    { id: 3, nome: 'Telegram', tipo: 'telegram', ativa: true },
   ];
 
   // Função para gerar cor de tag baseada no tipo
@@ -319,6 +333,65 @@ export function Conversas() {
     setConversas(conversas.map((conv: any) =>
       conv.id === convId ? { ...conv, unread: 0 } : conv
     ));
+  };
+
+  const abrirAgendarModal = () => {
+    setAgendarModalVisible(true);
+    setMensagemAgendada('');
+    setConexaoSelecionada(null);
+    setFilaSelecionadaAgenda(null);
+    setDataHoraAgendamento('');
+    setArquivoAnexado(null);
+  };
+
+  const fecharAgendarModal = () => {
+    setAgendarModalVisible(false);
+    setMensagemAgendada('');
+    setConexaoSelecionada(null);
+    setFilaSelecionadaAgenda(null);
+    setDataHoraAgendamento('');
+    setArquivoAnexado(null);
+  };
+
+  const handleAnexarArquivo = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setArquivoAnexado(file);
+    }
+  };
+
+  const salvarAgendamento = () => {
+    if (!mensagemAgendada.trim()) {
+      alert('Por favor, escreva uma mensagem');
+      return;
+    }
+    if (!conexaoSelecionada) {
+      alert('Por favor, selecione uma conexão');
+      return;
+    }
+    if (!dataHoraAgendamento) {
+      alert('Por favor, selecione uma data e hora');
+      return;
+    }
+
+    if (conversa) {
+      const novoAgendamento = {
+        id: Date.now(),
+        conversaId: conversa.id,
+        conversaNome: conversa.nome,
+        mensagem: mensagemAgendada,
+        conexao: conexaoSelecionada,
+        fila: filaSelecionadaAgenda,
+        dataHora: dataHoraAgendamento,
+        arquivo: arquivoAnexado?.name || null,
+        status: 'agendado',
+        criadoEm: new Date().toISOString(),
+      };
+
+      setAgendamentos([...agendamentos, novoAgendamento]);
+      fecharAgendarModal();
+      alert('Mensagem agendada com sucesso! Ela aparecerá no Calendário na data e hora especificadas.');
+    }
   };
 
   // ============ GRAVAÇÃO DE ÁUDIO ============
@@ -819,7 +892,7 @@ export function Conversas() {
               { Icon: X, label: 'Fechar Ticket', action: 'fechar' },
               { Icon: RefreshCw, label: 'Devolver para a IA', action: 'devolver' },
               { Icon: User, label: 'Transferir Ticket', action: 'transferir' },
-              { Icon: Calendar, label: 'Agendar Mensagem' },
+              { Icon: Calendar, label: 'Agendar Mensagem', action: 'agendar' },
               { Icon: DollarSign, label: 'Nova Oportunidade' },
               { Icon: FileText, label: 'Nota Interna' },
               { Icon: Paperclip, label: 'Anexar Arquivo' },
@@ -838,6 +911,8 @@ export function Conversas() {
                     devolverParaIA(conversa.id);
                   } else if (action === 'transferir') {
                     abrirTransferirModal();
+                  } else if (action === 'agendar') {
+                    abrirAgendarModal();
                   }
                 }}
                 style={{
@@ -1955,6 +2030,370 @@ export function Conversas() {
                 }}
               >
                 Transferir
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL DE AGENDAMENTO DE MENSAGEM */}
+      {agendarModalVisible && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 10001,
+        }}>
+          <div style={{
+            background: '#0a1520',
+            borderRadius: '12px',
+            border: '1px solid #1e3d54',
+            padding: '32px',
+            minWidth: '480px',
+            maxHeight: '85vh',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.6)',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '24px',
+            overflowY: 'auto',
+          }}>
+            {/* HEADER */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <Calendar size={20} style={{ color: '#c9943a' }} />
+                <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 700, color: '#e8edf2' }}>
+                  Novo Agendamento
+                </h3>
+              </div>
+              <button
+                onClick={fecharAgendarModal}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: '#7a96aa',
+                  cursor: 'pointer',
+                  fontSize: '20px',
+                  padding: '4px 8px',
+                }}
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* INFORMAÇÕES DO CONTATO */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <label style={{ fontSize: '12px', fontWeight: 700, color: '#c9943a', textTransform: 'uppercase', letterSpacing: '0.8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                👤 Informações do Contato
+              </label>
+              <div style={{
+                padding: '12px 14px',
+                borderRadius: '6px',
+                border: '1px solid #1e3d54',
+                background: 'rgba(13, 31, 45, 0.5)',
+                color: '#e8edf2',
+                fontSize: '13px',
+              }}>
+                {conversa?.nome || 'Nenhuma conversa selecionada'}
+              </div>
+              <div style={{ fontSize: '11px', color: '#7a96aa', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                ● Digite pelo menos 3 letras para buscar contatos
+              </div>
+            </div>
+
+            {/* CONEXÃO E FILA */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <label style={{ fontSize: '12px', fontWeight: 700, color: '#c9943a', textTransform: 'uppercase', letterSpacing: '0.8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                🔗 Conexão e Fila
+              </label>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <div>
+                  <label style={{ fontSize: '11px', color: '#7a96aa', fontWeight: 600, marginBottom: '6px', display: 'block' }}>
+                    CONEXÃO *
+                  </label>
+                  <select
+                    value={conexaoSelecionada || ''}
+                    onChange={(e) => setConexaoSelecionada(e.target.value || null)}
+                    style={{
+                      padding: '10px 14px',
+                      borderRadius: '6px',
+                      border: '1px solid #1e3d54',
+                      background: 'rgba(13, 31, 45, 0.5)',
+                      color: '#e8edf2',
+                      fontSize: '13px',
+                      outline: 'none',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                      width: '100%',
+                    }}
+                    onFocus={(e) => {
+                      (e.currentTarget as HTMLElement).style.borderColor = '#c9943a';
+                      (e.currentTarget as HTMLElement).style.background = 'rgba(13, 31, 45, 0.8)';
+                    }}
+                    onBlur={(e) => {
+                      (e.currentTarget as HTMLElement).style.borderColor = '#1e3d54';
+                      (e.currentTarget as HTMLElement).style.background = 'rgba(13, 31, 45, 0.5)';
+                    }}
+                  >
+                    <option value="">Selecionar...</option>
+                    {conexoesAtivas.map((conexao: any) => (
+                      <option key={conexao.id} value={conexao.nome}>
+                        {conexao.nome}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label style={{ fontSize: '11px', color: '#7a96aa', fontWeight: 600, marginBottom: '6px', display: 'block' }}>
+                    FILA
+                  </label>
+                  <select
+                    value={filaSelecionadaAgenda || ''}
+                    onChange={(e) => setFilaSelecionadaAgenda(e.target.value || null)}
+                    style={{
+                      padding: '10px 14px',
+                      borderRadius: '6px',
+                      border: '1px solid #1e3d54',
+                      background: 'rgba(13, 31, 45, 0.5)',
+                      color: '#e8edf2',
+                      fontSize: '13px',
+                      outline: 'none',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                      width: '100%',
+                    }}
+                    onFocus={(e) => {
+                      (e.currentTarget as HTMLElement).style.borderColor = '#c9943a';
+                      (e.currentTarget as HTMLElement).style.background = 'rgba(13, 31, 45, 0.8)';
+                    }}
+                    onBlur={(e) => {
+                      (e.currentTarget as HTMLElement).style.borderColor = '#1e3d54';
+                      (e.currentTarget as HTMLElement).style.background = 'rgba(13, 31, 45, 0.5)';
+                    }}
+                  >
+                    <option value="">Fila (opcional)</option>
+                    {filas.map((fila: any) => (
+                      <option key={fila.id} value={fila.nome}>
+                        {fila.nome}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* MENSAGEM */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <label style={{ fontSize: '12px', fontWeight: 700, color: '#c9943a', textTransform: 'uppercase', letterSpacing: '0.8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                💬 Mensagem
+              </label>
+              <textarea
+                value={mensagemAgendada}
+                onChange={(e) => setMensagemAgendada(e.target.value)}
+                placeholder="Mensagem..."
+                style={{
+                  padding: '12px 14px',
+                  borderRadius: '6px',
+                  border: '1px solid #1e3d54',
+                  background: 'rgba(13, 31, 45, 0.5)',
+                  color: '#e8edf2',
+                  fontSize: '13px',
+                  outline: 'none',
+                  transition: 'all 0.2s',
+                  resize: 'vertical',
+                  minHeight: '100px',
+                  fontFamily: 'inherit',
+                }}
+                onFocus={(e) => {
+                  (e.currentTarget as HTMLElement).style.borderColor = '#c9943a';
+                  (e.currentTarget as HTMLElement).style.background = 'rgba(13, 31, 45, 0.8)';
+                }}
+                onBlur={(e) => {
+                  (e.currentTarget as HTMLElement).style.borderColor = '#1e3d54';
+                  (e.currentTarget as HTMLElement).style.background = 'rgba(13, 31, 45, 0.5)';
+                }}
+              />
+            </div>
+
+            {/* DATA E HORÁRIO */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <label style={{ fontSize: '12px', fontWeight: 700, color: '#c9943a', textTransform: 'uppercase', letterSpacing: '0.8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                🕒 Data e Horário
+              </label>
+              <label style={{ fontSize: '11px', color: '#7a96aa', fontWeight: 600, marginBottom: '-6px', display: 'block' }}>
+                DATA E HORÁRIO DO ENVIO
+              </label>
+              <input
+                type="datetime-local"
+                value={dataHoraAgendamento}
+                onChange={(e) => setDataHoraAgendamento(e.target.value)}
+                style={{
+                  padding: '10px 14px',
+                  borderRadius: '6px',
+                  border: '1px solid #1e3d54',
+                  background: 'rgba(13, 31, 45, 0.5)',
+                  color: '#e8edf2',
+                  fontSize: '13px',
+                  outline: 'none',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                }}
+                onFocus={(e) => {
+                  (e.currentTarget as HTMLElement).style.borderColor = '#c9943a';
+                  (e.currentTarget as HTMLElement).style.background = 'rgba(13, 31, 45, 0.8)';
+                }}
+                onBlur={(e) => {
+                  (e.currentTarget as HTMLElement).style.borderColor = '#1e3d54';
+                  (e.currentTarget as HTMLElement).style.background = 'rgba(13, 31, 45, 0.5)';
+                }}
+              />
+            </div>
+
+            {/* ARQUIVO ANEXADO */}
+            {arquivoAnexado && (
+              <div style={{
+                padding: '12px 14px',
+                borderRadius: '6px',
+                background: 'rgba(46, 204, 113, 0.1)',
+                border: '1px solid rgba(46, 204, 113, 0.3)',
+                color: '#2ecc71',
+                fontSize: '13px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  📎 {arquivoAnexado.name}
+                </div>
+                <button
+                  onClick={() => setArquivoAnexado(null)}
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    color: '#2ecc71',
+                    cursor: 'pointer',
+                    fontSize: '16px',
+                  }}
+                >
+                  ✕
+                </button>
+              </div>
+            )}
+
+            {/* CONFIGURAÇÕES AVANÇADAS */}
+            <details style={{ cursor: 'pointer' }}>
+              <summary style={{
+                fontSize: '12px',
+                fontWeight: 700,
+                color: '#c9943a',
+                textTransform: 'uppercase',
+                letterSpacing: '0.8px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '8px 0',
+              }}>
+                ⚙️ Configurações Avançadas
+              </summary>
+              <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid #1e3d54' }}>
+                <p style={{ fontSize: '12px', color: '#7a96aa', margin: 0 }}>
+                  Opções avançadas para o agendamento serão adicionadas aqui.
+                </p>
+              </div>
+            </details>
+
+            {/* BOTÃO ANEXAR ARQUIVO */}
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              style={{
+                padding: '10px 16px',
+                borderRadius: '6px',
+                border: '1px solid #1e3d54',
+                background: 'transparent',
+                color: '#7a96aa',
+                fontSize: '12px',
+                fontWeight: 600,
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                justifyContent: 'center',
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.background = 'rgba(30, 61, 84, 0.3)';
+                (e.currentTarget as HTMLElement).style.borderColor = '#7a96aa';
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.background = 'transparent';
+                (e.currentTarget as HTMLElement).style.borderColor = '#1e3d54';
+              }}
+            >
+              📎 ANEXAR ARQUIVO
+            </button>
+
+            {/* HIDDEN FILE INPUT */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              onChange={handleAnexarArquivo}
+              style={{ display: 'none' }}
+            />
+
+            {/* BOTÕES */}
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+              <button
+                onClick={fecharAgendarModal}
+                style={{
+                  padding: '10px 20px',
+                  borderRadius: '6px',
+                  border: '1px solid #1e3d54',
+                  background: 'transparent',
+                  color: '#7a96aa',
+                  fontSize: '13px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.background = 'rgba(30, 61, 84, 0.3)';
+                  (e.currentTarget as HTMLElement).style.borderColor = '#7a96aa';
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.background = 'transparent';
+                  (e.currentTarget as HTMLElement).style.borderColor = '#1e3d54';
+                }}
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={salvarAgendamento}
+                style={{
+                  padding: '10px 20px',
+                  borderRadius: '6px',
+                  border: 'none',
+                  background: '#c9943a',
+                  color: '#0d1f2d',
+                  fontSize: '13px',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.background = '#e8b86d';
+                  (e.currentTarget as HTMLElement).style.transform = 'scale(1.05)';
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.background = '#c9943a';
+                  (e.currentTarget as HTMLElement).style.transform = 'scale(1)';
+                }}
+              >
+                Adicionar
               </button>
             </div>
           </div>
