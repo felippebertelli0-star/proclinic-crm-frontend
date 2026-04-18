@@ -3548,188 +3548,222 @@ export function Conversas() {
             </button>
           </div>
 
-          {/* CONTEÚDO */}
-          <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px', flex: 1 }}>
-            {/* AVATAR E NOME */}
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
+          {/* CONTEÚDO PREMIUM AAA */}
+          <div style={{ padding: '32px 24px', display: 'flex', flexDirection: 'column', gap: '28px', flex: 1 }}>
+            {/* PROFILE SECTION PREMIUM */}
+            <div style={{
+              background: 'rgba(201, 148, 58, 0.08)',
+              borderRadius: '14px',
+              padding: '28px 24px',
+              border: `1px solid ${PREMIUM_STYLES.colorBorder}`,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '16px',
+              boxShadow: PREMIUM_STYLES.shadowMd,
+            }}>
               <div style={{
-                width: '80px',
-                height: '80px',
+                width: '100px',
+                height: '100px',
                 borderRadius: '50%',
-                background: '#c9943a',
+                background: PREMIUM_STYLES.gradientPrimary,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: '32px',
+                fontSize: '42px',
                 fontWeight: 700,
                 color: '#0d1f2d',
+                boxShadow: PREMIUM_STYLES.shadowLg,
               }}>
                 {conversa?.nome?.substring(0, 2).toUpperCase()}
               </div>
-              <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: '14px', fontWeight: 700, color: '#e8edf2' }}>
-                  {conversa?.nome} 👤
-                </div>
-                <div style={{ fontSize: '12px', color: '#7a96aa', marginTop: '4px' }}>
-                  {conversa?.canal} · #{conversa?.id}
-                </div>
+              <div style={{ textAlign: 'center', width: '100%' }}>
+                <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 700, color: PREMIUM_STYLES.colorText }}>
+                  {conversa?.nome}
+                </h2>
+                <p style={{ margin: 0, fontSize: '12px', color: PREMIUM_STYLES.colorTextSecondary, marginTop: '6px', fontWeight: 500 }}>
+                  {conversa?.canal} • ID #{conversa?.id}
+                </p>
               </div>
+              <button style={{
+                padding: '10px 20px',
+                borderRadius: '8px',
+                border: `2px solid ${PREMIUM_STYLES.colorGold}`,
+                background: 'transparent',
+                color: PREMIUM_STYLES.colorGold,
+                fontSize: '12px',
+                fontWeight: 700,
+                cursor: 'pointer',
+                transition: PREMIUM_STYLES.transitionMedium,
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px',
+                width: '100%',
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.background = PREMIUM_STYLES.gradientPrimary;
+                (e.currentTarget as HTMLElement).style.color = '#0d1f2d';
+                (e.currentTarget as HTMLElement).style.borderColor = PREMIUM_STYLES.colorGoldLight;
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.background = 'transparent';
+                (e.currentTarget as HTMLElement).style.color = PREMIUM_STYLES.colorGold;
+                (e.currentTarget as HTMLElement).style.borderColor = PREMIUM_STYLES.colorGold;
+              }}
+              >
+                ✏️ Editar Contato
+              </button>
             </div>
 
-            {/* TELEFONE E DADOS */}
+            {/* INFO CARDS PREMIUM */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <div>
-                <div style={{ fontSize: '11px', fontWeight: 700, color: '#c9943a', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                  Telefone
+              {[
+                { icon: '📞', label: 'Telefone', value: '(11) 97765-3421', highlight: true },
+                { icon: '🆔', label: 'LID', value: '551197765342​1', mono: true },
+                { icon: '💬', label: 'JID', value: '551197765342​1@s.whatsapp.net', mono: true },
+              ].map((item, idx) => (
+                <div key={idx} style={{
+                  background: item.highlight ? 'linear-gradient(135deg, rgba(201, 148, 58, 0.12), rgba(232, 184, 109, 0.08))' : 'rgba(19, 38, 54, 0.6)',
+                  borderRadius: '10px',
+                  padding: '14px 16px',
+                  border: `1px solid ${item.highlight ? 'rgba(201, 148, 58, 0.3)' : PREMIUM_STYLES.colorBorder}`,
+                  transition: PREMIUM_STYLES.transitionFast,
+                  cursor: 'default',
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                    <span style={{ fontSize: '14px' }}>{item.icon}</span>
+                    <span style={{ fontSize: '10px', fontWeight: 700, color: PREMIUM_STYLES.colorGold, textTransform: 'uppercase', letterSpacing: '0.4px' }}>
+                      {item.label}
+                    </span>
+                  </div>
+                  <div style={{
+                    fontSize: '13px',
+                    color: PREMIUM_STYLES.colorText,
+                    fontWeight: 600,
+                    fontFamily: item.mono ? 'monospace' : 'inherit',
+                  }}>
+                    {item.value}
+                  </div>
                 </div>
-                <div style={{ fontSize: '13px', color: '#e8edf2', marginTop: '6px', fontWeight: 600 }}>
-                  (11) 97765-3421
-                </div>
-              </div>
-              <div>
-                <div style={{ fontSize: '11px', fontWeight: 700, color: '#c9943a', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                  LID
-                </div>
-                <div style={{ fontSize: '12px', color: '#7a96aa', marginTop: '6px', fontFamily: 'monospace' }}>
-                  551197765342​1
-                </div>
-              </div>
-              <div>
-                <div style={{ fontSize: '11px', fontWeight: 700, color: '#c9943a', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                  JID
-                </div>
-                <div style={{ fontSize: '12px', color: '#7a96aa', marginTop: '6px', fontFamily: 'monospace' }}>
-                  551197765342​1@s.whatsapp.net
-                </div>
-              </div>
+              ))}
             </div>
 
-            {/* BOTÃO EDITAR */}
-            <button style={{
-              padding: '10px 16px',
-              borderRadius: '6px',
-              border: '2px solid #c9943a',
-              background: 'transparent',
-              color: '#c9943a',
-              fontSize: '12px',
-              fontWeight: 700,
-              cursor: 'pointer',
-              transition: 'all 0.2s',
-              textTransform: 'uppercase',
-              letterSpacing: '0.5px',
-            }}
-            onMouseEnter={(e) => {
-              (e.currentTarget as HTMLElement).style.background = 'rgba(201, 148, 58, 0.1)';
-            }}
-            onMouseLeave={(e) => {
-              (e.currentTarget as HTMLElement).style.background = 'transparent';
-            }}
-            >
-              Editar Contato
-            </button>
-
-            {/* SEÇÃO TICKET */}
-            <div style={{ borderTop: '1px solid #1e3d54', paddingTop: '20px' }}>
-              <div style={{ fontSize: '11px', fontWeight: 700, color: '#c9943a', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '12px' }}>
-                Ticket
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '12px', color: '#7a96aa' }}>📋 Fila</span>
-                  <span style={{ fontSize: '12px', fontWeight: 600, color: '#e8edf2' }}>Secretária</span>
+            {/* TICKET INFO CARDS */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <h4 style={{ margin: 0, fontSize: '11px', fontWeight: 700, color: PREMIUM_STYLES.colorGold, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                📋 Informações do Ticket
+              </h4>
+              {[
+                { icon: '🔖', label: 'Fila', value: 'Secretária' },
+                { icon: '👤', label: 'Agente', value: 'Camiliy' },
+                { icon: '📅', label: 'Abertura', value: '08/04/2026' },
+                { icon: '⏱️', label: 'Tempo Resposta', value: '3 min' },
+              ].map((item, idx) => (
+                <div key={idx} style={{
+                  background: 'rgba(19, 38, 54, 0.6)',
+                  borderRadius: '10px',
+                  padding: '12px 16px',
+                  border: `1px solid ${PREMIUM_STYLES.colorBorder}`,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  transition: PREMIUM_STYLES.transitionFast,
+                }}>
+                  <span style={{ fontSize: '14px' }}>{item.icon}</span>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: '10px', color: PREMIUM_STYLES.colorTextSecondary, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.3px' }}>
+                      {item.label}
+                    </div>
+                    <div style={{ fontSize: '12px', color: PREMIUM_STYLES.colorText, fontWeight: 600, marginTop: '2px' }}>
+                      {item.value}
+                    </div>
+                  </div>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '12px', color: '#7a96aa' }}>👤 Agente</span>
-                  <span style={{ fontSize: '12px', fontWeight: 600, color: '#e8edf2' }}>Camiliy</span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '12px', color: '#7a96aa' }}>📅 Abertura</span>
-                  <span style={{ fontSize: '12px', fontWeight: 600, color: '#e8edf2' }}>08/04/2026</span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '12px', color: '#7a96aa' }}>⏱ T.M. Resp.</span>
-                  <span style={{ fontSize: '12px', fontWeight: 600, color: '#e8edf2' }}>3 min</span>
-                </div>
-              </div>
+              ))}
             </div>
 
-            {/* ETIQUETAS */}
-            <div style={{ borderTop: '1px solid #1e3d54', paddingTop: '20px' }}>
-              <div style={{ fontSize: '11px', fontWeight: 700, color: '#c9943a', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '12px' }}>
-                Etiquetas
-              </div>
-              <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-                <span style={{
-                  padding: '4px 10px',
-                  borderRadius: '4px',
-                  background: 'rgba(52, 152, 219, 0.2)',
-                  color: '#3498db',
-                  fontSize: '11px',
-                  fontWeight: 600,
-                }}>
-                  WHATSAPP
-                </span>
-                <span style={{
-                  padding: '4px 10px',
-                  borderRadius: '4px',
-                  background: 'rgba(155, 89, 182, 0.2)',
-                  color: '#9b59b6',
-                  fontSize: '11px',
-                  fontWeight: 600,
-                }}>
-                  SECRETÁRIA
-                </span>
+            {/* ETIQUETAS PREMIUM */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <h4 style={{ margin: 0, fontSize: '11px', fontWeight: 700, color: PREMIUM_STYLES.colorGold, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                🏷️ Etiquetas
+              </h4>
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                {[
+                  { label: 'WHATSAPP', color: '#3498db', bgColor: 'rgba(52, 152, 219, 0.2)' },
+                  { label: 'SECRETÁRIA', color: '#9b59b6', bgColor: 'rgba(155, 89, 182, 0.2)' },
+                ].map((tag, idx) => (
+                  <span key={idx} style={{
+                    padding: '6px 14px',
+                    borderRadius: '8px',
+                    background: tag.bgColor,
+                    color: tag.color,
+                    fontSize: '11px',
+                    fontWeight: 700,
+                    letterSpacing: '0.3px',
+                    border: `1px solid ${tag.color}33`,
+                    transition: PREMIUM_STYLES.transitionFast,
+                  }}>
+                    {tag.label}
+                  </span>
+                ))}
               </div>
             </div>
 
             {/* OBSERVAÇÕES */}
-            <div style={{ borderTop: '1px solid #1e3d54', paddingTop: '20px' }}>
-              <div style={{ fontSize: '11px', fontWeight: 700, color: '#c9943a', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '12px' }}>
-                Observações do Contato
-              </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: 'auto' }}>
+              <h4 style={{ margin: 0, fontSize: '11px', fontWeight: 700, color: PREMIUM_STYLES.colorGold, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                📝 Observações
+              </h4>
               <textarea
-                placeholder="Observação"
+                placeholder="Adicione observações sobre este contato..."
                 style={{
                   width: '100%',
-                  padding: '10px 12px',
-                  borderRadius: '6px',
-                  border: '1px solid #1e3d54',
-                  background: 'rgba(13, 31, 45, 0.5)',
-                  color: '#e8edf2',
+                  padding: '12px 16px',
+                  borderRadius: '10px',
+                  border: `1px solid ${PREMIUM_STYLES.colorBorder}`,
+                  background: 'rgba(19, 38, 54, 0.6)',
+                  color: PREMIUM_STYLES.colorText,
                   fontSize: '12px',
                   resize: 'vertical',
-                  minHeight: '60px',
+                  minHeight: '80px',
                   fontFamily: 'inherit',
                   outline: 'none',
-                  transition: 'all 0.2s',
+                  transition: PREMIUM_STYLES.transitionFast,
+                  boxShadow: `inset 0 2px 8px rgba(0, 0, 0, 0.2)`,
                 }}
                 onFocus={(e) => {
-                  (e.currentTarget as HTMLElement).style.borderColor = '#c9943a';
+                  (e.currentTarget as HTMLElement).style.borderColor = PREMIUM_STYLES.colorGold;
+                  (e.currentTarget as HTMLElement).style.background = 'rgba(19, 38, 54, 0.8)';
                 }}
                 onBlur={(e) => {
-                  (e.currentTarget as HTMLElement).style.borderColor = '#1e3d54';
+                  (e.currentTarget as HTMLElement).style.borderColor = PREMIUM_STYLES.colorBorder;
+                  (e.currentTarget as HTMLElement).style.background = 'rgba(19, 38, 54, 0.6)';
                 }}
               />
             </div>
 
-            {/* BOTÃO OPORTUNIDADE */}
+            {/* ACTION BUTTON */}
             <button style={{
-              padding: '10px 16px',
-              borderRadius: '6px',
+              padding: '12px 20px',
+              borderRadius: '10px',
               border: 'none',
-              background: 'rgba(201, 148, 58, 0.15)',
-              color: '#c9943a',
+              background: PREMIUM_STYLES.gradientPrimary,
+              color: '#0d1f2d',
               fontSize: '12px',
-              fontWeight: 600,
+              fontWeight: 700,
               cursor: 'pointer',
-              transition: 'all 0.2s',
-              marginTop: 'auto',
+              transition: PREMIUM_STYLES.transitionMedium,
+              textTransform: 'uppercase',
+              letterSpacing: '0.5px',
+              boxShadow: PREMIUM_STYLES.shadowMd,
+              width: '100%',
             }}
             onMouseEnter={(e) => {
-              (e.currentTarget as HTMLElement).style.background = 'rgba(201, 148, 58, 0.25)';
+              (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)';
+              (e.currentTarget as HTMLElement).style.boxShadow = PREMIUM_STYLES.shadowLg;
             }}
             onMouseLeave={(e) => {
-              (e.currentTarget as HTMLElement).style.background = 'rgba(201, 148, 58, 0.15)';
+              (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
+              (e.currentTarget as HTMLElement).style.boxShadow = PREMIUM_STYLES.shadowMd;
             }}
             >
               💰 Criar Oportunidade no Pipeline
