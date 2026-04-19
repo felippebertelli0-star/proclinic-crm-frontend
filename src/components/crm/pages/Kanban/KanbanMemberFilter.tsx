@@ -6,6 +6,7 @@
 'use client';
 
 import { memo } from 'react';
+import { User } from 'lucide-react';
 import { Membro } from '@/types/kanban';
 import styles from './KanbanMemberFilter.module.css';
 
@@ -20,14 +21,6 @@ const KanbanMemberFilterComponent = memo(({
   selectedMembro,
   onSelectMembro,
 }: Props) => {
-  const getMemberInitials = (nome: string) => {
-    return nome
-      .split(' ')
-      .map((word) => word[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
-  };
 
   return (
     <div className={styles.container}>
@@ -61,17 +54,8 @@ const KanbanMemberFilterComponent = memo(({
                 : '#1e3d54',
             }}
           >
-            {/* Avatar */}
-            <div
-              className={styles.avatar}
-              style={{
-                backgroundColor: membro.avatarColor,
-                color: '#fff',
-              }}
-              title={membro.nome}
-            >
-              {getMemberInitials(membro.nome)}
-            </div>
+            {/* Ícone User */}
+            <User size={10} style={{ color: membro.avatarColor, flexShrink: 0 }} />
             {/* Nome */}
             <span className={styles.memberName}>{membro.nome}</span>
           </button>

@@ -67,10 +67,6 @@ const KanbanCardComponent = memo(({
             </div>
 
             <div className={styles.nomeSection}>
-              <div className={styles.nome} title={card.nome}>
-                {card.nome}
-              </div>
-
               <div className={styles.metadata}>
                 {card.origem && (
                   <div className={styles.metaItem} title={card.origem}>
@@ -85,6 +81,10 @@ const KanbanCardComponent = memo(({
                     <span>{card.agente}</span>
                   </div>
                 )}
+              </div>
+
+              <div className={styles.nome} title={card.nome}>
+                {card.nome}
               </div>
             </div>
 
