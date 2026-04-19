@@ -37,8 +37,19 @@ export function Contatos() {
   // ============ STATES PARA MENU IMPORTAR/EXPORTAR ============
   const [importarExportarMenuVisible, setImportarExportarMenuVisible] = useState(false);
   const [exportarModalVisible, setExportarModalVisible] = useState(false);
-  const [mesSelecionado, setMesSelecionado] = useState(new Date().getMonth() + 1);
+  const [mesesSelecionados, setMesesSelecionados] = useState<number[]>([]);
   const [anoSelecionado, setAnoSelecionado] = useState(new Date().getFullYear());
+
+  // ============ FUNÇÃO PARA TOGGLE DE MESES ============
+  const toggleMesSelecionado = (mesIndex: number) => {
+    if (mesesSelecionados.includes(mesIndex)) {
+      // Se já está selecionado, remove
+      setMesesSelecionados(mesesSelecionados.filter(m => m !== mesIndex));
+    } else {
+      // Se não está selecionado, adiciona
+      setMesesSelecionados([...mesesSelecionados, mesIndex]);
+    }
+  };
 
   // Mock data de resumo
   const resumo = [
@@ -243,11 +254,17 @@ export function Contatos() {
   const exportarParaExcel = () => {
     const nomesMeses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
 
-    // Filtrar contatos pelo mês e ano selecionado
+    // Validação: verificar se pelo menos um mês foi selecionado
+    if (mesesSelecionados.length === 0) {
+      alert('Por favor, selecione pelo menos um mês para exportar.');
+      return;
+    }
+
+    // Filtrar contatos pelos meses e ano selecionado
     const contatosFiltrados = contatosList.filter((contato) => {
       const [data] = contato.ultimaInteracao.split(' ');
       const [ano, mes] = data.split('-');
-      return parseInt(mes) === mesSelecionado && parseInt(ano) === anoSelecionado;
+      return mesesSelecionados.includes(parseInt(mes)) && parseInt(ano) === anoSelecionado;
     });
 
     if (contatosFiltrados.length === 0) {
@@ -258,21 +275,29 @@ export function Contatos() {
     // Criar conteúdo CSV (compatível com Excel)
     let csvContent = 'RELATÓRIO DE CONTATOS - PROCLINIC CRM\n\n';
     csvContent += `Gerado em: ${new Date().toLocaleDateString('pt-BR')}\n`;
-    csvContent += `Período: ${nomesMeses[mesSelecionado - 1]} de ${anoSelecionado}\n\n`;
+    const mesesNomes = mesesSelecionados
+      .sort((a, b) => a - b)
+      .map(m => nomesMeses[m - 1])
+      .join(', ');
+    csvContent += `Período: ${mesesNomes} de ${anoSelecionado}\n\n`;
     csvContent += 'NOME,TELEFONE,EMAIL,ORIGEM,STATUS\n';
 
     contatosFiltrados.forEach((contato) => {
       csvContent += `"${contato.nome}","${contato.whatsapp}","${contato.email}","${contato.badge}","${contato.status}"\n`;
     });
 
-    csvContent += `\n\nTOTAL DE CONTATOS EM ${nomesMeses[mesSelecionado - 1].toUpperCase()} DE ${anoSelecionado}: ${contatosFiltrados.length}\n`;
+    csvContent += `\n\nTOTAL DE CONTATOS NO PERÍODO: ${contatosFiltrados.length}\n`;
 
     // Criar blob e download
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
     link.setAttribute('href', url);
-    link.setAttribute('download', `contatos_${nomesMeses[mesSelecionado - 1].toLowerCase()}_${anoSelecionado}.csv`);
+    const mesesCurtos = mesesSelecionados
+      .sort((a, b) => a - b)
+      .map(m => nomesMeses[m - 1].substring(0, 3).toLowerCase())
+      .join('_');
+    link.setAttribute('download', `contatos_${mesesCurtos}_${anoSelecionado}.csv`);
     link.style.visibility = 'hidden';
     document.body.appendChild(link);
     link.click();
@@ -1304,27 +1329,27 @@ export function Contatos() {
                 {['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'].map((mes, index) => (
                   <button
                     key={mes}
-                    onClick={() => setMesSelecionado(index + 1)}
+                    onClick={() => toggleMesSelecionado(index + 1)}
                     style={{
                       padding: '12px 14px',
                       borderRadius: '10px',
-                      border: mesSelecionado === index + 1 ? 'none' : '1px solid #1e3d54',
-                      background: mesSelecionado === index + 1 ? 'linear-gradient(135deg, #c9943a, #d9a344)' : 'transparent',
-                      color: mesSelecionado === index + 1 ? '#0d1f2d' : '#7a96aa',
+                      border: mesesSelecionados.includes(index + 1) ? 'none' : '1px solid #1e3d54',
+                      background: mesesSelecionados.includes(index + 1) ? 'linear-gradient(135deg, #c9943a, #d9a344)' : 'transparent',
+                      color: mesesSelecionados.includes(index + 1) ? '#0d1f2d' : '#7a96aa',
                       fontSize: '11px',
-                      fontWeight: mesSelecionado === index + 1 ? 700 : 600,
+                      fontWeight: mesesSelecionados.includes(index + 1) ? 700 : 600,
                       cursor: 'pointer',
                       transition: 'all 0.3s ease',
-                      boxShadow: mesSelecionado === index + 1 ? '0 4px 12px rgba(201, 148, 58, 0.2)' : 'none',
+                      boxShadow: mesesSelecionados.includes(index + 1) ? '0 4px 12px rgba(201, 148, 58, 0.2)' : 'none',
                     }}
                     onMouseEnter={(e) => {
-                      if (mesSelecionado !== index + 1) {
+                      if (!mesesSelecionados.includes(index + 1)) {
                         e.currentTarget.style.borderColor = '#c9943a';
                         e.currentTarget.style.color = '#c9943a';
                       }
                     }}
                     onMouseLeave={(e) => {
-                      if (mesSelecionado !== index + 1) {
+                      if (!mesesSelecionados.includes(index + 1)) {
                         e.currentTarget.style.borderColor = '#1e3d54';
                         e.currentTarget.style.color = '#7a96aa';
                       }
@@ -1401,13 +1426,13 @@ export function Contatos() {
               boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
             }}>
               <div style={{ marginBottom: '8px' }}>
-                <span style={{ fontWeight: 600, color: '#c9943a' }}>Período selecionado:</span> {['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'][mesSelecionado - 1]} de {anoSelecionado}
+                <span style={{ fontWeight: 600, color: '#c9943a' }}>Período selecionado:</span> {mesesSelecionados.length === 0 ? 'Nenhum mês selecionado' : mesesSelecionados.map(m => ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'][m - 1]).join(', ')} de {anoSelecionado}
               </div>
               <div>
-                <span style={{ fontWeight: 600, color: '#c9943a' }}>Total de contatos:</span> {contatosList.filter(c => {
+                <span style={{ fontWeight: 600, color: '#c9943a' }}>Total de contatos:</span> {mesesSelecionados.length === 0 ? 0 : contatosList.filter(c => {
                   const [data] = c.ultimaInteracao.split(' ');
                   const [ano, mes] = data.split('-');
-                  return parseInt(mes) === mesSelecionado && parseInt(ano) === anoSelecionado;
+                  return mesesSelecionados.includes(parseInt(mes)) && parseInt(ano) === anoSelecionado;
                 }).length}
               </div>
             </div>
