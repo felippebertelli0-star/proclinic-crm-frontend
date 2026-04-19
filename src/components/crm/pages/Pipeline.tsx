@@ -7,6 +7,7 @@
 
 import { useState } from 'react';
 import PipelineStage from './Pipeline/PipelineStage';
+import PipelineSummary from './Pipeline/PipelineSummary';
 import styles from './Pipeline.module.css';
 
 export function Pipeline() {
@@ -89,6 +90,16 @@ export function Pipeline() {
           </div>
         ))}
       </div>
+
+      {/* RESUMO VISUAL DAS SESSÕES */}
+      <PipelineSummary
+        stages={estagios.map((est) => ({
+          id: est.id,
+          title: est.titulo,
+          color: est.cor,
+          opportunities: est.opportunities,
+        }))}
+      />
 
       {/* AÇÕES */}
       <div className={styles.actionsBar}>
