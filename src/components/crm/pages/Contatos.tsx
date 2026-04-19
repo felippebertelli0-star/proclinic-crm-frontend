@@ -7,8 +7,17 @@
 
 import { useState } from 'react';
 import { Calendar, TrendingUp, Users, BarChart3 } from 'lucide-react';
+import { useEquipeStore } from '@/store/equipeStore';
+import { useOrigensStore } from '@/store/origensStore';
+import { useContatosStore } from '@/store/contatosStore';
 
 export function Contatos() {
+  // ============ STORES GLOBAIS ============
+  const membros = useEquipeStore((state) => state.membros);
+  const origens = useOrigensStore((state) => state.origens);
+  const contatosGlobais = useContatosStore((state) => state.contatos);
+  const addContatoGlobal = useContatosStore((state) => state.addContato);
+
   const [filterCanal, setFilterCanal] = useState('Todos os canais');
   const [filterPipeline, setFilterPipeline] = useState('Todos os pipelines');
   const [searchTerm, setSearchTerm] = useState('');
@@ -120,8 +129,9 @@ export function Contatos() {
       avatarColor: corAleatoria,
     };
 
-    // Adicionar à lista
+    // Adicionar à lista local e ao store global
     setContatosList([novoContato, ...contatosList]);
+    addContatoGlobal(novoContato);
     fecharNovoContatoModal();
   };
 
@@ -857,23 +867,23 @@ export function Contatos() {
           left: 0,
           right: 0,
           bottom: 0,
-          background: 'rgba(0, 0, 0, 0.6)',
+          background: 'rgba(0, 0, 0, 0.65)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           zIndex: 9999,
-          backdropFilter: 'blur(4px)',
+          backdropFilter: 'blur(6px)',
         }}>
           <div style={{
-            background: '#0d1f2d',
-            borderRadius: '12px',
-            border: '1px solid #1e3d54',
+            background: 'linear-gradient(135deg, #1a2332, #132636)',
+            borderRadius: '16px',
+            border: '2px solid #c9943a',
             padding: '32px',
             maxWidth: '600px',
             width: '90%',
             maxHeight: '80vh',
             overflowY: 'auto',
-            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.8)',
+            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(201, 148, 58, 0.15)',
           }}>
             {/* HEADER COM ÍCONE */}
             <div style={{
@@ -896,10 +906,11 @@ export function Contatos() {
                 👤
               </div>
               <h2 style={{
-                fontSize: '20px',
+                fontSize: '22px',
                 fontWeight: 800,
                 margin: '0 0 8px 0',
-                color: '#e8edf2',
+                color: '#c9943a',
+                letterSpacing: '0.5px',
               }}>
                 Novo Contato
               </h2>
@@ -926,17 +937,26 @@ export function Contatos() {
                   onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
                   style={{
                     width: '100%',
-                    padding: '12px 14px',
-                    borderRadius: '8px',
+                    padding: '14px 16px',
+                    borderRadius: '10px',
                     border: '1px solid #1e3d54',
-                    background: '#132636',
+                    background: '#0d1f2d',
                     color: '#e8edf2',
                     fontSize: '13px',
                     boxSizing: 'border-box',
                     fontFamily: 'inherit',
+                    transition: 'all 0.3s ease',
                   }}
-                  onFocus={(e) => e.target.style.borderColor = '#c9943a'}
-                  onBlur={(e) => e.target.style.borderColor = '#1e3d54'}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = '#c9943a';
+                    e.target.style.borderWidth = '2px';
+                    e.target.style.boxShadow = '0 0 12px rgba(201, 148, 58, 0.2)';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = '#1e3d54';
+                    e.target.style.borderWidth = '1px';
+                    e.target.style.boxShadow = 'none';
+                  }}
                 />
               </div>
 
@@ -1033,24 +1053,43 @@ export function Contatos() {
                     onChange={(e) => setFormData({ ...formData, agente: e.target.value })}
                     style={{
                       width: '100%',
-                      padding: '12px 14px',
-                      borderRadius: '8px',
+                      padding: '14px 16px',
+                      borderRadius: '10px',
                       border: '1px solid #1e3d54',
-                      background: '#132636',
+                      background: '#0d1f2d',
                       color: '#e8edf2',
                       fontSize: '13px',
                       boxSizing: 'border-box',
                       fontFamily: 'inherit',
                       cursor: 'pointer',
+                      transition: 'all 0.3s ease',
                     }}
-                    onFocus={(e) => e.target.style.borderColor = '#c9943a'}
-                    onBlur={(e) => e.target.style.borderColor = '#1e3d54'}
+                    onFocus={(e) => {
+                      e.target.style.borderColor = '#c9943a';
+                      e.target.style.borderWidth = '2px';
+                      e.target.style.boxShadow = '0 0 12px rgba(201, 148, 58, 0.2)';
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.borderColor = '#1e3d54';
+                      e.target.style.borderWidth = '1px';
+                      e.target.style.boxShadow = 'none';
+                    }}
                   >
-                    <option>Havila</option>
-                    <option>João</option>
-                    <option>Maria</option>
-                    <option>Pedro</option>
-                    <option>Ana</option>
+                    {membros.length > 0 ? (
+                      membros.map((m) => (
+                        <option key={m.id} value={m.nome}>
+                          {m.nome}
+                        </option>
+                      ))
+                    ) : (
+                      <>
+                        <option>Havila</option>
+                        <option>João</option>
+                        <option>Maria</option>
+                        <option>Pedro</option>
+                        <option>Ana</option>
+                      </>
+                    )}
                   </select>
                 </div>
                 <div>
@@ -1062,23 +1101,42 @@ export function Contatos() {
                     onChange={(e) => setFormData({ ...formData, origem: e.target.value })}
                     style={{
                       width: '100%',
-                      padding: '12px 14px',
-                      borderRadius: '8px',
+                      padding: '14px 16px',
+                      borderRadius: '10px',
                       border: '1px solid #1e3d54',
-                      background: '#132636',
+                      background: '#0d1f2d',
                       color: '#e8edf2',
                       fontSize: '13px',
                       boxSizing: 'border-box',
                       fontFamily: 'inherit',
                       cursor: 'pointer',
+                      transition: 'all 0.3s ease',
                     }}
-                    onFocus={(e) => e.target.style.borderColor = '#c9943a'}
-                    onBlur={(e) => e.target.style.borderColor = '#1e3d54'}
+                    onFocus={(e) => {
+                      e.target.style.borderColor = '#c9943a';
+                      e.target.style.borderWidth = '2px';
+                      e.target.style.boxShadow = '0 0 12px rgba(201, 148, 58, 0.2)';
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.borderColor = '#1e3d54';
+                      e.target.style.borderWidth = '1px';
+                      e.target.style.boxShadow = 'none';
+                    }}
                   >
-                    <option>Tráfego Pago</option>
-                    <option>Orgânico</option>
-                    <option>Indicação</option>
-                    <option>Direto</option>
+                    {origens.length > 0 ? (
+                      origens.map((o) => (
+                        <option key={o} value={o}>
+                          {o}
+                        </option>
+                      ))
+                    ) : (
+                      <>
+                        <option>Tráfego Pago</option>
+                        <option>Orgânico</option>
+                        <option>Indicação</option>
+                        <option>Direto</option>
+                      </>
+                    )}
                   </select>
                 </div>
               </div>
@@ -1148,26 +1206,27 @@ export function Contatos() {
                 onClick={handleSalvarContato}
                 style={{
                   flex: 1,
-                  padding: '12px 16px',
-                  borderRadius: '8px',
+                  padding: '14px 16px',
+                  borderRadius: '10px',
                   border: 'none',
-                  background: 'linear-gradient(135deg, #9b59b6, #8e44ad)',
-                  color: '#ffffff',
+                  background: 'linear-gradient(135deg, #c9943a, #d9a344)',
+                  color: '#0d1f2d',
                   fontSize: '13px',
                   fontWeight: 700,
                   cursor: 'pointer',
-                  transition: 'all 0.2s',
+                  transition: 'all 0.3s ease',
+                  boxShadow: '0 4px 12px rgba(201, 148, 58, 0.3)',
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow = '0 8px 20px rgba(155, 89, 182, 0.4)';
+                  e.currentTarget.style.boxShadow = '0 8px 24px rgba(201, 148, 58, 0.5)';
                   e.currentTarget.style.transform = 'translateY(-2px)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.boxShadow = 'none';
+                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(201, 148, 58, 0.3)';
                   e.currentTarget.style.transform = 'translateY(0)';
                 }}
               >
-                💾 Salvar Contato
+                Salvar Contato
               </button>
             </div>
           </div>

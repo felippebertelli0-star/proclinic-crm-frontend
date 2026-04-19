@@ -1,11 +1,9 @@
 'use client';
+
+import { useEquipeStore } from '@/store/equipeStore';
+
 export function Equipe() {
-  const membros = [
-    { id: 1, nome: 'Hávila Rodrigues', cargo: 'Gerente', status: 'Online', tickets: 87, conversas: 45, tmr: '5 min', avatarColor: '#e91e63' },
-    { id: 2, nome: 'Camilly Nunes', cargo: 'Atendente', status: 'Online', tickets: 34, conversas: 22, tmr: '6 min', avatarColor: '#9c27b0' },
-    { id: 3, nome: 'Fernando Silva', cargo: 'Atendente', status: 'Offline', tickets: 12, conversas: 8, tmr: '8 min', avatarColor: '#3f51b5' },
-    { id: 4, nome: 'Luana Costa', cargo: 'Suporte', status: 'Ausente', tickets: 5, conversas: 3, tmr: '10 min', avatarColor: '#00bcd4' },
-  ];
+  const membros = useEquipeStore((state) => state.membros);
   return (
     <div style={{ padding: '24px', background: '#0d1f2d', minHeight: '100vh', color: '#e8edf2', fontFamily: "'Segoe UI', sans-serif" }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '28px' }}>
