@@ -6,7 +6,7 @@
 'use client';
 
 import { memo } from 'react';
-import { MessageSquare, Edit2, Trash2, Copy } from 'lucide-react';
+import { MessageSquare, Edit, Trash2, Copy } from 'lucide-react';
 import { RespostaRapida } from '@/store/respostasRapidasStore';
 import styles from './RespostaCard.module.css';
 
@@ -52,11 +52,8 @@ const RespostaCard = memo(({ resposta, onEdit, onDelete, onCopy, copied }: Props
 
       {/* Footer */}
       <div className={styles.footer}>
-        <div className={styles.metadata}>
-          <span className={styles.categoria} style={{ borderColor: corCategoria, color: corCategoria }}>
-            {resposta.categoria}
-          </span>
-          <span className={styles.usos}>{resposta.usos} usos</span>
+        <div className={styles.categoria} style={{ borderColor: corCategoria, color: corCategoria }}>
+          {resposta.categoria}
         </div>
 
         <div className={styles.actions}>
@@ -78,7 +75,7 @@ const RespostaCard = memo(({ resposta, onEdit, onDelete, onCopy, copied }: Props
             title="Editar resposta"
             aria-label="Editar resposta"
           >
-            <Edit2 size={16} />
+            <Edit size={16} />
           </button>
           <button
             className={styles.btnAction}
@@ -89,6 +86,8 @@ const RespostaCard = memo(({ resposta, onEdit, onDelete, onCopy, copied }: Props
             <Trash2 size={16} />
           </button>
         </div>
+
+        <span className={styles.usos}>{resposta.usos} usos</span>
       </div>
     </div>
   );

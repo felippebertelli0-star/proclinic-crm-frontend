@@ -6,7 +6,7 @@
 'use client';
 
 import { memo, useState, useEffect } from 'react';
-import { X, MessageSquare } from 'lucide-react';
+import { X, MessageCircle } from 'lucide-react';
 import { useRespostasRapidasStore, RespostaRapida } from '@/store/respostasRapidasStore';
 import styles from './CreateRespostaModal.module.css';
 
@@ -88,7 +88,7 @@ const CreateRespostaModal = memo(({ onClose, respostaParaEditar, isOpen }: Props
         <div className={styles.header}>
           <div className={styles.headerContent}>
             <div className={styles.iconWrapper}>
-              <MessageSquare size={24} color="#0d1f2d" />
+              <MessageCircle size={24} color="#0d1f2d" />
             </div>
             <div>
               <h3 className={styles.title}>
