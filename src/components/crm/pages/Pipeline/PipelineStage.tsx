@@ -27,7 +27,7 @@ const PipelineStageComponent = memo(({ title, color, opportunities, count }: Pro
   return (
     <div className={styles.coluna}>
       {/* HEADER */}
-      <div className={styles.header} style={{ background: color }}>
+      <div className={styles.header} style={{ borderTopColor: color }}>
         <span className={styles.titulo}>{title}</span>
         <span className={styles.count}>({count})</span>
       </div>
