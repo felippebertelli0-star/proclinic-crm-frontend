@@ -6,6 +6,7 @@
 'use client';
 
 import { useState } from 'react';
+import { TrendingUp, CheckCircle, Percent, DollarSign } from 'lucide-react';
 import PipelineStage from './Pipeline/PipelineStage';
 import PipelineSummary from './Pipeline/PipelineSummary';
 import styles from './Pipeline.module.css';
@@ -77,12 +78,17 @@ export function Pipeline() {
       {/* RESUMO CARDS */}
       <div className={styles.summaryGrid}>
         {[
-          { label: `R$ ${(totalValor / 1000).toFixed(1)}k`, value: 'Total no Funil', color: '#c9943a' },
-          { label: convertidas, value: 'Convertidas', color: '#2ecc71' },
-          { label: `${taxaConversao}%`, value: 'Taxa de Conversão', color: '#3498db' },
-          { label: `R$ ${ticketMedio}`, value: 'Ticket Médio', color: '#f39c12' },
+          { label: `R$ ${(totalValor / 1000).toFixed(1)}k`, value: 'Total no Funil', color: '#c9943a', icon: <TrendingUp size={18} /> },
+          { label: convertidas, value: 'Convertidas', color: '#2ecc71', icon: <CheckCircle size={18} /> },
+          { label: `${taxaConversao}%`, value: 'Taxa de Conversão', color: '#3498db', icon: <Percent size={18} /> },
+          { label: `R$ ${ticketMedio}`, value: 'Ticket Médio', color: '#f39c12', icon: <DollarSign size={18} /> },
         ].map((card, idx) => (
           <div key={idx} className={styles.summaryCard}>
+            <div className={styles.summaryHeader}>
+              <div className={styles.summaryIcon} style={{ color: card.color }}>
+                {card.icon}
+              </div>
+            </div>
             <div className={styles.summaryValue} style={{ color: card.color }}>
               {card.label}
             </div>
