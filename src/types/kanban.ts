@@ -25,10 +25,14 @@ export interface KanbanColuna {
 }
 
 export interface Membro {
-  id: string;
+  id: number;
   nome: string;
-  email: string;
-  avatar?: string;
+  cargo: string;
+  status: 'Online' | 'Offline' | 'Ausente';
+  tickets: number;
+  conversas: number;
+  tmr: string;
+  avatarColor: string;
 }
 
 export interface KanbanState {

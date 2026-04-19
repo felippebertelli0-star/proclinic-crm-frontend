@@ -1,7 +1,8 @@
 /**
  * Kanban - Componente Principal
- * Sistema completo de Kanban com drag-and-drop, filtros e modal
+ * Sistema completo de Kanban com drag-and-drop, filtros de membros e modal
  * Premium AAA - Production Ready
+ * Filas Dinâmicas - Baseado em sistema de filas (queues)
  */
 
 'use client';
@@ -10,15 +11,17 @@ import { useEffect, useCallback, useMemo } from 'react';
 import { DragDropContext, DropResult } from '@hello-pangea/dnd';
 import { useKanbanStore } from '@/store/kanbanStore';
 import { useEquipeStore } from '@/store/equipeStore';
+import { useFilasStore } from '@/store/filasStore';
 import { KanbanCard as IKanbanCard, KanbanColuna } from '@/types/kanban';
 import KanbanSummary from './KanbanSummary';
-import KanbanFilters from './KanbanFilters';
+import KanbanMemberFilter from './KanbanMemberFilter';
 import KanbanColumn from './KanbanColumn';
 import KanbanModal from './KanbanModal';
 import styles from './index.module.css';
 
-// Mock data - Em produção, vir da API
-const MOCK_COLUNAS: KanbanColuna[] = [
+// Mock data temporário (em produção, vir da API via filasStore)
+// Este mock será substituído por dados reais da API
+const MOCK_COLUNAS_TEMP: KanbanColuna[] = [
   {
     id: 'comercial',
     titulo: 'Comercial',
@@ -119,14 +122,10 @@ const MOCK_COLUNAS: KanbanColuna[] = [
 export function Kanban() {
   const {
     colunas,
-    filterAgente,
-    filterPrioridade,
     selectedMembro,
     modalEspiarVisivel,
     conversaSelecionada,
     setColunas,
-    setFilterAgente,
-    setFilterPrioridade,
     setSelectedMembro,
     setModalEspiarVisivel,
     setConversaSelecionada,
@@ -135,11 +134,12 @@ export function Kanban() {
   } = useKanbanStore();
 
   const membros = useEquipeStore((state) => state.membros);
+  const { filas } = useFilasStore();
 
-  // Inicializar dados
+  // Inicializar dados com mock (em produção, carregará de API)
   useEffect(() => {
     if (colunas.length === 0) {
-      setColunas(MOCK_COLUNAS);
+      setColunas(MOCK_COLUNAS_TEMP);
     }
   }, [colunas.length, setColunas]);
 
@@ -180,29 +180,21 @@ export function Kanban() {
     setConversaSelecionada(null);
   }, [setModalEspiarVisivel, setConversaSelecionada]);
 
-  // Obter lista de agentes únicos
-  const agentes = useMemo(() => {
-    const uniqueAgentes = new Set<string>();
-    colunas.forEach((col) => {
-      col.cards.forEach((card) => {
-        if (card.agente) uniqueAgentes.add(card.agente);
-      });
-    });
-    return Array.from(uniqueAgentes).sort();
-  }, [colunas]);
+  // Handler para selecionar membro
+  const handleSelectMembro = useCallback((membro: string | null) => {
+    setSelectedMembro(membro);
+  }, [setSelectedMembro]);
 
   return (
     <div className={styles.container}>
       {/* Summary */}
       <KanbanSummary colunas={colunas} />
 
-      {/* Filters */}
-      <KanbanFilters
-        filterAgente={filterAgente}
-        filterPrioridade={filterPrioridade}
-        agentes={agentes}
-        onFilterAgente={setFilterAgente}
-        onFilterPrioridade={setFilterPrioridade}
+      {/* Member Filter */}
+      <KanbanMemberFilter
+        membros={membros}
+        selectedMembro={selectedMembro}
+        onSelectMembro={handleSelectMembro}
       />
 
       {/* Kanban Board */}
@@ -212,8 +204,6 @@ export function Kanban() {
             <KanbanColumn
               key={coluna.id}
               coluna={coluna}
-              filterAgente={filterAgente}
-              filterPrioridade={filterPrioridade}
               selectedMembro={selectedMembro}
               onEspiar={handleEspiarCard}
               onAbrir={handleAbrirCard}

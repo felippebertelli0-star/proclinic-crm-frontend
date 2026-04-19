@@ -16,8 +16,6 @@ import styles from './KanbanColumn.module.css';
 
 interface Props {
   coluna: KanbanColuna;
-  filterAgente: string;
-  filterPrioridade: string;
   selectedMembro: string | null;
   onEspiar: (card: IKanbanCard) => void;
   onAbrir: (card: IKanbanCard) => void;
@@ -26,8 +24,6 @@ interface Props {
 
 const KanbanColumnComponent = memo(({
   coluna,
-  filterAgente,
-  filterPrioridade,
   selectedMembro,
   onEspiar,
   onAbrir,
@@ -38,14 +34,13 @@ const KanbanColumnComponent = memo(({
   const isExpanded = expandedColumns[coluna.id] ?? true;
 
   // Memoized filter para performance
+  // Filtra cards apenas por membro selecionado
   const cardsFiltrados = useMemo(() => {
     return coluna.cards.filter((card) => {
-      const matchAgente = filterAgente === 'Todos' || card.agente === filterAgente;
-      const matchPrioridade = filterPrioridade === 'Todas' || card.prioridade === filterPrioridade;
       const matchMembro = selectedMembro === null || card.agente === selectedMembro;
-      return matchAgente && matchPrioridade && matchMembro;
+      return matchMembro;
     });
-  }, [coluna.cards, filterAgente, filterPrioridade, selectedMembro]);
+  }, [coluna.cards, selectedMembro]);
 
   const handleToggleColuna = () => {
     toggleColuna(coluna.id);
