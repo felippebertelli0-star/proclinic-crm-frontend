@@ -5,7 +5,7 @@
   min-width: 220px;
   max-width: 250px;
   border-radius: 0;
-  overflow: hidden;
+  overflow: visible;
   background: #132636;
   box-shadow: none;
   transition: all 0.15s ease-out;
