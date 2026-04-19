@@ -6,10 +6,12 @@
 'use client';
 
 import { useState } from 'react';
-import { Calendar, TrendingUp, Users, BarChart3, Phone, FileUp, Download } from 'lucide-react';
+import { Calendar, TrendingUp, Users, BarChart3, Phone, FileUp, Download, Eye, Pencil, Trash2 } from 'lucide-react';
 import { useEquipeStore } from '@/store/equipeStore';
 import { useOrigensStore } from '@/store/origensStore';
 import { useContatosStore } from '@/store/contatosStore';
+import { useAuthStore } from '@/store/authStore';
+import { mockFilas, mockConexoes } from '@/lib/mockData';
 
 export function Contatos() {
   // ============ STORES GLOBAIS ============
@@ -17,6 +19,9 @@ export function Contatos() {
   const origens = useOrigensStore((state) => state.origens);
   const contatosGlobais = useContatosStore((state) => state.contatos);
   const addContatoGlobal = useContatosStore((state) => state.addContato);
+  const updateContatoGlobal = useContatosStore((state) => state.updateContato);
+  const removeContatoGlobal = useContatosStore((state) => state.removeContato);
+  const usuarioLogado = useAuthStore((state) => state.usuario);
 
   const [filterCanal, setFilterCanal] = useState('Todos os canais');
   const [filterPipeline, setFilterPipeline] = useState('Todos os pipelines');
@@ -39,6 +44,22 @@ export function Contatos() {
   const [exportarModalVisible, setExportarModalVisible] = useState(false);
   const [mesesSelecionados, setMesesSelecionados] = useState<number[]>([]);
   const [anoSelecionado, setAnoSelecionado] = useState(new Date().getFullYear());
+
+  // ============ STATES PARA MODAIS DE AÇÕES ============
+  const [abrirTicketModalVisible, setAbrirTicketModalVisible] = useState(false);
+  const [editarContatoModalVisible, setEditarContatoModalVisible] = useState(false);
+  const [excluirContatoModalVisible, setExcluirContatoModalVisible] = useState(false);
+  const [contatoSelecionado, setContatoSelecionado] = useState<any>(null);
+  const [filaSelecionada, setFilaSelecionada] = useState('');
+  const [conexaoSelecionada, setConexaoSelecionada] = useState('');
+  const [formEditacao, setFormEditacao] = useState({
+    nome: '',
+    whatsapp: '',
+    email: '',
+    tipo: '',
+    conexao: '',
+    agenteResponsavel: '',
+  });
 
   // ============ FUNÇÃO PARA TOGGLE DE MESES ============
   const toggleMesSelecionado = (mesIndex: number) => {
@@ -792,7 +813,15 @@ export function Contatos() {
                 </td>
                 <td style={{ padding: '12px 16px', textAlign: 'center' }}>
                   <div style={{ display: 'flex', gap: '6px', justifyContent: 'center' }}>
+                    {/* Botão Abrir Ticket */}
                     <button
+                      title="Abrir ticket"
+                      onClick={() => {
+                        setContatoSelecionado(contato);
+                        setFilaSelecionada('');
+                        setConexaoSelecionada('');
+                        setAbrirTicketModalVisible(true);
+                      }}
                       onMouseEnter={(e) => {
                         e.currentTarget.style.color = '#00d4ff';
                         e.currentTarget.style.borderColor = '#00d4ff';
@@ -819,7 +848,21 @@ export function Contatos() {
                         <line x1="9" y1="14" x2="13" y2="14" />
                       </svg>
                     </button>
+                    {/* Botão Editar */}
                     <button
+                      title="Editar"
+                      onClick={() => {
+                        setContatoSelecionado(contato);
+                        setFormEditacao({
+                          nome: contato.nome,
+                          whatsapp: contato.whatsapp,
+                          email: contato.email,
+                          tipo: contato.badge,
+                          conexao: '',
+                          agenteResponsavel: '',
+                        });
+                        setEditarContatoModalVisible(true);
+                      }}
                       onMouseEnter={(e) => {
                         e.currentTarget.style.color = '#00d4ff';
                         e.currentTarget.style.borderColor = '#00d4ff';
@@ -845,7 +888,13 @@ export function Contatos() {
                         <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                       </svg>
                     </button>
+                    {/* Botão Excluir */}
                     <button
+                      title="Excluir contato"
+                      onClick={() => {
+                        setContatoSelecionado(contato);
+                        setExcluirContatoModalVisible(true);
+                      }}
                       onMouseEnter={(e) => {
                         e.currentTarget.style.color = '#00d4ff';
                         e.currentTarget.style.borderColor = '#00d4ff';
@@ -1499,6 +1548,397 @@ export function Contatos() {
                 }}
               >
                 <Download size={16} /> Exportar Excel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ============ MODAL ABRIR TICKET ============ */}
+      {abrirTicketModalVisible && contatoSelecionado && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0, 0, 0, 0.5)',
+          backdropFilter: 'blur(4px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000,
+        }}>
+          <div style={{
+            background: 'linear-gradient(135deg, #1a2332, #132636)',
+            border: '1px solid #1e3d54',
+            borderRadius: '12px',
+            padding: '28px',
+            minWidth: '420px',
+            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.4)',
+          }}>
+            <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#e8edf2', margin: '0 0 24px 0' }}>
+              Abrir Ticket - {contatoSelecionado.nome}
+            </h2>
+
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ display: 'block', fontSize: '12px', color: '#c9943a', fontWeight: 600, marginBottom: '8px' }}>
+                Fila
+              </label>
+              <select
+                value={filaSelecionada}
+                onChange={(e) => setFilaSelecionada(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '10px 12px',
+                  background: '#0d1f2d',
+                  border: '1px solid #1e3d54',
+                  borderRadius: '8px',
+                  color: '#e8edf2',
+                  fontSize: '13px',
+                  cursor: 'pointer',
+                }}>
+                <option value="">Selecione uma fila...</option>
+                {mockFilas.map((fila) => (
+                  <option key={fila.id} value={fila.id}>
+                    {fila.nome}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div style={{ marginBottom: '24px' }}>
+              <label style={{ display: 'block', fontSize: '12px', color: '#c9943a', fontWeight: 600, marginBottom: '8px' }}>
+                Conexão Ativa
+              </label>
+              <select
+                value={conexaoSelecionada}
+                onChange={(e) => setConexaoSelecionada(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '10px 12px',
+                  background: '#0d1f2d',
+                  border: '1px solid #1e3d54',
+                  borderRadius: '8px',
+                  color: '#e8edf2',
+                  fontSize: '13px',
+                  cursor: 'pointer',
+                }}>
+                <option value="">Selecione uma conexão...</option>
+                {mockConexoes.filter((c) => c.status === 'conectado').map((conexao) => (
+                  <option key={conexao.id} value={conexao.id}>
+                    {conexao.nome}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button
+                onClick={() => setAbrirTicketModalVisible(false)}
+                style={{
+                  flex: 1,
+                  padding: '12px 16px',
+                  borderRadius: '8px',
+                  border: '1px solid #1e3d54',
+                  background: 'transparent',
+                  color: '#7a96aa',
+                  fontSize: '13px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                }}>
+                Cancelar
+              </button>
+              <button
+                onClick={() => {
+                  if (filaSelecionada && conexaoSelecionada) {
+                    // Aqui seria criada a conversa e atribuída ao usuário logado
+                    // Por enquanto, apenas fecha o modal
+                    alert(`Ticket aberto para ${contatoSelecionado.nome} na fila selecionada!`);
+                    setAbrirTicketModalVisible(false);
+                  }
+                }}
+                disabled={!filaSelecionada || !conexaoSelecionada}
+                style={{
+                  flex: 1,
+                  padding: '12px 16px',
+                  borderRadius: '8px',
+                  border: 'none',
+                  background: filaSelecionada && conexaoSelecionada ? 'linear-gradient(135deg, #c9943a, #d9a344)' : '#333',
+                  color: filaSelecionada && conexaoSelecionada ? '#0d1f2d' : '#666',
+                  fontSize: '13px',
+                  fontWeight: 600,
+                  cursor: filaSelecionada && conexaoSelecionada ? 'pointer' : 'not-allowed',
+                  boxShadow: filaSelecionada && conexaoSelecionada ? '0 4px 12px rgba(201, 148, 58, 0.3)' : 'none',
+                }}>
+                Iniciar Atendimento
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ============ MODAL EDITAR CONTATO ============ */}
+      {editarContatoModalVisible && contatoSelecionado && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0, 0, 0, 0.5)',
+          backdropFilter: 'blur(4px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000,
+        }}>
+          <div style={{
+            background: 'linear-gradient(135deg, #1a2332, #132636)',
+            border: '1px solid #1e3d54',
+            borderRadius: '12px',
+            padding: '28px',
+            minWidth: '420px',
+            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.4)',
+          }}>
+            <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#e8edf2', margin: '0 0 24px 0' }}>
+              Editar Contato
+            </h2>
+
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ display: 'block', fontSize: '12px', color: '#c9943a', fontWeight: 600, marginBottom: '6px' }}>
+                Nome
+              </label>
+              <input
+                type="text"
+                value={formEditacao.nome}
+                onChange={(e) => setFormEditacao({ ...formEditacao, nome: e.target.value })}
+                style={{
+                  width: '100%',
+                  padding: '10px 12px',
+                  background: '#0d1f2d',
+                  border: '1px solid #1e3d54',
+                  borderRadius: '8px',
+                  color: '#e8edf2',
+                  fontSize: '13px',
+                  boxSizing: 'border-box',
+                }}
+              />
+            </div>
+
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ display: 'block', fontSize: '12px', color: '#c9943a', fontWeight: 600, marginBottom: '6px' }}>
+                WhatsApp
+              </label>
+              <input
+                type="text"
+                value={formEditacao.whatsapp}
+                onChange={(e) => setFormEditacao({ ...formEditacao, whatsapp: e.target.value })}
+                style={{
+                  width: '100%',
+                  padding: '10px 12px',
+                  background: '#0d1f2d',
+                  border: '1px solid #1e3d54',
+                  borderRadius: '8px',
+                  color: '#e8edf2',
+                  fontSize: '13px',
+                  boxSizing: 'border-box',
+                }}
+              />
+            </div>
+
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ display: 'block', fontSize: '12px', color: '#c9943a', fontWeight: 600, marginBottom: '6px' }}>
+                Email
+              </label>
+              <input
+                type="email"
+                value={formEditacao.email}
+                onChange={(e) => setFormEditacao({ ...formEditacao, email: e.target.value })}
+                style={{
+                  width: '100%',
+                  padding: '10px 12px',
+                  background: '#0d1f2d',
+                  border: '1px solid #1e3d54',
+                  borderRadius: '8px',
+                  color: '#e8edf2',
+                  fontSize: '13px',
+                  boxSizing: 'border-box',
+                }}
+              />
+            </div>
+
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ display: 'block', fontSize: '12px', color: '#c9943a', fontWeight: 600, marginBottom: '8px' }}>
+                Conexões
+              </label>
+              <select
+                value={formEditacao.conexao}
+                onChange={(e) => setFormEditacao({ ...formEditacao, conexao: e.target.value })}
+                style={{
+                  width: '100%',
+                  padding: '10px 12px',
+                  background: '#0d1f2d',
+                  border: '1px solid #1e3d54',
+                  borderRadius: '8px',
+                  color: '#e8edf2',
+                  fontSize: '13px',
+                  cursor: 'pointer',
+                }}>
+                <option value="">Selecione uma conexão...</option>
+                {mockConexoes.map((conexao) => (
+                  <option key={conexao.id} value={conexao.id}>
+                    {conexao.nome}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div style={{ marginBottom: '24px' }}>
+              <label style={{ display: 'block', fontSize: '12px', color: '#c9943a', fontWeight: 600, marginBottom: '8px' }}>
+                Agente Responsável
+              </label>
+              <select
+                value={formEditacao.agenteResponsavel}
+                onChange={(e) => setFormEditacao({ ...formEditacao, agenteResponsavel: e.target.value })}
+                style={{
+                  width: '100%',
+                  padding: '10px 12px',
+                  background: '#0d1f2d',
+                  border: '1px solid #1e3d54',
+                  borderRadius: '8px',
+                  color: '#e8edf2',
+                  fontSize: '13px',
+                  cursor: 'pointer',
+                }}>
+                <option value="">Selecione um agente...</option>
+                {membros && membros.map((membro: any) => (
+                  <option key={membro.id} value={membro.id}>
+                    {membro.nome}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button
+                onClick={() => setEditarContatoModalVisible(false)}
+                style={{
+                  flex: 1,
+                  padding: '12px 16px',
+                  borderRadius: '8px',
+                  border: '1px solid #1e3d54',
+                  background: 'transparent',
+                  color: '#7a96aa',
+                  fontSize: '13px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                }}>
+                Cancelar
+              </button>
+              <button
+                onClick={() => {
+                  if (!formEditacao.nome.trim()) {
+                    alert('Nome é obrigatório');
+                    return;
+                  }
+                  updateContatoGlobal(contatoSelecionado.id, {
+                    nome: formEditacao.nome,
+                    whatsapp: formEditacao.whatsapp,
+                    email: formEditacao.email,
+                  });
+                  setEditarContatoModalVisible(false);
+                  // Atualizar lista local também
+                  setContatosList(contatosList.map(c =>
+                    c.id === contatoSelecionado.id
+                      ? { ...c, ...formEditacao }
+                      : c
+                  ));
+                }}
+                style={{
+                  flex: 1,
+                  padding: '12px 16px',
+                  borderRadius: '8px',
+                  border: 'none',
+                  background: 'linear-gradient(135deg, #c9943a, #d9a344)',
+                  color: '#0d1f2d',
+                  fontSize: '13px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 12px rgba(201, 148, 58, 0.3)',
+                }}>
+                Salvar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ============ MODAL EXCLUIR CONTATO ============ */}
+      {excluirContatoModalVisible && contatoSelecionado && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0, 0, 0, 0.5)',
+          backdropFilter: 'blur(4px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000,
+        }}>
+          <div style={{
+            background: 'linear-gradient(135deg, #1a2332, #132636)',
+            border: '1px solid #1e3d54',
+            borderRadius: '12px',
+            padding: '28px',
+            minWidth: '380px',
+            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.4)',
+          }}>
+            <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#e8edf2', margin: '0 0 12px 0' }}>
+              Excluir Contato
+            </h2>
+            <p style={{ fontSize: '14px', color: '#7a96aa', margin: '0 0 24px 0' }}>
+              Tem certeza que deseja excluir o contato <strong style={{ color: '#c9943a' }}>{contatoSelecionado.nome}</strong>? Esta ação é irreversível.
+            </p>
+
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button
+                onClick={() => setExcluirContatoModalVisible(false)}
+                style={{
+                  flex: 1,
+                  padding: '12px 16px',
+                  borderRadius: '8px',
+                  border: '1px solid #1e3d54',
+                  background: 'transparent',
+                  color: '#7a96aa',
+                  fontSize: '13px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                }}>
+                Cancelar
+              </button>
+              <button
+                onClick={() => {
+                  removeContatoGlobal(contatoSelecionado.id);
+                  setContatosList(contatosList.filter(c => c.id !== contatoSelecionado.id));
+                  setExcluirContatoModalVisible(false);
+                }}
+                style={{
+                  flex: 1,
+                  padding: '12px 16px',
+                  borderRadius: '8px',
+                  border: 'none',
+                  background: '#ef5350',
+                  color: '#fff',
+                  fontSize: '13px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 12px rgba(239, 83, 80, 0.3)',
+                }}>
+                Excluir
               </button>
             </div>
           </div>
