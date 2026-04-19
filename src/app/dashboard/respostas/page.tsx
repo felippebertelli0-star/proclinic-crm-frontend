@@ -7,7 +7,7 @@
 'use client';
 
 import { useState, useMemo, useCallback } from 'react';
-import { Plus } from 'lucide-react';
+import { Plus, MessageSquare } from 'lucide-react';
 import { useRespostasRapidasStore, RespostaRapida } from '@/store/respostasRapidasStore';
 import RespostaCard from '@/components/respostas/RespostaCard';
 import CreateRespostaModal from '@/components/respostas/CreateRespostaModal';
@@ -152,7 +152,9 @@ export default function RespostasPage() {
         </div>
       ) : (
         <div className={styles.emptyState}>
-          <div className={styles.emptyIcon}>💬</div>
+          <div className={styles.emptyIcon}>
+            <MessageSquare size={48} color="#7a96aa" />
+          </div>
           <h3 className={styles.emptyTitle}>Nenhuma resposta encontrada</h3>
           <p className={styles.emptyText}>Crie suas primeiras respostas rápidas</p>
         </div>
