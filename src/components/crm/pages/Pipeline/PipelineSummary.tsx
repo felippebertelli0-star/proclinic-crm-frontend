@@ -60,7 +60,17 @@ const PipelineSummaryComponent = memo(({ stages }: Props) => {
 
             <div className={styles.content}>
               <div className={styles.count}>{stage.opportunities.length}</div>
-              <div className={styles.percentual} style={{ color: stage.color }}>
+              <div className={styles.progressBar}>
+                <div
+                  className={styles.progressFill}
+                  style={{
+                    width: `${percentual}%`,
+                    backgroundColor: stage.color,
+                    boxShadow: `0 0 8px ${stage.color}60`
+                  }}
+                />
+              </div>
+              <div className={styles.percentualText} style={{ color: stage.color }}>
                 {percentual}% do total
               </div>
             </div>
