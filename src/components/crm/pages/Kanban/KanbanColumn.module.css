@@ -9,6 +9,9 @@
   background: #132636;
   box-shadow: none;
   transition: all 0.15s ease-out;
+  margin-right: -3px;
+  position: relative;
+  z-index: 1;
 }
 
 .header {
