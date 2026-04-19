@@ -88,9 +88,9 @@ export function Pipeline() {
               <div className={styles.summaryIcon} style={{ color: card.color }}>
                 {card.icon}
               </div>
-            </div>
-            <div className={styles.summaryValue} style={{ color: card.color }}>
-              {card.label}
+              <div className={styles.summaryValue} style={{ color: card.color }}>
+                {card.label}
+              </div>
             </div>
             <div className={styles.summaryLabel}>{card.value}</div>
           </div>
