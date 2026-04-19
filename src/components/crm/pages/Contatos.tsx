@@ -13,6 +13,18 @@ export function Contatos() {
   const [filterPipeline, setFilterPipeline] = useState('Todos os pipelines');
   const [searchTerm, setSearchTerm] = useState('');
 
+  // ============ STATES PARA NOVO CONTATO MODAL ============
+  const [novoContatoModalVisible, setNovoContatoModalVisible] = useState(false);
+  const [formData, setFormData] = useState({
+    nome: '',
+    telefone: '',
+    email: '',
+    canal: 'WhatsApp',
+    agente: 'Havila',
+    origem: 'Tráfego Pago',
+    observacoes: '',
+  });
+
   // Mock data de resumo
   const resumo = [
     { label: 'Hoje', value: 5, color: '#c9943a', isTotal: false },
@@ -37,8 +49,8 @@ export function Contatos() {
     }
   };
 
-  // Mock data de contatos com badges e cores de avatar
-  const contatos = [
+  // Mock data inicial de contatos com badges e cores de avatar
+  const contatosInicial = [
     { id: 1, nome: 'Ida Santos', whatsapp: '(11) 99999-0001', email: 'ida@email.com', ultimaInteracao: '2026-04-18 10:30', status: 'Ativo', badge: 'Trabalho Pago', badgeColor: '#ef5350', avatarColor: '#e91e63' },
     { id: 2, nome: 'Daniele Mantovani', whatsapp: '(11) 99999-0002', email: 'daniele@email.com', ultimaInteracao: '2026-04-16 15:45', status: 'Ativo', badge: 'Orgânico', badgeColor: '#66bb6a', avatarColor: '#9c27b0' },
     { id: 3, nome: 'Maria Rosa', whatsapp: '(11) 99999-0003', email: 'maria@email.com', ultimaInteracao: '2026-04-15 09:20', status: 'Ativo', badge: 'Trabalho Pago', badgeColor: '#ef5350', avatarColor: '#673ab7' },
@@ -49,8 +61,66 @@ export function Contatos() {
     { id: 8, nome: 'Carlota Mendes', whatsapp: '(11) 99999-0008', email: 'carlota@email.com', ultimaInteracao: '2026-04-10 10:45', status: 'Ativo', badge: 'Orgânico', badgeColor: '#66bb6a', avatarColor: '#4caf50' },
   ];
 
+  const [contatosList, setContatosList] = useState(contatosInicial);
+
+  // ============ FUNÇÕES PARA NOVO CONTATO ============
+  const abrirNovoContatoModal = () => {
+    setFormData({
+      nome: '',
+      telefone: '',
+      email: '',
+      canal: 'WhatsApp',
+      agente: 'Havila',
+      origem: 'Tráfego Pago',
+      observacoes: '',
+    });
+    setNovoContatoModalVisible(true);
+  };
+
+  const fecharNovoContatoModal = () => {
+    setNovoContatoModalVisible(false);
+  };
+
+  const handleSalvarContato = () => {
+    // Validar campos obrigatórios
+    if (!formData.nome.trim()) {
+      alert('Por favor, preencha o nome do contato');
+      return;
+    }
+    if (!formData.email.trim()) {
+      alert('Por favor, preencha o email do contato');
+      return;
+    }
+
+    // Gerar ID único
+    const novoId = Math.max(...contatosList.map(c => c.id), 0) + 1;
+    const hoje = new Date();
+    const hojeFormatado = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}-${String(hoje.getDate()).padStart(2, '0')} ${String(hoje.getHours()).padStart(2, '0')}:${String(hoje.getMinutes()).padStart(2, '0')}`;
+
+    // Cores aleatórias para o avatar
+    const cores = ['#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#00bcd4', '#009688', '#4caf50', '#8bc34a', '#cddc39'];
+    const corAleatoria = cores[Math.floor(Math.random() * cores.length)];
+
+    // Criar novo contato
+    const novoContato = {
+      id: novoId,
+      nome: formData.nome,
+      whatsapp: formData.telefone || '(--) -----',
+      email: formData.email,
+      ultimaInteracao: hojeFormatado,
+      status: 'Ativo',
+      badge: formData.origem,
+      badgeColor: formData.origem === 'Tráfego Pago' ? '#ef5350' : '#66bb6a',
+      avatarColor: corAleatoria,
+    };
+
+    // Adicionar à lista
+    setContatosList([novoContato, ...contatosList]);
+    fecharNovoContatoModal();
+  };
+
   // Filtrar contatos
-  const contatosFiltrados = contatos.filter((c) => {
+  const contatosFiltrados = contatosList.filter((c) => {
     const matchSearch = c.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
                        c.whatsapp.includes(searchTerm) ||
                        c.email.toLowerCase().includes(searchTerm.toLowerCase());
@@ -92,6 +162,7 @@ export function Contatos() {
           </button>
           {/* BOTÃO ADICIONAR */}
           <button
+            onClick={abrirNovoContatoModal}
             style={{
               padding: '10px 16px',
               borderRadius: '8px',
@@ -505,6 +576,331 @@ export function Contatos() {
         }}>
           <div style={{ fontSize: '14px', marginBottom: '8px' }}>Nenhum contato encontrado</div>
           <div style={{ fontSize: '12px' }}>Tente ajustar os filtros ou criar um novo contato</div>
+        </div>
+      )}
+
+      {/* MODAL NOVO CONTATO */}
+      {novoContatoModalVisible && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0, 0, 0, 0.6)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 9999,
+          backdropFilter: 'blur(4px)',
+        }}>
+          <div style={{
+            background: '#0d1f2d',
+            borderRadius: '12px',
+            border: '1px solid #1e3d54',
+            padding: '32px',
+            maxWidth: '600px',
+            width: '90%',
+            maxHeight: '80vh',
+            overflowY: 'auto',
+            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.8)',
+          }}>
+            {/* HEADER COM ÍCONE */}
+            <div style={{
+              textAlign: 'center',
+              marginBottom: '32px',
+              paddingBottom: '16px',
+              borderBottom: '1px solid #1e3d54',
+            }}>
+              <div style={{
+                width: '64px',
+                height: '64px',
+                borderRadius: '50%',
+                background: 'linear-gradient(135deg, #9b59b6, #8e44ad)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                margin: '0 auto 16px',
+                fontSize: '32px',
+              }}>
+                👤
+              </div>
+              <h2 style={{
+                fontSize: '20px',
+                fontWeight: 800,
+                margin: '0 0 8px 0',
+                color: '#e8edf2',
+              }}>
+                Novo Contato
+              </h2>
+              <p style={{
+                fontSize: '13px',
+                color: '#7a96aa',
+                margin: 0,
+              }}>
+                Preencha os dados do contato
+              </p>
+            </div>
+
+            {/* FORMULÁRIO */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '16px' }}>
+              {/* NOME */}
+              <div>
+                <label style={{ fontSize: '11px', fontWeight: 700, color: '#7a96aa', display: 'block', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  Nome *
+                </label>
+                <input
+                  type="text"
+                  placeholder="Nome completo"
+                  value={formData.nome}
+                  onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
+                  style={{
+                    width: '100%',
+                    padding: '12px 14px',
+                    borderRadius: '8px',
+                    border: '1px solid #1e3d54',
+                    background: '#132636',
+                    color: '#e8edf2',
+                    fontSize: '13px',
+                    boxSizing: 'border-box',
+                    fontFamily: 'inherit',
+                  }}
+                  onFocus={(e) => e.target.style.borderColor = '#c9943a'}
+                  onBlur={(e) => e.target.style.borderColor = '#1e3d54'}
+                />
+              </div>
+
+              {/* TELEFONE E CANAL */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <div>
+                  <label style={{ fontSize: '11px', fontWeight: 700, color: '#7a96aa', display: 'block', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    Telefone / Handle
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="(11) 99999-9999"
+                    value={formData.telefone}
+                    onChange={(e) => setFormData({ ...formData, telefone: e.target.value })}
+                    style={{
+                      width: '100%',
+                      padding: '12px 14px',
+                      borderRadius: '8px',
+                      border: '1px solid #1e3d54',
+                      background: '#132636',
+                      color: '#e8edf2',
+                      fontSize: '13px',
+                      boxSizing: 'border-box',
+                      fontFamily: 'inherit',
+                    }}
+                    onFocus={(e) => e.target.style.borderColor = '#c9943a'}
+                    onBlur={(e) => e.target.style.borderColor = '#1e3d54'}
+                  />
+                </div>
+                <div>
+                  <label style={{ fontSize: '11px', fontWeight: 700, color: '#7a96aa', display: 'block', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    Canal
+                  </label>
+                  <select
+                    value={formData.canal}
+                    onChange={(e) => setFormData({ ...formData, canal: e.target.value })}
+                    style={{
+                      width: '100%',
+                      padding: '12px 14px',
+                      borderRadius: '8px',
+                      border: '1px solid #1e3d54',
+                      background: '#132636',
+                      color: '#e8edf2',
+                      fontSize: '13px',
+                      boxSizing: 'border-box',
+                      fontFamily: 'inherit',
+                      cursor: 'pointer',
+                    }}
+                    onFocus={(e) => e.target.style.borderColor = '#c9943a'}
+                    onBlur={(e) => e.target.style.borderColor = '#1e3d54'}
+                  >
+                    <option>WhatsApp</option>
+                    <option>Instagram</option>
+                    <option>Email</option>
+                    <option>Telefone</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* EMAIL */}
+              <div>
+                <label style={{ fontSize: '11px', fontWeight: 700, color: '#7a96aa', display: 'block', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  E-mail *
+                </label>
+                <input
+                  type="email"
+                  placeholder="email@exemplo.com"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  style={{
+                    width: '100%',
+                    padding: '12px 14px',
+                    borderRadius: '8px',
+                    border: '1px solid #1e3d54',
+                    background: '#132636',
+                    color: '#e8edf2',
+                    fontSize: '13px',
+                    boxSizing: 'border-box',
+                    fontFamily: 'inherit',
+                  }}
+                  onFocus={(e) => e.target.style.borderColor = '#c9943a'}
+                  onBlur={(e) => e.target.style.borderColor = '#1e3d54'}
+                />
+              </div>
+
+              {/* AGENTE E ORIGEM */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <div>
+                  <label style={{ fontSize: '11px', fontWeight: 700, color: '#7a96aa', display: 'block', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    Agente Responsável
+                  </label>
+                  <select
+                    value={formData.agente}
+                    onChange={(e) => setFormData({ ...formData, agente: e.target.value })}
+                    style={{
+                      width: '100%',
+                      padding: '12px 14px',
+                      borderRadius: '8px',
+                      border: '1px solid #1e3d54',
+                      background: '#132636',
+                      color: '#e8edf2',
+                      fontSize: '13px',
+                      boxSizing: 'border-box',
+                      fontFamily: 'inherit',
+                      cursor: 'pointer',
+                    }}
+                    onFocus={(e) => e.target.style.borderColor = '#c9943a'}
+                    onBlur={(e) => e.target.style.borderColor = '#1e3d54'}
+                  >
+                    <option>Havila</option>
+                    <option>João</option>
+                    <option>Maria</option>
+                    <option>Pedro</option>
+                    <option>Ana</option>
+                  </select>
+                </div>
+                <div>
+                  <label style={{ fontSize: '11px', fontWeight: 700, color: '#7a96aa', display: 'block', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    Origem
+                  </label>
+                  <select
+                    value={formData.origem}
+                    onChange={(e) => setFormData({ ...formData, origem: e.target.value })}
+                    style={{
+                      width: '100%',
+                      padding: '12px 14px',
+                      borderRadius: '8px',
+                      border: '1px solid #1e3d54',
+                      background: '#132636',
+                      color: '#e8edf2',
+                      fontSize: '13px',
+                      boxSizing: 'border-box',
+                      fontFamily: 'inherit',
+                      cursor: 'pointer',
+                    }}
+                    onFocus={(e) => e.target.style.borderColor = '#c9943a'}
+                    onBlur={(e) => e.target.style.borderColor = '#1e3d54'}
+                  >
+                    <option>Tráfego Pago</option>
+                    <option>Orgânico</option>
+                    <option>Indicação</option>
+                    <option>Direto</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* OBSERVAÇÕES */}
+              <div>
+                <label style={{ fontSize: '11px', fontWeight: 700, color: '#7a96aa', display: 'block', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  Observações
+                </label>
+                <textarea
+                  placeholder="Notas sobre este contato..."
+                  value={formData.observacoes}
+                  onChange={(e) => setFormData({ ...formData, observacoes: e.target.value })}
+                  style={{
+                    width: '100%',
+                    padding: '12px 14px',
+                    borderRadius: '8px',
+                    border: '1px solid #1e3d54',
+                    background: '#132636',
+                    color: '#e8edf2',
+                    fontSize: '13px',
+                    boxSizing: 'border-box',
+                    fontFamily: 'inherit',
+                    minHeight: '80px',
+                    resize: 'none',
+                  }}
+                  onFocus={(e) => e.target.style.borderColor = '#c9943a'}
+                  onBlur={(e) => e.target.style.borderColor = '#1e3d54'}
+                />
+              </div>
+            </div>
+
+            {/* BOTÕES */}
+            <div style={{
+              display: 'flex',
+              gap: '12px',
+              marginTop: '24px',
+              paddingTop: '16px',
+              borderTop: '1px solid #1e3d54',
+            }}>
+              <button
+                onClick={fecharNovoContatoModal}
+                style={{
+                  flex: 1,
+                  padding: '12px 16px',
+                  borderRadius: '8px',
+                  border: '1px solid #1e3d54',
+                  background: 'transparent',
+                  color: '#7a96aa',
+                  fontSize: '13px',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = '#c9943a';
+                  e.currentTarget.style.color = '#c9943a';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = '#1e3d54';
+                  e.currentTarget.style.color = '#7a96aa';
+                }}
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleSalvarContato}
+                style={{
+                  flex: 1,
+                  padding: '12px 16px',
+                  borderRadius: '8px',
+                  border: 'none',
+                  background: 'linear-gradient(135deg, #9b59b6, #8e44ad)',
+                  color: '#ffffff',
+                  fontSize: '13px',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.boxShadow = '0 8px 20px rgba(155, 89, 182, 0.4)';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.boxShadow = 'none';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }}
+              >
+                💾 Salvar Contato
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
