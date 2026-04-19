@@ -49,7 +49,11 @@ const PipelineSummaryComponent = memo(({ stages }: Props) => {
           <div
             key={stage.id}
             className={styles.card}
-            style={{ borderLeftColor: stage.color }}
+            style={{
+              borderLeftColor: stage.color,
+              backgroundColor: `${stage.color}26`,
+              borderColor: `${stage.color}40`,
+            }}
           >
             <div className={styles.header}>
               <div className={styles.iconWrapper} style={{ color: stage.color }}>
