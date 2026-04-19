@@ -9,7 +9,6 @@
   background: #132636;
   box-shadow: none;
   transition: all 0.15s ease-out;
-  margin-right: -20px;
   position: relative;
   z-index: 1;
 }
@@ -100,6 +99,9 @@
   flex-direction: column;
   gap: 6px;
   transition: background-color 0.15s ease-out;
+  margin-right: -20px;
+  position: relative;
+  z-index: 0;
 }
 
 .content.draggingOver {
