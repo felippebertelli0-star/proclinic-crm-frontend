@@ -188,13 +188,19 @@ export function Conversas() {
   }, [totalAtendendo, totalAguardando, totalGrupos, setConversasCounts]);
 
   // ============ AUTO-SAVE DE CONTATOS ============
+  // Usar ref para rastrear conversas já processadas (evita criar duplicatas)
+  const processedConversasRef = useRef<Set<number>>(new Set());
+
   useEffect(() => {
     // Quando uma conversa é selecionada, verificar se o contato já existe
-    // Se não existir, criar automaticamente
-    if (conversa && conversa.id) {
+    // Se não existir, criar automaticamente (apenas uma vez por conversa)
+    if (conversa && conversa.id && !processedConversasRef.current.has(conversa.id)) {
       const contatoJaExiste = contatoExiste(conversa.nome, conversa.email);
 
       if (!contatoJaExiste) {
+        // Marcar como processada ANTES de criar (evita race conditions)
+        processedConversasRef.current.add(conversa.id);
+
         // Criar novo contato automaticamente
         const cores = ['#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#00bcd4', '#009688', '#4caf50', '#8bc34a', '#cddc39'];
         const corAleatoria = cores[Math.floor(Math.random() * cores.length)];
@@ -215,12 +221,9 @@ export function Conversas() {
         };
 
         addContatoGlobal(novoContato);
-
-        // Toast notification silencioso (apenas log)
-        console.log(`✓ Novo contato criado: ${conversa.nome}`);
       }
     }
-  }, [conversa?.id, conversa?.nome, conversa?.email, contatoExiste, contatosGlobais, addContatoGlobal, conversa?.numero]);
+  }, [conversa?.id]);
 
   // ============ CLEANUP DE REFS (Previne memory leaks) ============
   useEffect(() => {
