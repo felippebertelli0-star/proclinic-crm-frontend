@@ -124,12 +124,7 @@ export function Conversas() {
   }));
 
   // ============ RESPOSTAS RÁPIDAS ============
-  const respostasRapidas = respostasRapidasStore.map(r => ({
-    ...r,
-    mensagem: r.conteudo,
-    uso: r.usos,
-    atalho: r.gatilho,
-  }));
+  const respostasRapidas = respostasRapidasStore;
 
   // Função para gerar cor de tag baseada no tipo
   const getTagColor = (tag: string) => {
@@ -1874,7 +1869,7 @@ export function Conversas() {
               {respostasRapidas.map((resposta: any) => (
                 <button
                   key={resposta.id}
-                  onClick={() => selecionarRespostaRapida(resposta.mensagem, resposta.id)}
+                  onClick={() => selecionarRespostaRapida(resposta.conteudo, resposta.id)}
                   style={{
                     padding: '12px 14px',
                     borderRadius: '6px',
