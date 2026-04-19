@@ -6,7 +6,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Calendar, TrendingUp, Users, BarChart3 } from 'lucide-react';
+import { Calendar, TrendingUp, Users, BarChart3, Phone, FileUp, Download } from 'lucide-react';
 import { useEquipeStore } from '@/store/equipeStore';
 import { useOrigensStore } from '@/store/origensStore';
 import { useContatosStore } from '@/store/contatosStore';
@@ -314,7 +314,7 @@ export function Contatos() {
                 fontSize: '12px',
                 fontWeight: 700,
                 cursor: 'pointer',
-                transition: 'all 0.2s',
+                transition: 'all 0.3s ease',
               }}
               onMouseEnter={(e) => {
                 if (!importarExportarMenuVisible) {
@@ -339,11 +339,11 @@ export function Contatos() {
                   position: 'absolute',
                   top: '44px',
                   left: 0,
-                  background: '#132636',
-                  border: '1px solid #1e3d54',
-                  borderRadius: '8px',
-                  minWidth: '240px',
-                  boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3)',
+                  background: 'linear-gradient(180deg, #132636, #0d1f2d)',
+                  border: '1px solid #2a4a64',
+                  borderRadius: '12px',
+                  minWidth: '280px',
+                  boxShadow: '0 12px 32px rgba(0, 0, 0, 0.4)',
                   zIndex: 1000,
                   overflow: 'hidden',
                 }}
@@ -355,7 +355,7 @@ export function Contatos() {
                   }}
                   style={{
                     width: '100%',
-                    padding: '12px 16px',
+                    padding: '14px 16px',
                     border: 'none',
                     background: 'transparent',
                     color: '#e8edf2',
@@ -364,7 +364,10 @@ export function Contatos() {
                     cursor: 'pointer',
                     textAlign: 'left',
                     borderBottom: '1px solid #1e3d54',
-                    transition: 'all 0.2s',
+                    transition: 'all 0.3s ease',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.background = '#1e3d54';
@@ -375,7 +378,7 @@ export function Contatos() {
                     e.currentTarget.style.color = '#e8edf2';
                   }}
                 >
-                  📞 Importar da Agenda do Telefone
+                  <Phone size={16} /> Importar da Agenda do Telefone
                 </button>
 
                 {/* Opção 2: Importar Arquivo */}
@@ -385,7 +388,7 @@ export function Contatos() {
                   }}
                   style={{
                     width: '100%',
-                    padding: '12px 16px',
+                    padding: '14px 16px',
                     border: 'none',
                     background: 'transparent',
                     color: '#e8edf2',
@@ -394,7 +397,10 @@ export function Contatos() {
                     cursor: 'pointer',
                     textAlign: 'left',
                     borderBottom: '1px solid #1e3d54',
-                    transition: 'all 0.2s',
+                    transition: 'all 0.3s ease',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.background = '#1e3d54';
@@ -405,7 +411,7 @@ export function Contatos() {
                     e.currentTarget.style.color = '#e8edf2';
                   }}
                 >
-                  📁 Importar Arquivo
+                  <FileUp size={16} /> Importar Arquivo
                 </button>
 
                 {/* Opção 3: Exportar Excel */}
@@ -416,7 +422,7 @@ export function Contatos() {
                   }}
                   style={{
                     width: '100%',
-                    padding: '12px 16px',
+                    padding: '14px 16px',
                     border: 'none',
                     background: 'transparent',
                     color: '#e8edf2',
@@ -424,7 +430,10 @@ export function Contatos() {
                     fontWeight: 600,
                     cursor: 'pointer',
                     textAlign: 'left',
-                    transition: 'all 0.2s',
+                    transition: 'all 0.3s ease',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.background = '#1e3d54';
@@ -435,7 +444,7 @@ export function Contatos() {
                     e.currentTarget.style.color = '#e8edf2';
                   }}
                 >
-                  📊 Exportar Excel
+                  <Download size={16} /> Exportar Excel
                 </button>
               </div>
             )}
@@ -1238,33 +1247,41 @@ export function Contatos() {
         <div style={{
           position: 'fixed',
           inset: 0,
-          background: 'rgba(0, 0, 0, 0.5)',
+          background: 'rgba(0, 0, 0, 0.6)',
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
           zIndex: 2000,
-          backdropFilter: 'blur(4px)',
+          backdropFilter: 'blur(6px)',
         }}>
           <div style={{
             background: 'linear-gradient(135deg, #1a2332, #132636)',
-            border: '1px solid #1e3d54',
-            borderRadius: '14px',
+            border: '2px solid #c9943a',
+            borderRadius: '16px',
             padding: '24px',
             maxWidth: '500px',
             width: '90%',
             color: '#e8edf2',
             fontFamily: "'Segoe UI', sans-serif",
-            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.4)',
+            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(201, 148, 58, 0.1)',
           }}>
             {/* TÍTULO */}
-            <h2 style={{
-              fontSize: '18px',
-              fontWeight: 800,
-              margin: '0 0 20px 0',
-              color: '#c9943a',
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              marginBottom: '24px',
             }}>
-              📊 Exportar Contatos
-            </h2>
+              <BarChart3 size={24} color="#c9943a" />
+              <h2 style={{
+                fontSize: '18px',
+                fontWeight: 800,
+                margin: 0,
+                color: '#c9943a',
+              }}>
+                Exportar Contatos
+              </h2>
+            </div>
 
             {/* SELETOR DE MÊS */}
             <div style={{ marginBottom: '20px' }}>
@@ -1289,15 +1306,16 @@ export function Contatos() {
                     key={mes}
                     onClick={() => setMesSelecionado(index + 1)}
                     style={{
-                      padding: '10px 12px',
-                      borderRadius: '8px',
+                      padding: '12px 14px',
+                      borderRadius: '10px',
                       border: mesSelecionado === index + 1 ? 'none' : '1px solid #1e3d54',
                       background: mesSelecionado === index + 1 ? 'linear-gradient(135deg, #c9943a, #d9a344)' : 'transparent',
                       color: mesSelecionado === index + 1 ? '#0d1f2d' : '#7a96aa',
                       fontSize: '11px',
                       fontWeight: mesSelecionado === index + 1 ? 700 : 600,
                       cursor: 'pointer',
-                      transition: 'all 0.2s',
+                      transition: 'all 0.3s ease',
+                      boxShadow: mesSelecionado === index + 1 ? '0 4px 12px rgba(201, 148, 58, 0.2)' : 'none',
                     }}
                     onMouseEnter={(e) => {
                       if (mesSelecionado !== index + 1) {
@@ -1341,15 +1359,16 @@ export function Contatos() {
                     key={ano}
                     onClick={() => setAnoSelecionado(ano)}
                     style={{
-                      padding: '10px 16px',
-                      borderRadius: '8px',
+                      padding: '12px 18px',
+                      borderRadius: '10px',
                       border: anoSelecionado === ano ? 'none' : '1px solid #1e3d54',
                       background: anoSelecionado === ano ? 'linear-gradient(135deg, #c9943a, #d9a344)' : 'transparent',
                       color: anoSelecionado === ano ? '#0d1f2d' : '#7a96aa',
                       fontSize: '12px',
                       fontWeight: anoSelecionado === ano ? 700 : 600,
                       cursor: 'pointer',
-                      transition: 'all 0.2s',
+                      transition: 'all 0.3s ease',
+                      boxShadow: anoSelecionado === ano ? '0 4px 12px rgba(201, 148, 58, 0.2)' : 'none',
                     }}
                     onMouseEnter={(e) => {
                       if (anoSelecionado !== ano) {
@@ -1372,13 +1391,14 @@ export function Contatos() {
 
             {/* RESUMO */}
             <div style={{
-              background: '#0d1f2d',
+              background: 'linear-gradient(135deg, #0d1f2d, #132636)',
               border: '1px solid #1e3d54',
-              borderRadius: '10px',
+              borderRadius: '12px',
               padding: '14px',
               marginBottom: '20px',
               fontSize: '12px',
               color: '#9ca3af',
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
             }}>
               <div style={{ marginBottom: '8px' }}>
                 <span style={{ fontWeight: 600, color: '#c9943a' }}>Período selecionado:</span> {['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'][mesSelecionado - 1]} de {anoSelecionado}
@@ -1404,15 +1424,15 @@ export function Contatos() {
                 onClick={() => setExportarModalVisible(false)}
                 style={{
                   flex: 1,
-                  padding: '12px 16px',
-                  borderRadius: '8px',
+                  padding: '14px 18px',
+                  borderRadius: '10px',
                   border: '1px solid #1e3d54',
                   background: 'transparent',
                   color: '#7a96aa',
                   fontSize: '13px',
                   fontWeight: 700,
                   cursor: 'pointer',
-                  transition: 'all 0.2s',
+                  transition: 'all 0.3s ease',
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.borderColor = '#c9943a';
@@ -1429,26 +1449,31 @@ export function Contatos() {
                 onClick={exportarParaExcel}
                 style={{
                   flex: 1,
-                  padding: '12px 16px',
-                  borderRadius: '8px',
+                  padding: '14px 18px',
+                  borderRadius: '10px',
                   border: 'none',
                   background: 'linear-gradient(135deg, #c9943a, #d9a344)',
                   color: '#0d1f2d',
                   fontSize: '13px',
                   fontWeight: 700,
                   cursor: 'pointer',
-                  transition: 'all 0.2s',
+                  transition: 'all 0.3s ease',
+                  boxShadow: '0 4px 12px rgba(201, 148, 58, 0.3)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow = '0 8px 20px rgba(201, 148, 58, 0.4)';
+                  e.currentTarget.style.boxShadow = '0 8px 24px rgba(201, 148, 58, 0.5)';
                   e.currentTarget.style.transform = 'translateY(-2px)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.boxShadow = 'none';
+                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(201, 148, 58, 0.3)';
                   e.currentTarget.style.transform = 'translateY(0)';
                 }}
               >
-                📥 Exportar Excel
+                <Download size={16} /> Exportar Excel
               </button>
             </div>
           </div>
