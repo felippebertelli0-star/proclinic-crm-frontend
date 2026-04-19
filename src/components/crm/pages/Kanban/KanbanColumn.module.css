@@ -4,12 +4,11 @@
   min-height: 420px;
   min-width: 220px;
   max-width: 250px;
-  border-radius: 0;
-  overflow: visible;
+  border-radius: 8px;
+  overflow: hidden;
   background: #132636;
   box-shadow: none;
   transition: all 0.15s ease-out;
-  margin-right: -20px;
   position: relative;
   z-index: 1;
 }
