@@ -337,6 +337,25 @@ export function Contatos() {
       color: '#e8edf2',
       fontFamily: "'Segoe UI', sans-serif",
     }}>
+      <style>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 8px;
+          height: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: #1a2332;
+          border-radius: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: linear-gradient(135deg, #c9943a, #d9a344);
+          border-radius: 8px;
+          border: 2px solid #1a2332;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: linear-gradient(135deg, #d9a344, #e8b755);
+          box-shadow: 0 0 8px rgba(201, 148, 58, 0.5);
+        }
+      `}</style>
       {/* HEADER COM TÍTULO E BOTÕES */}
       <div style={{
         display: 'flex',
@@ -676,10 +695,14 @@ export function Contatos() {
         background: '#132636',
         border: '1px solid #1e3d54',
         borderRadius: '14px',
-        overflow: 'hidden',
-        maxHeight: '600px',
+        maxHeight: 'calc(100vh - 420px)',
         overflowY: 'auto',
-      }}>
+        overflowX: 'auto',
+        scrollbarWidth: 'thin',
+        scrollbarColor: '#c9943a #1a2332',
+      }}
+      className="custom-scrollbar"
+      >
         <table style={{
           width: '100%',
           borderCollapse: 'collapse',
