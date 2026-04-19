@@ -1,0 +1,130 @@
+.container {
+  background: #132636;
+  border: 1px solid #1e3d54;
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.filterGroup {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.filterItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #7a96aa;
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.select {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #1e3d54;
+  background: #0d1f2d;
+  color: #e8edf2;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.2s ease-out;
+  font-weight: 500;
+}
+
+.select:hover {
+  border-color: #c9943a;
+  background: #0d1f2d;
+}
+
+.select:focus {
+  outline: 2px solid #c9943a;
+  outline-offset: 2px;
+  border-color: #c9943a;
+}
+
+.select option {
+  background: #132636;
+  color: #e8edf2;
+  padding: 8px;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.btnReset {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid #1e3d54;
+  background: transparent;
+  color: #7a96aa;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease-out;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+
+.btnReset:hover {
+  border-color: #c9943a;
+  color: #c9943a;
+  background: rgba(201, 148, 58, 0.1);
+}
+
+.btnReset:focus {
+  outline: 2px solid #c9943a;
+  outline-offset: 2px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filterGroup {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .filterItem {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .label {
+    margin-bottom: 4px;
+  }
+
+  .select {
+    width: 100%;
+  }
+
+  .actions {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .btnReset {
+    width: 100%;
+  }
+}

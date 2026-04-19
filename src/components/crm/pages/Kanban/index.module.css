@@ -1,0 +1,99 @@
+.container {
+  padding: 24px;
+  background: #0d1f2d;
+  min-height: 100vh;
+  color: #e8edf2;
+  font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0;
+  overflow-x: auto;
+  padding-bottom: 16px;
+}
+
+/* Scrollbar Styling */
+.board::-webkit-scrollbar {
+  height: 6px;
+}
+
+.board::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.board::-webkit-scrollbar-thumb {
+  background: #1e3d54;
+  border-radius: 3px;
+}
+
+.board::-webkit-scrollbar-thumb:hover {
+  background: #2d5c7b;
+}
+
+/* Responsive */
+@media (max-width: 1440px) {
+  .board {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 1024px) {
+  .board {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+  }
+
+  .board {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 12px;
+  }
+
+  .board {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}
+
+/* Acessibilidade - Focus visible */
+:focus-visible {
+  outline: 2px solid #c9943a;
+  outline-offset: 2px;
+}
+
+/* Dark theme consistency */
+input,
+select,
+button {
+  font-family: inherit;
+}
+
+/* Remove default scrollbar para custom */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1e3d54;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #2d5c7b;
+}
