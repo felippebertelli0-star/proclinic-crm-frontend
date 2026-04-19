@@ -10,6 +10,7 @@ import { X, RefreshCw, Calendar, DollarSign, FileText, Paperclip, Zap, BarChart3
 import { useAuthStore } from '@/store/authStore';
 import { useConversasStore } from '@/store/conversasStore';
 import { useContatosStore } from '@/store/contatosStore';
+import { useRespostasRapidasStore } from '@/store/respostasRapidasStore';
 import {
   CONVERSAS_INICIAIS,
   GRUPOS_INICIAIS,
@@ -19,7 +20,6 @@ import {
   ETAPAS_PIPELINE,
   PRODUTOS_SERVICOS,
   TAGS_CRM,
-  RESPOSTAS_RAPIDAS,
   MENSAGENS_PROTOTIPO,
   TAG_COLORS,
   DEFAULT_TAG_COLOR,
@@ -55,6 +55,7 @@ const PREMIUM_STYLES = {
 export function Conversas() {
   const { usuario } = useAuthStore();
   const { contatos: contatosGlobais, addContato: addContatoGlobal, contatoExiste } = useContatosStore();
+  const { respostas: respostasRapidasStore, incrementarUsos } = useRespostasRapidasStore();
   const [selectedConversa, setSelectedConversa] = useState(0);
   const [filtroStatus, setFiltroStatus] = useState<'atendendo' | 'aguardando' | 'grupos' | 'fechadas'>('atendendo');
   const [busca, setBusca] = useState('');
@@ -123,7 +124,12 @@ export function Conversas() {
   }));
 
   // ============ RESPOSTAS RÁPIDAS ============
-  const respostasRapidas = RESPOSTAS_RAPIDAS;
+  const respostasRapidas = respostasRapidasStore.map(r => ({
+    ...r,
+    mensagem: r.conteudo,
+    uso: r.usos,
+    atalho: r.gatilho,
+  }));
 
   // Função para gerar cor de tag baseada no tipo
   const getTagColor = (tag: string) => {
@@ -609,9 +615,10 @@ export function Conversas() {
     setRespostasRapidasVisivel(false);
   };
 
-  const selecionarRespostaRapida = (mensagem: string) => {
+  const selecionarRespostaRapida = (mensagem: string, respostaId: string) => {
     setNovaMensagem(mensagem);
     fecharRespostasRapidas();
+    incrementarUsos(respostaId);
   };
 
   // ============ HISTÓRICO DO TICKET ============
@@ -1867,7 +1874,7 @@ export function Conversas() {
               {respostasRapidas.map((resposta: any) => (
                 <button
                   key={resposta.id}
-                  onClick={() => selecionarRespostaRapida(resposta.mensagem)}
+                  onClick={() => selecionarRespostaRapida(resposta.mensagem, resposta.id)}
                   style={{
                     padding: '12px 14px',
                     borderRadius: '6px',
