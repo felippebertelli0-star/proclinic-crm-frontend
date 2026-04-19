@@ -6,6 +6,7 @@
 'use client';
 
 import { memo } from 'react';
+import { Users, Handshake, Calendar, CheckCircle, XCircle } from 'lucide-react';
 import PipelineCard from './PipelineCard';
 import styles from './PipelineStage.module.css';
 
@@ -23,13 +24,33 @@ interface Props {
   count: number;
 }
 
+const iconMap: Record<string, React.ReactNode> = {
+  'Novo Lead': <Users size={16} />,
+  'Em Negociação': <Handshake size={16} />,
+  'Agendou': <Calendar size={16} />,
+  'Convertido': <CheckCircle size={16} />,
+  'Não Agendou': <XCircle size={16} />,
+};
+
 const PipelineStageComponent = memo(({ title, color, opportunities, count }: Props) => {
+  const totalValor = opportunities.reduce((sum, opp) => sum + opp.valor, 0);
+
   return (
     <div className={styles.coluna}>
       {/* HEADER */}
       <div className={styles.header} style={{ borderTopColor: color }}>
-        <span className={styles.titulo}>{title}</span>
-        <span className={styles.count}>({count})</span>
+        <div className={styles.headerContent}>
+          <div className={styles.titleGroup}>
+            <div className={styles.iconWrapper} style={{ color }}>
+              {iconMap[title] || <Users size={16} />}
+            </div>
+            <span className={styles.titulo}>{title}</span>
+            <span className={styles.count}>{count}</span>
+          </div>
+          <div className={styles.valor} style={{ color }}>
+            R$ {totalValor.toLocaleString('pt-BR')}
+          </div>
+        </div>
       </div>
 
       {/* OPORTUNIDADES */}
