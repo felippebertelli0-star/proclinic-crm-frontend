@@ -67,22 +67,24 @@ const KanbanCardComponent = memo(({
             </div>
 
             <div className={styles.nomeSection}>
-              <div className={styles.metadata}>
-                {card.origem && (
+              {/* Origem */}
+              {card.origem && (
+                <div className={styles.metadata}>
                   <div className={styles.metaItem} title={card.origem}>
                     <Zap size={9} />
                     <span>{card.origem}</span>
                   </div>
-                )}
+                </div>
+              )}
 
-                {card.agente && (
-                  <div className={styles.metaItem} title={card.agente}>
-                    <User size={9} />
-                    <span>{card.agente}</span>
-                  </div>
-                )}
-              </div>
+              {/* Nome do Membro (Agente) */}
+              {card.agente && (
+                <div className={styles.nome} title={card.agente} style={{ fontSize: '11px', color: '#c9943a' }}>
+                  {card.agente}
+                </div>
+              )}
 
+              {/* Nome do Lead */}
               <div className={styles.nome} title={card.nome}>
                 {card.nome}
               </div>
