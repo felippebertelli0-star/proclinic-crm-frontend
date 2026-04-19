@@ -29,12 +29,7 @@ const PipelineCardComponent = memo(({ opportunity, stagColor }: Props) => {
     .join('');
 
   return (
-    <div
-      className={styles.card}
-      style={{
-        borderLeftColor: stagColor,
-      }}
-    >
+    <div className={styles.card}>
       {/* Avatar + Nome */}
       <div className={styles.header}>
         <div

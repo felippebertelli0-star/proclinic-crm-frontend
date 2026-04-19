@@ -25,7 +25,7 @@ interface Props {
 
 const PipelineStageComponent = memo(({ title, color, opportunities, count }: Props) => {
   return (
-    <div className={styles.coluna} style={{ borderLeftColor: color }}>
+    <div className={styles.coluna}>
       {/* HEADER */}
       <div className={styles.header} style={{ background: color }}>
         <span className={styles.titulo}>{title}</span>
