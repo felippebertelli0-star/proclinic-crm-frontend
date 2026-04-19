@@ -67,33 +67,20 @@
   }
 }
 
-/* Acessibilidade - Focus visible */
-:focus-visible {
-  outline: 2px solid #c9943a;
-  outline-offset: 2px;
+/* Scrollbar Styling */
+.board::-webkit-scrollbar {
+  height: 6px;
 }
 
-/* Dark theme consistency */
-input,
-select,
-button {
-  font-family: inherit;
-}
-
-/* Remove default scrollbar para custom */
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-::-webkit-scrollbar-track {
+.board::-webkit-scrollbar-track {
   background: transparent;
 }
 
-::-webkit-scrollbar-thumb {
+.board::-webkit-scrollbar-thumb {
   background: #1e3d54;
   border-radius: 3px;
 }
 
-::-webkit-scrollbar-thumb:hover {
+.board::-webkit-scrollbar-thumb:hover {
   background: #2d5c7b;
 }
