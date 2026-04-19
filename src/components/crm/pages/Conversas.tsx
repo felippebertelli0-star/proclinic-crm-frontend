@@ -9,6 +9,7 @@ import { useState, useEffect, useRef } from 'react';
 import { X, RefreshCw, Calendar, DollarSign, FileText, Paperclip, Zap, BarChart3, User, Mic, Send, Smile, Clock, Eye, Inbox, UserCheck } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import { useConversasStore } from '@/store/conversasStore';
+import { useContatosStore } from '@/store/contatosStore';
 import {
   CONVERSAS_INICIAIS,
   GRUPOS_INICIAIS,
@@ -53,6 +54,7 @@ const PREMIUM_STYLES = {
 
 export function Conversas() {
   const { usuario } = useAuthStore();
+  const { contatos: contatosGlobais, addContato: addContatoGlobal, contatoExiste } = useContatosStore();
   const [selectedConversa, setSelectedConversa] = useState(0);
   const [filtroStatus, setFiltroStatus] = useState<'atendendo' | 'aguardando' | 'grupos' | 'fechadas'>('atendendo');
   const [busca, setBusca] = useState('');
@@ -184,6 +186,41 @@ export function Conversas() {
     // Diminui automaticamente quando conversa é aberta (unread vira 0)
     setConversasCounts(totalAtendendo, totalAguardando, totalGrupos);
   }, [totalAtendendo, totalAguardando, totalGrupos, setConversasCounts]);
+
+  // ============ AUTO-SAVE DE CONTATOS ============
+  useEffect(() => {
+    // Quando uma conversa é selecionada, verificar se o contato já existe
+    // Se não existir, criar automaticamente
+    if (conversa && conversa.id) {
+      const contatoJaExiste = contatoExiste(conversa.nome, conversa.email);
+
+      if (!contatoJaExiste) {
+        // Criar novo contato automaticamente
+        const cores = ['#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#00bcd4', '#009688', '#4caf50', '#8bc34a', '#cddc39'];
+        const corAleatoria = cores[Math.floor(Math.random() * cores.length)];
+        const hoje = new Date();
+        const hojeFormatado = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}-${String(hoje.getDate()).padStart(2, '0')} ${String(hoje.getHours()).padStart(2, '0')}:${String(hoje.getMinutes()).padStart(2, '0')}`;
+        const novoId = Math.max(...contatosGlobais.map(c => c.id), 0) + 1;
+
+        const novoContato = {
+          id: novoId,
+          nome: conversa.nome,
+          whatsapp: conversa.numero || '(--) -----',
+          email: conversa.email || '',
+          ultimaInteracao: hojeFormatado,
+          status: 'Ativo',
+          badge: 'Novo',
+          badgeColor: '#3498db',
+          avatarColor: corAleatoria,
+        };
+
+        addContatoGlobal(novoContato);
+
+        // Toast notification silencioso (apenas log)
+        console.log(`✓ Novo contato criado: ${conversa.nome}`);
+      }
+    }
+  }, [conversa?.id, conversa?.nome, conversa?.email, contatoExiste, contatosGlobais, addContatoGlobal, conversa?.numero]);
 
   // ============ CLEANUP DE REFS (Previne memory leaks) ============
   useEffect(() => {
