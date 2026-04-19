@@ -6,6 +6,8 @@
 'use client';
 
 import { useState } from 'react';
+import PipelineStage from './Pipeline/PipelineStage';
+import styles from './Pipeline.module.css';
 
 export function Pipeline() {
   const [viewMode, setViewMode] = useState('kanban');
@@ -70,267 +72,45 @@ export function Pipeline() {
   const ticketMedio = (totalValor / totalOportunidades).toFixed(0);
 
   return (
-    <div
-      style={{
-        padding: '24px',
-        background: '#0d1f2d',
-        minHeight: '100vh',
-        color: '#e8edf2',
-        fontFamily: "'Segoe UI', sans-serif",
-      }}
-    >
+    <div className={styles.container}>
       {/* RESUMO CARDS */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
-          gap: '16px',
-          marginBottom: '28px',
-        }}
-      >
+      <div className={styles.summaryGrid}>
         {[
           { label: `R$ ${(totalValor / 1000).toFixed(1)}k`, value: 'Total no Funil', color: '#c9943a' },
           { label: convertidas, value: 'Convertidas', color: '#2ecc71' },
           { label: `${taxaConversao}%`, value: 'Taxa de Conversão', color: '#3498db' },
           { label: `R$ ${ticketMedio}`, value: 'Ticket Médio', color: '#f39c12' },
         ].map((card, idx) => (
-          <div
-            key={idx}
-            style={{
-              background: '#132636',
-              border: '1px solid #1e3d54',
-              borderRadius: '14px',
-              padding: '16px',
-            }}
-          >
-            <div
-              style={{
-                fontSize: '18px',
-                fontWeight: 700,
-                color: card.color,
-                marginBottom: '4px',
-              }}
-            >
+          <div key={idx} className={styles.summaryCard}>
+            <div className={styles.summaryValue} style={{ color: card.color }}>
               {card.label}
             </div>
-            <div
-              style={{
-                fontSize: '11px',
-                color: '#7a96aa',
-                fontWeight: 600,
-              }}
-            >
-              {card.value}
-            </div>
+            <div className={styles.summaryLabel}>{card.value}</div>
           </div>
         ))}
       </div>
 
       {/* AÇÕES */}
-      <div
-        style={{
-          background: '#132636',
-          border: '1px solid #1e3d54',
-          borderRadius: '14px',
-          padding: '16px',
-          marginBottom: '20px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: '12px',
-        }}
-      >
-        <button
-          style={{
-            padding: '8px 14px',
-            borderRadius: '8px',
-            border: 'none',
-            background: '#c9943a',
-            color: '#0d1f2d',
-            fontSize: '12px',
-            fontWeight: 600,
-            cursor: 'pointer',
-            transition: 'all 0.2s',
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.background = '#d9a344')}
-          onMouseLeave={(e) => (e.currentTarget.style.background = '#c9943a')}
-        >
+      <div className={styles.actionsBar}>
+        <button className={styles.btnNovaOportunidade}>
           + Nova Oportunidade
         </button>
 
-        <button
-          style={{
-            padding: '8px 14px',
-            borderRadius: '8px',
-            border: '1px solid #1e3d54',
-            background: 'transparent',
-            color: '#7a96aa',
-            fontSize: '11px',
-            fontWeight: 600,
-            cursor: 'pointer',
-          }}
-        >
+        <button className={styles.btnVista}>
           Vista
         </button>
       </div>
 
       {/* PIPELINE KANBAN */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(5, 1fr)',
-          gap: '16px',
-          overflowX: 'auto',
-        }}
-      >
+      <div className={styles.pipelineGrid}>
         {estagios.map((estagio) => (
-          <div
+          <PipelineStage
             key={estagio.id}
-            style={{
-              background: '#132636',
-              border: `2px solid ${estagio.cor}`,
-              borderRadius: '14px',
-              overflow: 'hidden',
-              display: 'flex',
-              flexDirection: 'column',
-              minHeight: '550px',
-            }}
-          >
-            {/* HEADER */}
-            <div
-              style={{
-                background: estagio.cor,
-                color: '#0d1f2d',
-                padding: '12px 16px',
-                fontWeight: 700,
-                fontSize: '13px',
-              }}
-            >
-              {estagio.titulo} ({estagio.opportunities.length})
-            </div>
-
-            {/* OPORTUNIDADES */}
-            <div
-              style={{
-                flex: 1,
-                padding: '12px',
-                overflowY: 'auto',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '10px',
-              }}
-            >
-              {estagio.opportunities.map((opp) => (
-                <div
-                  key={opp.id}
-                  style={{
-                    background: '#0d1f2d',
-                    border: `1px solid ${estagio.cor}20`,
-                    borderRadius: '8px',
-                    padding: '12px',
-                    cursor: 'grab',
-                    transition: 'all 0.2s',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = estagio.cor;
-                    e.currentTarget.style.boxShadow = `0 0 8px ${estagio.cor}30`;
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor = `${estagio.cor}20`;
-                    e.currentTarget.style.boxShadow = 'none';
-                  }}
-                >
-                  {/* Avatar + Nome */}
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      marginBottom: '8px',
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: '28px',
-                        height: '28px',
-                        borderRadius: '50%',
-                        background: estagio.cor,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '10px',
-                        fontWeight: 700,
-                        color: '#0d1f2d',
-                        flexShrink: 0,
-                      }}
-                    >
-                      {opp.nome[0]}
-                    </div>
-                    <div style={{ flex: 1 }}>
-                      <div
-                        style={{
-                          fontSize: '12px',
-                          fontWeight: 600,
-                          color: '#e8edf2',
-                        }}
-                      >
-                        {opp.nome}
-                      </div>
-                      <div
-                        style={{
-                          fontSize: '10px',
-                          color: '#7a96aa',
-                        }}
-                      >
-                        {opp.agente}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Valor */}
-                  <div
-                    style={{
-                      fontSize: '14px',
-                      fontWeight: 700,
-                      color: estagio.cor,
-                      marginBottom: '6px',
-                    }}
-                  >
-                    R$ {opp.valor.toLocaleString('pt-BR')}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* BOTÃO ADICIONAR */}
-            <div style={{ padding: '12px', borderTop: `1px solid ${estagio.cor}20` }}>
-              <button
-                style={{
-                  width: '100%',
-                  padding: '8px',
-                  borderRadius: '6px',
-                  border: `1px solid ${estagio.cor}40`,
-                  background: 'transparent',
-                  color: '#7a96aa',
-                  fontSize: '11px',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = estagio.cor;
-                  e.currentTarget.style.color = estagio.cor;
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = `${estagio.cor}40`;
-                  e.currentTarget.style.color = '#7a96aa';
-                }}
-              >
-                + Adicionar
-              </button>
-            </div>
-          </div>
+            title={estagio.titulo}
+            color={estagio.cor}
+            opportunities={estagio.opportunities}
+            count={estagio.opportunities.length}
+          />
         ))}
       </div>
     </div>

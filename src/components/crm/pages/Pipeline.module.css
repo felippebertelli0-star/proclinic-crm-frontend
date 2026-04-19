@@ -1,0 +1,154 @@
+.container {
+  padding: 24px;
+  background: #0d1f2d;
+  min-height: 100vh;
+  color: #e8edf2;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.summaryGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.summaryCard {
+  background: #132636;
+  border: 1px solid #1e3d54;
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s ease-out;
+}
+
+.summaryCard:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  transform: translateY(-2px);
+}
+
+.summaryValue {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.summaryLabel {
+  font-size: 11px;
+  color: #7a96aa;
+  font-weight: 600;
+}
+
+.actionsBar {
+  background: #132636;
+  border: 1px solid #1e3d54;
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.btnNovaOportunidade {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: none;
+  background: #c9943a;
+  color: #0d1f2d;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease-out;
+}
+
+.btnNovaOportunidade:hover {
+  background: #d9a344;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(201, 148, 58, 0.3);
+}
+
+.btnVista {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid #1e3d54;
+  background: transparent;
+  color: #7a96aa;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease-out;
+}
+
+.btnVista:hover {
+  border-color: #3498db;
+  color: #3498db;
+  background: rgba(52, 152, 219, 0.1);
+}
+
+.pipelineGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  overflow-x: auto;
+}
+
+/* Responsive */
+@media (max-width: 1400px) {
+  .pipelineGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 1024px) {
+  .summaryGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .pipelineGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+  }
+
+  .summaryGrid {
+    gridTemplateColumns: 1fr;
+    gap: 12px;
+    marginBottom: 20px;
+  }
+
+  .summaryCard {
+    padding: 12px;
+  }
+
+  .summaryValue {
+    fontSize: 16px;
+  }
+
+  .summaryLabel {
+    fontSize: 10px;
+  }
+
+  .actionsBar {
+    padding: 12px;
+    gap: 8px;
+  }
+
+  .btnNovaOportunidade,
+  .btnVista {
+    fontSize: 10px;
+    padding: 6px 10px;
+  }
+
+  .pipelineGrid {
+    gridTemplateColumns: 1fr;
+    gap: 12px;
+  }
+}
