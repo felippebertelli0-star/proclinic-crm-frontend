@@ -6,6 +6,43 @@
   font-family: 'Segoe UI', sans-serif;
 }
 
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
+.headerContent {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.headerTitle {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0;
+  color: #e8edf2;
+}
+
+.headerInfo {
+  font-size: 12px;
+  color: #7a96aa;
+  margin: 0;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
 .summaryGrid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -124,6 +161,15 @@
 }
 
 @media (max-width: 1024px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .headerActions {
+    width: 100%;
+  }
+
   .summaryGrid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -138,10 +184,34 @@
     padding: 16px;
   }
 
-  .summaryGrid {
-    gridTemplateColumns: 1fr;
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 20px;
     gap: 12px;
-    marginBottom: 20px;
+  }
+
+  .headerTitle {
+    font-size: 20px;
+  }
+
+  .headerInfo {
+    font-size: 11px;
+  }
+
+  .headerActions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .headerActions button {
+    width: 100%;
+  }
+
+  .summaryGrid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
   }
 
   .summaryCard {

@@ -12,6 +12,7 @@ import { DragDropContext, DropResult } from '@hello-pangea/dnd';
 import { useKanbanStore } from '@/store/kanbanStore';
 import { useEquipeStore } from '@/store/equipeStore';
 import { useFilasStore } from '@/store/filasStore';
+import { useEtiquetasStore } from '@/store/etiquetasStore';
 import { KanbanCard as IKanbanCard, KanbanColuna } from '@/types/kanban';
 import KanbanSummary from './KanbanSummary';
 import KanbanMemberFilter from './KanbanMemberFilter';
@@ -135,6 +136,7 @@ export function Kanban() {
 
   const membros = useEquipeStore((state) => state.membros);
   const { filas } = useFilasStore();
+  const { etiquetas } = useEtiquetasStore();
 
   // Inicializar dados com mock (em produção, carregará de API)
   useEffect(() => {
@@ -142,6 +144,13 @@ export function Kanban() {
       setColunas(MOCK_COLUNAS_TEMP);
     }
   }, [colunas.length, setColunas]);
+
+  // Filtrar apenas as colunas hardcoded (sem etiquetas)
+  const colunasDoKanban = useMemo(() => {
+    return colunas.filter(col =>
+      ['comercial', 'secretaria', 'ia', 'suporte', 'agendando'].includes(col.id)
+    );
+  }, [colunas]);
 
   // Drag and Drop Handler
   const handleDragEnd = useCallback((result: DropResult) => {
@@ -188,7 +197,7 @@ export function Kanban() {
   return (
     <div className={styles.container}>
       {/* Summary */}
-      <KanbanSummary colunas={colunas} />
+      <KanbanSummary colunas={colunasDoKanban} />
 
       {/* Member Filter */}
       <KanbanMemberFilter
@@ -200,7 +209,7 @@ export function Kanban() {
       {/* Kanban Board */}
       <DragDropContext onDragEnd={handleDragEnd}>
         <div className={styles.board}>
-          {colunas.map((coluna) => (
+          {colunasDoKanban.map((coluna) => (
             <KanbanColumn
               key={coluna.id}
               coluna={coluna}

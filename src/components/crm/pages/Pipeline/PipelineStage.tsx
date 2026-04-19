@@ -1,23 +1,19 @@
 /**
  * PipelineStage - Coluna do Funil de Vendas
- * Premium AAA - Otimizado para performance
+ * Com suporte a drag-and-drop (Droppable)
  */
 
 'use client';
 
 import { memo } from 'react';
+import { Droppable } from '@hello-pangea/dnd';
 import { Users, Handshake, Calendar, CheckCircle, XCircle } from 'lucide-react';
+import { Opportunity } from '@/store/pipelineStore';
 import PipelineCard from './PipelineCard';
 import styles from './PipelineStage.module.css';
 
-interface Opportunity {
-  id: number;
-  nome: string;
-  valor: number;
-  agente: string;
-}
-
 interface Props {
+  stageId: string;
   title: string;
   color: string;
   opportunities: Opportunity[];
@@ -32,7 +28,7 @@ const iconMap: Record<string, React.ReactNode> = {
   'Não Agendou': <XCircle size={16} />,
 };
 
-const PipelineStageComponent = memo(({ title, color, opportunities, count }: Props) => {
+const PipelineStageComponent = memo(({ stageId, title, color, opportunities, count }: Props) => {
   const totalValor = opportunities.reduce((sum, opp) => sum + opp.valor, 0);
 
   return (
@@ -53,18 +49,38 @@ const PipelineStageComponent = memo(({ title, color, opportunities, count }: Pro
         </div>
       </div>
 
-      {/* OPORTUNIDADES */}
-      <div className={styles.cardsContainer}>
-        {opportunities.map((opportunity) => (
-          <PipelineCard key={opportunity.id} opportunity={opportunity} stagColor={color} />
-        ))}
+      {/* DROPPABLE AREA PARA CARDS */}
+      <Droppable droppableId={stageId} type="PIPELINE_CARD">
+        {(provided, snapshot) => (
+          <div
+            className={styles.cardsContainer}
+            ref={provided.innerRef}
+            {...provided.droppableProps}
+            style={{
+              backgroundColor: snapshot.isDraggingOver ? `${color}15` : 'transparent',
+              transition: 'background-color 0.2s ease-out',
+            }}
+          >
+            {opportunities.map((opportunity, index) => (
+              <PipelineCard
+                key={opportunity.id}
+                stageId={stageId}
+                opportunity={opportunity}
+                stagColor={color}
+                index={index}
+              />
+            ))}
 
-        {opportunities.length === 0 && (
-          <div className={styles.empty}>
-            <div className={styles.emptyText}>Nenhuma oportunidade</div>
+            {provided.placeholder}
+
+            {opportunities.length === 0 && (
+              <div className={styles.empty}>
+                <div className={styles.emptyText}>Nenhuma oportunidade</div>
+              </div>
+            )}
           </div>
         )}
-      </div>
+      </Droppable>
 
       {/* BOTÃO ADICIONAR */}
       <div className={styles.footer}>

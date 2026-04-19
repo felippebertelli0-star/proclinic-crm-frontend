@@ -1,0 +1,146 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(2px);
+}
+
+.modal {
+  background: #132636;
+  border-radius: 12px;
+  border: 1px solid #1e3d54;
+  width: 90%;
+  max-width: 400px;
+  padding: 32px 24px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.iconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  background: rgba(231, 76, 60, 0.15);
+  color: #e74c3c;
+  margin-bottom: 24px;
+  flex-shrink: 0;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.content h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #e8edf2;
+  margin: 0;
+}
+
+.content p {
+  font-size: 13px;
+  color: #a8b8c8;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.content strong {
+  color: #e8edf2;
+  font-weight: 600;
+}
+
+.subtitle {
+  font-size: 12px !important;
+  color: #7a96aa !important;
+  opacity: 0.9;
+}
+
+.footer {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+}
+
+.btnCancel,
+.btnDelete {
+  flex: 1;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: none;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease-out;
+}
+
+.btnCancel {
+  background: transparent;
+  color: #7a96aa;
+  border: 1px solid #1e3d54;
+}
+
+.btnCancel:hover {
+  border-color: #3498db;
+  color: #3498db;
+  background: rgba(52, 152, 219, 0.1);
+}
+
+.btnDelete {
+  background: #e74c3c;
+  color: #ffffff;
+}
+
+.btnDelete:hover {
+  background: #c0392b;
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+}
+
+.btnDelete:active {
+  transform: scale(0.98);
+}
+
+@media (max-width: 768px) {
+  .modal {
+    width: 95%;
+    padding: 24px 16px;
+  }
+
+  .iconWrapper {
+    width: 56px;
+    height: 56px;
+    margin-bottom: 20px;
+  }
+
+  .content h2 {
+    font-size: 16px;
+  }
+
+  .content p {
+    font-size: 12px;
+  }
+
+  .footer {
+    flex-direction: column;
+  }
+
+  .btnCancel,
+  .btnDelete {
+    width: 100%;
+  }
+}

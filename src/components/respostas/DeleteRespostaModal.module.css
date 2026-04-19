@@ -1,0 +1,148 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1001;
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+  to {
+    opacity: 1;
+    backdrop-filter: blur(4px);
+  }
+}
+
+.modal {
+  background: linear-gradient(135deg, #0a1520 0%, #132636 100%);
+  border-radius: 16px;
+  border: 1px solid #1e3d54;
+  width: 90%;
+  max-width: 400px;
+  padding: 32px 24px;
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.9), 0 0 40px rgba(201, 148, 58, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.iconBox {
+  margin-bottom: 24px;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.content {
+  margin-bottom: 28px;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #ff9999;
+  margin: 0 0 12px 0;
+  letter-spacing: -0.5px;
+}
+
+.message {
+  font-size: 13px;
+  color: #a8bcc9;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.message strong {
+  color: #e8edf2;
+  font-weight: 600;
+}
+
+.footer {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+}
+
+.btnCancel,
+.btnDelete {
+  flex: 1;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: none;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.btnCancel {
+  background: transparent;
+  color: #7a96aa;
+  border: 1px solid #1e3d54;
+}
+
+.btnCancel:hover {
+  border-color: #3498db;
+  color: #3498db;
+  background: rgba(52, 152, 219, 0.1);
+}
+
+.btnDelete {
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  color: #fff;
+}
+
+.btnDelete:hover {
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+  transform: translateY(-2px);
+}
+
+.btnDelete:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+  .modal {
+    width: 95%;
+    max-width: 100%;
+    padding: 24px 20px;
+  }
+
+  .title {
+    font-size: 16px;
+  }
+
+  .message {
+    font-size: 12px;
+  }
+
+  .btnCancel,
+  .btnDelete {
+    font-size: 12px;
+  }
+}

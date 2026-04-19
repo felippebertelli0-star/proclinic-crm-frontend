@@ -1,80 +1,71 @@
 /**
  * Página Pipeline CRM - CRM ProClinic
- * 100% Fiel ao protótipo - Sales funnel com 5 estágios
+ * Funil de vendas interativo com drag-and-drop
  */
 
 'use client';
 
 import { useState } from 'react';
 import { TrendingUp, CheckCircle, Percent, DollarSign } from 'lucide-react';
+import { DragDropContext, DropResult } from '@hello-pangea/dnd';
+import { usePipelineStore } from '@/store/pipelineStore';
 import PipelineStage from './Pipeline/PipelineStage';
 import PipelineSummary from './Pipeline/PipelineSummary';
+import PipelineCreateOpportunityModal from './Pipeline/PipelineCreateOpportunityModal';
 import styles from './Pipeline.module.css';
 
 export function Pipeline() {
-  const [viewMode, setViewMode] = useState('kanban');
+  const { estagios, moveCard } = usePipelineStore();
+  const [createModalOpen, setCreateModalOpen] = useState(false);
 
-  // Mock data de oportunidades por estágio
-  const estagios = [
-    {
-      id: 'novo_lead',
-      titulo: 'Novo Lead',
-      cor: '#3498db',
-      opportunities: [
-        { id: 1, nome: 'João Silva', valor: 500, agente: 'Hávila' },
-        { id: 2, nome: 'Maria Santos', valor: 800, agente: 'Camilly' },
-        { id: 3, nome: 'Pedro Costa', valor: 1200, agente: 'Fernando' },
-      ],
-    },
-    {
-      id: 'negociacao',
-      titulo: 'Em Negociação',
-      cor: '#f39c12',
-      opportunities: [
-        { id: 4, nome: 'Ana Paula', valor: 1500, agente: 'Hávila' },
-        { id: 5, nome: 'Carlos Mendes', valor: 2000, agente: 'Camilly' },
-      ],
-    },
-    {
-      id: 'agendou',
-      titulo: 'Agendou',
-      cor: '#2ecc71',
-      opportunities: [
-        { id: 6, nome: 'Lucia Ferreira', valor: 1800, agente: 'Hávila' },
-        { id: 7, nome: 'Roberto Cunha', valor: 1200, agente: 'Fernando' },
-      ],
-    },
-    {
-      id: 'convertido',
-      titulo: 'Convertido',
-      cor: '#27ae60',
-      opportunities: [
-        { id: 8, nome: 'Patricia Lima', valor: 2500, agente: 'Camilly' },
-        { id: 9, nome: 'Daniel Alves', valor: 1700, agente: 'Hávila' },
-      ],
-    },
-    {
-      id: 'nao_agendou',
-      titulo: 'Não Agendou',
-      cor: '#e74c3c',
-      opportunities: [
-        { id: 10, nome: 'Gabriela Silva', valor: 900, agente: 'Fernando' },
-        { id: 11, nome: 'Helena Costa', valor: 600, agente: 'Camilly' },
-      ],
-    },
-  ];
-
-  // Calcular totais
+  // Calcular totais a partir do store
   const totalValor = estagios.reduce((acc, est) =>
     acc + est.opportunities.reduce((sum, opp) => sum + opp.valor, 0), 0
   );
   const totalOportunidades = estagios.reduce((acc, est) => acc + est.opportunities.length, 0);
-  const convertidas = estagios[3].opportunities.length;
-  const taxaConversao = ((convertidas / totalOportunidades) * 100).toFixed(1);
-  const ticketMedio = (totalValor / totalOportunidades).toFixed(0);
+  const convertidas = estagios.find(s => s.id === 'convertido')?.opportunities.length || 0;
+  const taxaConversao = totalOportunidades > 0 ? ((convertidas / totalOportunidades) * 100).toFixed(1) : 0;
+  const ticketMedio = totalOportunidades > 0 ? (totalValor / totalOportunidades).toFixed(0) : 0;
+
+  const handleDragEnd = (result: DropResult) => {
+    const { source, destination, draggableId } = result;
+
+    // Se não tem destino, mantém no lugar
+    if (!destination) return;
+
+    // Se dropped no mesmo lugar, não faz nada
+    if (
+      source.droppableId === destination.droppableId &&
+      source.index === destination.index
+    ) {
+      return;
+    }
+
+    const cardId = parseInt(draggableId);
+    moveCard(cardId, source.droppableId, destination.droppableId, destination.index);
+  };
 
   return (
     <div className={styles.container}>
+      {/* HEADER */}
+      <div className={styles.header}>
+        <div className={styles.headerContent}>
+          <h1 className={styles.headerTitle}>Pipeline de Oportunidades</h1>
+          <p className={styles.headerInfo}>
+            Clínica Dra. Andressa Barbarotti · {totalOportunidades} oportunidades · R$ {(totalValor / 1000).toFixed(1)}k no funil
+          </p>
+        </div>
+        <div className={styles.headerActions}>
+          <button className={styles.btnVista}>Vista</button>
+          <button
+            className={styles.btnNovaOportunidade}
+            onClick={() => setCreateModalOpen(true)}
+          >
+            + Nova Oportunidade
+          </button>
+        </div>
+      </div>
+
       {/* RESUMO CARDS */}
       <div className={styles.summaryGrid}>
         {[
@@ -94,42 +85,33 @@ export function Pipeline() {
             </div>
             <div className={styles.summaryLabel}>{card.value}</div>
           </div>
-        ))}
-      </div>
+        ))}</div>
 
       {/* RESUMO VISUAL DAS SESSÕES */}
-      <PipelineSummary
-        stages={estagios.map((est) => ({
-          id: est.id,
-          title: est.titulo,
-          color: est.cor,
-          opportunities: est.opportunities,
-        }))}
-      />
+      <PipelineSummary />
 
-      {/* AÇÕES */}
-      <div className={styles.actionsBar}>
-        <button className={styles.btnNovaOportunidade}>
-          + Nova Oportunidade
-        </button>
+      {/* PIPELINE KANBAN COM DRAG-AND-DROP */}
+      <DragDropContext onDragEnd={handleDragEnd}>
+        <div className={styles.pipelineGrid}>
+          {estagios.map((estagio) => (
+            <PipelineStage
+              key={estagio.id}
+              stageId={estagio.id}
+              title={estagio.titulo}
+              color={estagio.cor}
+              opportunities={estagio.opportunities}
+              count={estagio.opportunities.length}
+            />
+          ))}
+        </div>
+      </DragDropContext>
 
-        <button className={styles.btnVista}>
-          Vista
-        </button>
-      </div>
-
-      {/* PIPELINE KANBAN */}
-      <div className={styles.pipelineGrid}>
-        {estagios.map((estagio) => (
-          <PipelineStage
-            key={estagio.id}
-            title={estagio.titulo}
-            color={estagio.cor}
-            opportunities={estagio.opportunities}
-            count={estagio.opportunities.length}
-          />
-        ))}
-      </div>
+      {/* MODAL DE CRIAR OPORTUNIDADE */}
+      {createModalOpen && (
+        <PipelineCreateOpportunityModal
+          onClose={() => setCreateModalOpen(false)}
+        />
+      )}
     </div>
   );
 }

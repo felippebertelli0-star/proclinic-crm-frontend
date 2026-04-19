@@ -1,53 +1,61 @@
 .card {
-  background: #1a2f3f;
-  padding: 8px;
+  padding: 12px;
   border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 10px;
   cursor: grab;
   transition: all 0.2s ease-out;
   user-select: none;
+  border-left: 3px solid #c9943a;
 }
 
 .card:hover {
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5), 0 0 20px rgba(201, 148, 58, 0.1);
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, #1e3a4d 0%, #0f2536 100%);
+}
+
+.card.dragging {
+  opacity: 0.9;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
 }
 
 .header {
   display: flex;
   align-items: flex-start;
-  gap: 14px;
+  gap: 12px;
   position: relative;
 }
 
 .avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 6px;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 800;
   color: #fff;
   flex-shrink: 0;
-  border: 1.5px solid;
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
 .nomeSection {
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .nome {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   color: #ffffff;
-  margin-bottom: 2px;
   line-height: 1.2;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -55,8 +63,25 @@
   letter-spacing: 0.2px;
 }
 
+.tipo {
+  font-size: 11px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.tipoIcon {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
 .metadata {
-  font-size: 9px;
+  font-size: 10px;
   color: #7a96aa;
   display: flex;
   align-items: center;
@@ -77,50 +102,87 @@
   color: inherit;
 }
 
-.statusIndicator {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  flex-shrink: 0;
-  border: 1px solid #0d1f2d;
-  margin-top: 2px;
-}
-
-.divider {
-  height: 1px;
-  margin: 2px 0;
-}
-
-.valorSection {
+.footer {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding-top: 3px;
+  justify-content: space-between;
+  padding-top: 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .valor {
   font-size: 13px;
   font-weight: 700;
+  flex: 1;
 }
 
-/* Acessibilidade */
+.actions {
+  display: flex;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.2s ease-out;
+}
+
+.card:hover .actions {
+  opacity: 1;
+}
+
+.actionBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.05);
+  color: #7a96aa;
+  cursor: pointer;
+  transition: all 0.15s ease-out;
+  flex-shrink: 0;
+}
+
+.actionBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #e8edf2;
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.actionBtn:active {
+  transform: scale(0.95);
+}
+
+/* Responsivo */
 @media (max-width: 768px) {
   .card {
-    padding: 6px;
-    gap: 4px;
+    padding: 10px;
+    gap: 8px;
   }
 
   .avatar {
-    width: 28px;
-    height: 28px;
-    font-size: 11px;
+    width: 32px;
+    height: 32px;
+    font-size: 12px;
   }
 
   .nome {
-    font-size: 11px;
+    font-size: 12px;
+  }
+
+  .tipo {
+    font-size: 10px;
   }
 
   .metadata {
-    font-size: 8px;
+    font-size: 9px;
+  }
+
+  .actions {
+    opacity: 1;
+  }
+
+  .actionBtn {
+    width: 26px;
+    height: 26px;
   }
 }

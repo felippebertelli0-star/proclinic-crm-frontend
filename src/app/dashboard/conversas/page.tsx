@@ -6,7 +6,8 @@
 
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { TableCard } from '@/components/dashboard/TableCard';
 import { FilterBar } from '@/components/dashboard/FilterBar';
 import { StatusBadge } from '@/components/dashboard/StatusBadge';
@@ -18,9 +19,19 @@ import { MessageCircle } from 'lucide-react';
 const ITEMS_PER_PAGE = 10;
 
 export default function ConversasPage() {
+  const searchParams = useSearchParams();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+
+  // Ler query param 'pessoa' da URL
+  useEffect(() => {
+    const pessoa = searchParams.get('pessoa');
+    if (pessoa) {
+      setSearchTerm(decodeURIComponent(pessoa));
+      setCurrentPage(1);
+    }
+  }, [searchParams]);
 
   const handleSearch = (value: string) => {
     setSearchTerm(value);

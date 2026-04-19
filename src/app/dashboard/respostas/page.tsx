@@ -6,204 +6,170 @@
 
 'use client';
 
-import { useState, useMemo } from 'react';
-import { TableCard } from '@/components/dashboard/TableCard';
-import { FilterBar } from '@/components/dashboard/FilterBar';
-import { ActionButtons } from '@/components/dashboard/ActionButtons';
-import { Pagination } from '@/components/dashboard/Pagination';
-import { mockRespostas, filtrarRespostas, paginar, formatarData } from '@/lib/mockData';
-import { MessageSquare, Copy, Eye, Edit2 } from 'lucide-react';
+import { useState, useMemo, useCallback } from 'react';
+import { Plus } from 'lucide-react';
+import { useRespostasRapidasStore, RespostaRapida } from '@/store/respostasRapidasStore';
+import RespostaCard from '@/components/respostas/RespostaCard';
+import CreateRespostaModal from '@/components/respostas/CreateRespostaModal';
+import DeleteRespostaModal from '@/components/respostas/DeleteRespostaModal';
+import styles from './respostas.module.css';
 
-const ITEMS_PER_PAGE = 10;
+const CATEGORIAS = ['Saudação', 'Informação', 'Procedimento', 'Financeiro', 'Técnico', 'Fechamento'];
 
 export default function RespostasPage() {
+  const { respostas, deleteResposta, incrementarUsos } = useRespostasRapidasStore();
+
   const [searchTerm, setSearchTerm] = useState('');
   const [categoriaFilter, setCategoriaFilter] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [editingResposta, setEditingResposta] = useState<RespostaRapida | null>(null);
+  const [deletingResposta, setDeletingResposta] = useState<RespostaRapida | null>(null);
 
-  const handleSearch = (value: string) => {
-    setSearchTerm(value);
-    setCurrentPage(1);
-  };
+  // Filter respostas
+  const respostasFiltradas = useMemo(() => {
+    return respostas.filter((r) => {
+      const matchesSearch =
+        !searchTerm ||
+        r.titulo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        r.conteudo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        r.gatilho.toLowerCase().includes(searchTerm.toLowerCase());
 
-  const handleCategoriaFilter = (value: string) => {
-    setCategoriaFilter(value);
-    setCurrentPage(1);
-  };
+      const matchesCategoria = !categoriaFilter || r.categoria === categoriaFilter;
 
-  // Cálculos de estatísticas
+      return matchesSearch && matchesCategoria;
+    });
+  }, [respostas, searchTerm, categoriaFilter]);
+
+  // Calculate stats
   const respostaStats = useMemo(() => {
     return {
-      total: mockRespostas.length,
-      totalUsos: mockRespostas.reduce((sum, r) => sum + r.usos, 0),
-      usosPromedio: Math.round(
-        mockRespostas.reduce((sum, r) => sum + r.usos, 0) / mockRespostas.length,
-      ),
-      usosHoje: Math.floor(mockRespostas.reduce((sum, r) => sum + r.usos, 0) * 0.15),
+      total: respostas.length,
+      totalUsos: respostas.reduce((sum, r) => sum + r.usos, 0),
+      usosPromedio: respostas.length > 0 ? Math.round(respostas.reduce((sum, r) => sum + r.usos, 0) / respostas.length) : 0,
+      usosHoje: Math.floor((respostas.reduce((sum, r) => sum + r.usos, 0) || 0) * 0.15),
     };
+  }, [respostas]);
+
+  const handleCopiar = useCallback((resposta: RespostaRapida) => {
+    navigator.clipboard.writeText(resposta.conteudo);
+    incrementarUsos(resposta.id);
+    setCopiedId(resposta.id);
+    setTimeout(() => setCopiedId(null), 2000);
+  }, [incrementarUsos]);
+
+  const handleEdit = useCallback((resposta: RespostaRapida) => {
+    setEditingResposta(resposta);
+    setCreateModalOpen(true);
   }, []);
 
-  const respostasFiltradas = useMemo(() => {
-    return filtrarRespostas(searchTerm, categoriaFilter || undefined);
-  }, [searchTerm, categoriaFilter]);
+  const handleDelete = useCallback((resposta: RespostaRapida) => {
+    setDeletingResposta(resposta);
+  }, []);
 
-  const { items: respostasPaginadas, total: totalRespostas } = useMemo(() => {
-    return paginar(respostasFiltradas, ITEMS_PER_PAGE, (currentPage - 1) * ITEMS_PER_PAGE);
-  }, [respostasFiltradas, currentPage]);
+  const handleConfirmDelete = useCallback(() => {
+    if (deletingResposta) {
+      deleteResposta(deletingResposta.id);
+      setDeletingResposta(null);
+    }
+  }, [deletingResposta, deleteResposta]);
 
-  const totalPages = Math.ceil(totalRespostas / ITEMS_PER_PAGE);
-
-  // Categorias únicas para filtro
-  const categorias = Array.from(new Set(mockRespostas.map((r) => r.categoria)));
-
-  const handleCopiar = (id: string) => {
-    setCopiedId(id);
-    setTimeout(() => setCopiedId(null), 2000);
-  };
+  const handleCloseModals = useCallback(() => {
+    setCreateModalOpen(false);
+    setEditingResposta(null);
+  }, []);
 
   return (
-    <div className="space-y-6">
+    <div className={styles.container}>
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">Respostas Rápidas</h1>
-        <p className="text-gray-600 mt-2">Gerenciar templates e respostas pré-definidas</p>
+      <div className={styles.header}>
+        <div className={styles.headerContent}>
+          <h1 className={styles.title}>Respostas Rápidas</h1>
+          <p className={styles.subtitle}>Gerenciar templates e respostas pré-definidas</p>
+        </div>
+        <button className={styles.btnNovaResposta} onClick={() => setCreateModalOpen(true)}>
+          <Plus size={18} />
+          Nova Resposta
+        </button>
       </div>
 
-      {/* Cards de Estatísticas */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-          <p className="text-gray-600 text-sm font-medium">Total de Respostas</p>
-          <p className="text-3xl font-bold text-gray-900 mt-2">{respostaStats.total}</p>
+      {/* Stats Cards */}
+      <div className={styles.statsGrid}>
+        <div className={styles.statCard}>
+          <p className={styles.statLabel}>Total de Respostas</p>
+          <p className={styles.statValue}>{respostaStats.total}</p>
         </div>
-        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-          <p className="text-gray-600 text-sm font-medium">Total de Usos</p>
-          <p className="text-3xl font-bold text-blue-600 mt-2">{respostaStats.totalUsos}</p>
+        <div className={styles.statCard}>
+          <p className={styles.statLabel}>Total de Usos</p>
+          <p className={styles.statValue}>{respostaStats.totalUsos}</p>
         </div>
-        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-          <p className="text-gray-600 text-sm font-medium">Usos em Média</p>
-          <p className="text-3xl font-bold text-green-600 mt-2">{respostaStats.usosPromedio}</p>
+        <div className={styles.statCard}>
+          <p className={styles.statLabel}>Usos em Média</p>
+          <p className={styles.statValue}>{respostaStats.usosPromedio}</p>
         </div>
-        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-          <p className="text-gray-600 text-sm font-medium">Usos Hoje</p>
-          <p className="text-3xl font-bold text-orange-600 mt-2">{respostaStats.usosHoje}</p>
+        <div className={styles.statCard}>
+          <p className={styles.statLabel}>Usos Hoje</p>
+          <p className={styles.statValue}>{respostaStats.usosHoje}</p>
         </div>
       </div>
 
-      {/* Filtros */}
-      <FilterBar
-        searchValue={searchTerm}
-        onSearchChange={handleSearch}
-        searchPlaceholder="Buscar por título ou conteúdo..."
-        filters={[
-          {
-            label: 'Categoria',
-            name: 'categoria',
-            value: categoriaFilter,
-            options: categorias.map((c) => ({ label: c, value: c })),
-            onChange: handleCategoriaFilter,
-          },
-        ]}
+      {/* Filters */}
+      <div className={styles.filters}>
+        <input
+          type="text"
+          placeholder="Buscar por título, conteúdo ou gatilho..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className={styles.searchInput}
+        />
+        <select
+          value={categoriaFilter}
+          onChange={(e) => setCategoriaFilter(e.target.value)}
+          className={styles.filterSelect}
+        >
+          <option value="">Todas as Categorias</option>
+          {CATEGORIAS.map((cat) => (
+            <option key={cat} value={cat}>
+              {cat}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Cards Grid */}
+      {respostasFiltradas.length > 0 ? (
+        <div className={styles.grid}>
+          {respostasFiltradas.map((resposta) => (
+            <RespostaCard
+              key={resposta.id}
+              resposta={resposta}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              onCopy={handleCopiar}
+              copied={copiedId === resposta.id}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className={styles.emptyState}>
+          <div className={styles.emptyIcon}>💬</div>
+          <h3 className={styles.emptyTitle}>Nenhuma resposta encontrada</h3>
+          <p className={styles.emptyText}>Crie suas primeiras respostas rápidas</p>
+        </div>
+      )}
+
+      {/* Modals */}
+      <CreateRespostaModal
+        isOpen={createModalOpen}
+        onClose={handleCloseModals}
+        respostaParaEditar={editingResposta}
       />
-
-      {/* Tabela de Respostas */}
-      <TableCard title={`Total de Respostas: ${totalRespostas}`} actionLabel="Nova Resposta">
-        {respostasPaginadas.length > 0 ? (
-          <>
-            <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
-                    Título
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
-                    Categoria
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
-                    Conteúdo
-                  </th>
-                  <th className="px-6 py-3 text-center text-xs font-semibold text-gray-700 uppercase">
-                    Usos
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
-                    Criado por
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
-                    Modificado
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-semibold text-gray-700 uppercase">
-                    Ações
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {respostasPaginadas.map((resposta) => (
-                  <tr key={resposta.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <MessageSquare className="text-blue-600" size={20} />
-                        <div className="font-medium text-gray-900">{resposta.titulo}</div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="px-3 py-1 rounded-full text-xs font-semibold bg-purple-100 text-purple-800">
-                        {resposta.categoria}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <p className="text-sm text-gray-600 line-clamp-2">{resposta.conteudo}</p>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-center">
-                      <span className="font-semibold text-gray-900">{resposta.usos}</span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                      {resposta.criadoPor}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                      {formatarData(resposta.dataModificacao)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <button
-                          onClick={() => handleCopiar(resposta.id)}
-                          className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-                          title="Copiar resposta"
-                        >
-                          {copiedId === resposta.id ? (
-                            <span className="text-green-600 text-xs font-semibold">✓</span>
-                          ) : (
-                            <Copy size={16} />
-                          )}
-                        </button>
-                        <ActionButtons
-                          onEdit={() => console.log('Editar resposta:', resposta.id)}
-                          onDelete={() => console.log('Deletar resposta:', resposta.id)}
-                        />
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-
-            {totalPages > 1 && (
-              <div className="px-6 py-4">
-                <Pagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={setCurrentPage}
-                />
-              </div>
-            )}
-          </>
-        ) : (
-          <div className="flex flex-col items-center justify-center py-12">
-            <div className="text-5xl mb-4">💬</div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Nenhuma resposta encontrada</h3>
-            <p className="text-gray-600">Crie suas primeiras respostas rápidas</p>
-          </div>
-        )}
-      </TableCard>
+      <DeleteRespostaModal
+        resposta={deletingResposta}
+        isOpen={!!deletingResposta}
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setDeletingResposta(null)}
+      />
     </div>
   );
 }
