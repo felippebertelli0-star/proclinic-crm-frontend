@@ -25,6 +25,12 @@ export function Contatos() {
     observacoes: '',
   });
 
+  // ============ STATES PARA MENU IMPORTAR/EXPORTAR ============
+  const [importarExportarMenuVisible, setImportarExportarMenuVisible] = useState(false);
+  const [exportarModalVisible, setExportarModalVisible] = useState(false);
+  const [mesSelecionado, setMesSelecionado] = useState(new Date().getMonth() + 1);
+  const [anoSelecionado, setAnoSelecionado] = useState(new Date().getFullYear());
+
   // Mock data de resumo
   const resumo = [
     { label: 'Hoje', value: 5, color: '#c9943a', isTotal: false },
@@ -127,6 +133,146 @@ export function Contatos() {
     return matchSearch;
   });
 
+  // ============ FUNÇÕES IMPORTAR/EXPORTAR ============
+
+  // Importar da Agenda do Telefone
+  const importarDaAgenda = async () => {
+    try {
+      const navigatorWithContacts = navigator as any;
+      if (!navigatorWithContacts.contacts) {
+        alert('A API de Contatos não é suportada neste navegador. Tente importar via arquivo.');
+        return;
+      }
+      const props = ['name', 'tel', 'email'];
+      const contacts = await navigatorWithContacts.contacts.select(props, { multiple: true });
+
+      contacts.forEach((contact: any) => {
+        const novoId = Math.max(...contatosList.map(c => c.id), 0) + 1;
+        const hoje = new Date();
+        const hojeFormatado = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}-${String(hoje.getDate()).padStart(2, '0')} ${String(hoje.getHours()).padStart(2, '0')}:${String(hoje.getMinutes()).padStart(2, '0')}`;
+        const cores = ['#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#00bcd4', '#009688', '#4caf50', '#8bc34a', '#cddc39'];
+        const corAleatoria = cores[Math.floor(Math.random() * cores.length)];
+
+        const novoContato = {
+          id: novoId,
+          nome: contact.name?.[0] || 'Sem Nome',
+          whatsapp: contact.tel?.[0] || '(--) -----',
+          email: contact.email?.[0] || '',
+          ultimaInteracao: hojeFormatado,
+          status: 'Ativo',
+          badge: 'Importado',
+          badgeColor: '#3498db',
+          avatarColor: corAleatoria,
+        };
+        setContatosList((prev) => [novoContato, ...prev]);
+      });
+      setImportarExportarMenuVisible(false);
+      alert(`${contacts.length} contato(s) importado(s) com sucesso!`);
+    } catch (error) {
+      console.error('Erro ao importar contatos:', error);
+    }
+  };
+
+  // Importar Arquivo
+  const importarArquivo = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.csv,.json';
+    input.onchange = (e: any) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (event: any) => {
+        try {
+          const content = event.target.result;
+          const linhas = content.split('\n');
+          let importados = 0;
+
+          linhas.forEach((linha: string, index: number) => {
+            if (index === 0 || !linha.trim()) return; // Skip header e linhas vazias
+
+            const [nome, telefone, email] = linha.split(',').map((x: string) => x.trim());
+            if (!nome || !email) return;
+
+            const novoId = Math.max(...contatosList.map(c => c.id), 0) + 1;
+            const hoje = new Date();
+            const hojeFormatado = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}-${String(hoje.getDate()).padStart(2, '0')} ${String(hoje.getHours()).padStart(2, '0')}:${String(hoje.getMinutes()).padStart(2, '0')}`;
+            const cores = ['#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#00bcd4', '#009688', '#4caf50', '#8bc34a', '#cddc39'];
+            const corAleatoria = cores[Math.floor(Math.random() * cores.length)];
+
+            const novoContato = {
+              id: novoId,
+              nome,
+              whatsapp: telefone || '(--) -----',
+              email,
+              ultimaInteracao: hojeFormatado,
+              status: 'Ativo',
+              badge: 'Importado',
+              badgeColor: '#3498db',
+              avatarColor: corAleatoria,
+            };
+
+            setContatosList((prev) => [novoContato, ...prev]);
+            importados++;
+          });
+
+          setImportarExportarMenuVisible(false);
+          alert(`${importados} contato(s) importado(s) com sucesso!`);
+        } catch (error) {
+          alert('Erro ao importar arquivo. Verifique o formato.');
+          console.error('Erro:', error);
+        }
+      };
+      reader.readAsText(file);
+    };
+    input.click();
+  };
+
+  // Exportar para Excel (com filtro de mês/ano)
+  const exportarParaExcel = () => {
+    const nomesMeses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+
+    // Filtrar contatos pelo mês e ano selecionado
+    const contatosFiltrados = contatosList.filter((contato) => {
+      const [data] = contato.ultimaInteracao.split(' ');
+      const [ano, mes] = data.split('-');
+      return parseInt(mes) === mesSelecionado && parseInt(ano) === anoSelecionado;
+    });
+
+    if (contatosFiltrados.length === 0) {
+      alert('Nenhum contato encontrado para o período selecionado.');
+      return;
+    }
+
+    // Criar conteúdo CSV (compatível com Excel)
+    let csvContent = 'RELATÓRIO DE CONTATOS - PROCLINIC CRM\n\n';
+    csvContent += `Gerado em: ${new Date().toLocaleDateString('pt-BR')}\n`;
+    csvContent += `Período: ${nomesMeses[mesSelecionado - 1]} de ${anoSelecionado}\n\n`;
+    csvContent += 'NOME,TELEFONE,EMAIL,ORIGEM,STATUS\n';
+
+    contatosFiltrados.forEach((contato) => {
+      csvContent += `"${contato.nome}","${contato.whatsapp}","${contato.email}","${contato.badge}","${contato.status}"\n`;
+    });
+
+    csvContent += `\n\nTOTAL DE CONTATOS EM ${nomesMeses[mesSelecionado - 1].toUpperCase()} DE ${anoSelecionado}: ${contatosFiltrados.length}\n`;
+
+    // Criar blob e download
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `contatos_${nomesMeses[mesSelecionado - 1].toLowerCase()}_${anoSelecionado}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    setExportarModalVisible(false);
+    setImportarExportarMenuVisible(false);
+    alert('Contatos exportados com sucesso!');
+  };
+
   return (
     <div style={{
       padding: '24px',
@@ -146,20 +292,144 @@ export function Contatos() {
         <h1 style={{ fontSize: '24px', fontWeight: 800, margin: 0 }}>Contatos</h1>
         <div style={{ display: 'flex', gap: '8px' }}>
           {/* BOTÃO IMPORTAR/EXPORTAR */}
-          <button
-            style={{
-              padding: '10px 16px',
-              borderRadius: '8px',
-              border: '1px solid #1e3d54',
-              background: 'transparent',
-              color: '#7a96aa',
-              fontSize: '12px',
-              fontWeight: 700,
-              cursor: 'pointer',
-            }}
-          >
-            Importar / Exportar
-          </button>
+          <div style={{ position: 'relative' }}>
+            <button
+              onClick={() => setImportarExportarMenuVisible(!importarExportarMenuVisible)}
+              style={{
+                padding: '10px 16px',
+                borderRadius: '8px',
+                border: '1px solid #1e3d54',
+                background: importarExportarMenuVisible ? '#1e3d54' : 'transparent',
+                color: '#7a96aa',
+                fontSize: '12px',
+                fontWeight: 700,
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+              }}
+              onMouseEnter={(e) => {
+                if (!importarExportarMenuVisible) {
+                  e.currentTarget.style.borderColor = '#c9943a';
+                  e.currentTarget.style.color = '#c9943a';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!importarExportarMenuVisible) {
+                  e.currentTarget.style.borderColor = '#1e3d54';
+                  e.currentTarget.style.color = '#7a96aa';
+                }
+              }}
+            >
+              Importar / Exportar
+            </button>
+
+            {/* DROPDOWN MENU */}
+            {importarExportarMenuVisible && (
+              <div
+                style={{
+                  position: 'absolute',
+                  top: '44px',
+                  left: 0,
+                  background: '#132636',
+                  border: '1px solid #1e3d54',
+                  borderRadius: '8px',
+                  minWidth: '240px',
+                  boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3)',
+                  zIndex: 1000,
+                  overflow: 'hidden',
+                }}
+              >
+                {/* Opção 1: Importar da Agenda */}
+                <button
+                  onClick={() => {
+                    importarDaAgenda();
+                  }}
+                  style={{
+                    width: '100%',
+                    padding: '12px 16px',
+                    border: 'none',
+                    background: 'transparent',
+                    color: '#e8edf2',
+                    fontSize: '12px',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    borderBottom: '1px solid #1e3d54',
+                    transition: 'all 0.2s',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = '#1e3d54';
+                    e.currentTarget.style.color = '#c9943a';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'transparent';
+                    e.currentTarget.style.color = '#e8edf2';
+                  }}
+                >
+                  📞 Importar da Agenda do Telefone
+                </button>
+
+                {/* Opção 2: Importar Arquivo */}
+                <button
+                  onClick={() => {
+                    importarArquivo();
+                  }}
+                  style={{
+                    width: '100%',
+                    padding: '12px 16px',
+                    border: 'none',
+                    background: 'transparent',
+                    color: '#e8edf2',
+                    fontSize: '12px',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    borderBottom: '1px solid #1e3d54',
+                    transition: 'all 0.2s',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = '#1e3d54';
+                    e.currentTarget.style.color = '#c9943a';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'transparent';
+                    e.currentTarget.style.color = '#e8edf2';
+                  }}
+                >
+                  📁 Importar Arquivo
+                </button>
+
+                {/* Opção 3: Exportar Excel */}
+                <button
+                  onClick={() => {
+                    setExportarModalVisible(true);
+                    setImportarExportarMenuVisible(false);
+                  }}
+                  style={{
+                    width: '100%',
+                    padding: '12px 16px',
+                    border: 'none',
+                    background: 'transparent',
+                    color: '#e8edf2',
+                    fontSize: '12px',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    transition: 'all 0.2s',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = '#1e3d54';
+                    e.currentTarget.style.color = '#c9943a';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'transparent';
+                    e.currentTarget.style.color = '#e8edf2';
+                  }}
+                >
+                  📊 Exportar Excel
+                </button>
+              </div>
+            )}
+          </div>
           {/* BOTÃO ADICIONAR */}
           <button
             onClick={abrirNovoContatoModal}
@@ -898,6 +1168,228 @@ export function Contatos() {
                 }}
               >
                 💾 Salvar Contato
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ============ MODAL EXPORTAR COM MÊS/ANO ============ */}
+      {exportarModalVisible && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 2000,
+          backdropFilter: 'blur(4px)',
+        }}>
+          <div style={{
+            background: 'linear-gradient(135deg, #1a2332, #132636)',
+            border: '1px solid #1e3d54',
+            borderRadius: '14px',
+            padding: '24px',
+            maxWidth: '500px',
+            width: '90%',
+            color: '#e8edf2',
+            fontFamily: "'Segoe UI', sans-serif",
+            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.4)',
+          }}>
+            {/* TÍTULO */}
+            <h2 style={{
+              fontSize: '18px',
+              fontWeight: 800,
+              margin: '0 0 20px 0',
+              color: '#c9943a',
+            }}>
+              📊 Exportar Contatos
+            </h2>
+
+            {/* SELETOR DE MÊS */}
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{
+                fontSize: '11px',
+                fontWeight: 700,
+                color: '#7a96aa',
+                display: 'block',
+                marginBottom: '12px',
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px',
+              }}>
+                Selecione o Mês
+              </label>
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(3, 1fr)',
+                gap: '8px',
+              }}>
+                {['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'].map((mes, index) => (
+                  <button
+                    key={mes}
+                    onClick={() => setMesSelecionado(index + 1)}
+                    style={{
+                      padding: '10px 12px',
+                      borderRadius: '8px',
+                      border: mesSelecionado === index + 1 ? 'none' : '1px solid #1e3d54',
+                      background: mesSelecionado === index + 1 ? 'linear-gradient(135deg, #c9943a, #d9a344)' : 'transparent',
+                      color: mesSelecionado === index + 1 ? '#0d1f2d' : '#7a96aa',
+                      fontSize: '11px',
+                      fontWeight: mesSelecionado === index + 1 ? 700 : 600,
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                    }}
+                    onMouseEnter={(e) => {
+                      if (mesSelecionado !== index + 1) {
+                        e.currentTarget.style.borderColor = '#c9943a';
+                        e.currentTarget.style.color = '#c9943a';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (mesSelecionado !== index + 1) {
+                        e.currentTarget.style.borderColor = '#1e3d54';
+                        e.currentTarget.style.color = '#7a96aa';
+                      }
+                    }}
+                  >
+                    {mes.substring(0, 3)}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* SELETOR DE ANO */}
+            <div style={{ marginBottom: '24px' }}>
+              <label style={{
+                fontSize: '11px',
+                fontWeight: 700,
+                color: '#7a96aa',
+                display: 'block',
+                marginBottom: '12px',
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px',
+              }}>
+                Selecione o Ano
+              </label>
+              <div style={{
+                display: 'flex',
+                gap: '8px',
+                justifyContent: 'center',
+              }}>
+                {[2023, 2024, 2025, 2026, 2027].map((ano) => (
+                  <button
+                    key={ano}
+                    onClick={() => setAnoSelecionado(ano)}
+                    style={{
+                      padding: '10px 16px',
+                      borderRadius: '8px',
+                      border: anoSelecionado === ano ? 'none' : '1px solid #1e3d54',
+                      background: anoSelecionado === ano ? 'linear-gradient(135deg, #c9943a, #d9a344)' : 'transparent',
+                      color: anoSelecionado === ano ? '#0d1f2d' : '#7a96aa',
+                      fontSize: '12px',
+                      fontWeight: anoSelecionado === ano ? 700 : 600,
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                    }}
+                    onMouseEnter={(e) => {
+                      if (anoSelecionado !== ano) {
+                        e.currentTarget.style.borderColor = '#c9943a';
+                        e.currentTarget.style.color = '#c9943a';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (anoSelecionado !== ano) {
+                        e.currentTarget.style.borderColor = '#1e3d54';
+                        e.currentTarget.style.color = '#7a96aa';
+                      }
+                    }}
+                  >
+                    {ano}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* RESUMO */}
+            <div style={{
+              background: '#0d1f2d',
+              border: '1px solid #1e3d54',
+              borderRadius: '10px',
+              padding: '14px',
+              marginBottom: '20px',
+              fontSize: '12px',
+              color: '#9ca3af',
+            }}>
+              <div style={{ marginBottom: '8px' }}>
+                <span style={{ fontWeight: 600, color: '#c9943a' }}>Período selecionado:</span> {['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'][mesSelecionado - 1]} de {anoSelecionado}
+              </div>
+              <div>
+                <span style={{ fontWeight: 600, color: '#c9943a' }}>Total de contatos:</span> {contatosList.filter(c => {
+                  const [data] = c.ultimaInteracao.split(' ');
+                  const [ano, mes] = data.split('-');
+                  return parseInt(mes) === mesSelecionado && parseInt(ano) === anoSelecionado;
+                }).length}
+              </div>
+            </div>
+
+            {/* BOTÕES */}
+            <div style={{
+              display: 'flex',
+              gap: '12px',
+              marginTop: '20px',
+              paddingTop: '16px',
+              borderTop: '1px solid #1e3d54',
+            }}>
+              <button
+                onClick={() => setExportarModalVisible(false)}
+                style={{
+                  flex: 1,
+                  padding: '12px 16px',
+                  borderRadius: '8px',
+                  border: '1px solid #1e3d54',
+                  background: 'transparent',
+                  color: '#7a96aa',
+                  fontSize: '13px',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = '#c9943a';
+                  e.currentTarget.style.color = '#c9943a';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = '#1e3d54';
+                  e.currentTarget.style.color = '#7a96aa';
+                }}
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={exportarParaExcel}
+                style={{
+                  flex: 1,
+                  padding: '12px 16px',
+                  borderRadius: '8px',
+                  border: 'none',
+                  background: 'linear-gradient(135deg, #c9943a, #d9a344)',
+                  color: '#0d1f2d',
+                  fontSize: '13px',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.boxShadow = '0 8px 20px rgba(201, 148, 58, 0.4)';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.boxShadow = 'none';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }}
+              >
+                📥 Exportar Excel
               </button>
             </div>
           </div>
