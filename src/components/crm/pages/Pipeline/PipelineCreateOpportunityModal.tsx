@@ -19,7 +19,7 @@ interface Props {
 }
 
 const PipelineCreateOpportunityModal = memo(({ onClose }: Props) => {
-  const { estagios } = usePipelineStore();
+  const { estagios, addOpportunity } = usePipelineStore();
 
   const [formData, setFormData] = useState({
     nome: '',
@@ -44,12 +44,22 @@ const PipelineCreateOpportunityModal = memo(({ onClose }: Props) => {
       return;
     }
 
-    // Aqui você pode adicionar a lógica para criar a oportunidade
-    console.log('Nova oportunidade criada:', {
-      ...formData,
-      valor: parseInt(formData.valor),
+    const valor = parseInt(formData.valor);
+    if (isNaN(valor) || valor <= 0) {
+      alert('Valor deve ser um número positivo');
+      return;
+    }
+
+    // Criar oportunidade no store
+    addOpportunity(formData.etapa, {
+      nome: formData.nome,
+      tipo: formData.tipo,
+      origem: formData.origem,
+      agente: formData.agente,
+      valor: valor,
     });
 
+    // Fecha o modal e reseta o formulário
     onClose();
   };
 

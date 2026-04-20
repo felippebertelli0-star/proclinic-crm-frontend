@@ -27,6 +27,7 @@ interface PipelineState {
   moveCard: (cardId: number, sourceStageId: string, destStageId: string, position: number) => void;
   deleteOpportunity: (stageId: string, opportunityId: number) => void;
   updateOpportunity: (stageId: string, opportunityId: number, data: Partial<Opportunity>) => void;
+  addOpportunity: (stageId: string, opportunity: Omit<Opportunity, 'id'>) => void;
   getStageTotal: (stageId: string) => number;
   getStageCount: (stageId: string) => number;
 }
@@ -136,6 +137,24 @@ export const usePipelineStore = create<PipelineState>()(
                 opportunities: stage.opportunities.map((opp) =>
                   opp.id === opportunityId ? { ...opp, ...data } : opp
                 ),
+              }
+            : stage
+        ),
+      };
+    });
+  },
+
+  addOpportunity: (stageId, opportunity) => {
+    set((state) => {
+      const maxId = Math.max(...state.estagios.flatMap(s => s.opportunities.map(o => o.id)), 0);
+      const newId = maxId + 1;
+
+      return {
+        estagios: state.estagios.map((stage) =>
+          stage.id === stageId
+            ? {
+                ...stage,
+                opportunities: [...stage.opportunities, { ...opportunity, id: newId }],
               }
             : stage
         ),
