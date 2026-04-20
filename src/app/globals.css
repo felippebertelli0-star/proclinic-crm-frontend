@@ -63,16 +63,3 @@ body {
   scrollbar-width: thin;
   scrollbar-color: rgba(201, 148, 58, 0.4) rgba(13, 31, 45, 0.3);
 }
-
-/* Horizontal Scrollbar */
-::-webkit-scrollbar[data-horizontal] {
-  height: 12px;
-}
-
-::-webkit-scrollbar-thumb[data-horizontal] {
-  background: linear-gradient(
-    to right,
-    rgba(201, 148, 58, 0.3),
-    rgba(201, 148, 58, 0.5)
-  );
-}

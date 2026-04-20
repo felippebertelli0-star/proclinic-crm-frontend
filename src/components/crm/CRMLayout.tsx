@@ -149,7 +149,8 @@ export function CRMLayout() {
 
   useEffect(() => {
     // Detectar a página atual pela URL
-    const pageName = pathname?.split('/')[1] || 'dashboard';
+    const pathSegments = pathname?.split('/').filter(Boolean) || [];
+    const pageName = pathSegments[1] || 'dashboard'; // [0] é 'dashboard', [1] é a página
     if (pageName && pageName !== 'admin') {
       setCurrentPage(pageName as PageType);
     }
@@ -158,14 +159,14 @@ export function CRMLayout() {
   const handleNavigation = (pageId: string) => {
     const id = pageId as PageType;
     setCurrentPage(id);
-    
+
     // Navegar para a URL real
     if (id === 'sair') {
       console.log('Logout acionado');
       return;
     }
-    
-    router.push(`/${id}`);
+
+    router.push(`/dashboard/${id}`);
   };
 
   const renderPage = () => {
