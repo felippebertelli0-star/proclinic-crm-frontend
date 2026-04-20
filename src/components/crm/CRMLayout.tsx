@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 import { useConversasStore } from '@/store/conversasStore';
+import styles from './CRMLayout.module.css';
 import { LayoutDashboard, MessageCircle, Users, Grid3x3, TrendingUp, Tag, Zap, Calendar, RotateCw, CheckSquare, Cog, Brain, Sliders, List, Link, Folder, BarChart3, ClipboardList, LogOut } from 'lucide-react';
 import { Dashboard } from './pages/Dashboard';
 import { Conversas } from './pages/Conversas';
@@ -291,7 +292,20 @@ export function CRMLayout() {
         </div>
 
         {/* MENU */}
-        <div ref={menuScrollRef} style={{ flex: 1, overflowY: 'auto', padding: '8px 6px', display: 'flex', flexDirection: 'column', gap: '4px', scrollbarWidth: 'none' }}>
+        <div
+          ref={menuScrollRef}
+          className={styles.sidebarMenu}
+          style={{
+            flex: 1,
+            overflowY: 'auto',
+            padding: '8px 6px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '4px',
+            scrollbarWidth: 'thin',
+            scrollbarColor: 'rgba(201, 148, 58, 0.4) rgba(13, 31, 45, 0.3)',
+          }}
+        >
           <SidebarSection title="ATENDIMENTO" items={MENU_STRUCTURE.atendimento} />
           <SidebarSection title="UTILITÁRIOS" items={MENU_STRUCTURE.utilitarios} />
           <SidebarSection title="AGENDA" items={MENU_STRUCTURE.agenda} />

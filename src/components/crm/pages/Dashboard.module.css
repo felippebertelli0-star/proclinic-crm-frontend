@@ -1,0 +1,33 @@
+/* Dashboard Content Scrollbar */
+
+.dashboardContent {
+  scrollbar-gutter: stable;
+}
+
+/* Webkit Scrollbar (Chrome, Safari, Edge) */
+.dashboardContent::-webkit-scrollbar {
+  width: 12px;
+}
+
+.dashboardContent::-webkit-scrollbar-track {
+  background: rgba(13, 31, 45, 0.3);
+  border-radius: 4px;
+}
+
+.dashboardContent::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    to bottom,
+    rgba(201, 148, 58, 0.3),
+    rgba(201, 148, 58, 0.5)
+  );
+  border-radius: 6px;
+  border: 2px solid rgba(13, 31, 45, 0.3);
+}
+
+.dashboardContent::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    to bottom,
+    rgba(201, 148, 58, 0.6),
+    rgba(201, 148, 58, 0.8)
+  );
+}

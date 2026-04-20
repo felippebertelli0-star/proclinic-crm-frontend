@@ -7,6 +7,7 @@
 
 import { useState } from 'react';
 import { IconSVG } from '@/lib/icons';
+import styles from './Dashboard.module.css';
 
 export function Dashboard() {
   const [selectedPeriod, setSelectedPeriod] = useState('Hoje');
@@ -311,15 +312,20 @@ export function Dashboard() {
   };
 
   return (
-    <div style={{
-      padding: '24px',
-      background: '#0d1f2d',
-      minHeight: '100%',
-      color: '#e8edf2',
-      display: 'flex',
-      flexDirection: 'column',
-      overflowY: 'auto',
-    }}>
+    <div
+      className={styles.dashboardContent}
+      style={{
+        padding: '24px',
+        background: '#0d1f2d',
+        minHeight: '100%',
+        color: '#e8edf2',
+        display: 'flex',
+        flexDirection: 'column',
+        overflowY: 'auto',
+        scrollbarWidth: 'thin',
+        scrollbarColor: 'rgba(201, 148, 58, 0.4) rgba(13, 31, 45, 0.3)',
+      }}
+    >
       {/* FILTER BAR */}
       <div style={{
         background: '#132636',

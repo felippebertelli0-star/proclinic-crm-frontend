@@ -1307,11 +1307,12 @@ export function Conversas() {
             flexDirection: 'column',
             gap: '12px',
             background: 'linear-gradient(180deg, #0a1520 0%, #0d1f2d 100%)',
-            justifyContent: 'flex-end',
             scrollbarWidth: 'thin',
             scrollbarColor: '#c9943a rgba(10, 21, 32, 0.5)',
           }}
         >
+          {/* Spacer to push messages to bottom */}
+          <div style={{ flex: 1, minHeight: 0 }} />
           {[...mensagensPrototipo, ...historicoMensagens].map((msg: any, index) => {
             if (msg.tipo === 'evento') {
               return (
