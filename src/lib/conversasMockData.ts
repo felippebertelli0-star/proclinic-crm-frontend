@@ -35,6 +35,30 @@ export const CONVERSAS_INICIAIS = [
     origem: 'Indicação', tags: ['WHATSAPP', 'NOVO LEAD'], unread: 1, preview: 'Meu amigo falou muito bem de você...',
     assunto: 'Consulta Inicial - Avaliação', ticketId: '#87446'
   },
+  {
+    id: 87447, nome: 'Beatriz Lima', status: 'atendendo', canal: 'WHATSAPP',
+    atribuidoA: 'Havila Rodrigues', data: '08/04/2026', hora: '8 min',
+    origem: 'Trafego Pago', tags: ['WHATSAPP', 'NOVO LEAD'], unread: 0, preview: 'Gostaria de saber mais sobre o procedimento...',
+    assunto: 'Procedimento: Clareamento Dental', ticketId: '#87447'
+  },
+  {
+    id: 87448, nome: 'Lucas Ferreira', status: 'atendendo', canal: 'INSTAGRAM',
+    atribuidoA: 'IA - WhatsApp', data: '08/04/2026', hora: '10 min',
+    origem: 'Instagram Orgânico', tags: ['INSTAGRAM', 'ORÇAMENTO'], unread: 2, preview: 'Encontrei seu perfil e achei incrível!',
+    assunto: 'Consulta: Avaliação de Implante', ticketId: '#87448'
+  },
+  {
+    id: 87449, nome: 'Fernanda Alves', status: 'atendendo', canal: 'WHATSAPP',
+    atribuidoA: 'Camiliy Nunes', data: '08/04/2026', hora: '12 min',
+    origem: 'Indicação', tags: ['WHATSAPP', 'RETORNO'], unread: 1, preview: 'Preciso remarcar minha consulta, pode ser?',
+    assunto: 'Reagendamento: Retorno Programa', ticketId: '#87449'
+  },
+  {
+    id: 87450, nome: 'Gustavo Mendes', status: 'atendendo', canal: 'WHATSAPP',
+    atribuidoA: 'IA - WhatsApp', data: '08/04/2026', hora: '14 min',
+    origem: 'Trafego Pago', tags: ['WHATSAPP', 'NOVO LEAD'], unread: 3, preview: 'Qual é o preço da limpeza profissional?',
+    assunto: 'Limpeza Profissional: Orçamento', ticketId: '#87450'
+  },
   // ====== AGUARDANDO ======
   {
     id: 87440, nome: 'Sandra Oliveira', status: 'aguardando', canal: 'WHATSAPP',
@@ -53,6 +77,30 @@ export const CONVERSAS_INICIAIS = [
     atribuidoA: 'Fila de Suporte', data: '08/04/2026', hora: '25 min',
     origem: 'Instagram Orgânico', tags: ['INSTAGRAM', 'ORÇAMENTO'], unread: 3, preview: 'Gostaria de saber sobre parcelamento...',
     assunto: 'Informações sobre Plano de Saúde', ticketId: '#87442'
+  },
+  {
+    id: 87451, nome: 'Mariana Souza', status: 'aguardando', canal: 'WHATSAPP',
+    atribuidoA: 'Fila Geral', data: '08/04/2026', hora: '30 min',
+    origem: 'Trafego Pago', tags: ['WHATSAPP', 'NOVO LEAD'], unread: 1, preview: 'Tenho medo de agulha, pode fazer sem?',
+    assunto: 'Dúvida: Procedimento sem Anestesia', ticketId: '#87451'
+  },
+  {
+    id: 87452, nome: 'Rafael Costa', status: 'aguardando', canal: 'WHATSAPP',
+    atribuidoA: 'Fila de Retorno', data: '08/04/2026', hora: '35 min',
+    origem: 'Indicação', tags: ['WHATSAPP', 'RETORNO'], unread: 0, preview: 'Fui atendido há 3 meses, como vai meu caso?',
+    assunto: 'Acompanhamento: Pós-Procedimento', ticketId: '#87452'
+  },
+  {
+    id: 87453, nome: 'Juliana Rocha', status: 'aguardando', canal: 'INSTAGRAM',
+    atribuidoA: 'Fila Geral', data: '08/04/2026', hora: '40 min',
+    origem: 'Instagram Orgânico', tags: ['INSTAGRAM', 'ORÇAMENTO'], unread: 2, preview: 'Adorei o resultado da Ana Martins, quero também!',
+    assunto: 'Orçamento: Mesmo Procedimento', ticketId: '#87453'
+  },
+  {
+    id: 87454, nome: 'Pedro Oliveira', status: 'aguardando', canal: 'WHATSAPP',
+    atribuidoA: 'Fila de Suporte', data: '08/04/2026', hora: '45 min',
+    origem: 'Trafego Pago', tags: ['WHATSAPP', 'NOVO LEAD'], unread: 1, preview: 'Quantas sessões são necessárias?',
+    assunto: 'Informação: Número de Sessões', ticketId: '#87454'
   },
 ];
 
