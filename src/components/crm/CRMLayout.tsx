@@ -60,7 +60,7 @@ const PAGE_MAPPING: Record<PageType, React.ComponentType> = {
   sair: () => <div style={{ padding: '32px', color: '#7a96aa' }}>Saindo...</div>,
 };
 
-export function CRMLayout() {
+export function CRMLayout({ children }: { children?: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
   const { usuario } = useAuthStore();
