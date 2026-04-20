@@ -11,6 +11,7 @@ import { useAuthStore } from '@/store/authStore';
 import { useConversasStore } from '@/store/conversasStore';
 import { useContatosStore } from '@/store/contatosStore';
 import { useRespostasRapidasStore } from '@/store/respostasRapidasStore';
+import styles from './Conversas.module.css';
 import {
   CONVERSAS_INICIAIS,
   GRUPOS_INICIAIS,
@@ -943,7 +944,7 @@ export function Conversas() {
 
         {/* LISTA DE CONVERSAS */}
         <div
-          className="conversas-list"
+          className={styles.conversasList}
           style={{
             flex: 1,
             overflowY: 'auto',
@@ -1332,7 +1333,7 @@ export function Conversas() {
 
         {/* HISTÓRICO DE MENSAGENS / TIMELINE */}
         <div
-          className="chat-messages"
+          className={styles.chatMessages}
           style={{
             flex: 1,
             overflowY: 'auto',
