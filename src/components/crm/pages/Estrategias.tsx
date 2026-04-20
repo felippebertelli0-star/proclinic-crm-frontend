@@ -44,6 +44,7 @@ export function Estrategias() {
     setCarregando(true);
     try {
       let todasAsEstrategias: any[] = [];
+      let algumErro = false;
 
       // Processar cada imagem
       for (let i = 0; i < imagens.length; i++) {
@@ -51,17 +52,33 @@ export function Estrategias() {
         formData.append('file', imagens[i]);
         formData.append('mes', mesModal);
 
-        const response = await fetch('/api/processar-estrategia', {
-          method: 'POST',
-          body: formData,
-        });
+        console.log(`[ESTRATEGIAS] Processando imagem ${i + 1}/${imagens.length}: ${imagens[i].name}`);
 
-        const dados = await response.json();
+        try {
+          const response = await fetch('/api/processar-estrategia', {
+            method: 'POST',
+            body: formData,
+          });
 
-        if (dados.sucesso) {
-          todasAsEstrategias = [...todasAsEstrategias, ...dados.estrategias];
-        } else {
-          alert(`⚠️ Erro ao processar imagem ${i + 1}: ${dados.erro}`);
+          const dados = await response.json();
+
+          if (dados.sucesso) {
+            console.log(`[ESTRATEGIAS] ✓ Imagem ${i + 1} processada com sucesso:`, dados.estrategias);
+            todasAsEstrategias = [...todasAsEstrategias, ...dados.estrategias];
+          } else {
+            algumErro = true;
+            const mensagemErro = dados.detalhe || dados.erro || 'Erro desconhecido';
+            console.error(`[ESTRATEGIAS] ✗ Erro ao processar imagem ${i + 1}:`, mensagemErro);
+            alert(
+              `⚠️ Erro ao processar imagem ${i + 1}: ${dados.erro}\n\n` +
+              (dados.detalhe ? `Detalhes: ${dados.detalhe}` : '')
+            );
+          }
+        } catch (fetchError) {
+          algumErro = true;
+          const errorMsg = fetchError instanceof Error ? fetchError.message : String(fetchError);
+          console.error(`[ESTRATEGIAS] ✗ Erro de conexão ao processar imagem ${i + 1}:`, errorMsg);
+          alert(`❌ Erro de conexão ao processar imagem ${i + 1}: ${errorMsg}`);
         }
       }
 
@@ -75,10 +92,15 @@ export function Estrategias() {
         setEstrategias([...estrategias, ...novasEstrategias]);
         setModalAberto(false);
         setImagens([]);
+        console.log(`[ESTRATEGIAS] ✓ Sucesso! ${todasAsEstrategias.length} estratégias criadas`);
         alert(`✅ ${todasAsEstrategias.length} estratégias criadas automaticamente!`);
+      } else if (!algumErro) {
+        alert('⚠️ Nenhuma estratégia foi extraída das imagens. Verifique o conteúdo das imagens.');
       }
     } catch (erro) {
-      alert('❌ Erro ao enviar imagens: ' + erro);
+      const errorMsg = erro instanceof Error ? erro.message : String(erro);
+      console.error('[ESTRATEGIAS] ✗ Erro fatal ao enviar imagens:', errorMsg);
+      alert(`❌ Erro ao enviar imagens: ${errorMsg}`);
     } finally {
       setCarregando(false);
     }
