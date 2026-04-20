@@ -793,43 +793,6 @@ export function Conversas() {
 
   return (
     <div style={{ display: 'flex', height: 'calc(100vh - 60px)', background: '#0d1f2d', color: '#e8edf2', fontFamily: "'Segoe UI', sans-serif" }}>
-      <style>{`
-        /* Scrollbar para Lista de Conversas */
-        .conversas-list::-webkit-scrollbar {
-          width: 8px;
-        }
-        .conversas-list::-webkit-scrollbar-track {
-          background: #0d1f2d;
-          border-radius: 8px;
-        }
-        .conversas-list::-webkit-scrollbar-thumb {
-          background: linear-gradient(135deg, #c9943a, #d9a344);
-          border-radius: 8px;
-          border: 2px solid #0d1f2d;
-        }
-        .conversas-list::-webkit-scrollbar-thumb:hover {
-          background: linear-gradient(135deg, #d9a344, #e8b755);
-          box-shadow: 0 0 8px rgba(201, 148, 58, 0.5);
-        }
-
-        /* Scrollbar para Chat de Mensagens */
-        .chat-messages::-webkit-scrollbar {
-          width: 8px;
-        }
-        .chat-messages::-webkit-scrollbar-track {
-          background: transparent;
-          border-radius: 8px;
-        }
-        .chat-messages::-webkit-scrollbar-thumb {
-          background: linear-gradient(135deg, #c9943a, #d9a344);
-          border-radius: 8px;
-          border: 2px solid rgba(10, 21, 32, 0.5);
-        }
-        .chat-messages::-webkit-scrollbar-thumb:hover {
-          background: linear-gradient(135deg, #d9a344, #e8b755);
-          box-shadow: 0 0 8px rgba(201, 148, 58, 0.5);
-        }
-      `}</style>
       {/* SIDEBAR - LISTA DE CONVERSAS */}
       <div style={{
         width: '520px',
@@ -837,7 +800,7 @@ export function Conversas() {
         borderRight: '1px solid #1e3d54',
         display: 'flex',
         flexDirection: 'column',
-        overflowY: 'hidden',
+        overflow: 'hidden',
       }}>
         {/* TÍTULO */}
         <div style={{ padding: '16px', borderBottom: '1px solid #1e3d54', flexShrink: 0 }}>

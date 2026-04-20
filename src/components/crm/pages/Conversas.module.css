@@ -1,57 +1,57 @@
 /* Conversas Page Styles */
 
 /* Sidebar - Lista de Conversas */
-.conversas-list {
+.conversasList {
   /* Firefox */
   scrollbar-color: rgba(201, 148, 58, 0.4) transparent;
   scrollbar-width: thin;
 }
 
 /* Webkit Scrollbar (Chrome, Safari, Edge) */
-.conversas-list::-webkit-scrollbar {
+.conversasList::-webkit-scrollbar {
   width: 8px;
 }
 
-.conversas-list::-webkit-scrollbar-track {
+.conversasList::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.conversas-list::-webkit-scrollbar-thumb {
+.conversasList::-webkit-scrollbar-thumb {
   background: rgba(201, 148, 58, 0.4);
   border-radius: 4px;
   border: 2px solid transparent;
   background-clip: content-box;
 }
 
-.conversas-list::-webkit-scrollbar-thumb:hover {
+.conversasList::-webkit-scrollbar-thumb:hover {
   background: rgba(201, 148, 58, 0.7);
   background-clip: content-box;
 }
 
 /* Chat Messages - Histórico de Conversa */
-.chat-messages {
+.chatMessages {
   /* Firefox */
   scrollbar-color: rgba(201, 148, 58, 0.4) transparent;
   scrollbar-width: thin;
 }
 
 /* Webkit Scrollbar (Chrome, Safari, Edge) */
-.chat-messages::-webkit-scrollbar {
+.chatMessages::-webkit-scrollbar {
   width: 8px;
 }
 
-.chat-messages::-webkit-scrollbar-track {
+.chatMessages::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.chat-messages::-webkit-scrollbar-thumb {
+.chatMessages::-webkit-scrollbar-thumb {
   background: rgba(201, 148, 58, 0.4);
   border-radius: 4px;
   border: 2px solid transparent;
   background-clip: content-box;
 }
 
-.chat-messages::-webkit-scrollbar-thumb:hover {
+.chatMessages::-webkit-scrollbar-thumb:hover {
   background: rgba(201, 148, 58, 0.7);
   background-clip: content-box;
 }
