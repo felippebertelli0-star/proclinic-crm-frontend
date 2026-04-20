@@ -910,6 +910,7 @@ export function Conversas() {
           className={styles.conversasList}
           style={{
             flex: 1,
+            minHeight: 0,
             overflowY: 'auto',
             scrollbarWidth: 'thin',
             scrollbarColor: '#c9943a #0d1f2d',
@@ -1299,6 +1300,7 @@ export function Conversas() {
           className={styles.chatMessages}
           style={{
             flex: 1,
+            minHeight: 0,
             overflowY: 'auto',
             padding: '24px',
             display: 'flex',
