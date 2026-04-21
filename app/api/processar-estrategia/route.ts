@@ -174,23 +174,26 @@ export async function POST(request: NextRequest) {
     });
 
     // Claude system prompt for text analysis
-    const CLAUDE_SYSTEM_PROMPT = `Você é um assistente especializado em análise de estratégias odontológicas.
+    const CLAUDE_SYSTEM_PROMPT = `Você é um assistente especializado em análise de estratégias comerciais, de marketing e operacionais.
 
-Sua tarefa é ler um texto descritivo de uma estratégia e extrair informações estruturadas em formato JSON.
+Sua tarefa é ler um texto descritivo e extrair informações estruturadas sobre estratégias em formato JSON.
 
 IMPORTANTE: Sua resposta DEVE ser um JSON válido, sem texto adicional antes ou depois.
 
 Extraia a seguinte estrutura para CADA estratégia mencionada no texto:
 {
-  "nome": "Nome da estratégia (máx 100 caracteres)",
-  "descricao": "Descrição detalhada (máx 500 caracteres)",
-  "tipo": "Um dos valores: Limpeza, Clareamento, Implante, Tratamento Estético, Consulta, Restauração, Aparelho Ortodôntico",
-  "taxaSucesso": "Valor de 0 a 100 representando % de sucesso estimado"
+  "nome": "Nome ou título da estratégia (máx 100 caracteres)",
+  "descricao": "Descrição detalhada da estratégia, ações, objetivos e resultados esperados (máx 500 caracteres)",
+  "tipo": "Categorize a estratégia: pode ser qualquer tipo como Aquisição, Retenção, Follow-up, Reativação, Recuperação, Consulta, Tratamento, Promoção, Campanha, Comunicação, ou qualquer outro tipo relevante",
+  "taxaSucesso": "Valor de 0 a 100 representando % de sucesso estimado ou esperado"
 }
 
-Se o texto mencionar múltiplas estratégias, retorne um array JSON.
-
-Se o texto não contiver informação suficiente, retorne um array vazio [].
+REGRAS IMPORTANTES:
+- Extraia TODAS as estratégias mencionadas (não apenas as com nomes específicos)
+- Se o texto descreve ações, táticas ou planos com objetivos, considere como estratégia
+- O campo "tipo" é flexível - adapte à realidade do texto (pode ser para qualquer tipo de negócio: clínica médica, consultório odontológico, estética, etc)
+- Se o texto mencionar múltiplas estratégias, retorne um array JSON com todas
+- Se não conseguir extrair informações estruturadas, retorne um array vazio []
 
 NUNCA adicione explicações, comentários ou texto fora do JSON.`;
 
