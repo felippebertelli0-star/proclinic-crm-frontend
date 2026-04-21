@@ -205,7 +205,7 @@ Retorne um array JSON com as estratégias extraídas. Se não conseguir extrair 
     // Send to Claude Text API
     console.log('[ESTRATEGIA_API] Sending request to Claude Text API...');
     const message = await client.messages.create({
-      model: 'claude-3-5-sonnet-20241022',
+      model: 'claude-sonnet-4-6',
       max_tokens: 1024,
       system: CLAUDE_SYSTEM_PROMPT,
       messages: [
