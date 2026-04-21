@@ -1,0 +1,208 @@
+.container {
+  padding: 24px;
+  background: #0d1f2d;
+  min-height: 100vh;
+  color: #e8edf2;
+}
+
+.header {
+  margin-bottom: 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+}
+
+.headerContent {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 12px;
+  color: #7a96aa;
+  margin: 0;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+}
+
+.btnNovaEtiqueta {
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: none;
+  background: #c9943a;
+  color: #0d1f2d;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease-out;
+  flex-shrink: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.btnNovaEtiqueta:hover {
+  background: #d9a344;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(201, 148, 58, 0.3);
+}
+
+.btnNovaEtiqueta:active {
+  transform: translateY(0);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.etiquetaCard {
+  background: #132636;
+  border: 2px solid;
+  border-radius: 14px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease-out;
+  text-align: left;
+  font-family: inherit;
+
+  /* Reset button styles */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding: 16px;
+  border-radius: 14px;
+}
+
+.etiquetaCard:hover {
+  background: #1a334a;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.etiquetaCard:active {
+  transform: translateY(0);
+}
+
+.iconBox {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.nomeComTitulo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: space-between;
+}
+
+.nome {
+  font-size: 13px;
+  font-weight: 600;
+  color: #e8edf2;
+  flex: 1;
+}
+
+.cardCount {
+  font-size: 10px;
+  font-weight: 600;
+  opacity: 0.8;
+  white-space: nowrap;
+}
+
+.descricao {
+  font-size: 10px;
+  color: #7a96aa;
+}
+
+.etiquetaBadge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 14px;
+  border: 1.5px solid;
+  font-size: 10px;
+  font-weight: 700;
+  transition: all 0.15s ease-out;
+  cursor: default;
+  width: fit-content;
+  text-transform: uppercase;
+  letter-spacing: 0.2px;
+}
+
+.etiquetaBadge:hover {
+  opacity: 0.95;
+  transform: translateY(-1px);
+}
+
+.tickets {
+  font-size: 11px;
+  font-weight: 600;
+}
+
+@media (max-width: 1024px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .btnNovaEtiqueta {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    gap: 12px;
+  }
+
+  .title {
+    font-size: 20px;
+  }
+
+  .subtitle {
+    font-size: 11px;
+  }
+
+  .btnNovaEtiqueta {
+    width: 100%;
+    font-size: 12px;
+  }
+
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 12px;
+  }
+}

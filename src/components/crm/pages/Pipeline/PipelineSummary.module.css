@@ -1,0 +1,129 @@
+.container {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  padding: 16px 24px;
+  background: #0d1f2d;
+  border-bottom: 1px solid #1e3d54;
+}
+
+.card {
+  background: #132636;
+  border-left: 4px solid;
+  border-top: 1px solid;
+  border-right: 1px solid;
+  border-bottom: 1px solid;
+  border-radius: 10px;
+  padding: 16px;
+  transition: all 0.2s ease-out;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.iconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.title {
+  font-size: 11px;
+  font-weight: 700;
+  color: #e8edf2;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.count {
+  font-size: 24px;
+  font-weight: 800;
+  color: #e8edf2;
+  line-height: 1;
+}
+
+.progressRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.progressBar {
+  flex: 1;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 3px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s ease-out;
+}
+
+.percentualText {
+  font-size: 11px;
+  font-weight: 700;
+  opacity: 1;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+@media (max-width: 1400px) {
+  .container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 1024px) {
+  .container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    grid-template-columns: 1fr;
+    padding: 12px 16px;
+    gap: 12px;
+  }
+
+  .card {
+    padding: 12px;
+  }
+
+  .title {
+    font-size: 10px;
+  }
+
+  .count {
+    font-size: 20px;
+  }
+
+  .percentualText {
+    font-size: 10px;
+  }
+}

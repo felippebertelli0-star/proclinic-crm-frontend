@@ -1,0 +1,126 @@
+.container {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 24px;
+  background: #0d1f2d;
+  border-bottom: 1px solid #1e3d54;
+  overflow-x: auto;
+  flex-wrap: wrap;
+}
+
+.filterLabel {
+  font-size: 11px;
+  font-weight: 800;
+  color: #7a96aa;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.memberButtons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  overflow-x: auto;
+  flex-wrap: nowrap;
+  padding-bottom: 4px;
+
+  /* Scrollbar styling */
+  scroll-behavior: smooth;
+}
+
+.memberBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border: 1.5px solid #1e3d54;
+  border-radius: 6px;
+  background: transparent;
+  color: #e8edf2;
+  cursor: pointer;
+  transition: all 0.15s ease-out;
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 600;
+  height: 32px;
+}
+
+.memberBtn:hover {
+  border-color: #3498db;
+  background: rgba(52, 152, 219, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.memberBtn.active {
+  border-width: 2px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.memberBtn.active:hover {
+  transform: translateY(-2px);
+}
+
+.avatar {
+  display: none;
+}
+
+.memberName {
+  display: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Mostrar nome em telas maiores */
+@media (min-width: 768px) {
+  .memberName {
+    display: inline;
+    max-width: 80px;
+  }
+}
+
+/* Scrollbar para mobile */
+.memberButtons::-webkit-scrollbar {
+  height: 4px;
+}
+
+.memberButtons::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.memberButtons::-webkit-scrollbar-thumb {
+  background: #1e3d54;
+  border-radius: 2px;
+}
+
+.memberButtons::-webkit-scrollbar-thumb:hover {
+  background: #2d5c7b;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container {
+    padding: 12px 16px;
+    gap: 12px;
+  }
+
+  .memberBtn {
+    padding: 6px 10px;
+    font-size: 11px;
+    height: 36px;
+  }
+
+  .avatar {
+    width: 20px;
+    height: 20px;
+    font-size: 9px;
+  }
+
+  .memberName {
+    max-width: 60px;
+  }
+}

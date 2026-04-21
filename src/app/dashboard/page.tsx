@@ -2,7 +2,7 @@
  * Página do Dashboard
  */
 
-import { DashboardContent } from '@/components/dashboard/DashboardContent';
+import { CRMLayout } from '@/components/crm/CRMLayout';
 
 export const metadata = {
   title: 'Dashboard - ProClinic CRM',
@@ -10,5 +10,5 @@ export const metadata = {
 };
 
 export default function DashboardPage() {
-  return <DashboardContent />;
+  return <CRMLayout />;
 }

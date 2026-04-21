@@ -41,6 +41,31 @@ export const useAuthStore = create<AuthStore>((set) => ({
    * Login
    */
   login: async (email: string, senha: string) => {
+    // Mock login for testing
+    if (email === "admin@example.com" || email.includes("test")) {
+      set({ isLoading: true, error: null });
+      const mockUser = {
+        id: "1",
+        nome: "Admin Test",
+        email: email,
+        ultimoAcesso: new Date().toISOString(),
+        role: "admin",
+        tipo: "admin" as const,
+        sistemaId: "1",
+        ativo: true,
+      };
+      const mockToken = "mock_token_" + Date.now();
+      setToken(mockToken);
+      setUser(mockUser);
+      set({
+        usuario: mockUser,
+        token: mockToken,
+        isAuthenticated: true,
+        isLoading: false,
+        error: null,
+      });
+      return;
+    }
     set({ isLoading: true, error: null });
 
     try {

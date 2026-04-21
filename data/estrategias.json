@@ -1,0 +1,13 @@
+[
+  {
+    "id": 99,
+    "nome": "Implante Dental",
+    "descricao": "Implante completo",
+    "tipo": "Implante",
+    "ativa": true,
+    "dataCriacao": "2026-04-21",
+    "totalExecutions": 1,
+    "taxaSucesso": 90,
+    "criadoPor": "Teste Persistência"
+  }
+]
