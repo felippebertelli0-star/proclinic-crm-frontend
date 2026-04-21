@@ -15,7 +15,7 @@ import { Calendario } from './pages/Calendario';
 import { Etiquetas } from './pages/Etiquetas';
 import { Respostas } from './pages/Respostas';
 import { Followups } from './pages/Followups';
-import { Estrategias } from './pages/Estrategias';
+// Estrategias moved to app/dashboard/estrategias/page.tsx
 import { PortalIas } from './pages/PortalIas';
 import { FlowBuilder } from './pages/FlowBuilder';
 import { Webhooks } from './pages/Webhooks';
@@ -28,7 +28,7 @@ import { Configuracoes } from './pages/Configuracoes';
 import { Tarefas } from './pages/Tarefas';
 import { PedidoExames } from './pages/PedidoExames';
 
-type PageType = 'sair' | 'dashboard' | 'conversas' | 'contatos' | 'kanban' | 'pipeline' | 'calendario' | 'followups' | 'tarefas' | 'etiquetas' | 'respostas' | 'estrategias' | 'portal_ias' | 'flowbuilder' | 'webhooks' | 'filas' | 'equipe' | 'conexoes' | 'arquivos' | 'indicadores' | 'pedido_exames' | 'configuracoes';
+type PageType = 'sair' | 'dashboard' | 'conversas' | 'contatos' | 'kanban' | 'pipeline' | 'calendario' | 'followups' | 'tarefas' | 'etiquetas' | 'respostas' | 'portal_ias' | 'flowbuilder' | 'webhooks' | 'filas' | 'equipe' | 'conexoes' | 'arquivos' | 'indicadores' | 'pedido_exames' | 'configuracoes';
 
 const FOOTER_MENU = [
   { id: 'configuracoes', label: 'Configurações', icon: Cog },
@@ -46,7 +46,7 @@ const PAGE_MAPPING: Record<PageType, React.ComponentType> = {
   respostas: Respostas,
   followups: Followups,
   tarefas: Tarefas,
-  estrategias: Estrategias,
+  // estrategias moved to app/dashboard/estrategias/page.tsx
   portal_ias: PortalIas,
   flowbuilder: FlowBuilder,
   webhooks: Webhooks,
