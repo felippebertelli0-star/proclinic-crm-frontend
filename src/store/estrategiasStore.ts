@@ -81,6 +81,7 @@ export const useEstrategiasStore = create<EstrategiasState>((set) => ({
     set({ carregando: true, erro: null });
     try {
       console.log('[ESTRATEGIAS_STORE] Salvando', novasEstrategias.length, 'estratégias...');
+      console.log('[ESTRATEGIAS_STORE] Payload:', JSON.stringify({ estrategias: novasEstrategias }));
 
       const response = await fetch('/api/estrategias', {
         method: 'POST',
@@ -88,13 +89,18 @@ export const useEstrategiasStore = create<EstrategiasState>((set) => ({
         body: JSON.stringify({ estrategias: novasEstrategias }),
       });
 
+      console.log('[ESTRATEGIAS_STORE] Response status:', response.status);
+      const dados = await response.json();
+      console.log('[ESTRATEGIAS_STORE] Response data:', dados);
+
       if (!response.ok) {
-        throw new Error(`Erro ao salvar estratégias: ${response.status}`);
+        throw new Error(`Erro ao salvar estratégias: ${response.status} - ${dados.erro}`);
       }
 
       // Recarregar estratégias após salvar
+      console.log('[ESTRATEGIAS_STORE] Recarregando estratégias do backend...');
       await useEstrategiasStore.getState().carregarEstrategias();
-      console.log('[ESTRATEGIAS_STORE] ✓ Estratégias salvas com sucesso');
+      console.log('[ESTRATEGIAS_STORE] ✓ Estratégias salvas e recarregadas com sucesso');
     } catch (erro) {
       const mensagem = erro instanceof Error ? erro.message : 'Erro desconhecido';
       console.error('[ESTRATEGIAS_STORE] ✗ Erro ao salvar:', mensagem);

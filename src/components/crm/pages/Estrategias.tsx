@@ -125,7 +125,17 @@ export function Estrategias() {
 
         // Salvar no backend via store (NOVO SISTEMA DE PERSISTÊNCIA)
         console.log('[ESTRATEGIAS] Salvando no backend via store...');
-        await adicionarEstrategias(novasEstrategias);
+        console.log('[ESTRATEGIAS] Estratégias a salvar:', novasEstrategias);
+
+        try {
+          await adicionarEstrategias(novasEstrategias);
+          console.log('[ESTRATEGIAS] ✓ Estratégias salvas com sucesso no backend');
+        } catch (storeError) {
+          console.error('[ESTRATEGIAS] ✗ Erro ao salvar no store:', storeError);
+          alert(`❌ Erro ao salvar estratégias: ${storeError instanceof Error ? storeError.message : String(storeError)}`);
+          setCarregandoLocal(false);
+          return;
+        }
 
         // Limpar formulário após sucesso
         setTextoEstrategia('');
