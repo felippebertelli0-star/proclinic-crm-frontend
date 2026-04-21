@@ -245,12 +245,25 @@ export function Kanban() {
     }
   }, [colunas.length, setColunas]);
 
-  // Filtrar apenas as colunas hardcoded (sem etiquetas)
+  // Combinar colunas hardcoded com colunas dinâmicas de etiquetas
   const colunasDoKanban = useMemo(() => {
-    return colunas.filter(col =>
+    // Manter colunas hardcoded
+    const colunasHardcoded = colunas.filter(col =>
       ['comercial', 'secretaria', 'ia', 'suporte', 'agendando'].includes(col.id)
     );
-  }, [colunas]);
+
+    // Adicionar colunas dinâmicas de etiquetas
+    const colunasEtiquetas = etiquetas.map((etiqueta) => ({
+      id: etiqueta.id,
+      titulo: etiqueta.nome,
+      cor: etiqueta.cor,
+      cards: colunas
+        .find(col => col.id === etiqueta.id)
+        ?.cards || [],
+    }));
+
+    return [...colunasHardcoded, ...colunasEtiquetas];
+  }, [colunas, etiquetas]);
 
   // Drag and Drop Handler
   const handleDragEnd = useCallback((result: DropResult) => {
