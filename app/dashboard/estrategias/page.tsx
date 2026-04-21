@@ -26,7 +26,23 @@ const getIconeTipo = (tipo: string) => {
 export default function EstrategiasPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [tipoFilter, setTipoFilter] = useState('');
+  const [mesSelecionado, setMesSelecionado] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+
+  const MESES = [
+    { valor: 'janeiro', label: 'Jan' },
+    { valor: 'fevereiro', label: 'Fev' },
+    { valor: 'marco', label: 'Mar' },
+    { valor: 'abril', label: 'Abr' },
+    { valor: 'maio', label: 'Mai' },
+    { valor: 'junho', label: 'Jun' },
+    { valor: 'julho', label: 'Jul' },
+    { valor: 'agosto', label: 'Ago' },
+    { valor: 'setembro', label: 'Set' },
+    { valor: 'outubro', label: 'Out' },
+    { valor: 'novembro', label: 'Nov' },
+    { valor: 'dezembro', label: 'Dez' },
+  ];
 
   const handleSearch = (value: string) => {
     setSearchTerm(value);
@@ -64,6 +80,33 @@ export default function EstrategiasPage() {
       <div>
         <h1 className="text-3xl font-bold text-gray-900">Estratégias de Automação</h1>
         <p className="text-gray-600 mt-2">Gerenciar estratégias automatizadas de comunicação</p>
+        
+        {/* Botões de Meses */}
+        <div className="mt-6 flex flex-wrap gap-2">
+          <button
+            onClick={() => setMesSelecionado('')}
+            className={`px-4 py-2 rounded-lg font-medium transition ${
+              mesSelecionado === ''
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            }`}
+          >
+            Todos
+          </button>
+          {MESES.map((mes) => (
+            <button
+              key={mes.valor}
+              onClick={() => setMesSelecionado(mes.valor)}
+              className={`px-4 py-2 rounded-lg font-medium transition ${
+                mesSelecionado === mes.valor
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
+            >
+              {mes.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Cards de Estatísticas */}
