@@ -110,3 +110,35 @@ export interface ApiResponse<T = any> {
   error?: ApiError;
   message?: string;
 }
+
+// ============================================================================
+// ESTRATÉGIAS
+// ============================================================================
+
+export interface ProcessarEstrategiaRequest {
+  texto: string;
+  mes: string;
+  tamanho: number;
+}
+
+export interface EstrategiaExtraida {
+  id: number;
+  nome: string;
+  descricao: string;
+  tipo: 'Limpeza' | 'Clareamento' | 'Implante' | 'Tratamento Estético' | 'Consulta' | 'Restauração' | 'Aparelho Ortodôntico';
+  ativa: boolean;
+  dataCriacao: string;
+  dataAtivacao?: string;
+  totalExecutions: number;
+  taxaSucesso: number;
+  criadoPor: string;
+}
+
+export interface ProcessarEstrategiaResponse {
+  sucesso: boolean;
+  erro?: string;
+  detalhe?: string;
+  estrategias?: EstrategiaExtraida[];
+  total?: number;
+  processadoEm?: string;
+}

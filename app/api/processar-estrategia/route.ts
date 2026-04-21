@@ -2,18 +2,20 @@ import { NextRequest, NextResponse } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
 
 /**
- * SENIOR-LEVEL FIX FOR 401 AUTHENTICATION ERROR
+ * SISTEMA DE EXTRAÇÃO DE ESTRATÉGIAS POR TEXTO
  *
- * Root Cause Analysis:
- * 1. Module-level client instantiation caused API key to be read at module load time
- * 2. In Vercel serverless environment, env vars may not be available until runtime
- * 3. No validation or logging of API key presence/format
+ * Novo sistema que processa texto descritivo de estratégias ao invés de imagens.
  *
- * Solution:
- * - Instantiate client at function runtime (inside POST handler)
- * - Add comprehensive validation of environment variables
- * - Add detailed logging for debugging in production
- * - Improve error handling with specific error types
+ * Mudanças de Vision API para Text API:
+ * 1. Aceita JSON com campo "texto" ao invés de FormData com imagem
+ * 2. Valida tamanho do texto (50-5000 caracteres)
+ * 3. Claude analisa texto e extrai informações em formato JSON
+ * 4. Mais confiável, barato e sem dependência de qualidade de imagem
+ *
+ * Mantém:
+ * - Validação de API key em tempo de execução
+ * - Logging detalhado para debugging
+ * - Tratamento de erros específicos
  */
 
 /**
@@ -97,67 +99,119 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Parse form data
-    const formData = await request.formData();
-    const file = formData.get('file') as File;
-    const mes = formData.get('mes') as string;
+    // Parse JSON body
+    interface ProcessarEstrategiaRequest {
+      texto: string;
+      mes: string;
+      tamanho: number;
+    }
 
-    console.log('[ESTRATEGIA_API] Form data received:', {
-      fileName: file?.name,
-      fileSize: file?.size,
-      mes: mes,
-    });
-
-    if (!file) {
-      console.warn('[ESTRATEGIA_API] No file provided in request');
+    let body: ProcessarEstrategiaRequest;
+    try {
+      body = await request.json();
+    } catch (parseError) {
+      console.error('[ESTRATEGIA_API] ✗ Invalid JSON in request body');
       return NextResponse.json(
-        { sucesso: false, erro: 'Nenhuma imagem enviada' },
+        { sucesso: false, erro: 'Requisição inválida', detalhe: 'O corpo da requisição deve ser JSON válido' },
         { status: 400 }
       );
     }
 
-    // Convert file to base64
-    console.log('[ESTRATEGIA_API] Converting file to base64...');
-    const buffer = await file.arrayBuffer();
-    const base64 = Buffer.from(buffer).toString('base64');
-    console.log('[ESTRATEGIA_API] ✓ File converted to base64, length:', base64.length);
+    const { texto, mes, tamanho } = body;
 
-    // Send to Claude Vision API
-    console.log('[ESTRATEGIA_API] Sending request to Claude Vision API...');
+    // Validate text input
+    if (!texto || typeof texto !== 'string') {
+      console.warn('[ESTRATEGIA_API] No text provided in request');
+      return NextResponse.json(
+        {
+          sucesso: false,
+          erro: 'Texto da estratégia é obrigatório',
+          detalhe: 'O campo "texto" deve ser uma string não vazia'
+        },
+        { status: 400 }
+      );
+    }
+
+    if (tamanho < 50) {
+      console.warn('[ESTRATEGIA_API] Text too short:', tamanho, 'caracteres');
+      return NextResponse.json(
+        {
+          sucesso: false,
+          erro: 'Texto muito curto',
+          detalhe: `O texto deve ter pelo menos 50 caracteres (recebido: ${tamanho})`
+        },
+        { status: 400 }
+      );
+    }
+
+    if (tamanho > 5000) {
+      console.warn('[ESTRATEGIA_API] Text too long:', tamanho, 'caracteres');
+      return NextResponse.json(
+        {
+          sucesso: false,
+          erro: 'Texto muito longo',
+          detalhe: `O texto não deve exceder 5000 caracteres (recebido: ${tamanho})`
+        },
+        { status: 400 }
+      );
+    }
+
+    if (!mes) {
+      console.warn('[ESTRATEGIA_API] No month provided in request');
+      return NextResponse.json(
+        {
+          sucesso: false,
+          erro: 'Mês é obrigatório',
+          detalhe: 'Selecione um mês antes de processar'
+        },
+        { status: 400 }
+      );
+    }
+
+    console.log('[ESTRATEGIA_API] Text data received:', {
+      textLength: tamanho,
+      mes: mes,
+    });
+
+    // Claude system prompt for text analysis
+    const CLAUDE_SYSTEM_PROMPT = `Você é um assistente especializado em análise de estratégias odontológicas.
+
+Sua tarefa é ler um texto descritivo de uma estratégia e extrair informações estruturadas em formato JSON.
+
+IMPORTANTE: Sua resposta DEVE ser um JSON válido, sem texto adicional antes ou depois.
+
+Extraia a seguinte estrutura para CADA estratégia mencionada no texto:
+{
+  "nome": "Nome da estratégia (máx 100 caracteres)",
+  "descricao": "Descrição detalhada (máx 500 caracteres)",
+  "tipo": "Um dos valores: Limpeza, Clareamento, Implante, Tratamento Estético, Consulta, Restauração, Aparelho Ortodôntico",
+  "taxaSucesso": "Valor de 0 a 100 representando % de sucesso estimado"
+}
+
+Se o texto mencionar múltiplas estratégias, retorne um array JSON.
+
+Se o texto não contiver informação suficiente, retorne um array vazio [].
+
+NUNCA adicione explicações, comentários ou texto fora do JSON.`;
+
+    const userPrompt = `Analise o seguinte texto de estratégia e extraia as informações em JSON:
+
+Texto: ${texto}
+
+Mês: ${mes}
+
+Retorne um array JSON com as estratégias extraídas. Se não conseguir extrair nada válido, retorne [].`;
+
+    // Send to Claude Text API
+    console.log('[ESTRATEGIA_API] Sending request to Claude Text API...');
     const message = await client.messages.create({
       model: 'claude-3-5-sonnet-20241022',
       max_tokens: 1024,
+      system: CLAUDE_SYSTEM_PROMPT,
       messages: [
         {
           role: 'user',
-          content: [
-            {
-              type: 'image',
-              source: {
-                type: 'base64',
-                media_type: 'image/jpeg',
-                data: base64,
-              },
-            },
-            {
-              type: 'text',
-              text: `Analise esta imagem de estratégia e extraia as informações em formato JSON.
-
-              Para cada estratégia/campanha encontrada, crie um objeto com:
-              - nome: (nome da estratégia)
-              - canal: (canal de marketing: Ads, WhatsApp, Instagram, Email, etc)
-              - status: (Ativa ou Pausada)
-              - investimento: (valor em R$ ou "Grátis")
-
-              IMPORTANTE: Retorne APENAS um JSON válido com um array "estrategias", nada mais. Exemplo:
-              {
-                "estrategias": [
-                  {"nome": "Campanha Google Ads", "canal": "Ads", "status": "Ativa", "investimento": "R$ 2000"},
-                  {"nome": "Follow-up Automático", "canal": "WhatsApp", "status": "Ativa", "investimento": "Grátis"}
-                ]
-              }`,
-            },
-          ],
+          content: userPrompt,
         },
       ],
     });
@@ -176,38 +230,65 @@ export async function POST(request: NextRequest) {
 
     console.log('[ESTRATEGIA_API] Response text length:', resposta.text.length);
 
-    // Parse JSON
-    const jsonMatch = resposta.text.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) {
-      console.error('[ESTRATEGIA_API] ✗ Could not extract JSON from response');
-      console.error('[ESTRATEGIA_API] Response preview:', resposta.text.substring(0, 200));
-      return NextResponse.json(
-        { sucesso: false, erro: 'Não foi possível extrair dados da imagem' },
-        { status: 400 }
-      );
-    }
+    // Parse JSON - extract array from response
+    const jsonMatch = resposta.text.match(/\[[\s\S]*\]/);
+    const jsonString = jsonMatch?.[0] || '[]';
 
-    let dados;
+    let estrategiasDados: Array<any>;
     try {
-      dados = JSON.parse(jsonMatch[0]);
+      estrategiasDados = JSON.parse(jsonString);
       console.log('[ESTRATEGIA_API] ✓ JSON parsed successfully');
     } catch (parseError) {
       const parseMsg = parseError instanceof Error ? parseError.message : String(parseError);
       console.error('[ESTRATEGIA_API] ✗ JSON parse error:', parseMsg);
-      console.error('[ESTRATEGIA_API] JSON string:', jsonMatch[0].substring(0, 200));
+      console.error('[ESTRATEGIA_API] JSON string preview:', jsonString.substring(0, 200));
       return NextResponse.json(
-        { sucesso: false, erro: 'Erro ao processar dados da imagem' },
+        { sucesso: false, erro: 'Erro ao processar texto da estratégia', detalhe: parseMsg },
         { status: 400 }
       );
     }
 
-    const estrategias = dados.estrategias || [];
+    // Validate it's an array
+    if (!Array.isArray(estrategiasDados)) {
+      console.error('[ESTRATEGIA_API] ✗ Response is not an array');
+      return NextResponse.json(
+        { sucesso: false, erro: 'Formato de resposta inválido', detalhe: 'Claude retornou um JSON que não é um array' },
+        { status: 400 }
+      );
+    }
+
+    // Enrich estratégias with system data
+    interface EstrategiaExtraida {
+      id: number;
+      nome: string;
+      descricao: string;
+      tipo: string;
+      ativa: boolean;
+      dataCriacao: string;
+      totalExecutions: number;
+      taxaSucesso: number;
+      criadoPor: string;
+    }
+
+    const estrategias: EstrategiaExtraida[] = estrategiasDados.map((est, idx) => ({
+      id: Date.now() + idx,
+      nome: est.nome || 'Estratégia sem nome',
+      descricao: est.descricao || '',
+      tipo: est.tipo || 'Consulta',
+      ativa: true,
+      dataCriacao: new Date().toISOString().split('T')[0],
+      totalExecutions: 0,
+      taxaSucesso: Math.min(100, Math.max(0, est.taxaSucesso || 85)),
+      criadoPor: 'IA - Análise de Texto'
+    }));
+
     console.log('[ESTRATEGIA_API] ✓ Successfully extracted', estrategias.length, 'estratégias');
 
     return NextResponse.json({
       sucesso: true,
       estrategias: estrategias,
-      mes: mes,
+      total: estrategias.length,
+      processadoEm: new Date().toISOString()
     });
 
   } catch (erro) {

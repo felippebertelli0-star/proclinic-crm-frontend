@@ -4,7 +4,8 @@ import { useState } from 'react';
 export function Estrategias() {
   const [mesSelecionado, setMesSelecionado] = useState('Janeiro');
   const [modalAberto, setModalAberto] = useState(false);
-  const [imagens, setImagens] = useState<File[]>([]);
+  const [textoEstrategia, setTextoEstrategia] = useState('');
+  const [contadorCaracteres, setContadorCaracteres] = useState(0);
   const [mesModal, setMesModal] = useState('Janeiro');
   const [carregando, setCarregando] = useState(false);
   const [estrategias, setEstrategias] = useState([
@@ -15,92 +16,105 @@ export function Estrategias() {
     { id: 5, nome: 'Email Marketing Mensal', canal: 'Email', status: 'Ativa', investimento: 'R$ 300', mes: 'Janeiro' },
   ]);
 
+  const MAX_CARACTERES_TEXTO = 5000;
+  const MIN_CARACTERES_TEXTO = 50;
   const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
 
-  const handleImagemUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      const novasImagens = Array.from(e.target.files);
-      const totalImagens = imagens.length + novasImagens.length;
+  const handleTextoChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const texto = e.target.value;
+    const caracteres = texto.length;
 
-      if (totalImagens > 10) {
-        alert(`⚠️ Máximo de 10 imagens! Você selecionou ${totalImagens}`);
-        return;
-      }
-
-      setImagens([...imagens, ...novasImagens]);
+    if (caracteres <= MAX_CARACTERES_TEXTO) {
+      setTextoEstrategia(texto);
+      setContadorCaracteres(caracteres);
     }
   };
 
-  const removerImagem = (index: number) => {
-    setImagens(imagens.filter((_, i) => i !== index));
+  const validarTextoEstrategia = (): { valido: boolean; mensagem?: string } => {
+    if (!textoEstrategia.trim()) {
+      return { valido: false, mensagem: 'Por favor, insira um texto de estratégia' };
+    }
+    if (contadorCaracteres < MIN_CARACTERES_TEXTO) {
+      return {
+        valido: false,
+        mensagem: `Texto deve ter pelo menos ${MIN_CARACTERES_TEXTO} caracteres (${contadorCaracteres}/${MIN_CARACTERES_TEXTO})`
+      };
+    }
+    if (contadorCaracteres > MAX_CARACTERES_TEXTO) {
+      return {
+        valido: false,
+        mensagem: `Texto não deve exceder ${MAX_CARACTERES_TEXTO} caracteres (${contadorCaracteres}/${MAX_CARACTERES_TEXTO})`
+      };
+    }
+    if (!mesModal) {
+      return { valido: false, mensagem: 'Selecione um mês' };
+    }
+    return { valido: true };
   };
 
   const handleSalvarEstrategia = async () => {
-    if (imagens.length === 0) {
-      alert('Por favor, selecione pelo menos uma imagem');
+    const validacao = validarTextoEstrategia();
+    if (!validacao.valido) {
+      alert(`⚠️ ${validacao.mensagem}`);
       return;
     }
 
     setCarregando(true);
+
     try {
-      let todasAsEstrategias: any[] = [];
-      let algumErro = false;
+      console.log('[ESTRATEGIAS] Iniciando processamento de texto de estratégia');
+      console.log(`[ESTRATEGIAS] Texto: ${contadorCaracteres} caracteres, Mês: ${mesModal}`);
 
-      // Processar cada imagem
-      for (let i = 0; i < imagens.length; i++) {
-        const formData = new FormData();
-        formData.append('file', imagens[i]);
-        formData.append('mes', mesModal);
+      const payload = {
+        texto: textoEstrategia.trim(),
+        mes: mesModal,
+        tamanho: contadorCaracteres
+      };
 
-        console.log(`[ESTRATEGIAS] Processando imagem ${i + 1}/${imagens.length}: ${imagens[i].name}`);
+      console.log('[ESTRATEGIAS] Enviando para API:', payload);
 
-        try {
-          const response = await fetch('/api/processar-estrategia', {
-            method: 'POST',
-            body: formData,
-          });
+      const response = await fetch('/api/processar-estrategia', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
 
-          const dados = await response.json();
+      const dados = await response.json();
 
-          if (dados.sucesso) {
-            console.log(`[ESTRATEGIAS] ✓ Imagem ${i + 1} processada com sucesso:`, dados.estrategias);
-            todasAsEstrategias = [...todasAsEstrategias, ...dados.estrategias];
-          } else {
-            algumErro = true;
-            const mensagemErro = dados.detalhe || dados.erro || 'Erro desconhecido';
-            console.error(`[ESTRATEGIAS] ✗ Erro ao processar imagem ${i + 1}:`, mensagemErro);
-            alert(
-              `⚠️ Erro ao processar imagem ${i + 1}: ${dados.erro}\n\n` +
-              (dados.detalhe ? `Detalhes: ${dados.detalhe}` : '')
-            );
-          }
-        } catch (fetchError) {
-          algumErro = true;
-          const errorMsg = fetchError instanceof Error ? fetchError.message : String(fetchError);
-          console.error(`[ESTRATEGIAS] ✗ Erro de conexão ao processar imagem ${i + 1}:`, errorMsg);
-          alert(`❌ Erro de conexão ao processar imagem ${i + 1}: ${errorMsg}`);
-        }
+      if (!response.ok) {
+        console.error('[ESTRATEGIAS] ✗ Erro na resposta:', dados);
+        alert(
+          `⚠️ Erro ao processar estratégia:\n${dados.erro}\n\n` +
+          (dados.detalhe ? `Detalhes: ${dados.detalhe}` : '')
+        );
+        return;
       }
 
-      if (todasAsEstrategias.length > 0) {
-        // Adicionar todas as novas estratégias
-        const novasEstrategias = todasAsEstrategias.map((e: any, idx: number) => ({
+      if (dados.sucesso && dados.estrategias && Array.isArray(dados.estrategias)) {
+        console.log(`[ESTRATEGIAS] ✓ Sucesso! ${dados.estrategias.length} estratégias criadas`);
+        console.log('[ESTRATEGIAS] Estratégias:', dados.estrategias);
+
+        const novasEstrategias = dados.estrategias.map((e: any, idx: number) => ({
           id: Math.max(...estrategias.map(s => s.id), 0) + idx + 1,
           ...e,
           mes: mesModal,
         }));
         setEstrategias([...estrategias, ...novasEstrategias]);
+        setTextoEstrategia('');
+        setContadorCaracteres(0);
         setModalAberto(false);
-        setImagens([]);
-        console.log(`[ESTRATEGIAS] ✓ Sucesso! ${todasAsEstrategias.length} estratégias criadas`);
-        alert(`✅ ${todasAsEstrategias.length} estratégias criadas automaticamente!`);
-      } else if (!algumErro) {
-        alert('⚠️ Nenhuma estratégia foi extraída das imagens. Verifique o conteúdo das imagens.');
+
+        alert(`✅ ${dados.estrategias.length} estratégias criadas automaticamente!`);
+      } else {
+        console.warn('[ESTRATEGIAS] ⚠️ Resposta não contém estratégias', dados);
+        alert('⚠️ Nenhuma estratégia foi extraída do texto. Verifique o conteúdo.');
       }
     } catch (erro) {
       const errorMsg = erro instanceof Error ? erro.message : String(erro);
-      console.error('[ESTRATEGIAS] ✗ Erro fatal ao enviar imagens:', errorMsg);
-      alert(`❌ Erro ao enviar imagens: ${errorMsg}`);
+      console.error('[ESTRATEGIAS] ✗ Erro fatal:', errorMsg);
+      alert(`❌ Erro ao processar: ${errorMsg}`);
     } finally {
       setCarregando(false);
     }
@@ -216,58 +230,46 @@ export function Estrategias() {
               </select>
             </div>
 
-            {/* UPLOAD DE IMAGENS */}
+            {/* TEXTAREA DE ESTRATÉGIA */}
             <div style={{ marginBottom: '20px' }}>
-              <label style={{ fontSize: '12px', color: '#7a96aa', fontWeight: 600, display: 'block', marginBottom: '8px' }}>Upload de Estratégias (até 10 imagens) - {imagens.length}/10:</label>
-              <div style={{
-                border: '2px dashed #c9943a',
-                borderRadius: '8px',
-                padding: '20px',
-                textAlign: 'center',
-                cursor: 'pointer',
-                background: 'rgba(201, 148, 58, 0.05)',
-              }}>
-                <input
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  onChange={handleImagemUpload}
-                  style={{ display: 'none' }}
-                  id="file-input"
-                  disabled={imagens.length >= 10}
-                />
-                <label htmlFor="file-input" style={{ cursor: imagens.length >= 10 ? 'not-allowed' : 'pointer', display: 'block', opacity: imagens.length >= 10 ? 0.5 : 1 }}>
-                  <p style={{ fontSize: '12px', color: '#7a96aa', margin: '0 0 8px 0' }}>📷 Selecione imagens</p>
-                  <p style={{ fontSize: '11px', color: '#7a96aa', margin: 0 }}>ou arraste até 10 aqui</p>
-                </label>
+              <label style={{ fontSize: '12px', color: '#7a96aa', fontWeight: 600, display: 'block', marginBottom: '8px' }}>Insira o texto da estratégia:</label>
+              <textarea
+                value={textoEstrategia}
+                onChange={handleTextoChange}
+                placeholder="Cole aqui o texto da estratégia para análise..."
+                style={{
+                  width: '100%',
+                  height: '140px',
+                  padding: '12px',
+                  borderRadius: '6px',
+                  border: '1px solid #1e3d54',
+                  background: '#0d1f2d',
+                  color: '#e8edf2',
+                  fontSize: '13px',
+                  fontFamily: "'Segoe UI', sans-serif",
+                  resize: 'none',
+                  boxSizing: 'border-box',
+                  outline: 'none',
+                }}
+                maxLength={MAX_CARACTERES_TEXTO}
+                disabled={carregando}
+                onFocus={(e) => {
+                  (e.currentTarget as HTMLElement).style.borderColor = '#c9943a';
+                }}
+                onBlur={(e) => {
+                  (e.currentTarget as HTMLElement).style.borderColor = '#1e3d54';
+                }}
+              />
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '8px', fontSize: '11px', color: '#7a96aa' }}>
+                <span>
+                  {contadorCaracteres} / {MAX_CARACTERES_TEXTO} caracteres
+                </span>
+                {contadorCaracteres < MIN_CARACTERES_TEXTO && (
+                  <span style={{ color: '#e74c3c' }}>
+                    Mínimo {MIN_CARACTERES_TEXTO} caracteres
+                  </span>
+                )}
               </div>
-
-              {/* LISTA DE IMAGENS SELECIONADAS */}
-              {imagens.length > 0 && (
-                <div style={{ marginTop: '12px', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))', gap: '8px' }}>
-                  {imagens.map((img, index) => (
-                    <div key={index} style={{ position: 'relative', background: '#0d1f2d', border: '1px solid #1e3d54', borderRadius: '6px', padding: '8px', textAlign: 'center' }}>
-                      <p style={{ fontSize: '10px', color: '#7a96aa', margin: '0 0 4px 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{img.name}</p>
-                      <button
-                        onClick={() => removerImagem(index)}
-                        style={{
-                          width: '100%',
-                          padding: '4px',
-                          borderRadius: '4px',
-                          border: 'none',
-                          background: '#c9943a',
-                          color: '#0d1f2d',
-                          fontSize: '10px',
-                          fontWeight: 600,
-                          cursor: 'pointer',
-                        }}
-                      >
-                        ✕ Remover
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
             </div>
 
             {/* BOTÕES */}
@@ -275,7 +277,8 @@ export function Estrategias() {
               <button
                 onClick={() => {
                   setModalAberto(false);
-                  setImagens([]);
+                  setTextoEstrategia('');
+                  setContadorCaracteres(0);
                 }}
                 disabled={carregando}
                 style={{
@@ -295,21 +298,21 @@ export function Estrategias() {
               </button>
               <button
                 onClick={handleSalvarEstrategia}
-                disabled={imagens.length === 0 || carregando}
+                disabled={carregando || !textoEstrategia.trim() || contadorCaracteres < MIN_CARACTERES_TEXTO}
                 style={{
                   flex: 1,
                   padding: '10px',
                   borderRadius: '6px',
                   border: 'none',
-                  background: imagens.length === 0 || carregando ? '#666' : '#c9943a',
+                  background: (carregando || !textoEstrategia.trim() || contadorCaracteres < MIN_CARACTERES_TEXTO) ? '#666' : '#c9943a',
                   color: '#0d1f2d',
                   fontSize: '13px',
                   fontWeight: 600,
-                  cursor: imagens.length === 0 || carregando ? 'not-allowed' : 'pointer',
-                  opacity: imagens.length === 0 || carregando ? 0.5 : 1,
+                  cursor: (carregando || !textoEstrategia.trim() || contadorCaracteres < MIN_CARACTERES_TEXTO) ? 'not-allowed' : 'pointer',
+                  opacity: (carregando || !textoEstrategia.trim() || contadorCaracteres < MIN_CARACTERES_TEXTO) ? 0.5 : 1,
                 }}
               >
-                {carregando ? `⏳ Processando ${imagens.length} imagens...` : `💾 Processar ${imagens.length} imagem${imagens.length !== 1 ? 's' : ''}`}
+                {carregando ? '⏳ Processando...' : '✓ Processar Estratégia'}
               </button>
             </div>
           </div>
