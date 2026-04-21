@@ -5,7 +5,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 import { useConversasStore } from '@/store/conversasStore';
 import styles from './CRMLayout.module.css';
-import { LayoutDashboard, MessageCircle, Users, Grid3x3, TrendingUp, Tag, Zap, Calendar, RotateCw, CheckSquare, Cog, Brain, Sliders, List, Link, Folder, BarChart3, ClipboardList, LogOut } from 'lucide-react';
+import { LayoutDashboard, MessageCircle, Users, Grid3x3, TrendingUp, Tag, Zap, Calendar, RotateCw, CheckSquare, Cog, Brain, Sliders, List, Link, Folder, BarChart3, ClipboardList, LogOut, Target } from 'lucide-react';
 import { Dashboard } from './pages/Dashboard';
 import { Conversas } from './pages/Conversas';
 import { Contatos } from './pages/Contatos';
@@ -91,7 +91,7 @@ export function CRMLayout({ children }: { children?: React.ReactNode }) {
       { id: 'tarefas', label: 'Tarefas', icon: CheckSquare, badge: undefined },
     ],
     automacao: [
-      // Estratégias moved to /app/dashboard/estrategias/page.tsx
+      { id: 'estrategias', label: 'Estratégias', icon: Target, badge: undefined },
       { id: 'portal_ias', label: 'Portal das IAs', icon: Brain, badge: undefined },
       { id: 'flowbuilder', label: 'FlowBuilder', icon: Sliders, badge: undefined },
       { id: 'webhooks', label: 'Webhooks / Triggers', icon: Zap, badge: undefined },
