@@ -91,7 +91,7 @@ export function CRMLayout({ children }: { children?: React.ReactNode }) {
       { id: 'tarefas', label: 'Tarefas', icon: CheckSquare, badge: undefined },
     ],
     automacao: [
-      { id: 'estrategias', label: 'Estratégias', icon: Cog, badge: undefined },
+      // Estratégias moved to /app/dashboard/estrategias/page.tsx
       { id: 'portal_ias', label: 'Portal das IAs', icon: Brain, badge: undefined },
       { id: 'flowbuilder', label: 'FlowBuilder', icon: Sliders, badge: undefined },
       { id: 'webhooks', label: 'Webhooks / Triggers', icon: Zap, badge: undefined },
