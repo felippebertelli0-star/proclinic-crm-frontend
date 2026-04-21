@@ -170,8 +170,9 @@ export function CRMLayout({ children }: { children?: React.ReactNode }) {
   };
 
   const renderPage = () => {
-    // Se há children do App Router (como estrategias), renderiza eles primeiro
-    if (children) {
+    // If we're on a route with App Router children (e.g., /dashboard/estrategias)
+    // render them instead of using PAGE_MAPPING
+    if (pathname.includes('/estrategias') && children) {
       return children;
     }
 
