@@ -170,6 +170,11 @@ export function CRMLayout({ children }: { children?: React.ReactNode }) {
   };
 
   const renderPage = () => {
+    // Se há children do App Router (como estrategias), renderiza eles primeiro
+    if (children) {
+      return children;
+    }
+
     const PageComponent = PAGE_MAPPING[currentPage];
     if (PageComponent) {
       return <PageComponent />;
