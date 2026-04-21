@@ -1,5 +1,6 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useEstrategiasStore, Estrategia } from '@/store/estrategiasStore';
 
 export function Estrategias() {
   const [mesSelecionado, setMesSelecionado] = useState('Janeiro');
@@ -7,14 +8,23 @@ export function Estrategias() {
   const [textoEstrategia, setTextoEstrategia] = useState('');
   const [contadorCaracteres, setContadorCaracteres] = useState(0);
   const [mesModal, setMesModal] = useState('Janeiro');
-  const [carregando, setCarregando] = useState(false);
-  const [estrategias, setEstrategias] = useState([
-    { id: 1, nome: 'Campanha Tráfego Pago — Abril', canal: 'Ads', status: 'Ativa', investimento: 'R$ 2.500', mes: 'Abril' },
-    { id: 2, nome: 'Follow-up Automático IA', canal: 'WhatsApp', status: 'Ativa', investimento: 'Grátis', mes: 'Janeiro' },
-    { id: 3, nome: 'Reativação de Leads Frios', canal: 'WhatsApp', status: 'Pausada', investimento: 'R$ 0', mes: 'Fevereiro' },
-    { id: 4, nome: 'Instagram Orgânico', canal: 'Instagram', status: 'Ativa', investimento: 'R$ 500', mes: 'Março' },
-    { id: 5, nome: 'Email Marketing Mensal', canal: 'Email', status: 'Ativa', investimento: 'R$ 300', mes: 'Janeiro' },
-  ]);
+  const [carregandoLocal, setCarregandoLocal] = useState(false);
+
+  // Integração com store de estratégias para persistência backend
+  const { estrategias, carregando, erro, carregarEstrategias, adicionarEstrategias, limparErro } = useEstrategiasStore();
+
+  // Carregar estratégias ao montar o componente (persistência)
+  useEffect(() => {
+    console.log('[ESTRATEGIAS] Componente montado, carregando estratégias do backend...');
+    carregarEstrategias();
+  }, [carregarEstrategias]);
+
+  // Limpar erros ao fechar modal
+  useEffect(() => {
+    if (!modalAberto && erro) {
+      limparErro();
+    }
+  }, [modalAberto, erro, limparErro]);
 
   const MAX_CARACTERES_TEXTO = 5000;
   const MIN_CARACTERES_TEXTO = 50;
@@ -59,7 +69,7 @@ export function Estrategias() {
       return;
     }
 
-    setCarregando(true);
+    setCarregandoLocal(true);
 
     try {
       console.log('[ESTRATEGIAS] Iniciando processamento de texto de estratégia');
@@ -99,27 +109,40 @@ export function Estrategias() {
         console.log(`[ESTRATEGIAS] ✓ Sucesso! ${dados.estrategias.length} estratégias criadas`);
         console.log('[ESTRATEGIAS] Estratégias:', dados.estrategias);
 
-        const novasEstrategias = dados.estrategias.map((e: any, idx: number) => ({
-          id: Math.max(...estrategias.map(s => s.id), 0) + idx + 1,
-          ...e,
+        // Enriquecer com dados do mês selecionado
+        const novasEstrategias: Estrategia[] = dados.estrategias.map((e: any) => ({
+          id: e.id || Date.now(),
+          nome: e.nome || 'Estratégia sem nome',
+          descricao: e.descricao || '',
+          tipo: e.tipo || 'Consulta',
+          ativa: e.ativa !== undefined ? e.ativa : true,
+          dataCriacao: e.dataCriacao || new Date().toISOString().split('T')[0],
+          totalExecutions: e.totalExecutions || 0,
+          taxaSucesso: e.taxaSucesso || 85,
+          criadoPor: e.criadoPor || 'IA - Análise de Texto',
           mes: mesModal,
         }));
-        setEstrategias([...estrategias, ...novasEstrategias]);
+
+        // Salvar no backend via store (NOVO SISTEMA DE PERSISTÊNCIA)
+        console.log('[ESTRATEGIAS] Salvando no backend via store...');
+        await adicionarEstrategias(novasEstrategias);
+
+        // Limpar formulário após sucesso
         setTextoEstrategia('');
         setContadorCaracteres(0);
         setModalAberto(false);
 
-        alert(`✅ ${dados.estrategias.length} estratégias criadas automaticamente!`);
+        alert(`✅ ${dados.estrategias.length} estratégias criadas e salvas com sucesso!`);
       } else {
         console.warn('[ESTRATEGIAS] ⚠️ Resposta não contém estratégias', dados);
         alert('⚠️ Nenhuma estratégia foi extraída do texto. Verifique o conteúdo.');
       }
-    } catch (erro) {
-      const errorMsg = erro instanceof Error ? erro.message : String(erro);
+    } catch (errorFetch) {
+      const errorMsg = errorFetch instanceof Error ? errorFetch.message : String(errorFetch);
       console.error('[ESTRATEGIAS] ✗ Erro fatal:', errorMsg);
       alert(`❌ Erro ao processar: ${errorMsg}`);
     } finally {
-      setCarregando(false);
+      setCarregandoLocal(false);
     }
   };
 
@@ -128,8 +151,29 @@ export function Estrategias() {
   return (
     <div style={{ padding: '24px', background: '#0d1f2d', minHeight: '100vh', color: '#e8edf2', fontFamily: "'Segoe UI', sans-serif" }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '28px' }}>
-        <h1 style={{ fontSize: '24px', fontWeight: 700, margin: 0 }}>Estratégias</h1>
-        <button onClick={() => setModalAberto(true)} style={{ padding: '10px 16px', borderRadius: '8px', border: 'none', background: '#c9943a', color: '#0d1f2d', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}>+ Nova</button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <h1 style={{ fontSize: '24px', fontWeight: 700, margin: 0 }}>Estratégias</h1>
+          {carregando && (
+            <span style={{ fontSize: '12px', color: '#7a96aa' }}>⏳ Carregando...</span>
+          )}
+        </div>
+        <button
+          onClick={() => setModalAberto(true)}
+          disabled={carregando}
+          style={{
+            padding: '10px 16px',
+            borderRadius: '8px',
+            border: 'none',
+            background: carregando ? '#666' : '#c9943a',
+            color: '#0d1f2d',
+            fontSize: '13px',
+            fontWeight: 600,
+            cursor: carregando ? 'not-allowed' : 'pointer',
+            opacity: carregando ? 0.6 : 1,
+          }}
+        >
+          + Nova
+        </button>
       </div>
 
       {/* SELETOR DE MESES */}
@@ -210,6 +254,21 @@ export function Estrategias() {
           }}>
             <h2 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '16px', color: '#e8edf2' }}>Nova Estratégia</h2>
 
+            {/* ERRO DISPLAY */}
+            {erro && (
+              <div style={{
+                marginBottom: '16px',
+                padding: '12px',
+                background: 'rgba(231, 76, 60, 0.2)',
+                border: '1px solid #e74c3c',
+                borderRadius: '6px',
+                color: '#e74c3c',
+                fontSize: '12px',
+              }}>
+                ⚠️ {erro}
+              </div>
+            )}
+
             {/* SELETOR DE MÊS */}
             <div style={{ marginBottom: '16px' }}>
               <label style={{ fontSize: '12px', color: '#7a96aa', fontWeight: 600, display: 'block', marginBottom: '8px' }}>Selecione o Mês:</label>
@@ -255,7 +314,7 @@ export function Estrategias() {
                   outline: 'none',
                 }}
                 maxLength={MAX_CARACTERES_TEXTO}
-                disabled={carregando}
+                disabled={carregandoLocal}
                 onFocus={(e) => {
                   (e.currentTarget as HTMLElement).style.borderColor = '#c9943a';
                 }}
@@ -283,7 +342,7 @@ export function Estrategias() {
                   setTextoEstrategia('');
                   setContadorCaracteres(0);
                 }}
-                disabled={carregando}
+                disabled={carregandoLocal}
                 style={{
                   flex: 1,
                   padding: '10px',
@@ -293,29 +352,29 @@ export function Estrategias() {
                   color: '#7a96aa',
                   fontSize: '13px',
                   fontWeight: 600,
-                  cursor: carregando ? 'not-allowed' : 'pointer',
-                  opacity: carregando ? 0.5 : 1,
+                  cursor: carregandoLocal ? 'not-allowed' : 'pointer',
+                  opacity: carregandoLocal ? 0.5 : 1,
                 }}
               >
                 Cancelar
               </button>
               <button
                 onClick={handleSalvarEstrategia}
-                disabled={carregando || !textoEstrategia.trim() || contadorCaracteres < MIN_CARACTERES_TEXTO}
+                disabled={carregandoLocal || !textoEstrategia.trim() || contadorCaracteres < MIN_CARACTERES_TEXTO}
                 style={{
                   flex: 1,
                   padding: '10px',
                   borderRadius: '6px',
                   border: 'none',
-                  background: (carregando || !textoEstrategia.trim() || contadorCaracteres < MIN_CARACTERES_TEXTO) ? '#666' : '#c9943a',
+                  background: (carregandoLocal || !textoEstrategia.trim() || contadorCaracteres < MIN_CARACTERES_TEXTO) ? '#666' : '#c9943a',
                   color: '#0d1f2d',
                   fontSize: '13px',
                   fontWeight: 600,
-                  cursor: (carregando || !textoEstrategia.trim() || contadorCaracteres < MIN_CARACTERES_TEXTO) ? 'not-allowed' : 'pointer',
-                  opacity: (carregando || !textoEstrategia.trim() || contadorCaracteres < MIN_CARACTERES_TEXTO) ? 0.5 : 1,
+                  cursor: (carregandoLocal || !textoEstrategia.trim() || contadorCaracteres < MIN_CARACTERES_TEXTO) ? 'not-allowed' : 'pointer',
+                  opacity: (carregandoLocal || !textoEstrategia.trim() || contadorCaracteres < MIN_CARACTERES_TEXTO) ? 0.5 : 1,
                 }}
               >
-                {carregando ? '⏳ Processando...' : '✓ Processar Estratégia'}
+                {carregandoLocal ? '⏳ Processando...' : '✓ Processar Estratégia'}
               </button>
             </div>
           </div>
