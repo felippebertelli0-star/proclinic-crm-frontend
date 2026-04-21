@@ -84,7 +84,10 @@ export function Estrategias() {
       const dados = await response.json();
 
       if (!response.ok) {
-        console.error('[ESTRATEGIAS] ✗ Erro na resposta:', dados);
+        console.error('[ESTRATEGIAS] ✗ Erro HTTP Status:', response.status);
+        console.error('[ESTRATEGIAS] ✗ Erro Response:', JSON.stringify(dados, null, 2));
+        console.error('[ESTRATEGIAS] ✗ Erro Message:', dados.erro);
+        console.error('[ESTRATEGIAS] ✗ Erro Details:', dados.detalhe);
         alert(
           `⚠️ Erro ao processar estratégia:\n${dados.erro}\n\n` +
           (dados.detalhe ? `Detalhes: ${dados.detalhe}` : '')
