@@ -1,14 +1,21 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useEquipeStore } from '@/store/equipeStore';
 import { useEquipeSync } from '@/hooks/useEquipeSync';
 import { CreateMembroModal } from './Equipe/CreateMembroModal';
+import { Ticket, MessageCircle, Clock, Briefcase, Calendar, CheckCircle, XCircle, Send, Edit2 } from 'lucide-react';
 
 export function Equipe() {
   const membros = useEquipeStore((state) => state.membros);
   const addMembro = useEquipeStore((state) => state.addMembro);
+  const hydrate = useEquipeStore((state) => state.hydrate);
   const [createModalOpen, setCreateModalOpen] = useState(false);
+
+  // Carrega dados do localStorage ao montar
+  useEffect(() => {
+    hydrate();
+  }, [hydrate]);
 
   // Mock data para sincronização (substituir por dados reais do API)
   const conversasMock = useMemo(() => [], []);
@@ -55,14 +62,23 @@ export function Equipe() {
             fontSize: '13px',
             fontWeight: 600,
             cursor: 'pointer',
-            transition: 'all 0.2s',
+            transition: 'all 0.2s ease-out',
+            flexShrink: 0,
+            appearance: 'none',
+            WebkitAppearance: 'none',
+            MozAppearance: 'none',
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.background = '#d9a344';
             e.currentTarget.style.transform = 'translateY(-2px)';
+            e.currentTarget.style.boxShadow = '0 4px 12px rgba(201, 148, 58, 0.3)';
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.background = '#c9943a';
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = 'none';
+          }}
+          onMouseDown={(e) => {
             e.currentTarget.style.transform = 'translateY(0)';
           }}
         >
@@ -73,250 +89,312 @@ export function Equipe() {
       {/* Grid de Membros */}
       <div
         style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))',
-          gap: '16px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '18px',
         }}
       >
         {membros.map((membro) => (
           <div
             key={membro.id}
             style={{
-              background: '#132636',
-              border: '1px solid #1e3d54',
+              background: 'rgba(25, 45, 65, 0.5)',
+              backdropFilter: 'blur(8px)',
+              border: '1px solid rgba(90, 120, 140, 0.3)',
               borderRadius: '14px',
-              padding: '16px',
-              transition: 'all 0.2s ease',
+              padding: '16px 28px',
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              position: 'relative',
+              overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '24px',
+              minHeight: '72px',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.boxShadow = `0 8px 24px ${membro.avatarColor}40`;
+              e.currentTarget.style.boxShadow = `0 12px 30px rgba(0, 0, 0, 0.4)`;
               e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.borderColor = 'rgba(90, 120, 140, 0.5)';
+              e.currentTarget.style.background = 'rgba(25, 45, 65, 0.7)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.boxShadow = 'none';
+              e.currentTarget.style.boxShadow = `0 2px 8px rgba(0, 0, 0, 0.2)`;
               e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.borderColor = 'rgba(90, 120, 140, 0.3)';
+              e.currentTarget.style.background = 'rgba(25, 45, 65, 0.5)';
             }}
           >
-            {/* Header: Avatar + Nome + Status */}
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                marginBottom: '14px',
-              }}
-            >
-              <div
-                style={{
-                  width: '48px',
-                  height: '48px',
-                  borderRadius: '50%',
-                  background: membro.avatarColor,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '16px',
-                  fontWeight: 700,
-                  color: '#fff',
-                  flexShrink: 0,
-                }}
-              >
-                {membro.nome[0]}
-              </div>
-              <div style={{ flex: 1 }}>
-                <h3 style={{ fontSize: '14px', fontWeight: 600, margin: '0 0 2px 0', color: '#e8edf2' }}>
-                  {membro.nome}
-                </h3>
-                <div style={{ fontSize: '11px', color: '#7a96aa', marginBottom: '4px' }}>
-                  {membro.cargo}
-                </div>
-              </div>
-              <div
-                style={{
-                  fontSize: '12px',
-                  fontWeight: 600,
-                  color:
-                    membro.status === 'Online' ? '#2ecc71' : membro.status === 'Ausente' ? '#f39c12' : '#e74c3c',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {membro.status === 'Online' ? '◉ Online' : membro.status === 'Ausente' ? '◎ Ausente' : '○ Offline'}
-              </div>
-            </div>
 
-            {/* Métricas Principais */}
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: '1fr 1fr 1fr',
-                gap: '10px',
-                marginBottom: '12px',
-                padding: '12px',
-                background: 'rgba(13, 31, 45, 0.5)',
-                borderRadius: '8px',
-              }}
-            >
-              <div>
+            {/* Content Wrapper */}
+            <div style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', gap: '8px', width: '100%', justifyContent: 'flex-start' }}>
+              {/* Header: Avatar + Nome + Status + Métricas */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
+                {/* Avatar + Nome + Status */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0, width: '220px', minWidth: '220px' }}>
                 <div
                   style={{
-                    fontSize: '9px',
-                    color: '#7a96aa',
-                    textTransform: 'uppercase',
-                    marginBottom: '4px',
+                    width: '40px',
+                    height: '40px',
+                    borderRadius: '8px',
+                    background: membro.avatarColor,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '14px',
+                    fontWeight: 700,
+                    color: '#fff',
+                    flexShrink: 0,
+                    boxShadow: `0 2px 6px ${membro.avatarColor}25`,
+                    border: 'none',
                   }}
                 >
-                  Tickets
+                  {membro.nome[0].toUpperCase()}
                 </div>
-                <div style={{ fontSize: '18px', fontWeight: 700, color: '#c9943a' }}>
-                  {membro.tickets || 0}
+                <div>
+                  <h3 style={{ fontSize: '15px', fontWeight: 700, margin: '0 0 4px 0', color: '#e8edf2', letterSpacing: '-0.3px' }}>
+                    {membro.nome}
+                  </h3>
+                  <div style={{ fontSize: '12px', color: '#7a96aa', marginBottom: '8px', fontWeight: 500 }}>
+                    {membro.cargo}
+                  </div>
+                  {/* Status Badge */}
+                  <div
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      padding: '4px 10px',
+                      borderRadius: '6px',
+                      fontSize: '11px',
+                      fontWeight: 600,
+                      letterSpacing: '0.3px',
+                      textTransform: 'uppercase',
+                      background:
+                        membro.status === 'Online'
+                          ? 'rgba(46, 204, 113, 0.12)'
+                          : membro.status === 'Ausente'
+                          ? 'rgba(243, 156, 18, 0.12)'
+                          : 'rgba(120, 130, 140, 0.12)',
+                      color:
+                        membro.status === 'Online'
+                          ? '#2ecc71'
+                          : membro.status === 'Ausente'
+                          ? '#f39c12'
+                          : '#7a96aa',
+                      border:
+                        membro.status === 'Online'
+                          ? '1px solid rgba(46, 204, 113, 0.3)'
+                          : membro.status === 'Ausente'
+                          ? '1px solid rgba(243, 156, 18, 0.3)'
+                          : '1px solid rgba(120, 130, 140, 0.2)',
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: '6px',
+                        height: '6px',
+                        borderRadius: '50%',
+                        background:
+                          membro.status === 'Online'
+                            ? '#2ecc71'
+                            : membro.status === 'Ausente'
+                            ? '#f39c12'
+                            : '#7a96aa',
+                      }}
+                    />
+                    {membro.status === 'Online' ? 'Online' : membro.status === 'Ausente' ? 'Ausente' : 'Offline'}
+                  </div>
                 </div>
-              </div>
-              <div>
+                </div>
+
+                {/* Métricas Principais */}
                 <div
                   style={{
-                    fontSize: '9px',
-                    color: '#7a96aa',
-                    textTransform: 'uppercase',
-                    marginBottom: '4px',
+                    display: 'flex',
+                    gap: '10px',
+                    flexShrink: 0,
+                    width: 'auto',
+                    minWidth: '280px',
+                    alignItems: 'center',
+                    height: '100%',
                   }}
-                >
-                  Conversas
-                </div>
-                <div style={{ fontSize: '18px', fontWeight: 700, color: '#3498db' }}>
-                  {membro.conversas || 0}
+              >
+                {[
+                  { label: 'Tickets', value: membro.tickets || 0, Icon: Ticket },
+                  { label: 'Conversas', value: membro.conversas || 0, Icon: MessageCircle },
+                  { label: 'TMR', value: membro.tmr || '0 min', Icon: Clock },
+                ].map((metric) => (
+                  <div
+                    key={metric.label}
+                    style={{
+                      background: 'rgba(30, 61, 84, 0.4)',
+                      border: '1px solid #2a4a63',
+                      borderRadius: '10px',
+                      padding: '8px 12px',
+                      transition: 'all 0.3s ease',
+                      minWidth: '100px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      height: '100%',
+                      minHeight: '52px',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = 'rgba(30, 61, 84, 0.6)';
+                      e.currentTarget.style.borderColor = '#3a6a93';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = 'rgba(30, 61, 84, 0.4)';
+                      e.currentTarget.style.borderColor = '#2a4a63';
+                    }}
+                  >
+                    {/* Topo: Ícone + Label */}
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <metric.Icon size={14} style={{ color: '#c9943a', flexShrink: 0 }} />
+                      <div
+                        style={{
+                          fontSize: '8px',
+                          color: '#7a96aa',
+                          textTransform: 'uppercase',
+                          fontWeight: 600,
+                          letterSpacing: '0.4px',
+                        }}
+                      >
+                        {metric.label}
+                      </div>
+                    </div>
+                    {/* Meio: Número centralizado */}
+                    <div style={{ fontSize: '18px', fontWeight: 800, color: '#c9943a', letterSpacing: '-0.5px' }}>
+                      {metric.value}
+                    </div>
+                  </div>
+                ))}
                 </div>
               </div>
-              <div>
+
+              {/* Mini Pipeline Indicator */}
+              {membro.pipelineStats && (
                 <div
                   style={{
-                    fontSize: '9px',
-                    color: '#7a96aa',
-                    textTransform: 'uppercase',
-                    marginBottom: '4px',
+                    display: 'flex',
+                    gap: '6px',
+                    flexShrink: 0,
+                    alignItems: 'center',
+                    justifyContent: 'flex-start',
+                    height: '100%',
+                    marginLeft: '0px',
                   }}
                 >
-                  TMR
+                  {[
+                    { value: membro.pipelineStats.negociacao, Icon: Briefcase, title: 'Negociação' },
+                    { value: membro.pipelineStats.agendou, Icon: Calendar, title: 'Agendou' },
+                    { value: membro.pipelineStats.convertido, Icon: CheckCircle, title: 'Convertido' },
+                    { value: membro.pipelineStats.naoAgendou, Icon: XCircle, title: 'Não Agendou' },
+                  ].map((stage, idx) => (
+                    <div
+                      key={idx}
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '2px',
+                        minWidth: '38px',
+                      }}
+                      title={stage.title}
+                    >
+                      <stage.Icon size={18} style={{ color: '#7a96aa' }} />
+                      <span style={{ fontWeight: 700, color: '#e8edf2', fontSize: '11px' }}>{stage.value}</span>
+                    </div>
+                  ))}
                 </div>
-                <div style={{ fontSize: '18px', fontWeight: 700, color: '#2ecc71' }}>
-                  {membro.tmr || '0 min'}
-                </div>
-              </div>
-            </div>
+              )}
 
-            {/* Pipeline Stats */}
-            {membro.pipelineStats && (
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: '1fr 1fr',
-                  gap: '8px',
-                  marginBottom: '12px',
-                  fontSize: '11px',
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <div
-                    style={{
-                      width: '6px',
-                      height: '6px',
-                      borderRadius: '50%',
-                      background: '#f1c40f',
-                    }}
-                  ></div>
-                  <span style={{ color: '#7a96aa' }}>
-                    Neg.: <strong style={{ color: '#e8edf2' }}>{membro.pipelineStats.negociacao}</strong>
-                  </span>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <div
-                    style={{
-                      width: '6px',
-                      height: '6px',
-                      borderRadius: '50%',
-                      background: '#3498db',
-                    }}
-                  ></div>
-                  <span style={{ color: '#7a96aa' }}>
-                    Agendou: <strong style={{ color: '#e8edf2' }}>{membro.pipelineStats.agendou}</strong>
-                  </span>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <div
-                    style={{
-                      width: '6px',
-                      height: '6px',
-                      borderRadius: '50%',
-                      background: '#2ecc71',
-                    }}
-                  ></div>
-                  <span style={{ color: '#7a96aa' }}>
-                    Convertido: <strong style={{ color: '#e8edf2' }}>{membro.pipelineStats.convertido}</strong>
-                  </span>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <div
-                    style={{
-                      width: '6px',
-                      height: '6px',
-                      borderRadius: '50%',
-                      background: '#e74c3c',
-                    }}
-                  ></div>
-                  <span style={{ color: '#7a96aa' }}>
-                    Não Agendou: <strong style={{ color: '#e8edf2' }}>{membro.pipelineStats.naoAgendou}</strong>
-                  </span>
-                </div>
+              {/* Botões */}
+              <div style={{ display: 'flex', gap: '10px', flexShrink: 0, marginLeft: 'auto', justifyContent: 'flex-end' }}>
+                <button
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px',
+                    padding: '10px 16px',
+                    borderRadius: '10px',
+                    border: '1.5px solid #2a4a63',
+                    background: 'rgba(42, 74, 99, 0.3)',
+                    color: '#7a96aa',
+                    fontSize: '12px',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                    letterSpacing: '0.3px',
+                    flex: 1,
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = '#7a96aa';
+                    e.currentTarget.style.color = '#e8edf2';
+                    e.currentTarget.style.background = 'rgba(42, 74, 99, 0.6)';
+                    e.currentTarget.style.boxShadow = `0 8px 16px rgba(0, 0, 0, 0.2)`;
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = '#2a4a63';
+                    e.currentTarget.style.color = '#7a96aa';
+                    e.currentTarget.style.background = 'rgba(42, 74, 99, 0.3)';
+                    e.currentTarget.style.boxShadow = 'none';
+                    e.currentTarget.style.transform = 'translateY(0)';
+                  }}
+                >
+                  <Send size={16} />
+                  Mensagem
+                </button>
+                <button
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px',
+                    padding: '10px 16px',
+                    borderRadius: '10px',
+                    border: '1.5px solid #2a4a63',
+                    background: 'rgba(42, 74, 99, 0.3)',
+                    color: '#7a96aa',
+                    fontSize: '12px',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                    letterSpacing: '0.3px',
+                    flex: 1,
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = '#7a96aa';
+                    e.currentTarget.style.color = '#e8edf2';
+                    e.currentTarget.style.background = 'rgba(42, 74, 99, 0.6)';
+                    e.currentTarget.style.boxShadow = `0 8px 16px rgba(0, 0, 0, 0.2)`;
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = '#2a4a63';
+                    e.currentTarget.style.color = '#7a96aa';
+                    e.currentTarget.style.background = 'rgba(42, 74, 99, 0.3)';
+                    e.currentTarget.style.boxShadow = 'none';
+                    e.currentTarget.style.transform = 'translateY(0)';
+                  }}
+                >
+                  <Edit2 size={16} />
+                  Editar
+                </button>
               </div>
-            )}
-
-            {/* Botões */}
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <button
-                style={{
-                  flex: 1,
-                  padding: '8px',
-                  borderRadius: '6px',
-                  border: '1px solid #c9943a',
-                  background: 'transparent',
-                  color: '#c9943a',
-                  fontSize: '11px',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'rgba(201, 148, 58, 0.15)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'transparent';
-                }}
-              >
-                ○ Msg
-              </button>
-              <button
-                style={{
-                  flex: 1,
-                  padding: '8px',
-                  borderRadius: '6px',
-                  border: '1px solid #1e3d54',
-                  background: 'transparent',
-                  color: '#7a96aa',
-                  fontSize: '11px',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = '#7a96aa';
-                  e.currentTarget.style.color = '#e8edf2';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = '#1e3d54';
-                  e.currentTarget.style.color = '#7a96aa';
-                }}
-              >
-                Editar
-              </button>
             </div>
           </div>
         ))}
