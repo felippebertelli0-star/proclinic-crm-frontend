@@ -286,7 +286,7 @@ export function Filas() {
                   boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)',
                   border: 'none',
                   padding: '18px',
-                  minHeight: '320px',
+                  minHeight: '420px',
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'space-between',
