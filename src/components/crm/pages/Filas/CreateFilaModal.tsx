@@ -7,8 +7,9 @@
 
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import { X, AlertCircle } from 'lucide-react';
+import { CORES_PADRAO } from '@/store/etiquetasStore';
 
 interface CreateFilaModalProps {
   isOpen: boolean;
@@ -37,18 +38,6 @@ interface Erro {
   mensagem: string;
 }
 
-// Paleta de 8 cores Premium AAA
-const CORES_DISPONIVEIS = [
-  { valor: '#c9943a', label: 'Ouro', nome: 'Ouro' },
-  { valor: '#e91e63', label: 'Rosa', nome: 'Rosa' },
-  { valor: '#9c27b0', label: 'Roxo', nome: 'Roxo' },
-  { valor: '#3498db', label: 'Azul', nome: 'Azul' },
-  { valor: '#2ecc71', label: 'Verde', nome: 'Verde' },
-  { valor: '#f39c12', label: 'Laranja', nome: 'Laranja' },
-  { valor: '#e74c3c', label: 'Vermelho', nome: 'Vermelho' },
-  { valor: '#1abc9c', label: 'Teal', nome: 'Teal' },
-];
-
 const MAX_CARACTERES_NOME = 100;
 const MAX_CARACTERES_DESCRICAO = 300;
 const MIN_CARACTERES_NOME = 3;
@@ -61,6 +50,7 @@ export function CreateFilaModal({
   membros = [],
   carregando = false,
 }: CreateFilaModalProps) {
+  const pickerRef = useRef<HTMLDivElement>(null);
   const [form, setForm] = useState<FormData>({
     nome: '',
     descricao: '',
@@ -71,6 +61,44 @@ export function CreateFilaModal({
 
   const [erros, setErros] = useState<Erro[]>([]);
   const [processando, setProcessando] = useState(false);
+  const [showAdvancedPicker, setShowAdvancedPicker] = useState(false);
+  const [searchMembros, setSearchMembros] = useState('');
+  const [showMembrosDropdown, setShowMembrosDropdown] = useState(false);
+
+  // Membros filtrados pela busca
+  const membrosFiltrados = useMemo(() => {
+    return membros.filter((m) =>
+      m.nome.toLowerCase().includes(searchMembros.toLowerCase())
+    );
+  }, [membros, searchMembros]);
+
+  // Handler para toggle de membro
+  const handleToggleMembro = (membroId: string) => {
+    setForm((prev) => ({
+      ...prev,
+      agenteIds: prev.agenteIds.includes(membroId)
+        ? prev.agenteIds.filter((id) => id !== membroId)
+        : [...prev.agenteIds, membroId],
+    }));
+  };
+
+  // Handler para color picker avançado
+  const handlePickerClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!pickerRef.current) return;
+
+    const rect = pickerRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const width = rect.width;
+    const percentage = Math.max(0, Math.min(1, x / width));
+
+    const hue = percentage * 360;
+    const cor = `hsl(${hue}, 100%, 50%)`;
+
+    setForm((prev) => ({
+      ...prev,
+      cor,
+    }));
+  };
 
   // Validar formulário
   const validarFormulario = (): boolean => {
@@ -399,26 +427,31 @@ export function CreateFilaModal({
               <label style={{ display: 'block', color: '#e8edf2', fontSize: '13px', fontWeight: 600, marginBottom: '8px' }}>
                 Cor da Fila *
               </label>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
-                {CORES_DISPONIVEIS.map((cor) => (
+
+              {/* Paleta de cores padrão - Círculos pequenos */}
+              <div style={{ display: 'flex', gap: '8px', marginBottom: '8px', flexWrap: 'wrap' }}>
+                {CORES_PADRAO.map((cor) => (
                   <button
-                    key={cor.valor}
-                    onClick={() => setForm((prev) => ({ ...prev, cor: cor.valor }))}
+                    key={cor}
+                    onClick={() => setForm((prev) => ({ ...prev, cor }))}
                     disabled={processando || carregando}
-                    aria-label={cor.nome}
+                    title={cor}
+                    aria-label={`Selecionar cor ${cor}`}
                     style={{
-                      width: '100%',
-                      aspectRatio: '1',
-                      background: cor.valor,
-                      border: form.cor === cor.valor ? '3px solid white' : '2px solid rgba(255, 255, 255, 0.3)',
-                      borderRadius: '8px',
+                      width: '28px',
+                      height: '28px',
+                      backgroundColor: cor,
+                      borderRadius: '50%',
+                      border: form.cor === cor ? '2px solid white' : '2px solid transparent',
+                      boxShadow: form.cor === cor ? '0 0 0 2px #0a1520, 0 0 0 3px white' : 'none',
                       cursor: processando || carregando ? 'not-allowed' : 'pointer',
                       opacity: processando || carregando ? 0.6 : 1,
-                      transition: 'all 0.2s ease',
+                      transition: 'all 0.15s ease-out',
+                      flexShrink: 0,
                     }}
                     onMouseEnter={(e) => {
                       if (!processando && !carregando) {
-                        e.currentTarget.style.transform = 'scale(1.05)';
+                        e.currentTarget.style.transform = 'scale(1.15)';
                       }
                     }}
                     onMouseLeave={(e) => {
@@ -427,6 +460,93 @@ export function CreateFilaModal({
                   />
                 ))}
               </div>
+
+              {/* Color Picker Avançado */}
+              <button
+                onClick={() => setShowAdvancedPicker(!showAdvancedPicker)}
+                disabled={processando || carregando}
+                style={{
+                  marginTop: '8px',
+                  padding: '8px 12px',
+                  borderRadius: '6px',
+                  border: '1px solid rgba(201, 148, 58, 0.3)',
+                  background: 'rgba(201, 148, 58, 0.1)',
+                  color: '#c9943a',
+                  fontSize: '12px',
+                  fontWeight: 600,
+                  cursor: processando || carregando ? 'not-allowed' : 'pointer',
+                  opacity: processando || carregando ? 0.6 : 1,
+                  transition: 'all 0.15s ease-out',
+                  width: '100%',
+                }}
+                onMouseEnter={(e) => {
+                  if (!processando && !carregando) {
+                    e.currentTarget.style.background = 'rgba(201, 148, 58, 0.2)';
+                    e.currentTarget.style.borderColor = '#c9943a';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!processando && !carregando) {
+                    e.currentTarget.style.background = 'rgba(201, 148, 58, 0.1)';
+                    e.currentTarget.style.borderColor = 'rgba(201, 148, 58, 0.3)';
+                  }
+                }}
+              >
+                {showAdvancedPicker ? '−' : '+'} Cor Personalizada
+              </button>
+
+              {/* Gradiente de cores avançado */}
+              {showAdvancedPicker && (
+                <div style={{ marginTop: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <div
+                    ref={pickerRef}
+                    onClick={handlePickerClick}
+                    style={{
+                      width: '100%',
+                      height: '40px',
+                      borderRadius: '8px',
+                      cursor: 'crosshair',
+                      background: 'linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000)',
+                      border: '1px solid rgba(201, 148, 58, 0.4)',
+                      transition: 'all 0.15s ease-out',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = '#c9943a';
+                      e.currentTarget.style.boxShadow = '0 0 0 3px rgba(201, 148, 58, 0.2)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = 'rgba(201, 148, 58, 0.4)';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }}
+                  />
+                  <p style={{ fontSize: '11px', color: '#7a96aa', margin: '0', textAlign: 'center' }}>
+                    Clique para escolher uma cor
+                  </p>
+                </div>
+              )}
+
+              {/* Preview da cor selecionada */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '12px', fontSize: '12px', color: '#7a96aa' }}>
+                <span>Preview:</span>
+                <div
+                  style={{
+                    flex: 1,
+                    padding: '12px 16px',
+                    borderRadius: '6px',
+                    backgroundColor: form.cor,
+                    color: '#fff',
+                    fontWeight: 600,
+                    fontSize: '13px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    minHeight: '40px',
+                  }}
+                >
+                  {form.nome || 'Sua Fila'}
+                </div>
+              </div>
+
               {errosCampo.has('cor') && (
                 <div style={{ fontSize: '11px', color: '#ef4444', marginTop: '6px' }}>
                   {errosCampo.get('cor')}
@@ -434,73 +554,166 @@ export function CreateFilaModal({
               )}
             </div>
 
-            {/* Membros */}
+            {/* Membros com Busca */}
             <div style={{ marginBottom: '16px' }}>
               <label style={{ display: 'block', color: '#e8edf2', fontSize: '13px', fontWeight: 600, marginBottom: '8px' }}>
                 Selecionar Membros ({form.agenteIds.length}/{MAX_MEMBROS}) *
               </label>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                {membros.length === 0 ? (
-                  <div style={{ color: '#7a96aa', fontSize: '12px', padding: '8px' }}>
-                    Nenhum membro disponível
-                  </div>
-                ) : (
-                  membros.map((membro) => (
-                    <label
-                      key={membro.id}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        padding: '8px 12px',
-                        background: '#0d1f2d',
-                        border: '1px solid rgba(201, 148, 58, 0.2)',
-                        borderRadius: '8px',
-                        cursor: processando || carregando ? 'not-allowed' : 'pointer',
-                        opacity: processando || carregando ? 0.6 : 1,
-                      }}
-                      onMouseEnter={(e) => {
-                        if (!processando && !carregando) {
-                          e.currentTarget.style.background = 'rgba(201, 148, 58, 0.1)';
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.background = '#0d1f2d';
-                      }}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={form.agenteIds.includes(membro.id)}
-                        onChange={() => handleToggleAgente(membro.id)}
-                        disabled={processando || carregando || (form.agenteIds.length >= MAX_MEMBROS && !form.agenteIds.includes(membro.id))}
-                        style={{
-                          marginRight: '8px',
-                          cursor: 'pointer',
-                          width: '16px',
-                          height: '16px',
-                        }}
-                      />
-                      <div
-                        style={{
-                          width: '24px',
-                          height: '24px',
-                          borderRadius: '50%',
-                          background: membro.avatarColor,
-                          marginRight: '8px',
-                          flexShrink: 0,
-                        }}
-                      />
-                      <div style={{ flex: 1 }}>
-                        <div style={{ color: '#e8edf2', fontSize: '13px', fontWeight: 500 }}>
-                          {membro.nome}
-                        </div>
-                        <div style={{ color: '#7a96aa', fontSize: '11px' }}>
-                          {membro.status === 'online' ? '🟢 Online' : '⭕ Offline'}
-                        </div>
+
+              {/* Campo de Busca */}
+              <div style={{ position: 'relative', marginBottom: '8px' }}>
+                <input
+                  type="text"
+                  placeholder="Buscar membro..."
+                  value={searchMembros}
+                  onChange={(e) => setSearchMembros(e.target.value)}
+                  disabled={processando || carregando}
+                  style={{
+                    width: '100%',
+                    padding: '10px 12px',
+                    background: '#0d1f2d',
+                    border: errosCampo.has('agenteIds') ? '1px solid #ef4444' : '1px solid rgba(201, 148, 58, 0.3)',
+                    borderRadius: '8px',
+                    color: '#e8edf2',
+                    fontSize: '13px',
+                    outline: 'none',
+                    boxSizing: 'border-box',
+                    transition: 'all 0.15s ease-out',
+                    cursor: processando || carregando ? 'not-allowed' : 'text',
+                    opacity: processando || carregando ? 0.6 : 1,
+                  }}
+                  onFocus={(e) => {
+                    setShowMembrosDropdown(true);
+                    if (!errosCampo.has('agenteIds')) {
+                      e.currentTarget.style.borderColor = '#c9943a';
+                    }
+                  }}
+                  onBlur={(e) => {
+                    setTimeout(() => setShowMembrosDropdown(false), 150);
+                    if (!errosCampo.has('agenteIds')) {
+                      e.currentTarget.style.borderColor = 'rgba(201, 148, 58, 0.3)';
+                    }
+                  }}
+                />
+
+                {/* Dropdown de Membros */}
+                {showMembrosDropdown && (
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: '100%',
+                      left: 0,
+                      right: 0,
+                      background: '#0d1f2d',
+                      border: '1px solid rgba(201, 148, 58, 0.3)',
+                      borderTop: 'none',
+                      borderRadius: '0 0 8px 8px',
+                      maxHeight: '240px',
+                      overflowY: 'auto',
+                      zIndex: 10,
+                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)',
+                    }}
+                  >
+                    {membrosFiltrados.length === 0 ? (
+                      <div style={{ padding: '12px', color: '#7a96aa', fontSize: '12px', textAlign: 'center' }}>
+                        {membros.length === 0 ? 'Nenhum membro disponível' : 'Nenhum membro encontrado'}
                       </div>
-                    </label>
-                  ))
+                    ) : (
+                      membrosFiltrados.map((membro) => (
+                        <button
+                          key={membro.id}
+                          onClick={() => handleToggleMembro(membro.id)}
+                          disabled={processando || carregando || (form.agenteIds.length >= MAX_MEMBROS && !form.agenteIds.includes(membro.id))}
+                          style={{
+                            width: '100%',
+                            padding: '10px 12px',
+                            background: form.agenteIds.includes(membro.id) ? 'rgba(201, 148, 58, 0.15)' : 'transparent',
+                            border: 'none',
+                            borderBottom: '1px solid rgba(201, 148, 58, 0.1)',
+                            color: '#e8edf2',
+                            fontSize: '13px',
+                            cursor: processando || carregando ? 'not-allowed' : 'pointer',
+                            opacity: processando || carregando ? 0.6 : 1,
+                            textAlign: 'left',
+                            transition: 'all 0.15s ease-out',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                          }}
+                          onMouseEnter={(e) => {
+                            if (!processando && !carregando) {
+                              e.currentTarget.style.background = 'rgba(201, 148, 58, 0.1)';
+                            }
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.background = form.agenteIds.includes(membro.id) ? 'rgba(201, 148, 58, 0.15)' : 'transparent';
+                          }}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={form.agenteIds.includes(membro.id)}
+                            onChange={() => {}}
+                            style={{
+                              cursor: 'pointer',
+                              width: '16px',
+                              height: '16px',
+                            }}
+                          />
+                          <span>{membro.nome}</span>
+                        </button>
+                      ))
+                    )}
+                  </div>
                 )}
               </div>
+
+              {/* Tags dos Membros Selecionados */}
+              {form.agenteIds.length > 0 && (
+                <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '8px' }}>
+                  {form.agenteIds.map((membroId) => {
+                    const membro = membros.find((m) => m.id === membroId);
+                    return membro ? (
+                      <div
+                        key={membroId}
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          padding: '4px 10px',
+                          background: 'rgba(201, 148, 58, 0.2)',
+                          border: '1px solid rgba(201, 148, 58, 0.4)',
+                          borderRadius: '6px',
+                          fontSize: '12px',
+                          color: '#e8edf2',
+                        }}
+                      >
+                        <span>{membro.nome}</span>
+                        <button
+                          onClick={() => handleToggleMembro(membroId)}
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            color: '#7a96aa',
+                            cursor: 'pointer',
+                            padding: '0',
+                            fontSize: '14px',
+                            transition: 'color 0.15s ease-out',
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.color = '#ef4444';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.color = '#7a96aa';
+                          }}
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ) : null;
+                  })}
+                </div>
+              )}
+
               {errosCampo.has('agenteIds') && (
                 <div style={{ fontSize: '11px', color: '#ef4444', marginTop: '6px' }}>
                   {errosCampo.get('agenteIds')}

@@ -8,7 +8,7 @@
 'use client';
 
 import { useState, useMemo, useEffect, useCallback } from 'react';
-import { Clock, AlertCircle } from 'lucide-react';
+import { Clock, AlertCircle, Trash2 } from 'lucide-react';
 import styles from './Calendario.module.css';
 import { useFilasStore } from '@/store/filasStore';
 import { CreateFilaModal } from './Filas/CreateFilaModal';
@@ -98,11 +98,13 @@ const FILAS_INICIAIS = [
 ];
 
 export function Filas() {
-  const { filas, setFilas, addFila } = useFilasStore();
+  const { filas, setFilas, addFila, deleteFila } = useFilasStore();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'todos' | 'ativas' | 'pausadas'>('todos');
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [carregandoModal, setCarregandoModal] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [filaParaDeletar, setFilaParaDeletar] = useState<string | null>(null);
 
   // Inicializar filas se estiverem vazias
   useEffect(() => {
@@ -195,6 +197,29 @@ export function Filas() {
     [filas]
   );
 
+  // Handler: Abrir modal de exclusão
+  const handleAbrirDeleteModal = useCallback((filaId: string) => {
+    setFilaParaDeletar(filaId);
+    setDeleteModalOpen(true);
+  }, []);
+
+  // Handler: Confirmar exclusão
+  const handleConfirmarDelete = useCallback(() => {
+    if (filaParaDeletar) {
+      console.log('[FILAS] ✓ Deletando fila:', filaParaDeletar);
+      deleteFila(filaParaDeletar);
+      setDeleteModalOpen(false);
+      setFilaParaDeletar(null);
+      console.log('[FILAS] ✓ Fila deletada com sucesso');
+    }
+  }, [filaParaDeletar, deleteFila]);
+
+  // Handler: Cancelar exclusão
+  const handleCancelarDelete = useCallback(() => {
+    setDeleteModalOpen(false);
+    setFilaParaDeletar(null);
+  }, []);
+
   return (
     <div className={styles.container}>
       {/* Header */}
@@ -285,8 +310,8 @@ export function Filas() {
                   backgroundColor: '#132636',
                   boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)',
                   border: 'none',
-                  padding: '18px',
-                  minHeight: '420px',
+                  padding: '14px',
+                  minHeight: '220px',
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'space-between',
@@ -294,31 +319,65 @@ export function Filas() {
                 onMouseEnter={(e) => {
                   e.currentTarget.style.boxShadow = `0 8px 24px ${fila.cor}40`;
                   e.currentTarget.style.transform = 'translateY(-2px)';
+                  // Mostrar ícone delete ao passar mouse
+                  const deleteBtn = e.currentTarget.querySelector('button[title="Deletar fila"]') as HTMLButtonElement;
+                  if (deleteBtn) deleteBtn.style.opacity = '1';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.4)';
                   e.currentTarget.style.transform = 'translateY(0)';
+                  // Esconder ícone delete ao sair o mouse
+                  const deleteBtn = e.currentTarget.querySelector('button[title="Deletar fila"]') as HTMLButtonElement;
+                  if (deleteBtn) deleteBtn.style.opacity = '0';
                 }}
               >
                 {/* Header: Título + Status + Tickets */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '6px' }}>
                   <div style={{ flex: 1 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '2px' }}>
-                      <h3 className={styles.cardTitle} style={{ margin: 0 }}>{fila.nome}</h3>
-                      <span
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '2px', justifyContent: 'space-between' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <h3 className={styles.cardTitle} style={{ margin: 0 }}>{fila.nome}</h3>
+                        <span
+                          style={{
+                            display: 'inline-block',
+                            padding: '2px 6px',
+                            borderRadius: '4px',
+                            fontSize: '9px',
+                            fontWeight: 600,
+                            background: fila.status === 'ativa' ? 'rgba(46, 204, 113, 0.15)' : 'rgba(255, 193, 7, 0.15)',
+                            color: fila.status === 'ativa' ? '#2ecc71' : '#ffc107',
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
+                          {fila.status === 'ativa' ? '🟢 Ativa' : '⭕ Pausada'}
+                        </span>
+                      </div>
+                      {/* Botão Delete - Inicialmente invisível, aparece no hover */}
+                      <button
+                        onClick={() => handleAbrirDeleteModal(fila.id)}
                         style={{
-                          display: 'inline-block',
-                          padding: '2px 6px',
-                          borderRadius: '4px',
-                          fontSize: '9px',
-                          fontWeight: 600,
-                          background: fila.status === 'ativa' ? 'rgba(46, 204, 113, 0.15)' : 'rgba(255, 193, 7, 0.15)',
-                          color: fila.status === 'ativa' ? '#2ecc71' : '#ffc107',
-                          whiteSpace: 'nowrap',
+                          background: 'transparent',
+                          border: 'none',
+                          cursor: 'pointer',
+                          padding: '4px',
+                          color: '#ef4444',
+                          opacity: 0,
+                          transition: 'opacity 0.2s ease',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          flexShrink: 0,
+                        }}
+                        title="Deletar fila"
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.opacity = '1';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.opacity = '0';
                         }}
                       >
-                        {fila.status === 'ativa' ? '🟢 Ativa' : '⭕ Pausada'}
-                      </span>
+                        <Trash2 size={16} />
+                      </button>
                     </div>
                     <p className={styles.cardDescription} style={{ margin: 0, marginBottom: '4px' }}>{fila.descricao}</p>
                     {membros.length > 0 && (
@@ -346,7 +405,7 @@ export function Filas() {
                   <div style={{
                     flex: 1,
                     padding: '10px 12px',
-                    border: `1px solid ${fila.cor}50`,
+                    border: `1px solid ${fila.cor}20`,
                     borderRadius: '6px',
                     backgroundColor: 'transparent',
                     display: 'flex',
@@ -366,7 +425,7 @@ export function Filas() {
                   <div style={{
                     flex: 1,
                     padding: '10px 12px',
-                    border: `1px solid ${fila.slaPercentual >= 80 ? '#2ecc71' : fila.slaPercentual >= 60 ? '#f39c12' : '#ef4444'}50`,
+                    border: `1px solid ${fila.slaPercentual >= 80 ? '#2ecc71' : fila.slaPercentual >= 60 ? '#f39c12' : '#ef4444'}20`,
                     borderRadius: '6px',
                     backgroundColor: 'transparent',
                     display: 'flex',
@@ -501,6 +560,106 @@ export function Filas() {
         membros={MEMBROS_MOCK}
         carregando={carregandoModal}
       />
+
+      {/* Modal: Confirmar Exclusão */}
+      {deleteModalOpen && (
+        <>
+          {/* Backdrop */}
+          <div
+            onClick={handleCancelarDelete}
+            style={{
+              position: 'fixed',
+              inset: 0,
+              background: 'rgba(0, 0, 0, 0.5)',
+              backdropFilter: 'blur(4px)',
+              zIndex: 40,
+            }}
+          />
+
+          {/* Modal */}
+          <div
+            style={{
+              position: 'fixed',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              background: '#132636',
+              border: '1px solid rgba(201, 148, 58, 0.2)',
+              borderRadius: '12px',
+              padding: '24px',
+              zIndex: 50,
+              maxWidth: '400px',
+              width: '90%',
+              boxShadow: '0 20px 25px rgba(0, 0, 0, 0.4)',
+            }}
+          >
+            {/* Header com ícone de alerta */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+              <AlertCircle size={24} color="#ef4444" />
+              <h2 style={{ margin: 0, color: '#e8edf2', fontSize: '18px', fontWeight: 700 }}>
+                Confirmar Exclusão
+              </h2>
+            </div>
+
+            {/* Mensagem */}
+            <p style={{ color: '#7a96aa', fontSize: '14px', marginBottom: '24px', lineHeight: '1.5' }}>
+              Tem certeza que deseja excluir a fila <strong style={{ color: '#e8edf2' }}>"{filas.find(f => f.id === filaParaDeletar)?.nome}"</strong>? Esta ação não pode ser desfeita.
+            </p>
+
+            {/* Botões */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              <button
+                onClick={handleCancelarDelete}
+                style={{
+                  padding: '10px 16px',
+                  background: 'transparent',
+                  border: '1px solid #7a96aa70',
+                  color: '#7a96aa',
+                  borderRadius: '8px',
+                  fontSize: '13px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(122, 150, 170, 0.15)';
+                  e.currentTarget.style.borderColor = '#7a96aa';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'transparent';
+                  e.currentTarget.style.borderColor = '#7a96aa70';
+                }}
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleConfirmarDelete}
+                style={{
+                  padding: '10px 16px',
+                  background: '#ef4444',
+                  border: '1px solid #ef4444',
+                  color: '#fff',
+                  borderRadius: '8px',
+                  fontSize: '13px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = '#dc2626';
+                  e.currentTarget.style.borderColor = '#dc2626';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = '#ef4444';
+                  e.currentTarget.style.borderColor = '#ef4444';
+                }}
+              >
+                Sim, Excluir
+              </button>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }

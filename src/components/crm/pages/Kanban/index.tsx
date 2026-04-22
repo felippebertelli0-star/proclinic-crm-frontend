@@ -12,7 +12,6 @@ import { DragDropContext, DropResult } from '@hello-pangea/dnd';
 import { useKanbanStore } from '@/store/kanbanStore';
 import { useEquipeStore } from '@/store/equipeStore';
 import { useFilasStore } from '@/store/filasStore';
-import { useEtiquetasStore } from '@/store/etiquetasStore';
 import { KanbanCard as IKanbanCard, KanbanColuna } from '@/types/kanban';
 import KanbanSummary from './KanbanSummary';
 import KanbanMemberFilter from './KanbanMemberFilter';
@@ -20,205 +19,6 @@ import KanbanColumn from './KanbanColumn';
 import KanbanModal from './KanbanModal';
 import styles from './index.module.css';
 
-// Mock data temporário (em produção, vir da API via filasStore)
-// Este mock será substituído por dados reais da API
-const MOCK_COLUNAS_TEMP: KanbanColuna[] = [
-  {
-    id: 'comercial',
-    titulo: 'Comercial',
-    cor: '#c9943a',
-    cards: [
-      {
-        id: '1',
-        nome: 'Ida Santos',
-        agente: 'Hávila Rodrigues',
-        prioridade: 'Alta',
-        origem: 'Tráfego Pago',
-        tempo: '2h 15m',
-        criadoEm: new Date(),
-        atualizadoEm: new Date(),
-      },
-      {
-        id: '2',
-        nome: 'Laura Ferreira',
-        agente: 'Camilly Nunes',
-        prioridade: 'Média',
-        origem: 'Orgânico',
-        tempo: '1h 30m',
-        criadoEm: new Date(),
-        atualizadoEm: new Date(),
-      },
-      {
-        id: '3',
-        nome: 'Carlos Silva',
-        agente: 'Hávila Rodrigues',
-        prioridade: 'Média',
-        origem: 'Direto',
-        tempo: '3h 45m',
-        criadoEm: new Date(),
-        atualizadoEm: new Date(),
-      },
-      {
-        id: '4',
-        nome: 'Marina Costa',
-        agente: 'Camilly Nunes',
-        prioridade: 'Baixa',
-        origem: 'Indicação',
-        tempo: '4h 20m',
-        criadoEm: new Date(),
-        atualizadoEm: new Date(),
-      },
-      {
-        id: '5',
-        nome: 'Ricardo Pereira',
-        agente: 'Fernando Silva',
-        prioridade: 'Alta',
-        origem: 'Tráfego Pago',
-        tempo: '1h 50m',
-        criadoEm: new Date(),
-        atualizadoEm: new Date(),
-      },
-    ],
-  },
-  {
-    id: 'secretaria',
-    titulo: 'Secretária',
-    cor: '#3498db',
-    cards: [
-      {
-        id: '6',
-        nome: 'Daniele Mantovani',
-        agente: 'Camilly Nunes',
-        prioridade: 'Média',
-        origem: 'Tráfego Pago',
-        tempo: '1h 45m',
-        criadoEm: new Date(),
-        atualizadoEm: new Date(),
-      },
-      {
-        id: '7',
-        nome: 'Paula Mendes',
-        agente: 'Fernando Silva',
-        prioridade: 'Média',
-        origem: 'Orgânico',
-        tempo: '2h 30m',
-        criadoEm: new Date(),
-        atualizadoEm: new Date(),
-      },
-      {
-        id: '8',
-        nome: 'Miguel Santos',
-        agente: 'Luana Costa',
-        prioridade: 'Baixa',
-        origem: 'Indicação',
-        tempo: '3h 15m',
-        criadoEm: new Date(),
-        atualizadoEm: new Date(),
-      },
-    ],
-  },
-  {
-    id: 'ia',
-    titulo: 'IA',
-    cor: '#9b59b6',
-    cards: [
-      {
-        id: '11',
-        nome: 'Ana Beatriz',
-        agente: 'Luana Costa',
-        prioridade: 'Média',
-        origem: 'Orgânico',
-        tempo: '1h 10m',
-        criadoEm: new Date(),
-        atualizadoEm: new Date(),
-      },
-      {
-        id: '12',
-        nome: 'Felipe Costa',
-        agente: 'Hávila Rodrigues',
-        prioridade: 'Alta',
-        origem: 'Direto',
-        tempo: '2h 40m',
-        criadoEm: new Date(),
-        atualizadoEm: new Date(),
-      },
-      {
-        id: '13',
-        nome: 'Juliana Oliveira',
-        agente: 'Camilly Nunes',
-        prioridade: 'Média',
-        origem: 'Tráfego Pago',
-        tempo: '3h 05m',
-        criadoEm: new Date(),
-        atualizadoEm: new Date(),
-      },
-    ],
-  },
-  {
-    id: 'suporte',
-    titulo: 'Suporte',
-    cor: '#2ecc71',
-    cards: [
-      {
-        id: '14',
-        nome: 'Carlota Mendes',
-        agente: 'Camilly Nunes',
-        prioridade: 'Média',
-        origem: 'Tráfego Pago',
-        tempo: '2h 5m',
-        criadoEm: new Date(),
-        atualizadoEm: new Date(),
-      },
-      {
-        id: '15',
-        nome: 'Roberto Lima',
-        agente: 'Fernando Silva',
-        prioridade: 'Baixa',
-        origem: 'Orgânico',
-        tempo: '2h 50m',
-        criadoEm: new Date(),
-        atualizadoEm: new Date(),
-      },
-    ],
-  },
-  {
-    id: 'agendando',
-    titulo: 'Agendando',
-    cor: '#f39c12',
-    cards: [
-      {
-        id: '16',
-        nome: 'Ana Paula',
-        agente: 'Fernando Silva',
-        prioridade: 'Média',
-        origem: 'Indicação',
-        tempo: '1h 25m',
-        criadoEm: new Date(),
-        atualizadoEm: new Date(),
-      },
-      {
-        id: '17',
-        nome: 'Bruno Garcia',
-        agente: 'Luana Costa',
-        prioridade: 'Alta',
-        origem: 'Tráfego Pago',
-        tempo: '3h 35m',
-        criadoEm: new Date(),
-        atualizadoEm: new Date(),
-      },
-      {
-        id: '18',
-        nome: 'Alessandra Souza',
-        agente: 'Hávila Rodrigues',
-        prioridade: 'Média',
-        origem: 'Direto',
-        tempo: '2h 55m',
-        criadoEm: new Date(),
-        atualizadoEm: new Date(),
-      },
-    ],
-  },
-];
 
 export function Kanban() {
   const {
@@ -236,34 +36,19 @@ export function Kanban() {
 
   const membros = useEquipeStore((state) => state.membros);
   const { filas } = useFilasStore();
-  const { etiquetas } = useEtiquetasStore();
 
-  // Inicializar dados com mock (em produção, carregará de API)
-  useEffect(() => {
-    if (colunas.length === 0) {
-      setColunas(MOCK_COLUNAS_TEMP);
-    }
-  }, [colunas.length, setColunas]);
-
-  // Combinar colunas hardcoded com colunas dinâmicas de etiquetas
+  // Criar colunas a partir de Filas (fonte única de verdade)
   const colunasDoKanban = useMemo(() => {
-    // Manter colunas hardcoded
-    const colunasHardcoded = colunas.filter(col =>
-      ['comercial', 'secretaria', 'ia', 'suporte', 'agendando'].includes(col.id)
-    );
-
-    // Adicionar colunas dinâmicas de etiquetas
-    const colunasEtiquetas = etiquetas.map((etiqueta) => ({
-      id: etiqueta.id,
-      titulo: etiqueta.nome,
-      cor: etiqueta.cor,
+    // Criar colunas a partir das Filas
+    return filas.map((fila) => ({
+      id: fila.id,
+      titulo: fila.nome,
+      cor: fila.cor,
       cards: colunas
-        .find(col => col.id === etiqueta.id)
+        .find(col => col.id === fila.id)
         ?.cards || [],
     }));
-
-    return [...colunasHardcoded, ...colunasEtiquetas];
-  }, [colunas, etiquetas]);
+  }, [filas, colunas]);
 
   // Drag and Drop Handler
   const handleDragEnd = useCallback((result: DropResult) => {
