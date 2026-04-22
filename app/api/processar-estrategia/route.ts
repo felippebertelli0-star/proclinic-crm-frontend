@@ -134,26 +134,34 @@ Mês: ${mes}
 Retorne um array JSON com as estratégias extraídas. Se não conseguir extrair nada válido, retorne [].`;
 
     console.log('[ESTRATEGIA_API] Enviando para Claude API...');
+    console.log('[ESTRATEGIA_API] API Key existe:', !!apiKey);
 
-    const message = await client.messages.create({
-      model: 'claude-opus-4-6',
-      max_tokens: 1024,
-      system: CLAUDE_SYSTEM_PROMPT,
-      messages: [
-        {
-          role: 'user',
-          content: userPrompt,
-        },
-      ],
-    });
+    let message;
+    try {
+      message = await client.messages.create({
+        model: 'claude-opus-4-6',
+        max_tokens: 1024,
+        system: CLAUDE_SYSTEM_PROMPT,
+        messages: [
+          {
+            role: 'user',
+            content: userPrompt,
+          },
+        ],
+      });
 
-    console.log('[ESTRATEGIA_API] ✓ Resposta recebida do Claude');
+      console.log('[ESTRATEGIA_API] ✓ Resposta recebida do Claude');
+      console.log('[ESTRATEGIA_API] Message object:', JSON.stringify(message).substring(0, 300));
+    } catch (erroClaudeAPI) {
+      console.error('[ESTRATEGIA_API] ✗ Erro ao chamar Claude API:', erroClaudeAPI);
+      throw erroClaudeAPI;
+    }
 
     // Extrair JSON da resposta
     const responseText =
       message.content[0]?.type === 'text' ? message.content[0].text : '';
 
-    console.log('[ESTRATEGIA_API] Texto da resposta:', responseText.substring(0, 200));
+    console.log('[ESTRATEGIA_API] Texto da resposta:', responseText.substring(0, 500));
 
     const jsonMatch = responseText.match(/\[[\s\S]*\]/);
     if (!jsonMatch) {
