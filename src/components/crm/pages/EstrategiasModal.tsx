@@ -99,14 +99,12 @@ export default function EstrategiasModal({ isOpen, onClose }: EstrategiasModalPr
     }
   };
 
-  if (!isOpen) return null;
-
   return (
     <div style={{
       position: 'fixed',
       inset: 0,
       backgroundColor: 'rgba(0, 0, 0, 0.5)',
-      display: 'flex',
+      display: isOpen ? 'flex' : 'none',
       alignItems: 'center',
       justifyContent: 'center',
       zIndex: 50,
