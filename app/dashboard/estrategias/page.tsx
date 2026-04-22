@@ -40,20 +40,43 @@ export default function EstrategiasPage() {
     setCurrentPage(1);
   };
 
+  // Função para extrair mês da data
+  const obterMesDaData = (dataCriacao: string): string => {
+    const data = new Date(dataCriacao);
+    const meses = [
+      'janeiro', 'fevereiro', 'marco', 'abril', 'maio', 'junho',
+      'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'
+    ];
+    return meses[data.getMonth()];
+  };
+
   // Cálculos de estatísticas
   const estrategiaStats = useMemo(() => {
-    const todas = filtrarEstrategias(''); // Carrega dinamicamente do localStorage
+    let todas = filtrarEstrategias(''); // Carrega dinamicamente do localStorage
+    
+    // Aplicar filtro de mês nas estatísticas também
+    if (mesSelecionado) {
+      todas = todas.filter((est) => obterMesDaData(est.dataCriacao) === mesSelecionado);
+    }
+    
     return {
       total: todas.length,
       ativas: todas.filter((e) => e.ativa).length,
       inativas: todas.filter((e) => !e.ativa).length,
       totalExecutions: todas.reduce((sum, e) => sum + e.totalExecutions, 0),
     };
-  }, [searchTerm, tipoFilter]);
+  }, [searchTerm, tipoFilter, mesSelecionado]);
 
   const estrategiasFiltradas = useMemo(() => {
-    return filtrarEstrategias(searchTerm, tipoFilter || undefined);
-  }, [searchTerm, tipoFilter]);
+    let resultado = filtrarEstrategias(searchTerm, tipoFilter || undefined);
+    
+    // Aplicar filtro de mês se selecionado
+    if (mesSelecionado) {
+      resultado = resultado.filter((est) => obterMesDaData(est.dataCriacao) === mesSelecionado);
+    }
+    
+    return resultado;
+  }, [searchTerm, tipoFilter, mesSelecionado]);
 
   const { items: estrategiasPaginadas, total: totalEstrategias } = useMemo(() => {
     return paginar(estrategiasFiltradas, ITEMS_PER_PAGE, (currentPage - 1) * ITEMS_PER_PAGE);

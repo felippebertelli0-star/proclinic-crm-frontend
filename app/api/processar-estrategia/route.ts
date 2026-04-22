@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Anthropic } from '@anthropic-ai/sdk';
-import { adicionarEstrategiasSalvas } from '@/lib/estrategias-salvas';
 
 const CLAUDE_SYSTEM_PROMPT = `Você é um assistente especializado em análise de estratégias clínicas e de automação.
 
@@ -201,14 +200,8 @@ Retorne um array JSON com as estratégias extraídas. Se não conseguir extrair 
 
     console.log(`[ESTRATEGIA_API] ✓ ${estrategias.length} estratégias criadas`);
 
-    // Salvar estratégias criadas (tipos extraídos pela IA, sem mapeamento)
-    try {
-      adicionarEstrategiasSalvas(estrategias as any);
-      console.log(`[ESTRATEGIA_API] ✓ ${estrategias.length} estratégias salvas em memória`);
-    } catch (erroSalvar) {
-      console.warn('[ESTRATEGIA_API] ⚠️ Erro ao salvar estratégias:', erroSalvar);
-      // Continua mesmo se não conseguir salvar
-    }
+    // NOTA: A persistência em localStorage é feita no FRONTEND (navegador), não no servidor
+    // O servidor apenas retorna as estratégias, o frontend chama adicionarEstrategiasSalvas()
 
     return NextResponse.json(
       {

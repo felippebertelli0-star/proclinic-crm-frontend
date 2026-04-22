@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { X } from 'lucide-react';
+import { adicionarEstrategiasSalvas } from '@/lib/estrategias-salvas';
 
 const MESES = [
   { valor: 'janeiro', label: 'Janeiro' },
@@ -91,6 +92,11 @@ export default function EstrategiasModal({ isOpen, onClose }: EstrategiasModalPr
       if (dados.sucesso && dados.estrategias?.length > 0) {
         console.log(`[ESTRATEGIAS] ✅ ${dados.estrategias.length} estratégias extraídas`);
         console.log('[ESTRATEGIAS] Estratégias:', dados.estrategias);
+
+        // IMPORTANTE: Salvar estratégias em localStorage ANTES de recarregar
+        adicionarEstrategiasSalvas(dados.estrategias);
+        console.log('[ESTRATEGIAS] 💾 Estratégias salvas em localStorage');
+
         alert(`✅ ${dados.estrategias.length} estratégias criadas com sucesso!\n\nA página será recarregada...`);
 
         setTextoEstrategia('');
