@@ -1,211 +1,241 @@
 /**
  * Página: Conexões
- * Gerenciar integrações com serviços terceirizados
+ * Gerenciar integrações com serviços terceirizados - Premium AAA
  * Qualidade: Premium AAA
  */
 
 'use client';
 
 import { useState, useMemo } from 'react';
-import { TableCard } from '@/components/dashboard/TableCard';
-import { FilterBar } from '@/components/dashboard/FilterBar';
-import { ActionButtons } from '@/components/dashboard/ActionButtons';
-import { Pagination } from '@/components/dashboard/Pagination';
-import { mockConexoes, filtrarConexoes, paginar, formatarData } from '@/lib/mockData';
-import { AlertTriangle, CheckCircle2, Plug, Clock } from 'lucide-react';
+import styles from '@/components/crm/pages/Calendario.module.css';
 
-const ITEMS_PER_PAGE = 10;
+interface Conexao {
+  id: number;
+  nome: string;
+  descricao: string;
+  status: 'conectado' | 'desconectado';
+  chaveAPI: string;
+  usuarioConfiguracao: string;
+  ultimaSincronizacao: string;
+  erros: string | null;
+}
+
+const conexoesDados: Conexao[] = [
+  {
+    id: 1,
+    nome: 'WhatsApp Business',
+    descricao: 'Integração para envio de mensagens via WhatsApp',
+    status: 'conectado',
+    chaveAPI: 'whatsapp_key_8f9d2c...',
+    usuarioConfiguracao: 'Admin',
+    ultimaSincronizacao: '2026-04-22T11:15:00',
+    erros: null
+  },
+  {
+    id: 2,
+    nome: 'Google Calendar',
+    descricao: 'Sincronização de calendários e agendamentos',
+    status: 'conectado',
+    chaveAPI: 'google_calendar_key_a1b2c...',
+    usuarioConfiguracao: 'Admin',
+    ultimaSincronizacao: '2026-04-22T10:30:00',
+    erros: null
+  },
+  {
+    id: 3,
+    nome: 'Stripe Pagamentos',
+    descricao: 'Gateway de pagamentos online',
+    status: 'conectado',
+    chaveAPI: 'stripe_key_pk_live_51...',
+    usuarioConfiguracao: 'Financeiro',
+    ultimaSincronizacao: '2026-04-22T11:00:00',
+    erros: null
+  },
+  {
+    id: 4,
+    nome: 'Mailchimp',
+    descricao: 'Gerenciamento de campanhas de email',
+    status: 'desconectado',
+    chaveAPI: 'mailchimp_key_3d4e5f...',
+    usuarioConfiguracao: 'Marketing',
+    ultimaSincronizacao: '2026-04-21T15:45:00',
+    erros: 'Chave API expirada'
+  },
+  {
+    id: 5,
+    nome: 'Slack',
+    descricao: 'Notificações em tempo real para a equipe',
+    status: 'conectado',
+    chaveAPI: 'slack_webhook_xoxb_12...',
+    usuarioConfiguracao: 'Admin',
+    ultimaSincronizacao: '2026-04-22T11:10:00',
+    erros: null
+  },
+  {
+    id: 6,
+    nome: 'Google Drive',
+    descricao: 'Armazenamento en nuvem de documentos',
+    status: 'conectado',
+    chaveAPI: 'google_drive_key_9z8x...',
+    usuarioConfiguracao: 'Admin',
+    ultimaSincronizacao: '2026-04-22T10:50:00',
+    erros: null
+  },
+];
 
 export default function ConexoesPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
 
   const handleSearch = (value: string) => {
     setSearchTerm(value);
-    setCurrentPage(1);
   };
 
   const handleStatusFilter = (value: string) => {
     setStatusFilter(value);
-    setCurrentPage(1);
   };
 
   // Cálculos de estatísticas
   const conexaoStats = useMemo(() => {
     return {
-      total: mockConexoes.length,
-      conectadas: mockConexoes.filter((c) => c.status === 'conectado').length,
-      desconectadas: mockConexoes.filter((c) => c.status === 'desconectado').length,
-      comErros: mockConexoes.filter((c) => c.erros !== null).length,
+      total: conexoesDados.length,
+      conectadas: conexoesDados.filter((c) => c.status === 'conectado').length,
+      desconectadas: conexoesDados.filter((c) => c.status === 'desconectado').length,
+      comErros: conexoesDados.filter((c) => c.erros !== null).length,
     };
   }, []);
 
   const conexoesFiltradas = useMemo(() => {
-    return filtrarConexoes(searchTerm, statusFilter || undefined);
+    let resultado = conexoesDados;
+    if (searchTerm) {
+      resultado = resultado.filter((c) =>
+        c.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        c.descricao.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+    if (statusFilter) {
+      resultado = resultado.filter((c) => c.status === statusFilter);
+    }
+    return resultado;
   }, [searchTerm, statusFilter]);
 
-  const { items: conexoesPaginadas, total: totalConexoes } = useMemo(() => {
-    return paginar(conexoesFiltradas, ITEMS_PER_PAGE, (currentPage - 1) * ITEMS_PER_PAGE);
-  }, [conexoesFiltradas, currentPage]);
-
-  const totalPages = Math.ceil(totalConexoes / ITEMS_PER_PAGE);
-
   return (
-    <div className="space-y-6">
+    <div className={styles.container}>
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">Conexões</h1>
-        <p className="text-gray-600 mt-2">Gerenciar integrações com serviços terceirizados</p>
+      <div className={styles.header}>
+        <div className={styles.headerContent}>
+          <h1 className={styles.title}>Conexões</h1>
+          <p className={styles.subtitle}>Gerenciar integrações com serviços terceirizados</p>
+
+          {/* Filtros de Status */}
+          <div className={styles.botoesContainer}>
+            <button
+              onClick={() => handleStatusFilter('')}
+              className={`${styles.botaoMes} ${!statusFilter ? styles.active : ''}`}
+            >
+              Todos
+            </button>
+            <button
+              onClick={() => handleStatusFilter('conectado')}
+              className={`${styles.botaoMes} ${statusFilter === 'conectado' ? styles.active : ''}`}
+            >
+              Conectados
+            </button>
+            <button
+              onClick={() => handleStatusFilter('desconectado')}
+              className={`${styles.botaoMes} ${statusFilter === 'desconectado' ? styles.active : ''}`}
+            >
+              Desconectados
+            </button>
+          </div>
+        </div>
+        <button className={styles.btnNova}>
+          🔌 Nova Conexão
+        </button>
       </div>
 
       {/* Cards de Estatísticas */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-          <p className="text-gray-600 text-sm font-medium">Total de Conexões</p>
-          <p className="text-3xl font-bold text-gray-900 mt-2">{conexaoStats.total}</p>
+      <div className={styles.statsGrid}>
+        <div className={styles.statCard}>
+          <span className={styles.statLabel}>Total de Conexões</span>
+          <span className={styles.statValue}>{conexaoStats.total}</span>
         </div>
-        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-          <p className="text-gray-600 text-sm font-medium">Conectadas</p>
-          <p className="text-3xl font-bold text-green-600 mt-2">{conexaoStats.conectadas}</p>
+        <div className={styles.statCard}>
+          <span className={styles.statLabel}>Conectadas</span>
+          <span className={styles.statValue}>{conexaoStats.conectadas}</span>
         </div>
-        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-          <p className="text-gray-600 text-sm font-medium">Desconectadas</p>
-          <p className="text-3xl font-bold text-orange-600 mt-2">{conexaoStats.desconectadas}</p>
+        <div className={styles.statCard}>
+          <span className={styles.statLabel}>Desconectadas</span>
+          <span className={styles.statValue}>{conexaoStats.desconectadas}</span>
         </div>
-        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-          <p className="text-gray-600 text-sm font-medium">Com Erros</p>
-          <p className="text-3xl font-bold text-red-600 mt-2">{conexaoStats.comErros}</p>
+        <div className={styles.statCard}>
+          <span className={styles.statLabel}>Com Erros</span>
+          <span className={styles.statValue}>{conexaoStats.comErros}</span>
         </div>
       </div>
 
-      {/* Filtros */}
-      <FilterBar
-        searchValue={searchTerm}
-        onSearchChange={handleSearch}
-        searchPlaceholder="Buscar por nome ou descrição..."
-        filters={[
-          {
-            label: 'Status',
-            name: 'status',
-            value: statusFilter,
-            options: [
-              { label: 'Conectado', value: 'conectado' },
-              { label: 'Desconectado', value: 'desconectado' },
-            ],
-            onChange: handleStatusFilter,
-          },
-        ]}
-      />
+      {/* Busca */}
+      <div style={{ marginBottom: '20px' }}>
+        <input
+          type="text"
+          placeholder="Buscar por nome ou descrição..."
+          value={searchTerm}
+          onChange={(e) => handleSearch(e.target.value)}
+          className={styles.searchInput}
+        />
+      </div>
 
-      {/* Tabela de Conexões */}
-      <TableCard title={`Total de Conexões: ${totalConexoes}`} actionLabel="Nova Conexão">
-        {conexoesPaginadas.length > 0 ? (
-          <>
-            <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
-                    Serviço
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
-                    Descrição
-                  </th>
-                  <th className="px-6 py-3 text-center text-xs font-semibold text-gray-700 uppercase">
-                    Status
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
-                    Configurado por
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
-                    Última Sincronização
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
-                    Erros
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-semibold text-gray-700 uppercase">
-                    Ações
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {conexoesPaginadas.map((conexao) => (
-                  <tr key={conexao.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center gap-3">
-                        <Plug className="text-blue-600" size={20} />
-                        <div className="font-medium text-gray-900">{conexao.nome}</div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <p className="text-sm text-gray-600">{conexao.descricao}</p>
-                      <p className="text-xs text-gray-500 mt-1">
-                        Chave: <code className="bg-gray-100 px-1 rounded">{conexao.chaveAPI}</code>
-                      </p>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-center">
-                      <div className="flex items-center justify-center gap-2">
-                        {conexao.status === 'conectado' ? (
-                          <CheckCircle2 className="text-green-600" size={18} />
-                        ) : (
-                          <AlertTriangle className="text-orange-600" size={18} />
-                        )}
-                        <span
-                          className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                            conexao.status === 'conectado'
-                              ? 'bg-green-100 text-green-800'
-                              : 'bg-orange-100 text-orange-800'
-                          }`}
-                        >
-                          {conexao.status === 'conectado' ? 'Conectado' : 'Desconectado'}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                      {conexao.usuarioConfiguracao}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                      <div className="flex items-center gap-2">
-                        <Clock size={16} />
-                        {formatarData(conexao.ultimaSincronizacao)}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {conexao.erros ? (
-                        <div className="text-sm text-red-600 font-medium">{conexao.erros}</div>
-                      ) : (
-                        <span className="text-green-600 text-sm font-medium">✓ Sem erros</span>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right">
-                      <ActionButtons
-                        onEdit={() => console.log('Editar conexão:', conexao.id)}
-                        onDelete={() => console.log('Deletar conexão:', conexao.id)}
-                      />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-
-            {totalPages > 1 && (
-              <div className="px-6 py-4">
-                <Pagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={setCurrentPage}
-                />
+      {/* Grid de Conexões */}
+      {conexoesFiltradas.length > 0 ? (
+        <div className={styles.gridCards}>
+          {conexoesFiltradas.map((conexao) => (
+            <div key={conexao.id} className={styles.estrategiaCard}>
+              <div className={styles.cardHeader}>
+                <h3 className={styles.cardTitle}>{conexao.nome}</h3>
+                <span className={styles.cardType}>{conexao.status === 'conectado' ? '✅ Conectado' : '⚠️ Desconectado'}</span>
               </div>
-            )}
-          </>
-        ) : (
-          <div className="flex flex-col items-center justify-center py-12">
-            <div className="text-5xl mb-4">🔌</div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Nenhuma conexão encontrada</h3>
-            <p className="text-gray-600">Configure sua primeira integração</p>
-          </div>
-        )}
-      </TableCard>
+
+              <p className={styles.cardDescription}>{conexao.descricao}</p>
+
+              <div className={styles.cardStats}>
+                <div className={styles.statItem}>
+                  <span className={styles.statItemLabel}>Chave API</span>
+                  <span className={styles.statItemValue} style={{ fontSize: '11px', color: '#7a96aa', wordBreak: 'break-all' }}>
+                    {conexao.chaveAPI}
+                  </span>
+                </div>
+                <div className={styles.statItem}>
+                  <span className={styles.statItemLabel}>Configurado por</span>
+                  <span className={styles.statItemValue}>{conexao.usuarioConfiguracao}</span>
+                </div>
+                <div className={styles.statItem}>
+                  <span className={styles.statItemLabel}>Última Sincronização</span>
+                  <span className={styles.statItemValue} style={{ fontSize: '11px' }}>
+                    {new Date(conexao.ultimaSincronizacao).toLocaleDateString('pt-BR', {
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })}
+                  </span>
+                </div>
+                {conexao.erros && (
+                  <div className={styles.statItem}>
+                    <span className={styles.statItemLabel}>Status do Erro</span>
+                    <span className={styles.statItemValue} style={{ color: '#ef4444', fontSize: '11px' }}>
+                      {conexao.erros}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className={styles.emptyState}>
+          <div className={styles.emptyIcon}>🔌</div>
+          <p className={styles.emptyTitle}>Nenhuma conexão encontrada</p>
+          <p className={styles.emptySubtitle}>Configure sua primeira integração</p>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,219 +1,265 @@
 /**
  * Página: Filas
- * Gerenciar filas de atendimento e distribuição de chamados
+ * Gerenciar filas de atendimento com cards Premium AAA
  * Qualidade: Premium AAA
  */
 
 'use client';
 
 import { useState, useMemo } from 'react';
-import { TableCard } from '@/components/dashboard/TableCard';
-import { FilterBar } from '@/components/dashboard/FilterBar';
-import { ActionButtons } from '@/components/dashboard/ActionButtons';
-import { Pagination } from '@/components/dashboard/Pagination';
-import { mockFilas, filtrarFilas, paginar, formatarData } from '@/lib/mockData';
-import { Users, Clock, CheckCircle2 } from 'lucide-react';
+import { Users, Clock } from 'lucide-react';
+import styles from '@/components/crm/pages/Calendario.module.css';
 
-const ITEMS_PER_PAGE = 10;
+interface Fila {
+  id: number;
+  nome: string;
+  descricao: string;
+  status: 'ativa' | 'pausada';
+  totalAtendimentos: number;
+  atendimentosCompletos: number;
+  tempoMedio: number;
+  agentesAtivos: number;
+  ultimaAtualizacao: string;
+}
+
+const filasData: Fila[] = [
+  {
+    id: 1,
+    nome: 'Fila Principal',
+    descricao: 'Atendimento geral de pacientes',
+    status: 'ativa',
+    totalAtendimentos: 45,
+    atendimentosCompletos: 38,
+    tempoMedio: 15,
+    agentesAtivos: 3,
+    ultimaAtualizacao: '2026-04-22T10:30:00'
+  },
+  {
+    id: 2,
+    nome: 'Fila Emergência',
+    descricao: 'Atendimento prioritário',
+    status: 'ativa',
+    totalAtendimentos: 12,
+    atendimentosCompletos: 10,
+    tempoMedio: 8,
+    agentesAtivos: 2,
+    ultimaAtualizacao: '2026-04-22T11:15:00'
+  },
+  {
+    id: 3,
+    nome: 'Fila Agendamentos',
+    descricao: 'Confirmação de consultas',
+    status: 'ativa',
+    totalAtendimentos: 28,
+    atendimentosCompletos: 25,
+    tempoMedio: 5,
+    agentesAtivos: 1,
+    ultimaAtualizacao: '2026-04-22T09:45:00'
+  },
+  {
+    id: 4,
+    nome: 'Fila Suporte',
+    descricao: 'Dúvidas e problemas gerais',
+    status: 'pausada',
+    totalAtendimentos: 18,
+    atendimentosCompletos: 15,
+    tempoMedio: 12,
+    agentesAtivos: 0,
+    ultimaAtualizacao: '2026-04-22T08:20:00'
+  },
+  {
+    id: 5,
+    nome: 'Fila Cobranças',
+    descricao: 'Atendimento de pagamentos',
+    status: 'ativa',
+    totalAtendimentos: 22,
+    atendimentosCompletos: 20,
+    tempoMedio: 10,
+    agentesAtivos: 2,
+    ultimaAtualizacao: '2026-04-22T11:00:00'
+  },
+  {
+    id: 6,
+    nome: 'Fila Follow-up',
+    descricao: 'Acompanhamento pós-atendimento',
+    status: 'ativa',
+    totalAtendimentos: 35,
+    atendimentosCompletos: 32,
+    tempoMedio: 7,
+    agentesAtivos: 2,
+    ultimaAtualizacao: '2026-04-22T10:50:00'
+  },
+];
 
 export default function FilasPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
 
   const handleSearch = (value: string) => {
     setSearchTerm(value);
-    setCurrentPage(1);
   };
 
   const handleStatusFilter = (value: string) => {
     setStatusFilter(value);
-    setCurrentPage(1);
   };
 
   // Cálculos de estatísticas
   const filaStats = useMemo(() => {
     return {
-      total: mockFilas.length,
-      ativas: mockFilas.filter((f) => f.status === 'ativa').length,
-      totalAtendimentos: mockFilas.reduce((sum, f) => sum + f.totalAtendimentos, 0),
+      total: filasData.length,
+      ativas: filasData.filter((f) => f.status === 'ativa').length,
+      totalAtendimentos: filasData.reduce((sum, f) => sum + f.totalAtendimentos, 0),
       tempoMedioGeral:
         Math.round(
-          mockFilas.reduce((sum, f) => sum + f.tempoMedio, 0) / mockFilas.length,
+          filasData.reduce((sum, f) => sum + f.tempoMedio, 0) / filasData.length,
         ) || 0,
     };
   }, []);
 
   const filasFiltradas = useMemo(() => {
-    return filtrarFilas(searchTerm, statusFilter || undefined);
+    let resultado = filasData;
+    if (searchTerm) {
+      resultado = resultado.filter((f) =>
+        f.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        f.descricao.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+    if (statusFilter) {
+      resultado = resultado.filter((f) => f.status === statusFilter);
+    }
+    return resultado;
   }, [searchTerm, statusFilter]);
 
-  const { items: filasPaginadas, total: totalFilas } = useMemo(() => {
-    return paginar(filasFiltradas, ITEMS_PER_PAGE, (currentPage - 1) * ITEMS_PER_PAGE);
-  }, [filasFiltradas, currentPage]);
-
-  const totalPages = Math.ceil(totalFilas / ITEMS_PER_PAGE);
-
   return (
-    <div className="space-y-6">
+    <div className={styles.container}>
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">Filas de Atendimento</h1>
-        <p className="text-gray-600 mt-2">Gerenciar filas e distribuição de pacientes</p>
+      <div className={styles.header}>
+        <div className={styles.headerContent}>
+          <h1 className={styles.title}>Filas de Atendimento</h1>
+          <p className={styles.subtitle}>Gerenciar filas e distribuição de pacientes</p>
+
+          {/* Filtros de Status */}
+          <div className={styles.botoesContainer}>
+            <button
+              onClick={() => handleStatusFilter('')}
+              className={`${styles.botaoMes} ${!statusFilter ? styles.active : ''}`}
+            >
+              Todos
+            </button>
+            <button
+              onClick={() => handleStatusFilter('ativa')}
+              className={`${styles.botaoMes} ${statusFilter === 'ativa' ? styles.active : ''}`}
+            >
+              Ativas
+            </button>
+            <button
+              onClick={() => handleStatusFilter('pausada')}
+              className={`${styles.botaoMes} ${statusFilter === 'pausada' ? styles.active : ''}`}
+            >
+              Pausadas
+            </button>
+          </div>
+        </div>
+        <button className={styles.btnNova}>
+          <Users size={16} style={{ marginRight: '6px' }} />
+          Nova Fila
+        </button>
       </div>
 
       {/* Cards de Estatísticas */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-          <p className="text-gray-600 text-sm font-medium">Total de Filas</p>
-          <p className="text-3xl font-bold text-gray-900 mt-2">{filaStats.total}</p>
+      <div className={styles.statsGrid}>
+        <div className={styles.statCard}>
+          <span className={styles.statLabel}>Total de Filas</span>
+          <span className={styles.statValue}>{filaStats.total}</span>
         </div>
-        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-          <p className="text-gray-600 text-sm font-medium">Filas Ativas</p>
-          <p className="text-3xl font-bold text-green-600 mt-2">{filaStats.ativas}</p>
+        <div className={styles.statCard}>
+          <span className={styles.statLabel}>Filas Ativas</span>
+          <span className={styles.statValue}>{filaStats.ativas}</span>
         </div>
-        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-          <p className="text-gray-600 text-sm font-medium">Total de Atendimentos</p>
-          <p className="text-3xl font-bold text-blue-600 mt-2">{filaStats.totalAtendimentos}</p>
+        <div className={styles.statCard}>
+          <span className={styles.statLabel}>Total de Atendimentos</span>
+          <span className={styles.statValue}>{filaStats.totalAtendimentos}</span>
         </div>
-        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-          <p className="text-gray-600 text-sm font-medium">Tempo Médio (min)</p>
-          <p className="text-3xl font-bold text-orange-600 mt-2">{filaStats.tempoMedioGeral}</p>
+        <div className={styles.statCard}>
+          <span className={styles.statLabel}>Tempo Médio (min)</span>
+          <span className={styles.statValue}>{filaStats.tempoMedioGeral}</span>
         </div>
       </div>
 
-      {/* Filtros */}
-      <FilterBar
-        searchValue={searchTerm}
-        onSearchChange={handleSearch}
-        searchPlaceholder="Buscar por nome da fila..."
-        filters={[
-          {
-            label: 'Status',
-            name: 'status',
-            value: statusFilter,
-            options: [
-              { label: 'Ativa', value: 'ativa' },
-              { label: 'Pausada', value: 'pausada' },
-            ],
-            onChange: handleStatusFilter,
-          },
-        ]}
-      />
+      {/* Busca */}
+      <div style={{ marginBottom: '20px' }}>
+        <input
+          type="text"
+          placeholder="Buscar por nome da fila..."
+          value={searchTerm}
+          onChange={(e) => handleSearch(e.target.value)}
+          className={styles.searchInput}
+        />
+      </div>
 
-      {/* Tabela de Filas */}
-      <TableCard title={`Total de Filas: ${totalFilas}`} actionLabel="Nova Fila">
-        {filasPaginadas.length > 0 ? (
-          <>
-            <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
-                    Nome da Fila
-                  </th>
-                  <th className="px-6 py-3 text-center text-xs font-semibold text-gray-700 uppercase">
-                    Status
-                  </th>
-                  <th className="px-6 py-3 text-center text-xs font-semibold text-gray-700 uppercase">
-                    Atendimentos
-                  </th>
-                  <th className="px-6 py-3 text-center text-xs font-semibold text-gray-700 uppercase">
-                    Completos
-                  </th>
-                  <th className="px-6 py-3 text-center text-xs font-semibold text-gray-700 uppercase">
-                    Tempo Médio
-                  </th>
-                  <th className="px-6 py-3 text-center text-xs font-semibold text-gray-700 uppercase">
-                    Agentes Ativos
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
-                    Última Atualização
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-semibold text-gray-700 uppercase">
-                    Ações
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {filasPaginadas.map((fila) => {
-                  const percentualCompleto = Math.round(
-                    (fila.atendimentosCompletos / fila.totalAtendimentos) * 100,
-                  );
+      {/* Grid de Filas */}
+      {filasFiltradas.length > 0 ? (
+        <div className={styles.gridCards}>
+          {filasFiltradas.map((fila) => {
+            const percentualCompleto = Math.round(
+              (fila.atendimentosCompletos / fila.totalAtendimentos) * 100,
+            );
 
-                  return (
-                    <tr key={fila.id} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-6 py-4">
-                        <div className="font-medium text-gray-900">{fila.nome}</div>
-                        <div className="text-sm text-gray-500 mt-1">{fila.descricao}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-center">
-                        <span
-                          className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                            fila.status === 'ativa'
-                              ? 'bg-green-100 text-green-800'
-                              : 'bg-orange-100 text-orange-800'
-                          }`}
-                        >
-                          {fila.status === 'ativa' ? 'Ativa' : 'Pausada'}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-center">
-                        <div className="flex items-center justify-center gap-2 font-semibold text-gray-900">
-                          <Clock size={16} />
-                          {fila.totalAtendimentos}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-center">
-                        <div className="flex items-center justify-center gap-2 font-semibold text-green-600">
-                          <CheckCircle2 size={16} />
-                          {fila.atendimentosCompletos}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-center">
-                        <span className="text-sm font-semibold text-gray-900">
-                          {fila.tempoMedio} min
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-center">
-                        <div className="flex items-center justify-center gap-2">
-                          <Users size={16} className="text-blue-600" />
-                          <span className="font-semibold text-gray-900">{fila.agentesAtivos}</span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                        {formatarData(fila.ultimaAtualizacao)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right">
-                        <ActionButtons
-                          onView={() => console.log('Abrir fila:', fila.id)}
-                          onEdit={() => console.log('Editar fila:', fila.id)}
-                          onDelete={() => console.log('Deletar fila:', fila.id)}
-                        />
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+            return (
+              <div key={fila.id} className={styles.estrategiaCard}>
+                <div className={styles.cardHeader}>
+                  <h3 className={styles.cardTitle}>{fila.nome}</h3>
+                  <span className={styles.cardType}>{fila.status === 'ativa' ? '🟢 Ativa' : '⭕ Pausada'}</span>
+                </div>
 
-            {totalPages > 1 && (
-              <div className="px-6 py-4">
-                <Pagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={setCurrentPage}
-                />
+                <p className={styles.cardDescription}>{fila.descricao}</p>
+
+                <div className={styles.cardStats}>
+                  <div className={styles.statItem}>
+                    <span className={styles.statItemLabel}>Atendimentos</span>
+                    <span className={styles.statItemValue}>{fila.totalAtendimentos}</span>
+                  </div>
+                  <div className={styles.statItem}>
+                    <span className={styles.statItemLabel}>Completos</span>
+                    <span className={styles.statItemValue}>{fila.atendimentosCompletos}</span>
+                  </div>
+                  <div className={styles.statItem}>
+                    <span className={styles.statItemLabel}>Tempo Médio</span>
+                    <span className={styles.statItemValue}>{fila.tempoMedio}min</span>
+                  </div>
+                  <div className={styles.statItem}>
+                    <span className={styles.statItemLabel}>Agentes</span>
+                    <span className={styles.statItemValue}>{fila.agentesAtivos}</span>
+                  </div>
+                </div>
+
+                {/* Progress Bar */}
+                <div style={{ marginTop: '8px', paddingTop: '8px', borderTop: '1px solid rgba(201, 148, 58, 0.1)' }}>
+                  <div style={{ fontSize: '10px', color: '#7a96aa', marginBottom: '4px' }}>
+                    Taxa de Conclusão: {percentualCompleto}%
+                  </div>
+                  <div style={{ width: '100%', height: '6px', background: '#0d1f2d', borderRadius: '3px', overflow: 'hidden' }}>
+                    <div
+                      style={{
+                        width: `${percentualCompleto}%`,
+                        height: '100%',
+                        background: '#c9943a',
+                        transition: 'width 0.2s ease-out'
+                      }}
+                    />
+                  </div>
+                </div>
               </div>
-            )}
-          </>
-        ) : (
-          <div className="flex flex-col items-center justify-center py-12">
-            <div className="text-5xl mb-4">📋</div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Nenhuma fila encontrada</h3>
-            <p className="text-gray-600">Crie sua primeira fila de atendimento</p>
-          </div>
-        )}
-      </TableCard>
+            );
+          })}
+        </div>
+      ) : (
+        <div className={styles.emptyState}>
+          <div className={styles.emptyIcon}>📋</div>
+          <p className={styles.emptyTitle}>Nenhuma fila encontrada</p>
+          <p className={styles.emptySubtitle}>Crie sua primeira fila de atendimento</p>
+        </div>
+      )}
     </div>
   );
 }
