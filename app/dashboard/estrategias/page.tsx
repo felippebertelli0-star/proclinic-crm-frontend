@@ -42,13 +42,14 @@ export default function EstrategiasPage() {
 
   // Cálculos de estatísticas
   const estrategiaStats = useMemo(() => {
+    const todas = filtrarEstrategias(''); // Carrega dinamicamente do localStorage
     return {
-      total: mockEstrategias.length,
-      ativas: mockEstrategias.filter((e) => e.ativa).length,
-      inativas: mockEstrategias.filter((e) => !e.ativa).length,
-      totalExecutions: mockEstrategias.reduce((sum, e) => sum + e.totalExecutions, 0),
+      total: todas.length,
+      ativas: todas.filter((e) => e.ativa).length,
+      inativas: todas.filter((e) => !e.ativa).length,
+      totalExecutions: todas.reduce((sum, e) => sum + e.totalExecutions, 0),
     };
-  }, []);
+  }, [searchTerm, tipoFilter]);
 
   const estrategiasFiltradas = useMemo(() => {
     return filtrarEstrategias(searchTerm, tipoFilter || undefined);
