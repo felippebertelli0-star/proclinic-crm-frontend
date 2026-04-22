@@ -183,6 +183,17 @@ Retorne um array JSON com as estratégias extraídas. Se não conseguir extrair 
       `[ESTRATEGIA_API] ✓ JSON parseado com sucesso, ${estrategiasDados.length} estratégias`
     );
 
+    // Converter mês selecionado para data (primeiro dia do mês)
+    const mesMap: Record<string, number> = {
+      'janeiro': 0, 'fevereiro': 1, 'marco': 2, 'abril': 3,
+      'maio': 4, 'junho': 5, 'julho': 6, 'agosto': 7,
+      'setembro': 8, 'outubro': 9, 'novembro': 10, 'dezembro': 11
+    };
+
+    const mesIndex = mesMap[mes.toLowerCase()] ?? new Date().getMonth();
+    const ano = new Date().getFullYear();
+    const dataCriacaoMes = new Date(ano, mesIndex, 1).toISOString().split('T')[0];
+
     // Enriquecer dados com tipos extraídos pela IA (sem mapeamento restritivo)
     const estrategias: EstrategiaExtraida[] = estrategiasDados.map(
       (est, idx) => ({
@@ -191,7 +202,7 @@ Retorne um array JSON com as estratégias extraídas. Se não conseguir extrair 
         descricao: est.descricao || '',
         tipo: est.tipo || 'Estratégia',
         ativa: true,
-        dataCriacao: new Date().toISOString().split('T')[0],
+        dataCriacao: dataCriacaoMes,
         totalExecutions: 0,
         taxaSucesso: Math.min(100, Math.max(0, est.taxaSucesso || 85)),
         criadoPor: 'IA - Análise de Texto',
