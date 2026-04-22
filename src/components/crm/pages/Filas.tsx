@@ -95,6 +95,18 @@ const FILAS_INICIAIS = [
     slaPercentual: 100,
     ultimaAtualizacao: new Date().toISOString(),
   },
+  {
+    id: 'fila_5',
+    nome: 'teste',
+    descricao: '',
+    status: 'ativa' as const,
+    cor: '#1abc9c',
+    agenteIds: ['agente_1'],
+    totalTickets: 0,
+    tmr: 0,
+    slaPercentual: 100,
+    ultimaAtualizacao: new Date().toISOString(),
+  },
 ];
 
 export function Filas() {
