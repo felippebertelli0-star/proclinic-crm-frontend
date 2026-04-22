@@ -644,15 +644,21 @@ const estrategiasBase = Array.from({ length: 6 }, (_, index) => ({
   criadoPor: mockUsuarios[0]?.nome,
 }));
 
-// Merge com estratégias criadas via IA
-export const mockEstrategias = [...estrategiasBase, ...obterEstrategiasSalvas()];
+// Retorna estratégias compiladas (base + salvas) dinamicamente
+export const obterMockEstrategias = () => {
+  return [...estrategiasBase, ...obterEstrategiasSalvas()];
+};
+
+// Exportado para compatibilidade (computed dinamicamente)
+export const mockEstrategias = obterMockEstrategias();
 
 export const filtrarEstrategias = (
   termo: string,
   tipo?: string,
-): typeof mockEstrategias => {
+) => {
+  const todasEstrategias = obterMockEstrategias();
   const termoBaixo = termo.toLowerCase();
-  return mockEstrategias.filter(
+  return todasEstrategias.filter(
     (e) =>
       (e.nome.toLowerCase().includes(termoBaixo) ||
         e.descricao?.toLowerCase().includes(termoBaixo)) &&

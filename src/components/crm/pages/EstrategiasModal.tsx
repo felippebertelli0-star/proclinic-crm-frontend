@@ -60,28 +60,37 @@ export default function EstrategiasModal({ isOpen, onClose }: EstrategiasModalPr
 
     setProcessando(true);
     try {
-      console.log('[ESTRATEGIAS] Enviando texto para processamento...');
+      console.log('[ESTRATEGIAS] ⏳ Iniciando processamento de texto...');
+      console.log(`[ESTRATEGIAS] Texto: ${contadorCaracteres} caracteres, Mês: ${mesModal}`);
+
+      const payload = {
+        texto: textoEstrategia.trim(),
+        mes: mesModal,
+        tamanho: contadorCaracteres,
+      };
+
+      console.log('[ESTRATEGIAS] 📤 Enviando para /api/processar-estrategia...');
 
       const response = await fetch('/api/processar-estrategia', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          texto: textoEstrategia.trim(),
-          mes: mesModal,
-          tamanho: contadorCaracteres,
-        }),
+        body: JSON.stringify(payload),
       });
 
+      console.log(`[ESTRATEGIAS] 📥 Resposta: ${response.status} ${response.statusText}`);
+
       const dados = await response.json();
+      console.log('[ESTRATEGIAS] Dados recebidos:', dados);
 
       if (!response.ok) {
-        console.error('[ESTRATEGIAS] ✗ Erro na API:', dados);
+        console.error('[ESTRATEGIAS] ✗ Erro (status != 200):', dados);
         alert(`❌ ${dados.erro}\n${dados.detalhe || ''}`);
         return;
       }
 
       if (dados.sucesso && dados.estrategias?.length > 0) {
-        console.log(`[ESTRATEGIAS] ✓ ${dados.estrategias.length} estratégias extraídas`);
+        console.log(`[ESTRATEGIAS] ✅ ${dados.estrategias.length} estratégias extraídas`);
+        console.log('[ESTRATEGIAS] Estratégias:', dados.estrategias);
         alert(`✅ ${dados.estrategias.length} estratégias criadas com sucesso!\n\nA página será recarregada...`);
 
         setTextoEstrategia('');
@@ -90,9 +99,11 @@ export default function EstrategiasModal({ isOpen, onClose }: EstrategiasModalPr
 
         // Recarrega a página para mostrar os novos cards
         setTimeout(() => {
+          console.log('[ESTRATEGIAS] 🔄 Recarregando página...');
           window.location.reload();
         }, 500);
       } else {
+        console.warn('[ESTRATEGIAS] ⚠️ Nenhuma estratégia extraída:', dados);
         alert('⚠️ Nenhuma estratégia foi extraída. Verifique o texto.');
       }
     } catch (erro) {

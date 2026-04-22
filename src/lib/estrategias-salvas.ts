@@ -1,8 +1,10 @@
 /**
  * Estratégias Salvas via IA
  * Armazena estratégias criadas dinamicamente via /api/processar-estrategia
- * Mantém a identidade visual dos cards existentes
+ * Persiste em localStorage para sobreviver page reloads
  */
+
+const STORAGE_KEY = 'proclinic_estrategias_salvas';
 
 export interface EstrategiaSalva {
   id: number;
@@ -18,38 +20,70 @@ export interface EstrategiaSalva {
 }
 
 /**
- * Array de estratégias criadas via IA
- * Esta lista é atualizada quando o usuário processa texto com IA
+ * Carrega estratégias do localStorage
  */
-export const estrategiasSalvas: EstrategiaSalva[] = [];
+const carregarDoStorage = (): EstrategiaSalva[] => {
+  if (typeof window === 'undefined') return []; // Server-side
+
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    return stored ? JSON.parse(stored) : [];
+  } catch (erro) {
+    console.error('[ESTRATEGIAS-SALVAS] ✗ Erro ao carregar do localStorage:', erro);
+    return [];
+  }
+};
 
 /**
- * Adiciona estratégia salva à lista
+ * Salva estratégias no localStorage
+ */
+const salvarNoStorage = (estrategias: EstrategiaSalva[]) => {
+  if (typeof window === 'undefined') return; // Server-side
+
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(estrategias));
+    console.log(`[ESTRATEGIAS-SALVAS] ✓ ${estrategias.length} estratégias salvas em localStorage`);
+  } catch (erro) {
+    console.error('[ESTRATEGIAS-SALVAS] ✗ Erro ao salvar em localStorage:', erro);
+  }
+};
+
+/**
+ * Array de estratégias salvas (carregado do localStorage)
+ */
+export let estrategiasSalvas: EstrategiaSalva[] = carregarDoStorage();
+
+/**
+ * Adiciona estratégia salva à lista e localStorage
  */
 export const adicionarEstrategiaSalva = (estrategia: EstrategiaSalva) => {
   estrategiasSalvas.push(estrategia);
+  salvarNoStorage(estrategiasSalvas);
   console.log('[ESTRATEGIAS-SALVAS] ✓ Estratégia adicionada:', estrategia.nome);
 };
 
 /**
- * Adiciona múltiplas estratégias
+ * Adiciona múltiplas estratégias e localStorage
  */
 export const adicionarEstrategiasSalvas = (estrategias: EstrategiaSalva[]) => {
   estrategiasSalvas.push(...estrategias);
-  console.log(`[ESTRATEGIAS-SALVAS] ✓ ${estrategias.length} estratégias adicionadas`);
+  salvarNoStorage(estrategiasSalvas);
+  console.log(`[ESTRATEGIAS-SALVAS] ✓ ${estrategias.length} estratégias adicionadas e persistidas`);
 };
 
 /**
- * Limpa lista (para reset/debug)
+ * Limpa lista e localStorage (para reset/debug)
  */
 export const limparEstrategiasSalvas = () => {
   estrategiasSalvas.length = 0;
+  salvarNoStorage(estrategiasSalvas);
   console.log('[ESTRATEGIAS-SALVAS] ✓ Lista limpa');
 };
 
 /**
- * Retorna todas as estratégias salvas
+ * Retorna todas as estratégias salvas (sempre lê do localStorage para garantir sync)
  */
 export const obterEstrategiasSalvas = (): EstrategiaSalva[] => {
-  return [...estrategiasSalvas];
+  const atualizadas = carregarDoStorage();
+  return [...atualizadas];
 };
