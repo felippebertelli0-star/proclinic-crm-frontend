@@ -464,7 +464,7 @@ export function Filas() {
                     style={{
                       width: `${fila.slaPercentual}%`,
                       height: '100%',
-                      background: fila.slaPercentual >= 80 ? '#2ecc71' : fila.slaPercentual >= 60 ? '#f39c12' : '#ef4444',
+                      background: fila.cor,
                       transition: 'width 0.3s ease',
                     }}
                   />
