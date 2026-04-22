@@ -288,21 +288,11 @@ export function Filas() {
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.boxShadow = `0 8px 24px ${fila.cor}40`;
-                  e.currentTarget.style.transform = 'translateY(-4px)';
-                  const buttonGroup = e.currentTarget.querySelector('.button-group') as HTMLElement;
-                  if (buttonGroup) {
-                    buttonGroup.style.opacity = '1';
-                    buttonGroup.style.pointerEvents = 'auto';
-                  }
+                  e.currentTarget.style.transform = 'translateY(-2px)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.boxShadow = 'none';
+                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.4)';
                   e.currentTarget.style.transform = 'translateY(0)';
-                  const buttonGroup = e.currentTarget.querySelector('.button-group') as HTMLElement;
-                  if (buttonGroup) {
-                    buttonGroup.style.opacity = '0';
-                    buttonGroup.style.pointerEvents = 'none';
-                  }
                 }}
               >
                 {/* Header: Título + Status + Tickets */}
@@ -404,26 +394,47 @@ export function Filas() {
                   />
                 </div>
 
-                {/* Botões de Ação - Invisíveis até Hover */}
+                {/* Membros Badges */}
+                {membros.length > 0 && (
+                  <div style={{ display: 'flex', gap: '6px', marginBottom: '12px', flexWrap: 'wrap' }}>
+                    {membros.map((m) => (
+                      <span
+                        key={m.id}
+                        style={{
+                          display: 'inline-block',
+                          padding: '4px 10px',
+                          background: `${m.avatarColor}20`,
+                          color: m.avatarColor,
+                          borderRadius: '4px',
+                          fontSize: '11px',
+                          fontWeight: 600,
+                          border: `1px solid ${m.avatarColor}50`,
+                        }}
+                      >
+                        {m.nome.split(' ')[0]}
+                      </span>
+                    ))}
+                  </div>
+                )}
+
+                {/* Botões de Ação */}
                 <div
                   style={{
                     display: 'grid',
                     gridTemplateColumns: '1fr 1fr',
-                    gap: '6px',
-                    opacity: 0,
-                    transition: 'opacity 0.2s ease',
-                    pointerEvents: 'none',
+                    gap: '8px',
+                    marginBottom: '0',
                   }}
                   className="button-group"
                 >
                   <button
                     style={{
-                      padding: '6px 10px',
+                      padding: '8px 12px',
                       background: 'transparent',
                       border: `1px solid ${fila.cor}70`,
                       color: fila.cor,
                       borderRadius: '6px',
-                      fontSize: '10px',
+                      fontSize: '11px',
                       fontWeight: 600,
                       cursor: 'pointer',
                       transition: 'all 0.2s',
@@ -441,12 +452,12 @@ export function Filas() {
                   </button>
                   <button
                     style={{
-                      padding: '6px 10px',
+                      padding: '8px 12px',
                       background: 'transparent',
                       border: '1px solid #7a96aa70',
                       color: '#7a96aa',
                       borderRadius: '6px',
-                      fontSize: '10px',
+                      fontSize: '11px',
                       fontWeight: 600,
                       cursor: 'pointer',
                       transition: 'all 0.2s',
