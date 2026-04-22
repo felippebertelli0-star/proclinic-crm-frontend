@@ -1,6 +1,6 @@
 /**
  * Página: Estratégias
- * Gerenciar estratégias de automação
+ * Gerenciar estratégias de automação com IA
  * Qualidade: Premium AAA
  */
 
@@ -9,7 +9,7 @@
 import { useState, useMemo } from 'react';
 import { mockEstrategias, filtrarEstrategias, paginar } from '@/lib/mockData';
 import styles from '@/components/crm/pages/Estrategias.module.css';
-import { Zap, CheckCircle2, AlertCircle } from 'lucide-react';
+import EstrategiasModal from '@/components/crm/pages/EstrategiasModal';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -33,6 +33,7 @@ export default function EstrategiasPage() {
   const [tipoFilter, setTipoFilter] = useState('');
   const [mesSelecionado, setMesSelecionado] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [modalAberto, setModalAberto] = useState(false);
 
   const handleSearch = (value: string) => {
     setSearchTerm(value);
@@ -56,8 +57,6 @@ export default function EstrategiasPage() {
   const { items: estrategiasPaginadas, total: totalEstrategias } = useMemo(() => {
     return paginar(estrategiasFiltradas, ITEMS_PER_PAGE, (currentPage - 1) * ITEMS_PER_PAGE);
   }, [estrategiasFiltradas, currentPage]);
-
-  const totalPages = Math.ceil(totalEstrategias / ITEMS_PER_PAGE);
 
   return (
     <div className={styles.container}>
@@ -86,7 +85,9 @@ export default function EstrategiasPage() {
             ))}
           </div>
         </div>
-        <button className={styles.btnNova}>+ Nova Estratégia</button>
+        <button className={styles.btnNova} onClick={() => setModalAberto(true)}>
+          + Nova Estratégia
+        </button>
       </div>
 
       {/* Cards de Estatísticas */}
@@ -172,6 +173,12 @@ export default function EstrategiasPage() {
           <p className={styles.emptySubtitle}>Crie uma nova estratégia para começar</p>
         </div>
       )}
+
+      {/* Modal de Nova Estratégia */}
+      <EstrategiasModal
+        isOpen={modalAberto}
+        onClose={() => setModalAberto(false)}
+      />
     </div>
   );
 }
