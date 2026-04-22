@@ -40,14 +40,17 @@ export default function EstrategiasPage() {
     setCurrentPage(1);
   };
 
-  // Função para extrair mês da data
+  // Função para extrair mês da data (sem timezone issue)
   const obterMesDaData = (dataCriacao: string): string => {
-    const data = new Date(dataCriacao);
+    // Parsear data manualmente para evitar timezone issue
+    // dataCriacao formato: "YYYY-MM-DD"
+    const [ano, mes, dia] = dataCriacao.split('-').map(Number);
     const meses = [
       'janeiro', 'fevereiro', 'marco', 'abril', 'maio', 'junho',
       'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'
     ];
-    return meses[data.getMonth()];
+    // mes vem como 1-12, array como 0-11, então precisa de -1
+    return meses[mes - 1];
   };
 
   // Cálculos de estatísticas
