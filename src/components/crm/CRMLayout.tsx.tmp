@@ -1,0 +1,13 @@
+const renderPage = () => {
+    // If we're on a route with App Router children (e.g., /dashboard/estrategias)
+    // render them instead of using PAGE_MAPPING
+    if (pathname.includes('/estrategias') && children) {
+      return children;
+    }
+
+    const PageComponent = PAGE_MAPPING[currentPage];
+    if (PageComponent) {
+      return <PageComponent />;
+    }
+    return <div style={{ padding: '32px', color: '#7a96aa' }}>Página em desenvolvimento: {currentPage}</div>;
+  };
