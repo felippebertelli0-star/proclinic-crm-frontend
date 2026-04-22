@@ -631,18 +631,8 @@ const estrategiasNomes = [
   'Oferta de Pacotes',
 ];
 
-const estrategiasBase = Array.from({ length: 6 }, (_, index) => ({
-  id: gerarId(),
-  nome: estrategiasNomes[index],
-  descricao: `Estratégia automatizada para ${estrategiasNomes[index].toLowerCase()}`,
-  tipo: ['email', 'sms', 'whatsapp'][Math.floor(Math.random() * 3)] as 'email' | 'sms' | 'whatsapp',
-  ativa: Math.random() > 0.3,
-  dataCriacao: dataAleatoriaUltimoAno(),
-  dataAtivacao: dataAleatoriaUltimo30Dias(),
-  totalExecutions: Math.floor(Math.random() * 1000) + 100,
-  taxaSucesso: Math.floor(Math.random() * 40) + 60,
-  criadoPor: mockUsuarios[0]?.nome,
-}));
+// Cards estáticos removidos para testar criação de novos cards via IA
+const estrategiasBase: any[] = [];
 
 // Retorna estratégias compiladas (base + salvas) dinamicamente
 export const obterMockEstrategias = () => {

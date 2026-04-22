@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { Anthropic } from '@anthropic-ai/sdk';
 import { adicionarEstrategiasSalvas } from '@/lib/estrategias-salvas';
 
-const CLAUDE_SYSTEM_PROMPT = `Você é um assistente especializado em análise de estratégias odontológicas.
+const CLAUDE_SYSTEM_PROMPT = `Você é um assistente especializado em análise de estratégias clínicas e de automação.
 
 Sua tarefa é ler um texto descritivo de uma estratégia e extrair informações estruturadas em formato JSON.
 
@@ -12,7 +12,7 @@ Extraia a seguinte estrutura para CADA estratégia mencionada no texto:
 {
   "nome": "Nome da estratégia (máx 100 caracteres)",
   "descricao": "Descrição detalhada (máx 500 caracteres)",
-  "tipo": "Um dos valores: Limpeza, Clareamento, Implante, Tratamento Estético, Consulta, Restauração, Aparelho Ortodôntico",
+  "tipo": "Tipo/categoria da estratégia conforme mencionado no texto (ex: Marketing, Automação, Follow-up, Qualificação, etc)",
   "taxaSucesso": "Valor de 0 a 100 representando % de sucesso estimado"
 }
 
