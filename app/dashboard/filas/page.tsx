@@ -1,134 +1,199 @@
 /**
  * Página: Filas
  * Gerenciar filas de atendimento com cards Premium AAA
+ * Sincronização em tempo real com métricas dinâmicas
  * Qualidade: Premium AAA
  */
 
 'use client';
 
-import { useState, useMemo } from 'react';
-import { Users, Clock } from 'lucide-react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
+import { Clock, AlertCircle } from 'lucide-react';
 import styles from '@/components/crm/pages/Calendario.module.css';
+import { useFilasStore } from '@/store/filasStore';
+import { CreateFilaModal } from '@/components/crm/pages/Filas/CreateFilaModal';
+import { useFilaSync } from '@/hooks/useFilaSync';
 
-interface Fila {
-  id: number;
-  nome: string;
-  descricao: string;
-  status: 'ativa' | 'pausada';
-  totalAtendimentos: number;
-  atendimentosCompletos: number;
-  tempoMedio: number;
-  agentesAtivos: number;
-  ultimaAtualizacao: string;
-}
-
-const filasData: Fila[] = [
+// Mock de conversas para sincronização (em produção, virá do conversasStore ou API)
+const CONVERSAS_MOCK = [
   {
-    id: 1,
+    id: '1',
+    filaId: 'fila_1',
+    abertoEm: '2026-04-22T10:00:00',
+    ultimaMsgEm: '2026-04-22T10:30:00',
+  },
+  {
+    id: '2',
+    filaId: 'fila_1',
+    abertoEm: '2026-04-22T09:30:00',
+    ultimaMsgEm: '2026-04-22T10:15:00',
+  },
+  {
+    id: '3',
+    filaId: 'fila_2',
+    abertoEm: '2026-04-22T10:15:00',
+    ultimaMsgEm: '2026-04-22T10:22:00',
+  },
+];
+
+// Mock de membros da equipe
+const MEMBROS_MOCK = [
+  { id: 'agente_1', nome: 'João Silva', avatarColor: '#3498db', status: 'online' as const },
+  { id: 'agente_2', nome: 'Maria Santos', avatarColor: '#e91e63', status: 'online' as const },
+  { id: 'agente_3', nome: 'Carlos Mendes', avatarColor: '#2ecc71', status: 'offline' as const },
+  { id: 'agente_4', nome: 'Ana Costa', avatarColor: '#f39c12', status: 'online' as const },
+  { id: 'agente_5', nome: 'Fernanda Lima', avatarColor: '#9c27b0', status: 'online' as const },
+];
+
+// Mock de filas iniciais
+const FILAS_INICIAIS = [
+  {
+    id: 'fila_1',
     nome: 'Fila Principal',
     descricao: 'Atendimento geral de pacientes',
-    status: 'ativa',
-    totalAtendimentos: 45,
-    atendimentosCompletos: 38,
-    tempoMedio: 15,
-    agentesAtivos: 3,
-    ultimaAtualizacao: '2026-04-22T10:30:00'
+    status: 'ativa' as const,
+    cor: '#c9943a',
+    agenteIds: ['agente_1', 'agente_2'],
+    totalTickets: 2,
+    tmr: 22,
+    slaPercentual: 100,
+    ultimaAtualizacao: new Date().toISOString(),
   },
   {
-    id: 2,
+    id: 'fila_2',
     nome: 'Fila Emergência',
     descricao: 'Atendimento prioritário',
-    status: 'ativa',
-    totalAtendimentos: 12,
-    atendimentosCompletos: 10,
-    tempoMedio: 8,
-    agentesAtivos: 2,
-    ultimaAtualizacao: '2026-04-22T11:15:00'
+    status: 'ativa' as const,
+    cor: '#e91e63',
+    agenteIds: ['agente_3', 'agente_4'],
+    totalTickets: 1,
+    tmr: 7,
+    slaPercentual: 100,
+    ultimaAtualizacao: new Date().toISOString(),
   },
   {
-    id: 3,
+    id: 'fila_3',
     nome: 'Fila Agendamentos',
     descricao: 'Confirmação de consultas',
-    status: 'ativa',
-    totalAtendimentos: 28,
-    atendimentosCompletos: 25,
-    tempoMedio: 5,
-    agentesAtivos: 1,
-    ultimaAtualizacao: '2026-04-22T09:45:00'
+    status: 'ativa' as const,
+    cor: '#2ecc71',
+    agenteIds: ['agente_5'],
+    totalTickets: 0,
+    tmr: 0,
+    slaPercentual: 100,
+    ultimaAtualizacao: new Date().toISOString(),
   },
   {
-    id: 4,
+    id: 'fila_4',
     nome: 'Fila Suporte',
     descricao: 'Dúvidas e problemas gerais',
-    status: 'pausada',
-    totalAtendimentos: 18,
-    atendimentosCompletos: 15,
-    tempoMedio: 12,
-    agentesAtivos: 0,
-    ultimaAtualizacao: '2026-04-22T08:20:00'
-  },
-  {
-    id: 5,
-    nome: 'Fila Cobranças',
-    descricao: 'Atendimento de pagamentos',
-    status: 'ativa',
-    totalAtendimentos: 22,
-    atendimentosCompletos: 20,
-    tempoMedio: 10,
-    agentesAtivos: 2,
-    ultimaAtualizacao: '2026-04-22T11:00:00'
-  },
-  {
-    id: 6,
-    nome: 'Fila Follow-up',
-    descricao: 'Acompanhamento pós-atendimento',
-    status: 'ativa',
-    totalAtendimentos: 35,
-    atendimentosCompletos: 32,
-    tempoMedio: 7,
-    agentesAtivos: 2,
-    ultimaAtualizacao: '2026-04-22T10:50:00'
+    status: 'pausada' as const,
+    cor: '#9c27b0',
+    agenteIds: [],
+    totalTickets: 0,
+    tmr: 0,
+    slaPercentual: 100,
+    ultimaAtualizacao: new Date().toISOString(),
   },
 ];
 
 export default function FilasPage() {
+  const { filas, setFilas, addFila } = useFilasStore();
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'todos' | 'ativas' | 'pausadas'>('todos');
+  const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [carregandoModal, setCarregandoModal] = useState(false);
 
-  const handleSearch = (value: string) => {
-    setSearchTerm(value);
-  };
+  // Inicializar filas se estiverem vazias
+  useEffect(() => {
+    if (filas.length === 0) {
+      console.log('[FILAS_PAGE] ✓ Inicializando filas com mock data');
+      setFilas(FILAS_INICIAIS);
+    }
+  }, [filas.length, setFilas]);
 
-  const handleStatusFilter = (value: string) => {
-    setStatusFilter(value);
-  };
+  // Sincronizar filas com conversas (real-time)
+  useFilaSync(CONVERSAS_MOCK, 30000);
 
-  // Cálculos de estatísticas
-  const filaStats = useMemo(() => {
-    return {
-      total: filasData.length,
-      ativas: filasData.filter((f) => f.status === 'ativa').length,
-      totalAtendimentos: filasData.reduce((sum, f) => sum + f.totalAtendimentos, 0),
-      tempoMedioGeral:
-        Math.round(
-          filasData.reduce((sum, f) => sum + f.tempoMedio, 0) / filasData.length,
-        ) || 0,
-    };
-  }, []);
+  // Handler: Criar nova fila
+  const handleCreateFila = useCallback(
+    async (novaFilaData: {
+      nome: string;
+      descricao?: string;
+      cor: string;
+      agenteIds: string[];
+      status: 'ativa' | 'pausada';
+    }) => {
+      setCarregandoModal(true);
 
+      try {
+        console.log('[FILAS_PAGE] ✓ Criando nova fila:', novaFilaData.nome);
+
+        const novaFila = {
+          id: `fila_${Date.now()}`,
+          ...novaFilaData,
+          totalTickets: 0,
+          tmr: 0,
+          slaPercentual: 100,
+          ultimaAtualizacao: new Date().toISOString(),
+        };
+
+        addFila(novaFila);
+
+        console.log('[FILAS_PAGE] ✓ Fila criada com sucesso');
+      } catch (erro) {
+        const mensagem = erro instanceof Error ? erro.message : 'Erro desconhecido';
+        console.error('[FILAS_PAGE] ✗ Erro ao criar fila:', mensagem);
+        throw erro;
+      } finally {
+        setCarregandoModal(false);
+      }
+    },
+    [addFila]
+  );
+
+  // Filtrar filas
   const filasFiltradas = useMemo(() => {
-    let resultado = filasData;
-    if (searchTerm) {
-      resultado = resultado.filter((f) =>
-        f.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        f.descricao.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-    if (statusFilter) {
-      resultado = resultado.filter((f) => f.status === statusFilter);
-    }
-    return resultado;
-  }, [searchTerm, statusFilter]);
+    return filas.filter((fila) => {
+      // Filtro status
+      if (statusFilter === 'ativas' && fila.status !== 'ativa') return false;
+      if (statusFilter === 'pausadas' && fila.status !== 'pausada') return false;
+
+      // Filtro busca
+      if (
+        searchTerm &&
+        !fila.nome.toLowerCase().includes(searchTerm.toLowerCase()) &&
+        !fila.descricao?.toLowerCase().includes(searchTerm.toLowerCase())
+      ) {
+        return false;
+      }
+
+      return true;
+    });
+  }, [filas, statusFilter, searchTerm]);
+
+  // Calcular estatísticas
+  const stats = useMemo(() => {
+    return {
+      total: filas.length,
+      ativas: filas.filter((f) => f.status === 'ativa').length,
+      pausadas: filas.filter((f) => f.status === 'pausada').length,
+      totalTickets: filas.reduce((sum, f) => sum + f.totalTickets, 0),
+      tmrMedio: filas.length > 0 ? Math.round(filas.reduce((sum, f) => sum + f.tmr, 0) / filas.length) : 0,
+      slaMedio: filas.length > 0 ? Math.round(filas.reduce((sum, f) => sum + f.slaPercentual, 0) / filas.length) : 0,
+    };
+  }, [filas]);
+
+  // Obter membros da fila
+  const getMembrosOfFila = useCallback(
+    (filaId: string) => {
+      const fila = filas.find((f) => f.id === filaId);
+      if (!fila) return [];
+
+      return MEMBROS_MOCK.filter((m) => fila.agenteIds.includes(m.id));
+    },
+    [filas]
+  );
 
   return (
     <div className={styles.container}>
@@ -141,28 +206,31 @@ export default function FilasPage() {
           {/* Filtros de Status */}
           <div className={styles.botoesContainer}>
             <button
-              onClick={() => handleStatusFilter('')}
-              className={`${styles.botaoMes} ${!statusFilter ? styles.active : ''}`}
+              onClick={() => setStatusFilter('todos')}
+              className={`${styles.botaoMes} ${statusFilter === 'todos' ? styles.active : ''}`}
             >
               Todos
             </button>
             <button
-              onClick={() => handleStatusFilter('ativa')}
-              className={`${styles.botaoMes} ${statusFilter === 'ativa' ? styles.active : ''}`}
+              onClick={() => setStatusFilter('ativas')}
+              className={`${styles.botaoMes} ${statusFilter === 'ativas' ? styles.active : ''}`}
             >
               Ativas
             </button>
             <button
-              onClick={() => handleStatusFilter('pausada')}
-              className={`${styles.botaoMes} ${statusFilter === 'pausada' ? styles.active : ''}`}
+              onClick={() => setStatusFilter('pausadas')}
+              className={`${styles.botaoMes} ${statusFilter === 'pausadas' ? styles.active : ''}`}
             >
               Pausadas
             </button>
           </div>
         </div>
-        <button className={styles.btnNova}>
-          <Users size={16} style={{ marginRight: '6px' }} />
-          Nova Fila
+        <button
+          onClick={() => setCreateModalOpen(true)}
+          className={styles.btnNova}
+          style={{ cursor: 'pointer' }}
+        >
+          🔌 Nova Fila
         </button>
       </div>
 
@@ -170,19 +238,23 @@ export default function FilasPage() {
       <div className={styles.statsGrid}>
         <div className={styles.statCard}>
           <span className={styles.statLabel}>Total de Filas</span>
-          <span className={styles.statValue}>{filaStats.total}</span>
+          <span className={styles.statValue}>{stats.total}</span>
         </div>
         <div className={styles.statCard}>
-          <span className={styles.statLabel}>Filas Ativas</span>
-          <span className={styles.statValue}>{filaStats.ativas}</span>
+          <span className={styles.statLabel}>Ativas</span>
+          <span className={styles.statValue}>{stats.ativas}</span>
         </div>
         <div className={styles.statCard}>
-          <span className={styles.statLabel}>Total de Atendimentos</span>
-          <span className={styles.statValue}>{filaStats.totalAtendimentos}</span>
+          <span className={styles.statLabel}>Tickets na Fila</span>
+          <span className={styles.statValue}>{stats.totalTickets}</span>
         </div>
         <div className={styles.statCard}>
-          <span className={styles.statLabel}>Tempo Médio (min)</span>
-          <span className={styles.statValue}>{filaStats.tempoMedioGeral}</span>
+          <span className={styles.statLabel}>TMR Médio</span>
+          <span className={styles.statValue}>{stats.tmrMedio}min</span>
+        </div>
+        <div className={styles.statCard}>
+          <span className={styles.statLabel}>SLA Médio</span>
+          <span className={styles.statValue}>{stats.slaMedio}%</span>
         </div>
       </div>
 
@@ -190,9 +262,9 @@ export default function FilasPage() {
       <div style={{ marginBottom: '20px' }}>
         <input
           type="text"
-          placeholder="Buscar por nome da fila..."
+          placeholder="Buscar por nome ou descrição..."
           value={searchTerm}
-          onChange={(e) => handleSearch(e.target.value)}
+          onChange={(e) => setSearchTerm(e.target.value)}
           className={styles.searchInput}
         />
       </div>
@@ -201,53 +273,172 @@ export default function FilasPage() {
       {filasFiltradas.length > 0 ? (
         <div className={styles.gridCards}>
           {filasFiltradas.map((fila) => {
-            const percentualCompleto = Math.round(
-              (fila.atendimentosCompletos / fila.totalAtendimentos) * 100,
-            );
+            const membros = getMembrosOfFila(fila.id);
 
             return (
-              <div key={fila.id} className={styles.estrategiaCard}>
-                <div className={styles.cardHeader}>
-                  <h3 className={styles.cardTitle}>{fila.nome}</h3>
-                  <span className={styles.cardType}>{fila.status === 'ativa' ? '🟢 Ativa' : '⭕ Pausada'}</span>
+              <div
+                key={fila.id}
+                className={styles.estrategiaCard}
+                style={{
+                  borderColor: fila.cor,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  backgroundColor: '#132636',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.boxShadow = `0 8px 24px ${fila.cor}40`;
+                  e.currentTarget.style.transform = 'translateY(-4px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.boxShadow = 'none';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }}
+              >
+                {/* Header: Título + Tickets */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
+                  <div>
+                    <h3 className={styles.cardTitle}>{fila.nome}</h3>
+                    <p className={styles.cardDescription}>{fila.descricao}</p>
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <div style={{ color: fila.cor, fontSize: '24px', fontWeight: 700 }}>
+                      {fila.totalTickets}
+                    </div>
+                    <div style={{ color: '#7a96aa', fontSize: '10px', textTransform: 'uppercase' }}>
+                      tickets
+                    </div>
+                  </div>
                 </div>
 
-                <p className={styles.cardDescription}>{fila.descricao}</p>
+                {/* Row 1: TMR + SLA */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
+                  {/* TMR */}
+                  <div style={{ background: 'rgba(13, 31, 45, 0.5)', padding: '12px', borderRadius: '8px' }}>
+                    <div style={{ color: fila.cor, fontSize: '18px', fontWeight: 700 }}>
+                      {fila.tmr} min
+                    </div>
+                    <div style={{ color: '#7a96aa', fontSize: '10px', textTransform: 'uppercase', marginTop: '4px' }}>
+                      Espera Média
+                    </div>
+                  </div>
 
-                <div className={styles.cardStats}>
-                  <div className={styles.statItem}>
-                    <span className={styles.statItemLabel}>Atendimentos</span>
-                    <span className={styles.statItemValue}>{fila.totalAtendimentos}</span>
-                  </div>
-                  <div className={styles.statItem}>
-                    <span className={styles.statItemLabel}>Completos</span>
-                    <span className={styles.statItemValue}>{fila.atendimentosCompletos}</span>
-                  </div>
-                  <div className={styles.statItem}>
-                    <span className={styles.statItemLabel}>Tempo Médio</span>
-                    <span className={styles.statItemValue}>{fila.tempoMedio}min</span>
-                  </div>
-                  <div className={styles.statItem}>
-                    <span className={styles.statItemLabel}>Agentes</span>
-                    <span className={styles.statItemValue}>{fila.agentesAtivos}</span>
+                  {/* SLA */}
+                  <div style={{ background: 'rgba(13, 31, 45, 0.5)', padding: '12px', borderRadius: '8px' }}>
+                    <div
+                      style={{
+                        color: fila.slaPercentual >= 80 ? '#2ecc71' : fila.slaPercentual >= 60 ? '#f39c12' : '#ef4444',
+                        fontSize: '18px',
+                        fontWeight: 700,
+                      }}
+                    >
+                      {fila.slaPercentual}%
+                    </div>
+                    <div style={{ color: '#7a96aa', fontSize: '10px', textTransform: 'uppercase', marginTop: '4px' }}>
+                      SLA
+                    </div>
                   </div>
                 </div>
 
                 {/* Progress Bar */}
-                <div style={{ marginTop: '8px', paddingTop: '8px', borderTop: '1px solid rgba(201, 148, 58, 0.1)' }}>
-                  <div style={{ fontSize: '10px', color: '#7a96aa', marginBottom: '4px' }}>
-                    Taxa de Conclusão: {percentualCompleto}%
+                <div style={{ width: '100%', height: '4px', background: '#0d1f2d', borderRadius: '2px', marginBottom: '16px', overflow: 'hidden' }}>
+                  <div
+                    style={{
+                      width: `${fila.slaPercentual}%`,
+                      height: '100%',
+                      background: fila.slaPercentual >= 80 ? '#2ecc71' : fila.slaPercentual >= 60 ? '#f39c12' : '#ef4444',
+                      transition: 'width 0.3s ease',
+                    }}
+                  />
+                </div>
+
+                {/* Status Badge */}
+                <div style={{ marginBottom: '12px' }}>
+                  <span
+                    style={{
+                      display: 'inline-block',
+                      padding: '4px 10px',
+                      borderRadius: '6px',
+                      fontSize: '11px',
+                      fontWeight: 600,
+                      background: fila.status === 'ativa' ? 'rgba(46, 204, 113, 0.15)' : 'rgba(255, 193, 7, 0.15)',
+                      color: fila.status === 'ativa' ? '#2ecc71' : '#ffc107',
+                    }}
+                  >
+                    {fila.status === 'ativa' ? '🟢 Ativa' : '⭕ Pausada'}
+                  </span>
+                </div>
+
+                {/* Agentes Tags */}
+                {membros.length > 0 && (
+                  <div style={{ marginBottom: '16px' }}>
+                    <div style={{ color: '#7a96aa', fontSize: '10px', textTransform: 'uppercase', marginBottom: '8px' }}>
+                      Agentes ({membros.length})
+                    </div>
+                    <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                      {membros.map((membro) => (
+                        <span
+                          key={membro.id}
+                          style={{
+                            background: `${membro.avatarColor}20`,
+                            color: membro.avatarColor,
+                            padding: '4px 10px',
+                            borderRadius: '6px',
+                            fontSize: '11px',
+                            fontWeight: 600,
+                            border: `1px solid ${membro.avatarColor}40`,
+                          }}
+                        >
+                          {membro.nome.split(' ')[0]}
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                  <div style={{ width: '100%', height: '6px', background: '#0d1f2d', borderRadius: '3px', overflow: 'hidden' }}>
-                    <div
-                      style={{
-                        width: `${percentualCompleto}%`,
-                        height: '100%',
-                        background: '#c9943a',
-                        transition: 'width 0.2s ease-out'
-                      }}
-                    />
-                  </div>
+                )}
+
+                {/* Botões de Ação */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                  <button
+                    style={{
+                      padding: '10px',
+                      background: 'transparent',
+                      border: `1px solid ${fila.cor}60`,
+                      color: fila.cor,
+                      borderRadius: '8px',
+                      fontSize: '12px',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = `${fila.cor}20`;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = 'transparent';
+                    }}
+                  >
+                    ⚙️ Configurar
+                  </button>
+                  <button
+                    style={{
+                      padding: '10px',
+                      background: 'transparent',
+                      border: '1px solid #7a96aa60',
+                      color: '#7a96aa',
+                      borderRadius: '8px',
+                      fontSize: '12px',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = 'rgba(122, 150, 170, 0.1)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = 'transparent';
+                    }}
+                  >
+                    👥 Membros
+                  </button>
                 </div>
               </div>
             );
@@ -257,9 +448,20 @@ export default function FilasPage() {
         <div className={styles.emptyState}>
           <div className={styles.emptyIcon}>📋</div>
           <p className={styles.emptyTitle}>Nenhuma fila encontrada</p>
-          <p className={styles.emptySubtitle}>Crie sua primeira fila de atendimento</p>
+          <p className={styles.emptySubtitle}>
+            {searchTerm ? 'Tente ajustar seus filtros' : 'Crie sua primeira fila de atendimento'}
+          </p>
         </div>
       )}
+
+      {/* Modal: Criar Fila */}
+      <CreateFilaModal
+        isOpen={createModalOpen}
+        onClose={() => setCreateModalOpen(false)}
+        onCreate={handleCreateFila}
+        membros={MEMBROS_MOCK}
+        carregando={carregandoModal}
+      />
     </div>
   );
 }

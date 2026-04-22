@@ -1,6 +1,6 @@
 /**
- * Store de Filas - Gerenciamento de filas dinâmicas
- * Busca filas da API e mantém estado global
+ * Store de Filas - Gerenciamento de filas dinâmicas com métricas
+ * Busca filas da API, sincroniza com conversas, calcula TMR e SLA
  * Qualidade: Premium AAA
  */
 
@@ -11,10 +11,29 @@ export interface Fila {
   id: string;
   nome: string;
   descricao?: string;
-  prioridade: number;
-  ativa: boolean;
+  status: 'ativa' | 'pausada';
   cor: string;
+
+  // Membros e configuração
+  agenteIds: string[];
+
+  // Métricas calculadas dinamicamente
+  totalTickets: number;
+  tmr: number;
+  slaPercentual: number;
+
+  // Dados originais (fallback/compatibilidade)
+  prioridade?: number;
+  ativa?: boolean;
   sistemaId?: string;
+  ultimaAtualizacao: string;
+}
+
+interface Conversa {
+  id: string;
+  filaId?: string;
+  abertoEm?: string;
+  ultimaMsgEm?: string;
 }
 
 interface FilasState {
@@ -22,19 +41,50 @@ interface FilasState {
   loading: boolean;
   error: string | null;
 
-  // Actions
+  // Actions CRUD
   setFilas: (filas: Fila[]) => void;
   addFila: (fila: Fila) => void;
   updateFila: (id: string, fila: Partial<Fila>) => void;
   deleteFila: (id: string) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
+
+  // Cálculos de métricas
+  calcularMetricasFila: (filaId: string, conversas: Conversa[]) => void;
+  sincronizarTodasAsFilas: (conversas: Conversa[]) => void;
+
+  // Fetch
   fetchFilas: (sistemaId: string) => Promise<void>;
   hydrate: () => void;
 }
 
 const STORAGE_KEY = 'proclinic_filas';
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+
+// Helper: Calcular tempo de resposta em minutos
+const calcularTempoResposta = (conversa: Conversa): number | null => {
+  if (!conversa.ultimaMsgEm || !conversa.abertoEm) return null;
+
+  try {
+    const abertoEm = new Date(conversa.abertoEm);
+    const ultimaMsgEm = new Date(conversa.ultimaMsgEm);
+    const diffMs = ultimaMsgEm.getTime() - abertoEm.getTime();
+
+    return Math.round(diffMs / (1000 * 60)); // Converter para minutos
+  } catch {
+    return null;
+  }
+};
+
+// Helper: Verificar se conversa está dentro do SLA (24 horas)
+const verificarSLA = (conversa: Conversa): boolean => {
+  const SLA_HORAS = 24;
+  const tempoResposta = calcularTempoResposta(conversa);
+
+  if (tempoResposta === null) return true; // Sem dados = no SLA
+
+  return tempoResposta <= SLA_HORAS * 60;
+};
 
 export const useFilasStore = create<FilasState>()(
   persist(
@@ -72,6 +122,60 @@ export const useFilasStore = create<FilasState>()(
         set({ error });
       },
 
+      // Calcular métricas de uma fila baseado em conversas
+      calcularMetricasFila: (filaId: string, conversas: Conversa[]) => {
+        const conversasDaFila = conversas.filter((c) => c.filaId === filaId);
+
+        if (conversasDaFila.length === 0) {
+          // Fila vazia: valores padrão
+          get().updateFila(filaId, {
+            totalTickets: 0,
+            tmr: 0,
+            slaPercentual: 100,
+          });
+          return;
+        }
+
+        // Calcular TMR (Tempo Médio de Resposta)
+        const temposResposta = conversasDaFila
+          .map((c) => calcularTempoResposta(c))
+          .filter((t) => t !== null) as number[];
+
+        const tmr =
+          temposResposta.length > 0
+            ? Math.round(
+                temposResposta.reduce((a, b) => a + b, 0) / temposResposta.length
+              )
+            : 0;
+
+        // Calcular SLA
+        const conversasNoSLA = conversasDaFila.filter((c) => verificarSLA(c)).length;
+        const slaPercentual = Math.round(
+          (conversasNoSLA / conversasDaFila.length) * 100
+        );
+
+        // Atualizar fila
+        get().updateFila(filaId, {
+          totalTickets: conversasDaFila.length,
+          tmr,
+          slaPercentual,
+          ultimaAtualizacao: new Date().toISOString(),
+        });
+      },
+
+      // Sincronizar TODAS as filas com conversas
+      sincronizarTodasAsFilas: (conversas: Conversa[]) => {
+        const filasIds = new Set(
+          conversas
+            .map((c) => c.filaId)
+            .filter((id) => id !== undefined) as string[]
+        );
+
+        filasIds.forEach((filaId) => {
+          get().calcularMetricasFila(filaId, conversas);
+        });
+      },
+
       fetchFilas: async (sistemaId: string) => {
         try {
           set({ loading: true, error: null });
@@ -98,9 +202,14 @@ export const useFilasStore = create<FilasState>()(
               id: f.id,
               nome: f.nome,
               descricao: f.descricao,
+              status: f.status || (f.ativa !== false ? 'ativa' : 'pausada'),
+              cor: f.cor || '#c9943a',
+              agenteIds: f.agenteIds || [],
+              totalTickets: f.totalTickets || 0,
+              tmr: f.tmr || 0,
+              slaPercentual: f.slaPercentual || 100,
+              ultimaAtualizacao: f.ultimaAtualizacao || new Date().toISOString(),
               prioridade: f.prioridade || 0,
-              ativa: f.ativa !== false,
-              cor: f.cor || '#132636',
               sistemaId: sistemaId,
             })),
             loading: false,
@@ -108,7 +217,7 @@ export const useFilasStore = create<FilasState>()(
           });
         } catch (error) {
           const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
-          console.error('Erro ao buscar filas:', errorMessage);
+          console.error('[FILAS_STORE] Erro ao buscar filas:', errorMessage);
           set({
             loading: false,
             error: errorMessage,
@@ -126,7 +235,7 @@ export const useFilasStore = create<FilasState>()(
             });
           }
         } catch (error) {
-          console.error('Erro ao hidratar filasStore:', error);
+          console.error('[FILAS_STORE] Erro ao hidratar:', error);
         }
       },
     }),
