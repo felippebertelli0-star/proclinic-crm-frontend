@@ -166,7 +166,7 @@ export function CRMLayout({ children }: { children?: React.ReactNode }) {
       return;
     }
 
-    router.push(`/dashboard/${id}`);
+    router.push(id === 'dashboard' ? '/dashboard' : `/dashboard/${id}`);
   };
 
   const renderPage = () => {
