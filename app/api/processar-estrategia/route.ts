@@ -32,7 +32,7 @@ interface EstrategiaExtraida {
   id: number;
   nome: string;
   descricao: string;
-  tipo: string;
+  tipo: string; // Qualquer tipo extraído pela IA
   ativa: boolean;
   dataCriacao: string;
   totalExecutions: number;
@@ -176,29 +176,13 @@ Retorne um array JSON com as estratégias extraídas. Se não conseguir extrair 
       `[ESTRATEGIA_API] ✓ JSON parseado com sucesso, ${estrategiasDados.length} estratégias`
     );
 
-    // Mapear tipos de estratégia para manter identidade visual
-    const mapearTipo = (tipoIa: string): 'email' | 'sms' | 'whatsapp' => {
-      const tipo = tipoIa?.toLowerCase() || '';
-      if (tipo.includes('email') || tipo.includes('consulta') || tipo.includes('clareamento')) {
-        return 'email';
-      }
-      if (tipo.includes('sms') || tipo.includes('limpeza') || tipo.includes('aparelho')) {
-        return 'sms';
-      }
-      if (tipo.includes('whatsapp') || tipo.includes('implante') || tipo.includes('restauração')) {
-        return 'whatsapp';
-      }
-      // Default: distribui aleatoriamente
-      return ['email', 'sms', 'whatsapp'][Math.floor(Math.random() * 3)] as 'email' | 'sms' | 'whatsapp';
-    };
-
-    // Enriquecer dados
+    // Enriquecer dados com tipos extraídos pela IA (sem mapeamento restritivo)
     const estrategias: EstrategiaExtraida[] = estrategiasDados.map(
       (est, idx) => ({
         id: Date.now() + idx,
         nome: est.nome || 'Estratégia sem nome',
         descricao: est.descricao || '',
-        tipo: mapearTipo(est.tipo),
+        tipo: est.tipo || 'Estratégia',
         ativa: true,
         dataCriacao: new Date().toISOString().split('T')[0],
         totalExecutions: 0,
@@ -209,14 +193,9 @@ Retorne um array JSON com as estratégias extraídas. Se não conseguir extrair 
 
     console.log(`[ESTRATEGIA_API] ✓ ${estrategias.length} estratégias criadas`);
 
-    // Salvar estratégias criadas
+    // Salvar estratégias criadas (tipos extraídos pela IA, sem mapeamento)
     try {
-      adicionarEstrategiasSalvas(
-        estrategias.map(est => ({
-          ...est,
-          tipo: est.tipo === 'Consulta' ? 'email' : est.tipo === 'Email' ? 'email' : est.tipo === 'SMS' ? 'sms' : 'whatsapp',
-        })) as any
-      );
+      adicionarEstrategiasSalvas(estrategias as any);
       console.log(`[ESTRATEGIA_API] ✓ ${estrategias.length} estratégias salvas em memória`);
     } catch (erroSalvar) {
       console.warn('[ESTRATEGIA_API] ⚠️ Erro ao salvar estratégias:', erroSalvar);

@@ -8,7 +8,7 @@ export interface EstrategiaSalva {
   id: number;
   nome: string;
   descricao: string;
-  tipo: 'email' | 'sms' | 'whatsapp';
+  tipo: string; // Qualquer tipo extraído pela IA (Consulta, Limpeza, Implante, etc)
   ativa: boolean;
   dataCriacao: string;
   dataAtivacao?: string;
