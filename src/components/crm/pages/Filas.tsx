@@ -285,6 +285,11 @@ export function Filas() {
                   backgroundColor: '#132636',
                   boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)',
                   border: 'none',
+                  padding: '18px',
+                  minHeight: '320px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.boxShadow = `0 8px 24px ${fila.cor}40`;
