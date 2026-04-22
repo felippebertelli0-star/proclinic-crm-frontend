@@ -82,11 +82,16 @@ export default function EstrategiasModal({ isOpen, onClose }: EstrategiasModalPr
 
       if (dados.sucesso && dados.estrategias?.length > 0) {
         console.log(`[ESTRATEGIAS] ✓ ${dados.estrategias.length} estratégias extraídas`);
-        alert(`✅ ${dados.estrategias.length} estratégias criadas com sucesso!`);
+        alert(`✅ ${dados.estrategias.length} estratégias criadas com sucesso!\n\nA página será recarregada...`);
 
         setTextoEstrategia('');
         setMesModal('');
         onClose();
+
+        // Recarrega a página para mostrar os novos cards
+        setTimeout(() => {
+          window.location.reload();
+        }, 500);
       } else {
         alert('⚠️ Nenhuma estratégia foi extraída. Verifique o texto.');
       }

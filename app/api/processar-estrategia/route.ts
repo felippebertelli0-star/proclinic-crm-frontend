@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Anthropic } from '@anthropic-ai/sdk';
+import { adicionarEstrategiasSalvas } from '@/lib/estrategias-salvas';
 
 const CLAUDE_SYSTEM_PROMPT = `Você é um assistente especializado em análise de estratégias odontológicas.
 
@@ -175,13 +176,29 @@ Retorne um array JSON com as estratégias extraídas. Se não conseguir extrair 
       `[ESTRATEGIA_API] ✓ JSON parseado com sucesso, ${estrategiasDados.length} estratégias`
     );
 
+    // Mapear tipos de estratégia para manter identidade visual
+    const mapearTipo = (tipoIa: string): 'email' | 'sms' | 'whatsapp' => {
+      const tipo = tipoIa?.toLowerCase() || '';
+      if (tipo.includes('email') || tipo.includes('consulta') || tipo.includes('clareamento')) {
+        return 'email';
+      }
+      if (tipo.includes('sms') || tipo.includes('limpeza') || tipo.includes('aparelho')) {
+        return 'sms';
+      }
+      if (tipo.includes('whatsapp') || tipo.includes('implante') || tipo.includes('restauração')) {
+        return 'whatsapp';
+      }
+      // Default: distribui aleatoriamente
+      return ['email', 'sms', 'whatsapp'][Math.floor(Math.random() * 3)] as 'email' | 'sms' | 'whatsapp';
+    };
+
     // Enriquecer dados
     const estrategias: EstrategiaExtraida[] = estrategiasDados.map(
       (est, idx) => ({
         id: Date.now() + idx,
         nome: est.nome || 'Estratégia sem nome',
         descricao: est.descricao || '',
-        tipo: est.tipo || 'Consulta',
+        tipo: mapearTipo(est.tipo),
         ativa: true,
         dataCriacao: new Date().toISOString().split('T')[0],
         totalExecutions: 0,
@@ -191,6 +208,20 @@ Retorne um array JSON com as estratégias extraídas. Se não conseguir extrair 
     );
 
     console.log(`[ESTRATEGIA_API] ✓ ${estrategias.length} estratégias criadas`);
+
+    // Salvar estratégias criadas
+    try {
+      adicionarEstrategiasSalvas(
+        estrategias.map(est => ({
+          ...est,
+          tipo: est.tipo === 'Consulta' ? 'email' : est.tipo === 'Email' ? 'email' : est.tipo === 'SMS' ? 'sms' : 'whatsapp',
+        })) as any
+      );
+      console.log(`[ESTRATEGIA_API] ✓ ${estrategias.length} estratégias salvas em memória`);
+    } catch (erroSalvar) {
+      console.warn('[ESTRATEGIA_API] ⚠️ Erro ao salvar estratégias:', erroSalvar);
+      // Continua mesmo se não conseguir salvar
+    }
 
     return NextResponse.json(
       {

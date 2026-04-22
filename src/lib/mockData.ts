@@ -13,6 +13,7 @@ import {
   ConfiguracaoIntegracao,
   ConfiguracaoEquipe,
 } from '@/types';
+import { obterEstrategiasSalvas } from './estrategias-salvas';
 
 // ============================================================================
 // UTILITÁRIOS
@@ -630,11 +631,11 @@ const estrategiasNomes = [
   'Oferta de Pacotes',
 ];
 
-export const mockEstrategias = Array.from({ length: 6 }, (_, index) => ({
+const estrategiasBase = Array.from({ length: 6 }, (_, index) => ({
   id: gerarId(),
   nome: estrategiasNomes[index],
   descricao: `Estratégia automatizada para ${estrategiasNomes[index].toLowerCase()}`,
-  tipo: ['email', 'sms', 'whatsapp'][Math.floor(Math.random() * 3)],
+  tipo: ['email', 'sms', 'whatsapp'][Math.floor(Math.random() * 3)] as 'email' | 'sms' | 'whatsapp',
   ativa: Math.random() > 0.3,
   dataCriacao: dataAleatoriaUltimoAno(),
   dataAtivacao: dataAleatoriaUltimo30Dias(),
@@ -642,6 +643,9 @@ export const mockEstrategias = Array.from({ length: 6 }, (_, index) => ({
   taxaSucesso: Math.floor(Math.random() * 40) + 60,
   criadoPor: mockUsuarios[0]?.nome,
 }));
+
+// Merge com estratégias criadas via IA
+export const mockEstrategias = [...estrategiasBase, ...obterEstrategiasSalvas()];
 
 export const filtrarEstrategias = (
   termo: string,
