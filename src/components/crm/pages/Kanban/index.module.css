@@ -1,80 +1,156 @@
+/* ==================== KANBAN PREMIUM AAA ==================== */
+
 .container {
-  padding: 24px;
-  background: #0d1f2d;
+  padding: 24px 28px 40px;
+  background:
+    radial-gradient(1200px 600px at 10% -10%, rgba(201, 148, 58, 0.08), transparent 60%),
+    #0d1f2d;
   min-height: 100vh;
   color: #e8edf2;
-  font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+  font-family: 'Segoe UI', 'Helvetica Neue', system-ui, sans-serif;
 }
+
+@keyframes kbFadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes kbPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.55); }
+  50% { box-shadow: 0 0 0 6px rgba(46, 204, 113, 0); }
+}
+
+/* ==================== HERO ==================== */
+
+.hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 22px;
+  animation: kbFadeIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(201, 148, 58, 0.35);
+  background: rgba(201, 148, 58, 0.08);
+  color: #d9a848;
+  font-size: 10px;
+  letter-spacing: 1.4px;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.eyebrowDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #2ecc71;
+  animation: kbPulse 2s infinite;
+}
+
+.title {
+  font-size: 30px;
+  font-weight: 900;
+  margin: 0;
+  letter-spacing: -0.8px;
+  background: linear-gradient(135deg, #e8edf2 0%, #c9943a 60%, #a87a28 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: #7a96aa;
+}
+
+.subtitle strong {
+  color: #e8edf2;
+}
+
+.heroMeta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.metaBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #b0c4d4;
+  background: linear-gradient(180deg, rgba(19, 38, 54, 0.8), rgba(15, 33, 48, 0.8));
+  border: 1px solid #1e3d54;
+  backdrop-filter: blur(10px);
+}
+
+.metaDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  box-shadow: 0 0 6px currentColor;
+  animation: kbPulse 2s infinite;
+}
+
+/* ==================== BOARD ==================== */
 
 .board {
   display: grid;
-  grid-template-columns: repeat(5, minmax(220px, 250px));
+  grid-template-columns: repeat(5, minmax(260px, 1fr));
   gap: 16px;
   overflow-x: auto;
-  padding-bottom: 16px;
+  padding: 4px 2px 20px;
   scrollbar-width: thin;
   scrollbar-color: rgba(201, 148, 58, 0.4) rgba(13, 31, 45, 0.3);
+  animation: kbFadeIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/* Scrollbar Styling - Horizontal Scrollbar */
+/* Scrollbar Styling */
 .board::-webkit-scrollbar {
   height: 12px;
 }
 
 .board::-webkit-scrollbar-track {
   background: rgba(13, 31, 45, 0.3);
-  border-radius: 4px;
+  border-radius: 6px;
 }
 
 .board::-webkit-scrollbar-thumb {
-  background: linear-gradient(
-    to right,
-    rgba(201, 148, 58, 0.3),
-    rgba(201, 148, 58, 0.5)
-  );
+  background: linear-gradient(to right, rgba(201, 148, 58, 0.35), rgba(201, 148, 58, 0.6));
   border-radius: 6px;
   border: 2px solid rgba(13, 31, 45, 0.3);
 }
 
 .board::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(
-    to right,
-    rgba(201, 148, 58, 0.6),
-    rgba(201, 148, 58, 0.8)
-  );
+  background: linear-gradient(to right, rgba(201, 148, 58, 0.7), rgba(201, 148, 58, 0.95));
 }
 
 /* Responsive */
 @media (max-width: 1440px) {
-  .board {
-    grid-template-columns: repeat(4, 1fr);
-  }
+  .board { grid-template-columns: repeat(4, minmax(260px, 1fr)); }
 }
-
-@media (max-width: 1024px) {
-  .board {
-    grid-template-columns: repeat(3, 1fr);
-  }
+@media (max-width: 1200px) {
+  .board { grid-template-columns: repeat(3, minmax(260px, 1fr)); }
 }
-
-@media (max-width: 768px) {
-  .container {
-    padding: 16px;
-  }
-
-  .board {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0;
-  }
+@media (max-width: 900px) {
+  .board { grid-template-columns: repeat(2, minmax(260px, 1fr)); }
 }
-
-@media (max-width: 480px) {
-  .container {
-    padding: 12px;
-  }
-
-  .board {
-    grid-template-columns: 1fr;
-    gap: 0;
-  }
+@media (max-width: 640px) {
+  .container { padding: 16px; }
+  .title { font-size: 24px; }
+  .board { grid-template-columns: 1fr; }
 }

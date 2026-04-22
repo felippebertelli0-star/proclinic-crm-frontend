@@ -92,8 +92,36 @@ export function Kanban() {
     setSelectedMembro(membro);
   }, [setSelectedMembro]);
 
+  const totalCards = useMemo(
+    () => colunasDoKanban.reduce((acc, c) => acc + c.cards.length, 0),
+    [colunasDoKanban]
+  );
+
   return (
     <div className={styles.container}>
+      {/* HERO */}
+      <div className={styles.hero}>
+        <div>
+          <span className={styles.eyebrow}>
+            <span className={styles.eyebrowDot} /> Board Visual · Drag &amp; Drop · Sincronizado
+          </span>
+          <h1 className={styles.title}>Kanban</h1>
+          <p className={styles.subtitle}>
+            Gerencie atendimentos em pipeline · <strong>{totalCards}</strong> cards distribuídos em{' '}
+            <strong>{colunasDoKanban.length}</strong> filas
+          </p>
+        </div>
+        <div className={styles.heroMeta}>
+          <span className={styles.metaBadge}>
+            <span className={styles.metaDot} style={{ background: '#2ecc71' }} />
+            Tempo real
+          </span>
+          <span className={styles.metaBadge} style={{ color: '#c9943a' }}>
+            {totalCards} tickets ativos
+          </span>
+        </div>
+      </div>
+
       {/* Summary */}
       <KanbanSummary colunas={colunasDoKanban} />
 

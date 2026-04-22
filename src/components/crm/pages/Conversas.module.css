@@ -1,79 +1,299 @@
-/* Conversas Page Styles */
+/* ==================== CONVERSAS PREMIUM AAA ==================== */
 
-/* Sidebar - Lista de Conversas */
+/* ---------- ANIMATIONS ---------- */
+@keyframes cvFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes cvPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.55); }
+  50% { box-shadow: 0 0 0 6px rgba(46, 204, 113, 0); }
+}
+
+@keyframes cvShimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* ---------- SIDEBAR HERO ---------- */
+.sidebarHero {
+  padding: 16px;
+  border-bottom: 1px solid #1e3d54;
+  flex-shrink: 0;
+  background:
+    radial-gradient(600px 240px at 0% 0%, rgba(201, 148, 58, 0.06), transparent 60%),
+    #0d1f2d;
+  animation: cvFadeIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(201, 148, 58, 0.35);
+  background: rgba(201, 148, 58, 0.08);
+  color: #d9a848;
+  font-size: 9.5px;
+  letter-spacing: 1.3px;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  width: fit-content;
+}
+
+.eyebrowDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #2ecc71;
+  box-shadow: 0 0 8px #2ecc71;
+  animation: cvPulse 2s infinite;
+}
+
+.heroTitle {
+  font-size: 22px;
+  font-weight: 900;
+  margin: 0 0 4px 0;
+  letter-spacing: -0.6px;
+  background: linear-gradient(135deg, #e8edf2 0%, #c9943a 60%, #a87a28 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.heroSubtitle {
+  font-size: 11px;
+  color: #7a96aa;
+  margin: 0 0 14px 0;
+  font-weight: 500;
+  letter-spacing: 0.1px;
+}
+
+.heroSubtitle strong {
+  color: #e8edf2;
+  font-weight: 800;
+}
+
+/* ---------- FILTER PILLS ---------- */
+.filterGroup {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.filterBtn {
+  flex: 1;
+  min-width: 95px;
+  padding: 9px 10px;
+  border-radius: 999px;
+  border: 1px solid #1e3d54;
+  background: rgba(13, 31, 45, 0.5);
+  color: #b0c4d4;
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  text-align: center;
+  white-space: nowrap;
+  letter-spacing: 0.2px;
+  backdrop-filter: blur(6px);
+}
+
+.filterBtn:hover {
+  border-color: #c9943a;
+  background: rgba(201, 148, 58, 0.1);
+  color: #c9943a;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
+}
+
+.filterBtnActive {
+  border-width: 1.5px;
+  border-color: #c9943a;
+  background: linear-gradient(135deg, #c9943a 0%, #a87a28 100%) !important;
+  color: #0d1f2d !important;
+  font-weight: 800;
+  box-shadow:
+    0 0 0 2px rgba(201, 148, 58, 0.15),
+    0 8px 20px rgba(201, 148, 58, 0.25);
+}
+
+.filterBtnActive:hover {
+  transform: translateY(-1px);
+  color: #0d1f2d !important;
+}
+
+.filterBtn:focus {
+  outline: 2px solid #c9943a;
+  outline-offset: 2px;
+}
+
+/* ---------- SEARCH INPUT ---------- */
+.searchWrap {
+  position: relative;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 11px 14px 11px 36px;
+  border-radius: 10px;
+  border: 1px solid #1e3d54;
+  background: linear-gradient(180deg, rgba(19, 38, 54, 0.8), rgba(15, 33, 48, 0.6));
+  color: #e8edf2;
+  font-size: 13px;
+  transition: all 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  box-sizing: border-box;
+  font-weight: 500;
+  letter-spacing: 0.1px;
+}
+
+.searchInput::placeholder {
+  color: #5e7a8e;
+  font-weight: 500;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: #c9943a;
+  box-shadow:
+    0 0 0 3px rgba(201, 148, 58, 0.12),
+    0 8px 18px rgba(0, 0, 0, 0.35);
+  background: linear-gradient(180deg, rgba(26, 48, 67, 0.9), rgba(19, 38, 54, 0.7));
+}
+
+.searchIcon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #7a96aa;
+  pointer-events: none;
+  transition: color 0.25s ease;
+}
+
+.searchInput:focus ~ .searchIcon {
+  color: #c9943a;
+}
+
+/* ---------- SCROLLBARS (existentes) ---------- */
 .conversasList {
-  /* Modern approach: reserve space for scrollbar */
   scrollbar-gutter: stable;
   scrollbar-width: thin;
   scrollbar-color: rgba(201, 148, 58, 0.4) rgba(13, 31, 45, 0.3);
-
-  /* Webkit browsers */
   overflow-y: scroll !important;
 }
 
-/* Webkit Scrollbar (Chrome, Safari, Edge) */
-.conversasList::-webkit-scrollbar {
-  width: 12px;
-}
-
+.conversasList::-webkit-scrollbar { width: 12px; }
 .conversasList::-webkit-scrollbar-track {
   background: rgba(13, 31, 45, 0.3);
   border-radius: 4px;
 }
-
 .conversasList::-webkit-scrollbar-thumb {
-  background: linear-gradient(
-    to bottom,
-    rgba(201, 148, 58, 0.3),
-    rgba(201, 148, 58, 0.5)
-  );
+  background: linear-gradient(to bottom, rgba(201, 148, 58, 0.35), rgba(201, 148, 58, 0.6));
   border-radius: 6px;
   border: 2px solid rgba(13, 31, 45, 0.3);
 }
-
 .conversasList::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(
-    to bottom,
-    rgba(201, 148, 58, 0.6),
-    rgba(201, 148, 58, 0.8)
-  );
+  background: linear-gradient(to bottom, rgba(201, 148, 58, 0.7), rgba(201, 148, 58, 0.95));
 }
 
-/* Chat Messages - Histórico de Conversa */
 .chatMessages {
-  /* Modern approach: reserve space for scrollbar */
   scrollbar-gutter: stable;
   scrollbar-width: thin;
   scrollbar-color: rgba(201, 148, 58, 0.4) rgba(13, 31, 45, 0.3);
-
-  /* Webkit browsers */
   overflow-y: scroll !important;
 }
 
-/* Webkit Scrollbar (Chrome, Safari, Edge) */
-.chatMessages::-webkit-scrollbar {
-  width: 12px;
-}
-
+.chatMessages::-webkit-scrollbar { width: 12px; }
 .chatMessages::-webkit-scrollbar-track {
   background: rgba(13, 31, 45, 0.3);
   border-radius: 4px;
 }
-
 .chatMessages::-webkit-scrollbar-thumb {
-  background: linear-gradient(
-    to bottom,
-    rgba(201, 148, 58, 0.3),
-    rgba(201, 148, 58, 0.5)
-  );
+  background: linear-gradient(to bottom, rgba(201, 148, 58, 0.35), rgba(201, 148, 58, 0.6));
   border-radius: 6px;
   border: 2px solid rgba(13, 31, 45, 0.3);
 }
-
 .chatMessages::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(
-    to bottom,
-    rgba(201, 148, 58, 0.6),
-    rgba(201, 148, 58, 0.8)
-  );
+  background: linear-gradient(to bottom, rgba(201, 148, 58, 0.7), rgba(201, 148, 58, 0.95));
+}
+
+/* ---------- CONVERSATION ROW ---------- */
+.convRow {
+  position: relative;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(30, 61, 84, 0.6);
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  overflow: hidden;
+}
+
+.convRow::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, #c9943a, #a87a28);
+  transform: scaleY(0);
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  transform-origin: center;
+}
+
+.convRow:hover {
+  background: rgba(201, 148, 58, 0.05);
+}
+
+.convRow:hover::before {
+  transform: scaleY(0.8);
+}
+
+.convRowActive {
+  background: linear-gradient(90deg, rgba(201, 148, 58, 0.12), rgba(201, 148, 58, 0.03)) !important;
+}
+
+.convRowActive::before {
+  transform: scaleY(1) !important;
+}
+
+/* ---------- CHAT HEADER ACTION BUTTON ---------- */
+.actionIconBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  border: 1px solid #1e3d54;
+  background: rgba(13, 31, 45, 0.55);
+  color: #b0c4d4;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  flex-shrink: 0;
+}
+
+.actionIconBtn:hover {
+  border-color: #c9943a;
+  color: #c9943a;
+  background: rgba(201, 148, 58, 0.1);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.actionIconBtn:focus {
+  outline: 2px solid #c9943a;
+  outline-offset: 2px;
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 768px) {
+  .sidebarHero { padding: 12px; }
+  .heroTitle { font-size: 18px; }
+  .filterBtn { font-size: 10.5px; padding: 7px 8px; min-width: 78px; }
+  .searchInput { font-size: 12px; padding: 10px 12px 10px 32px; }
 }

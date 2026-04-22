@@ -1,4 +1,4 @@
-/* Dashboard Content Scrollbar */
+/* Dashboard Content - Premium Scrollbar + Animations */
 
 .dashboardContent {
   scrollbar-gutter: stable;
@@ -30,4 +30,218 @@
     rgba(201, 148, 58, 0.6),
     rgba(201, 148, 58, 0.8)
   );
+}
+
+/* ========== PREMIUM ANIMATIONS ========== */
+
+@keyframes dashFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes dashPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.45);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(46, 204, 113, 0);
+  }
+}
+
+@keyframes dashShimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+@keyframes dashGlow {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes dashDrawLine {
+  from {
+    stroke-dashoffset: 3000;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes dashTooltipIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes dashRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.fadeIn {
+  animation: dashFadeIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.pulseDot {
+  animation: dashPulse 2s infinite;
+}
+
+.glowing {
+  animation: dashGlow 2.4s ease-in-out infinite;
+}
+
+.liveBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.liveBadge::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #2ecc71;
+  box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.6);
+  animation: dashPulse 2s infinite;
+}
+
+/* Chart path animation */
+.chartPath {
+  stroke-dasharray: 3000;
+  animation: dashDrawLine 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Premium card base */
+.premiumCard {
+  position: relative;
+  background: linear-gradient(180deg, #132636 0%, #0f2130 100%);
+  border: 1px solid #1e3d54;
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.premiumCard::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    600px circle at var(--mx, 50%) var(--my, 0%),
+    rgba(201, 148, 58, 0.08),
+    transparent 40%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.premiumCard:hover::before {
+  opacity: 1;
+}
+
+.premiumCard:hover {
+  transform: translateY(-3px);
+  border-color: rgba(201, 148, 58, 0.4);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(201, 148, 58, 0.1);
+}
+
+/* Sheen effect for KPI number */
+.sheenNumber {
+  background: linear-gradient(
+    120deg,
+    currentColor 30%,
+    rgba(255, 255, 255, 0.85) 45%,
+    currentColor 60%
+  );
+  background-size: 200% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: dashShimmer 4s ease-in-out infinite;
+}
+
+/* Filter pill active state */
+.pillActive {
+  box-shadow: 0 0 0 1px rgba(201, 148, 58, 0.5), 0 6px 16px rgba(201, 148, 58, 0.15);
+}
+
+/* Delta indicator */
+.deltaUp {
+  color: #2ecc71;
+  background: rgba(46, 204, 113, 0.12);
+  border: 1px solid rgba(46, 204, 113, 0.3);
+}
+
+.deltaDown {
+  color: #e74c3c;
+  background: rgba(231, 76, 60, 0.12);
+  border: 1px solid rgba(231, 76, 60, 0.3);
+}
+
+.deltaNeutral {
+  color: #7a96aa;
+  background: rgba(122, 150, 170, 0.1);
+  border: 1px solid rgba(122, 150, 170, 0.25);
+}
+
+/* Toolbar blur */
+.toolbar {
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  background: rgba(19, 38, 54, 0.85);
+}
+
+/* Sticky section header */
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #e8edf2;
+  letter-spacing: -0.3px;
+  margin: 0;
+}
+
+.sectionTitle::before {
+  content: '';
+  width: 4px;
+  height: 18px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, #c9943a, #a87a28);
+  box-shadow: 0 0 12px rgba(201, 148, 58, 0.5);
+}
+
+.sectionSubtitle {
+  font-size: 11px;
+  color: #7a96aa;
+  font-weight: 500;
 }

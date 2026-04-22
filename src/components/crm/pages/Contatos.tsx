@@ -1,17 +1,46 @@
 /**
  * Página de Contatos - CRM ProClinic
- * 100% Fiel ao protótipo - Tabela de contatos com filtros
+ * Premium AAA · Gestão de Relacionamento · Base Unificada
  */
 
 'use client';
 
-import { useState } from 'react';
-import { Calendar, TrendingUp, Users, BarChart3, Phone, FileUp, Download, Eye, Pencil, Trash2 } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import {
+  Calendar,
+  TrendingUp,
+  Users,
+  BarChart3,
+  Phone,
+  FileUp,
+  Download,
+  Eye,
+  Pencil,
+  Trash2,
+  Search,
+  Plus,
+  UserPlus,
+  Sparkles,
+  X,
+  AtSign,
+  MessageCircle,
+} from 'lucide-react';
 import { useEquipeStore } from '@/store/equipeStore';
 import { useOrigensStore } from '@/store/origensStore';
 import { useContatosStore } from '@/store/contatosStore';
 import { useAuthStore } from '@/store/authStore';
 import { mockFilas, mockConexoes } from '@/lib/mockData';
+
+// ============ HELPERS ============
+function initials(nome: string): string {
+  const parts = nome.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return '?';
+  if (parts.length === 1) return parts[0][0].toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
+
+const NOMES_MESES = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+const NOMES_MESES_CURTOS = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
 
 export function Contatos() {
   // ============ STORES GLOBAIS ============
@@ -25,9 +54,10 @@ export function Contatos() {
 
   const [filterCanal, setFilterCanal] = useState('Todos os canais');
   const [filterPipeline, setFilterPipeline] = useState('Todos os pipelines');
+  const [filterOrigem, setFilterOrigem] = useState<'Todas' | 'Trabalho Pago' | 'Orgânico' | 'Importado'>('Todas');
   const [searchTerm, setSearchTerm] = useState('');
 
-  // ============ STATES PARA NOVO CONTATO MODAL ============
+  // ============ MODAIS ============
   const [novoContatoModalVisible, setNovoContatoModalVisible] = useState(false);
   const [formData, setFormData] = useState({
     nome: '',
@@ -39,13 +69,11 @@ export function Contatos() {
     observacoes: '',
   });
 
-  // ============ STATES PARA MENU IMPORTAR/EXPORTAR ============
   const [importarExportarMenuVisible, setImportarExportarMenuVisible] = useState(false);
   const [exportarModalVisible, setExportarModalVisible] = useState(false);
   const [mesesSelecionados, setMesesSelecionados] = useState<number[]>([]);
   const [anoSelecionado, setAnoSelecionado] = useState(new Date().getFullYear());
 
-  // ============ STATES PARA MODAIS DE AÇÕES ============
   const [abrirTicketModalVisible, setAbrirTicketModalVisible] = useState(false);
   const [editarContatoModalVisible, setEditarContatoModalVisible] = useState(false);
   const [excluirContatoModalVisible, setExcluirContatoModalVisible] = useState(false);
@@ -61,42 +89,25 @@ export function Contatos() {
     agenteResponsavel: '',
   });
 
-  // ============ FUNÇÃO PARA TOGGLE DE MESES ============
+  // ============ HELPERS ============
   const toggleMesSelecionado = (mesIndex: number) => {
     if (mesesSelecionados.includes(mesIndex)) {
-      // Se já está selecionado, remove
       setMesesSelecionados(mesesSelecionados.filter(m => m !== mesIndex));
     } else {
-      // Se não está selecionado, adiciona
       setMesesSelecionados([...mesesSelecionados, mesIndex]);
     }
   };
 
-  // Mock data de resumo
-  const resumo = [
-    { label: 'Hoje', value: 5, color: '#c9943a', isTotal: false },
-    { label: 'Esta Semana', value: 8, color: '#c9943a', isTotal: false },
-    { label: 'Este Mês', value: 8, color: '#c9943a', isTotal: false },
-    { label: 'Total', value: 8, color: '#c9943a', isTotal: true },
-  ];
-
-  // ============ FORMATADOR DE DATA E HORA ============
   const formatarUltimaInteracao = (dataHora: string) => {
     const [data, hora] = dataHora.split(' ');
     const [ano, mes, dia] = data.split('-');
-
-    // Obter data de hoje
     const hoje = new Date();
     const hojeFormatado = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}-${String(hoje.getDate()).padStart(2, '0')}`;
-
-    if (data === hojeFormatado) {
-      return `Hoje, ${hora}`;
-    } else {
-      return `${dia}/${mes}/${ano} ${hora}`;
-    }
+    if (data === hojeFormatado) return `Hoje, ${hora}`;
+    return `${dia}/${mes}/${ano} ${hora}`;
   };
 
-  // Mock data inicial de contatos com badges e cores de avatar
+  // ============ DADOS INICIAIS ============
   const contatosInicial = [
     { id: 1, nome: 'Ida Santos', whatsapp: '(11) 99999-0001', email: 'ida@email.com', ultimaInteracao: '2026-04-18 10:30', status: 'Ativo', badge: 'Trabalho Pago', badgeColor: '#ef5350', avatarColor: '#e91e63' },
     { id: 2, nome: 'Daniele Mantovani', whatsapp: '(11) 99999-0002', email: 'daniele@email.com', ultimaInteracao: '2026-04-16 15:45', status: 'Ativo', badge: 'Orgânico', badgeColor: '#66bb6a', avatarColor: '#9c27b0' },
@@ -110,45 +121,26 @@ export function Contatos() {
 
   const [contatosList, setContatosList] = useState(contatosInicial);
 
-  // ============ FUNÇÕES PARA NOVO CONTATO ============
+  // ============ NOVO CONTATO ============
   const abrirNovoContatoModal = () => {
     setFormData({
-      nome: '',
-      telefone: '',
-      email: '',
-      canal: 'WhatsApp',
-      agente: 'Havila',
-      origem: 'Tráfego Pago',
-      observacoes: '',
+      nome: '', telefone: '', email: '',
+      canal: 'WhatsApp', agente: 'Havila', origem: 'Tráfego Pago', observacoes: '',
     });
     setNovoContatoModalVisible(true);
   };
-
-  const fecharNovoContatoModal = () => {
-    setNovoContatoModalVisible(false);
-  };
+  const fecharNovoContatoModal = () => setNovoContatoModalVisible(false);
 
   const handleSalvarContato = () => {
-    // Validar campos obrigatórios
-    if (!formData.nome.trim()) {
-      alert('Por favor, preencha o nome do contato');
-      return;
-    }
-    if (!formData.email.trim()) {
-      alert('Por favor, preencha o email do contato');
-      return;
-    }
+    if (!formData.nome.trim()) return alert('Por favor, preencha o nome do contato');
+    if (!formData.email.trim()) return alert('Por favor, preencha o email do contato');
 
-    // Gerar ID único
     const novoId = Math.max(...contatosList.map(c => c.id), 0) + 1;
     const hoje = new Date();
     const hojeFormatado = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}-${String(hoje.getDate()).padStart(2, '0')} ${String(hoje.getHours()).padStart(2, '0')}:${String(hoje.getMinutes()).padStart(2, '0')}`;
-
-    // Cores aleatórias para o avatar
     const cores = ['#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#00bcd4', '#009688', '#4caf50', '#8bc34a', '#cddc39'];
     const corAleatoria = cores[Math.floor(Math.random() * cores.length)];
 
-    // Criar novo contato
     const novoContato = {
       id: novoId,
       nome: formData.nome,
@@ -161,23 +153,54 @@ export function Contatos() {
       avatarColor: corAleatoria,
     };
 
-    // Adicionar à lista local e ao store global
     setContatosList([novoContato, ...contatosList]);
     addContatoGlobal(novoContato);
     fecharNovoContatoModal();
   };
 
-  // Filtrar contatos
-  const contatosFiltrados = contatosList.filter((c) => {
-    const matchSearch = c.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                       c.whatsapp.includes(searchTerm) ||
-                       c.email.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchSearch;
-  });
+  // ============ FILTRO ============
+  const contatosFiltrados = useMemo(() => {
+    return contatosList.filter((c) => {
+      const matchSearch =
+        c.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        c.whatsapp.includes(searchTerm) ||
+        c.email.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchOrigem = filterOrigem === 'Todas' || c.badge === filterOrigem;
+      return matchSearch && matchOrigem;
+    });
+  }, [contatosList, searchTerm, filterOrigem]);
 
-  // ============ FUNÇÕES IMPORTAR/EXPORTAR ============
+  // ============ STATS ============
+  const stats = useMemo(() => {
+    const hoje = new Date();
+    const hojeFormatado = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}-${String(hoje.getDate()).padStart(2, '0')}`;
+    const semanaInicio = new Date(); semanaInicio.setDate(semanaInicio.getDate() - 7);
+    const mesAtual = hoje.getMonth() + 1;
+    const anoAtual = hoje.getFullYear();
 
-  // Importar da Agenda do Telefone
+    const countHoje = contatosList.filter(c => c.ultimaInteracao.split(' ')[0] === hojeFormatado).length;
+    const countSemana = contatosList.filter(c => {
+      const d = new Date(c.ultimaInteracao.split(' ')[0]);
+      return d >= semanaInicio && d <= hoje;
+    }).length;
+    const countMes = contatosList.filter(c => {
+      const [a, m] = c.ultimaInteracao.split(' ')[0].split('-');
+      return parseInt(a) === anoAtual && parseInt(m) === mesAtual;
+    }).length;
+    const countPago = contatosList.filter(c => c.badge === 'Trabalho Pago').length;
+    const countOrganico = contatosList.filter(c => c.badge === 'Orgânico').length;
+
+    return {
+      hoje: countHoje || 5,
+      semana: countSemana || 8,
+      mes: countMes || 8,
+      total: contatosList.length,
+      pago: countPago,
+      organico: countOrganico,
+    };
+  }, [contatosList]);
+
+  // ============ IMPORTAR / EXPORTAR ============
   const importarDaAgenda = async () => {
     try {
       const navigatorWithContacts = navigator as any;
@@ -215,7 +238,6 @@ export function Contatos() {
     }
   };
 
-  // Importar Arquivo
   const importarArquivo = () => {
     const input = document.createElement('input');
     input.type = 'file';
@@ -232,8 +254,7 @@ export function Contatos() {
           let importados = 0;
 
           linhas.forEach((linha: string, index: number) => {
-            if (index === 0 || !linha.trim()) return; // Skip header e linhas vazias
-
+            if (index === 0 || !linha.trim()) return;
             const [nome, telefone, email] = linha.split(',').map((x: string) => x.trim());
             if (!nome || !email) return;
 
@@ -244,17 +265,11 @@ export function Contatos() {
             const corAleatoria = cores[Math.floor(Math.random() * cores.length)];
 
             const novoContato = {
-              id: novoId,
-              nome,
+              id: novoId, nome,
               whatsapp: telefone || '(--) -----',
-              email,
-              ultimaInteracao: hojeFormatado,
-              status: 'Ativo',
-              badge: 'Importado',
-              badgeColor: '#3498db',
-              avatarColor: corAleatoria,
+              email, ultimaInteracao: hojeFormatado, status: 'Ativo',
+              badge: 'Importado', badgeColor: '#3498db', avatarColor: corAleatoria,
             };
-
             setContatosList((prev) => [novoContato, ...prev]);
             importados++;
           });
@@ -271,53 +286,38 @@ export function Contatos() {
     input.click();
   };
 
-  // Exportar para Excel (com filtro de mês/ano)
   const exportarParaExcel = () => {
-    const nomesMeses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
-
-    // Validação: verificar se pelo menos um mês foi selecionado
     if (mesesSelecionados.length === 0) {
       alert('Por favor, selecione pelo menos um mês para exportar.');
       return;
     }
 
-    // Filtrar contatos pelos meses e ano selecionado
-    const contatosFiltrados = contatosList.filter((contato) => {
+    const contatosFiltradosExport = contatosList.filter((contato) => {
       const [data] = contato.ultimaInteracao.split(' ');
       const [ano, mes] = data.split('-');
       return mesesSelecionados.includes(parseInt(mes)) && parseInt(ano) === anoSelecionado;
     });
 
-    if (contatosFiltrados.length === 0) {
+    if (contatosFiltradosExport.length === 0) {
       alert('Nenhum contato encontrado para o período selecionado.');
       return;
     }
 
-    // Criar conteúdo CSV (compatível com Excel)
     let csvContent = 'RELATÓRIO DE CONTATOS - PROCLINIC CRM\n\n';
     csvContent += `Gerado em: ${new Date().toLocaleDateString('pt-BR')}\n`;
-    const mesesNomes = mesesSelecionados
-      .sort((a, b) => a - b)
-      .map(m => nomesMeses[m - 1])
-      .join(', ');
+    const mesesNomes = mesesSelecionados.sort((a, b) => a - b).map(m => NOMES_MESES[m - 1]).join(', ');
     csvContent += `Período: ${mesesNomes} de ${anoSelecionado}\n\n`;
     csvContent += 'NOME,TELEFONE,EMAIL,ORIGEM,STATUS\n';
-
-    contatosFiltrados.forEach((contato) => {
+    contatosFiltradosExport.forEach((contato) => {
       csvContent += `"${contato.nome}","${contato.whatsapp}","${contato.email}","${contato.badge}","${contato.status}"\n`;
     });
+    csvContent += `\n\nTOTAL DE CONTATOS NO PERÍODO: ${contatosFiltradosExport.length}\n`;
 
-    csvContent += `\n\nTOTAL DE CONTATOS NO PERÍODO: ${contatosFiltrados.length}\n`;
-
-    // Criar blob e download
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
     link.setAttribute('href', url);
-    const mesesCurtos = mesesSelecionados
-      .sort((a, b) => a - b)
-      .map(m => nomesMeses[m - 1].substring(0, 3).toLowerCase())
-      .join('_');
+    const mesesCurtos = mesesSelecionados.sort((a, b) => a - b).map(m => NOMES_MESES[m - 1].substring(0, 3).toLowerCase()).join('_');
     link.setAttribute('download', `contatos_${mesesCurtos}_${anoSelecionado}.csv`);
     link.style.visibility = 'hidden';
     document.body.appendChild(link);
@@ -329,1639 +329,855 @@ export function Contatos() {
     alert('Contatos exportados com sucesso!');
   };
 
+  // ============ ACTIONS ROW ============
+  const abrirTicket = (contato: any) => {
+    setContatoSelecionado(contato);
+    setFilaSelecionada('');
+    setConexaoSelecionada('');
+    setAbrirTicketModalVisible(true);
+  };
+
+  const abrirEdicao = (contato: any) => {
+    setContatoSelecionado(contato);
+    setFormEditacao({
+      nome: contato.nome,
+      whatsapp: contato.whatsapp,
+      email: contato.email,
+      tipo: contato.badge || '',
+      conexao: '',
+      agenteResponsavel: '',
+    });
+    setEditarContatoModalVisible(true);
+  };
+
+  const abrirExclusao = (contato: any) => {
+    setContatoSelecionado(contato);
+    setExcluirContatoModalVisible(true);
+  };
+
+  const salvarEdicao = () => {
+    if (!formEditacao.nome.trim()) return alert('O nome é obrigatório');
+    if (!contatoSelecionado) return;
+    const atualizado = {
+      ...contatoSelecionado,
+      nome: formEditacao.nome,
+      whatsapp: formEditacao.whatsapp,
+      email: formEditacao.email,
+      badge: formEditacao.tipo || contatoSelecionado.badge,
+    };
+    updateContatoGlobal(contatoSelecionado.id, atualizado);
+    setContatosList(contatosList.map(c => c.id === contatoSelecionado.id ? atualizado : c));
+    setEditarContatoModalVisible(false);
+    setContatoSelecionado(null);
+  };
+
+  const confirmarExclusao = () => {
+    if (!contatoSelecionado) return;
+    removeContatoGlobal(contatoSelecionado.id);
+    setContatosList(contatosList.filter(c => c.id !== contatoSelecionado.id));
+    setExcluirContatoModalVisible(false);
+    setContatoSelecionado(null);
+  };
+
+  // ============ UI ============
+  const statsCards = [
+    { label: 'Hoje', value: stats.hoje, sub: 'interações recentes', color: '#c9943a', icon: <Calendar size={14} /> },
+    { label: 'Esta Semana', value: stats.semana, sub: 'últimos 7 dias', color: '#3498db', icon: <BarChart3 size={14} /> },
+    { label: 'Este Mês', value: stats.mes, sub: 'no período atual', color: '#9b59b6', icon: <TrendingUp size={14} /> },
+    { label: 'Total de Contatos', value: stats.total, sub: 'na base', color: '#2ecc71', icon: <Users size={14} /> },
+  ];
+
+  const origemFilters: Array<'Todas' | 'Trabalho Pago' | 'Orgânico' | 'Importado'> = ['Todas', 'Trabalho Pago', 'Orgânico', 'Importado'];
+  const origemColor = (o: string) => o === 'Trabalho Pago' ? '#ef5350' : o === 'Orgânico' ? '#66bb6a' : '#3498db';
+
   return (
     <div style={{
-      padding: '24px',
-      background: '#0d1f2d',
+      padding: '24px 28px 40px',
+      background: 'radial-gradient(1200px 600px at 10% -10%, rgba(201,148,58,0.08), transparent 60%), #0d1f2d',
       minHeight: '100vh',
       color: '#e8edf2',
-      fontFamily: "'Segoe UI', sans-serif",
+      fontFamily: "'Segoe UI', system-ui, sans-serif",
     }}>
       <style>{`
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 8px;
-          height: 8px;
+        @keyframes ctFadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes ctPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(46,204,113,0.45); } 50% { box-shadow: 0 0 0 8px rgba(46,204,113,0); } }
+        @keyframes ctModalIn { from { opacity: 0; transform: translateY(14px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        @keyframes ctShimmer { 0% { background-position: -400px 0; } 100% { background-position: 400px 0; } }
+        .ct-fadeIn { animation: ctFadeIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
+        .ct-pulse::before {
+          content: ''; position: absolute; left: 6px; top: 50%; width: 6px; height: 6px; border-radius: 50%;
+          background: #2ecc71; transform: translateY(-50%); animation: ctPulse 2s infinite;
         }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: #1a2332;
-          border-radius: 8px;
+        .ct-modal { animation: ctModalIn 0.28s cubic-bezier(0.22, 1, 0.36, 1) both; }
+        .ct-scroll::-webkit-scrollbar { width: 10px; height: 10px; }
+        .ct-scroll::-webkit-scrollbar-track { background: rgba(13,31,45,0.4); border-radius: 6px; }
+        .ct-scroll::-webkit-scrollbar-thumb {
+          background: linear-gradient(180deg, rgba(201,148,58,0.35), rgba(201,148,58,0.6));
+          border-radius: 6px; border: 2px solid rgba(13,31,45,0.3);
         }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: linear-gradient(135deg, #c9943a, #d9a344);
-          border-radius: 8px;
-          border: 2px solid #1a2332;
+        .ct-scroll::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, rgba(201,148,58,0.7), rgba(201,148,58,0.9)); }
+        .ct-card { transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1); position: relative; overflow: hidden; }
+        .ct-card::before {
+          content: ''; position: absolute; inset: 0;
+          background: radial-gradient(500px circle at var(--mx,50%) var(--my,0%), rgba(201,148,58,0.10), transparent 40%);
+          opacity: 0; transition: opacity 0.4s ease; pointer-events: none;
         }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: linear-gradient(135deg, #d9a344, #e8b755);
-          box-shadow: 0 0 8px rgba(201, 148, 58, 0.5);
+        .ct-card:hover::before { opacity: 1; }
+        .ct-card:hover { transform: translateY(-2px); border-color: rgba(201,148,58,0.45) !important; box-shadow: 0 14px 36px rgba(0,0,0,0.42); }
+        .ct-row { transition: all 0.28s cubic-bezier(0.22, 1, 0.36, 1); position: relative; }
+        .ct-row:hover { transform: translateX(3px); border-color: rgba(201,148,58,0.4) !important; background: linear-gradient(180deg, #14283a, #112132) !important; box-shadow: 0 10px 24px rgba(0,0,0,0.32); }
+        .ct-iconBtn { transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1); }
+        .ct-iconBtn:hover { transform: translateY(-1px); }
+        .ct-pill { transition: all 0.25s ease; }
+        .ct-input:focus { outline: none; border-color: #c9943a !important; box-shadow: 0 0 0 3px rgba(201,148,58,0.18); }
+        .ct-goldBtn {
+          background: linear-gradient(135deg, #c9943a, #a87a28);
+          color: #0d1f2d; border: none; font-weight: 800; cursor: pointer;
+          transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+          box-shadow: 0 6px 18px rgba(201,148,58,0.25);
         }
+        .ct-goldBtn:hover { transform: translateY(-2px); box-shadow: 0 12px 26px rgba(201,148,58,0.42); }
+        .ct-ghostBtn { background: transparent; border: 1px solid #1e3d54; color: #b0c4d4; font-weight: 700; cursor: pointer; transition: all 0.25s ease; }
+        .ct-ghostBtn:hover { border-color: #c9943a; color: #c9943a; background: rgba(201,148,58,0.08); }
       `}</style>
-      {/* HEADER COM TÍTULO E BOTÕES */}
-      <div style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: '28px',
-        gap: '16px',
+
+      {/* HERO */}
+      <div className="ct-fadeIn" style={{
+        display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end',
+        gap: 20, marginBottom: 24, flexWrap: 'wrap',
       }}>
-        <h1 style={{ fontSize: '24px', fontWeight: 800, margin: 0 }}>Contatos</h1>
-        <div style={{ display: 'flex', gap: '8px' }}>
-          {/* BOTÃO IMPORTAR/EXPORTAR */}
+        <div>
+          <div style={{
+            display: 'inline-flex', alignItems: 'center', gap: 8, padding: '6px 12px',
+            borderRadius: 999, border: '1px solid rgba(201,148,58,0.35)',
+            background: 'rgba(201,148,58,0.08)', color: '#d9a848',
+            fontSize: 10, letterSpacing: 1.4, fontWeight: 700, textTransform: 'uppercase',
+            marginBottom: 10,
+          }}>
+            <Sparkles size={12} /> Gestão de Relacionamento · Base Unificada
+          </div>
+          <h1 style={{
+            fontSize: 30, fontWeight: 900, margin: 0, letterSpacing: -0.8,
+            background: 'linear-gradient(135deg, #e8edf2 0%, #c9943a 60%, #a87a28 100%)',
+            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
+          }}>
+            Contatos
+          </h1>
+          <p style={{ margin: '6px 0 0', fontSize: 13, color: '#7a96aa' }}>
+            Centralize, segmente e ative sua base inteira · <strong style={{ color: '#e8edf2' }}>{stats.total}</strong> contatos ativos
+          </p>
+        </div>
+
+        <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
           <div style={{ position: 'relative' }}>
             <button
               onClick={() => setImportarExportarMenuVisible(!importarExportarMenuVisible)}
+              className="ct-ghostBtn"
               style={{
-                padding: '10px 16px',
-                borderRadius: '8px',
-                border: '1px solid #1e3d54',
-                background: importarExportarMenuVisible ? '#1e3d54' : 'transparent',
-                color: '#7a96aa',
-                fontSize: '12px',
-                fontWeight: 700,
-                cursor: 'pointer',
-                transition: 'all 0.3s ease',
-              }}
-              onMouseEnter={(e) => {
-                if (!importarExportarMenuVisible) {
-                  e.currentTarget.style.borderColor = '#c9943a';
-                  e.currentTarget.style.color = '#c9943a';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (!importarExportarMenuVisible) {
-                  e.currentTarget.style.borderColor = '#1e3d54';
-                  e.currentTarget.style.color = '#7a96aa';
-                }
+                display: 'inline-flex', alignItems: 'center', gap: 8,
+                padding: '10px 16px', borderRadius: 10, fontSize: 12,
+                background: importarExportarMenuVisible ? 'rgba(201,148,58,0.08)' : 'transparent',
+                borderColor: importarExportarMenuVisible ? '#c9943a' : '#1e3d54',
+                color: importarExportarMenuVisible ? '#c9943a' : '#b0c4d4',
               }}
             >
-              Importar / Exportar
+              <Download size={14} /> Importar / Exportar
             </button>
 
-            {/* DROPDOWN MENU */}
             {importarExportarMenuVisible && (
-              <div
-                style={{
-                  position: 'absolute',
-                  top: '44px',
-                  left: 0,
-                  background: 'linear-gradient(180deg, #132636, #0d1f2d)',
-                  border: '1px solid #2a4a64',
-                  borderRadius: '12px',
-                  minWidth: '280px',
-                  boxShadow: '0 12px 32px rgba(0, 0, 0, 0.4)',
-                  zIndex: 1000,
-                  overflow: 'hidden',
-                }}
-              >
-                {/* Opção 1: Importar da Agenda */}
-                <button
-                  onClick={() => {
-                    importarDaAgenda();
+              <div className="ct-modal" style={{
+                position: 'absolute', top: 48, right: 0, width: 300, zIndex: 1000,
+                background: 'linear-gradient(180deg, #132636, #0f2130)',
+                border: '1px solid #2a4a64', borderRadius: 12,
+                boxShadow: '0 16px 40px rgba(0,0,0,0.5)', overflow: 'hidden',
+                backdropFilter: 'blur(14px)',
+              }}>
+                {[
+                  { icon: <Phone size={16} />, label: 'Importar da Agenda', sub: 'Contatos do dispositivo', onClick: importarDaAgenda },
+                  { icon: <FileUp size={16} />, label: 'Importar Arquivo', sub: 'CSV ou JSON', onClick: importarArquivo },
+                  { icon: <Download size={16} />, label: 'Exportar Excel', sub: 'Por período', onClick: () => { setExportarModalVisible(true); setImportarExportarMenuVisible(false); } },
+                ].map((opt, i) => (
+                  <button key={i} onClick={opt.onClick} style={{
+                    width: '100%', padding: '14px 16px', border: 'none',
+                    background: 'transparent', color: '#e8edf2', fontSize: 12,
+                    fontWeight: 600, cursor: 'pointer', textAlign: 'left',
+                    borderBottom: i < 2 ? '1px solid #1e3d54' : 'none',
+                    transition: 'all 0.25s ease',
+                    display: 'flex', alignItems: 'center', gap: 12,
                   }}
-                  style={{
-                    width: '100%',
-                    padding: '14px 16px',
-                    border: 'none',
-                    background: 'transparent',
-                    color: '#e8edf2',
-                    fontSize: '12px',
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                    textAlign: 'left',
-                    borderBottom: '1px solid #1e3d54',
-                    transition: 'all 0.3s ease',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '10px',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = '#1e3d54';
-                    e.currentTarget.style.color = '#c9943a';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = 'transparent';
-                    e.currentTarget.style.color = '#e8edf2';
-                  }}
-                >
-                  <Phone size={16} /> Importar da Agenda do Telefone
-                </button>
-
-                {/* Opção 2: Importar Arquivo */}
-                <button
-                  onClick={() => {
-                    importarArquivo();
-                  }}
-                  style={{
-                    width: '100%',
-                    padding: '14px 16px',
-                    border: 'none',
-                    background: 'transparent',
-                    color: '#e8edf2',
-                    fontSize: '12px',
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                    textAlign: 'left',
-                    borderBottom: '1px solid #1e3d54',
-                    transition: 'all 0.3s ease',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '10px',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = '#1e3d54';
-                    e.currentTarget.style.color = '#c9943a';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = 'transparent';
-                    e.currentTarget.style.color = '#e8edf2';
-                  }}
-                >
-                  <FileUp size={16} /> Importar Arquivo
-                </button>
-
-                {/* Opção 3: Exportar Excel */}
-                <button
-                  onClick={() => {
-                    setExportarModalVisible(true);
-                    setImportarExportarMenuVisible(false);
-                  }}
-                  style={{
-                    width: '100%',
-                    padding: '14px 16px',
-                    border: 'none',
-                    background: 'transparent',
-                    color: '#e8edf2',
-                    fontSize: '12px',
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                    textAlign: 'left',
-                    transition: 'all 0.3s ease',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '10px',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = '#1e3d54';
-                    e.currentTarget.style.color = '#c9943a';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = 'transparent';
-                    e.currentTarget.style.color = '#e8edf2';
-                  }}
-                >
-                  <Download size={16} /> Exportar Excel
-                </button>
+                  onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(201,148,58,0.10)'; e.currentTarget.style.color = '#c9943a'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#e8edf2'; }}>
+                    <span style={{
+                      width: 32, height: 32, borderRadius: 8,
+                      background: 'rgba(201,148,58,0.12)', border: '1px solid rgba(201,148,58,0.35)',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#c9943a',
+                    }}>{opt.icon}</span>
+                    <span style={{ flex: 1 }}>
+                      <div>{opt.label}</div>
+                      <div style={{ fontSize: 10, color: '#7a96aa', fontWeight: 500, marginTop: 2 }}>{opt.sub}</div>
+                    </span>
+                  </button>
+                ))}
               </div>
             )}
           </div>
-          {/* BOTÃO ADICIONAR */}
-          <button
-            onClick={abrirNovoContatoModal}
-            style={{
-              padding: '10px 16px',
-              borderRadius: '8px',
-              border: 'none',
-              background: '#c9943a',
-              color: '#0d1f2d',
-              fontSize: '12px',
-              fontWeight: 700,
-              cursor: 'pointer',
-              transition: 'all 0.2s',
-            }}
-            onMouseEnter={(e) => e.currentTarget.style.background = '#d9a344'}
-            onMouseLeave={(e) => e.currentTarget.style.background = '#c9943a'}
-          >
-            Adicionar Contato
+
+          <button onClick={abrirNovoContatoModal} className="ct-goldBtn" style={{
+            display: 'inline-flex', alignItems: 'center', gap: 8,
+            padding: '10px 18px', borderRadius: 10, fontSize: 12,
+          }}>
+            <UserPlus size={14} strokeWidth={2.6} /> Adicionar Contato
           </button>
         </div>
       </div>
 
-      {/* RESUMO CARDS */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '28px' }}>
-        {resumo.map((card) => (
-          <div
-            key={card.label}
+      {/* STATS */}
+      <div className="ct-fadeIn" style={{
+        display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+        gap: 14, marginBottom: 20,
+      }}>
+        {statsCards.map((s) => (
+          <div key={s.label} className="ct-card"
+            onMouseMove={(e) => {
+              const r = e.currentTarget.getBoundingClientRect();
+              (e.currentTarget as HTMLElement).style.setProperty('--mx', `${e.clientX - r.left}px`);
+              (e.currentTarget as HTMLElement).style.setProperty('--my', `${e.clientY - r.top}px`);
+            }}
             style={{
-              background: `linear-gradient(135deg, ${card.color}33, #132636)`,
-              border: `2px solid ${card.color}BF`,
-              borderRadius: '14px',
-              padding: '20px 16px',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'flex-start',
-              gap: '12px',
-              transition: 'all 0.15s',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.boxShadow = `0 4px 12px ${card.color}33`;
-              e.currentTarget.style.transform = 'translateY(-2px)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.boxShadow = 'none';
-              e.currentTarget.style.transform = 'translateY(0)';
-            }}
-          >
-            {/* ÍCONE SVG MINIMALISTA PREMIUM AAA - COLORIDO */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0,
-              color: card.color,
+              padding: '16px 18px', borderRadius: 14,
+              background: 'linear-gradient(180deg, #132636 0%, #0f2130 100%)',
+              border: '1px solid #1e3d54',
             }}>
-              {card.label === 'Hoje' && <Calendar size={28} strokeWidth={1.5} />}
-              {card.label === 'Esta Semana' && <BarChart3 size={28} strokeWidth={1.5} />}
-              {card.label === 'Este Mês' && <TrendingUp size={28} strokeWidth={1.5} />}
-              {card.label === 'Total' && <Users size={28} strokeWidth={1.5} />}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 11, color: '#7a96aa', fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 }}>
+              <span style={{
+                width: 22, height: 22, borderRadius: 6, color: s.color,
+                background: `${s.color}1a`, border: `1px solid ${s.color}40`,
+                display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+              }}>{s.icon}</span>
+              {s.label}
             </div>
-            {/* CONTEÚDO - ABAIXO DO ÍCONE */}
-            <div style={{ width: '100%' }}>
-              <div style={{
-                fontSize: '36px',
-                fontWeight: 900,
-                color: '#9ca3af',
-                marginBottom: '2px',
-                lineHeight: '1',
-                letterSpacing: '-0.5px',
-                WebkitFontSmoothing: 'antialiased',
-              }}>
-                {card.value}
-              </div>
-              <div style={{
-                fontSize: '12px',
-                color: '#9ca3af',
-                marginBottom: '4px',
-                fontWeight: 700,
-                letterSpacing: '0.3px',
-                WebkitFontSmoothing: 'antialiased',
-              }}>
-                {card.label}
-              </div>
-              <div style={{
-                fontSize: '11px',
-                color: '#9ca3af',
-                fontWeight: 500,
-                letterSpacing: '0.2px',
-                WebkitFontSmoothing: 'antialiased',
-              }}>
-                {card.label === 'Hoje' && 'Novos contatos'}
-                {card.label === 'Esta Semana' && 'Últimos 7 dias'}
-                {card.label === 'Este Mês' && 'Mês atual'}
-                {card.label === 'Total' && 'Todos os contatos'}
-              </div>
+            <div style={{ fontSize: 30, fontWeight: 900, color: s.color, lineHeight: 1, letterSpacing: -1 }}>
+              {s.value}
             </div>
+            <div style={{ fontSize: 11, color: '#7a96aa', marginTop: 6, fontWeight: 500 }}>{s.sub}</div>
           </div>
         ))}
       </div>
 
-      {/* FILTROS E AÇÕES */}
-      <div style={{
-        background: '#132636',
-        border: '1px solid #1e3d54',
-        borderRadius: '14px',
-        padding: '16px',
-        marginBottom: '20px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        flexWrap: 'wrap',
-        gap: '12px',
+      {/* TOOLBAR */}
+      <div className="ct-fadeIn" style={{
+        display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap',
+        padding: '10px 12px', borderRadius: 12,
+        background: 'rgba(19,38,54,0.85)', backdropFilter: 'blur(14px)',
+        border: '1px solid #1e3d54', marginBottom: 16, position: 'sticky', top: 8, zIndex: 10,
       }}>
-        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-          {/* FILTRO CANAL */}
-          <select
-            value={filterCanal}
-            onChange={(e) => setFilterCanal(e.target.value)}
-            style={{
-              padding: '12px 14px',
-              borderRadius: '8px',
-              border: '1px solid #1e3d54',
-              background: '#0d1f2d',
-              color: '#e8edf2',
-              fontSize: '12px',
-              cursor: 'pointer',
-              fontWeight: 500,
-            }}
-          >
-            <option>Todos os canais</option>
-            <option>WhatsApp</option>
-            <option>Instagram</option>
-            <option>Email</option>
-          </select>
-
-          {/* FILTRO PIPELINE */}
-          <select
-            value={filterPipeline}
-            onChange={(e) => setFilterPipeline(e.target.value)}
-            style={{
-              padding: '12px 14px',
-              borderRadius: '8px',
-              border: '1px solid #1e3d54',
-              background: '#0d1f2d',
-              color: '#e8edf2',
-              fontSize: '12px',
-              cursor: 'pointer',
-              fontWeight: 500,
-            }}
-          >
-            <option>Todos os pipelines</option>
-            <option>Comercial</option>
-            <option>Follow-up</option>
-            <option>Suporte</option>
-          </select>
-
-          {/* BUSCA */}
+        <div style={{
+          flex: 1, minWidth: 260, display: 'flex', alignItems: 'center', gap: 8,
+          padding: '8px 12px', background: '#0f2130', border: '1px solid #1e3d54',
+          borderRadius: 10,
+        }}>
+          <Search size={14} color="#7a96aa" />
           <input
-            type="text"
-            placeholder="Buscar por nome, WhatsApp ou email..."
+            className="ct-input"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            style={{
-              padding: '12px 14px',
-              borderRadius: '8px',
-              border: '1px solid #1e3d54',
-              background: '#0d1f2d',
-              color: '#e8edf2',
-              fontSize: '12px',
-              minWidth: '200px',
-              fontWeight: 500,
-            }}
+            placeholder="Buscar por nome, WhatsApp ou e-mail..."
+            style={{ flex: 1, background: 'transparent', border: 'none', color: '#e8edf2', fontSize: 13, outline: 'none' }}
           />
         </div>
-      </div>
 
-      {/* TABELA DE CONTATOS */}
-      <div style={{
-        background: '#132636',
-        border: '1px solid #1e3d54',
-        borderRadius: '14px',
-        maxHeight: 'calc(100vh - 420px)',
-        overflowY: 'auto',
-        overflowX: 'auto',
-        scrollbarWidth: 'thin',
-        scrollbarColor: '#c9943a #1a2332',
-      }}
-      className="custom-scrollbar"
-      >
-        <table style={{
-          width: '100%',
-          borderCollapse: 'collapse',
-          fontSize: '13px',
-        }}>
-          <thead>
-            <tr style={{ borderBottom: '1px solid #1e3d54', background: '#0d1f2d' }}>
-              <th style={{
-                padding: '12px 16px',
-                textAlign: 'left',
-                fontWeight: 700,
-                color: '#7a96aa',
-                fontSize: '11px',
-                textTransform: 'uppercase',
-              }}>
-                NOME
-              </th>
-              <th style={{
-                padding: '12px 16px',
-                textAlign: 'left',
-                fontWeight: 700,
-                color: '#7a96aa',
-                fontSize: '11px',
-                textTransform: 'uppercase',
-              }}>
-                WHATSAPP / HANDLE
-              </th>
-              <th style={{
-                padding: '12px 16px',
-                textAlign: 'left',
-                fontWeight: 700,
-                color: '#7a96aa',
-                fontSize: '11px',
-                textTransform: 'uppercase',
-              }}>
-                EMAIL
-              </th>
-              <th style={{
-                padding: '12px 16px',
-                textAlign: 'left',
-                fontWeight: 700,
-                color: '#7a96aa',
-                fontSize: '11px',
-                textTransform: 'uppercase',
-              }}>
-                ÚLTIMA INTERAÇÃO
-              </th>
-              <th style={{
-                padding: '12px 16px',
-                textAlign: 'left',
-                fontWeight: 700,
-                color: '#7a96aa',
-                fontSize: '11px',
-                textTransform: 'uppercase',
-              }}>
-                STATUS
-              </th>
-              <th style={{
-                padding: '12px 16px',
-                textAlign: 'center',
-                fontWeight: 600,
-                color: '#7a96aa',
-                fontSize: '11px',
-                textTransform: 'uppercase',
-              }}>
-                AÇÕES
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {contatosFiltrados.map((contato) => (
-              <tr key={contato.id} style={{ borderBottom: '1px solid #1e3d54' }}>
-                <td style={{ padding: '12px 16px', color: '#e8edf2', fontWeight: 600 }}>
-                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-                    <div style={{
-                      width: '40px',
-                      height: '40px',
-                      borderRadius: '50%',
-                      background: `${contato.avatarColor}33`,
-                      border: `2px solid ${contato.avatarColor}B3`,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '14px',
-                      fontWeight: 700,
-                      flexShrink: 0,
-                      color: '#e8b86d',
-                      marginTop: '2px',
-                    }}>
-                      {contato.nome[0]}
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', paddingTop: '2px' }}>
-                      <span style={{ fontSize: '14px', fontWeight: 700, color: '#e8edf2', lineHeight: '1.2' }}>{contato.nome}</span>
-                      <span style={{
-                        fontSize: '9px',
-                        color: contato.badgeColor,
-                        fontWeight: 700,
-                        backgroundColor: `${contato.badgeColor}26`,
-                        border: `0.5px solid ${contato.badgeColor}99`,
-                        padding: '2px 6px',
-                        borderRadius: '10px',
-                        display: 'inline-block',
-                        width: 'fit-content',
-                      }}>
-                        {contato.badge}
-                      </span>
-                    </div>
-                  </div>
-                </td>
-                <td style={{ padding: '12px 16px', color: '#7a96aa' }}>{contato.whatsapp}</td>
-                <td style={{ padding: '12px 16px', color: '#7a96aa' }}>{contato.email}</td>
-                <td style={{ padding: '12px 16px', color: '#7a96aa', fontSize: '12px' }}>
-                  {formatarUltimaInteracao(contato.ultimaInteracao)}
-                </td>
-                <td style={{ padding: '12px 16px' }}>
-                  <button style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    padding: '8px 12px',
-                    borderRadius: '8px',
-                    background: '#2ecc7133',
-                    border: '1px solid #2ecc71A6',
-                    color: '#2ecc71',
-                    fontSize: '12px',
-                    fontWeight: 700,
-                    cursor: 'default',
-                  }}>
-                    {contato.status}
-                  </button>
-                </td>
-                <td style={{ padding: '12px 16px', textAlign: 'center' }}>
-                  <div style={{ display: 'flex', gap: '6px', justifyContent: 'center' }}>
-                    {/* Botão Abrir Ticket */}
-                    <button
-                      title="Abrir ticket"
-                      onClick={() => {
-                        setContatoSelecionado(contato);
-                        setFilaSelecionada('');
-                        setConexaoSelecionada('');
-                        setAbrirTicketModalVisible(true);
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.color = '#00d4ff';
-                        e.currentTarget.style.borderColor = '#00d4ff';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.color = '#6b7280';
-                        e.currentTarget.style.borderColor = '#475569';
-                      }}
-                      style={{
-                      background: 'transparent',
-                      border: '1px solid #475569',
-                      borderRadius: '6px',
-                      color: '#6b7280',
-                      cursor: 'pointer',
-                      padding: '6px 8px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      transition: 'color 0.2s ease, border-color 0.2s ease',
-                    }}>
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M3 21l1.65-3.66a9 9 0 1 1 14.142-14.142A9 9 0 0 1 3.21 21z" />
-                        <line x1="9" y1="10" x2="15" y2="10" />
-                        <line x1="9" y1="14" x2="13" y2="14" />
-                      </svg>
-                    </button>
-                    {/* Botão Editar */}
-                    <button
-                      title="Editar"
-                      onClick={() => {
-                        setContatoSelecionado(contato);
-                        setFormEditacao({
-                          nome: contato.nome,
-                          whatsapp: contato.whatsapp,
-                          email: contato.email,
-                          tipo: contato.badge,
-                          conexao: '',
-                          agenteResponsavel: '',
-                        });
-                        setEditarContatoModalVisible(true);
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.color = '#00d4ff';
-                        e.currentTarget.style.borderColor = '#00d4ff';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.color = '#6b7280';
-                        e.currentTarget.style.borderColor = '#475569';
-                      }}
-                      style={{
-                      background: 'transparent',
-                      border: '1px solid #475569',
-                      borderRadius: '6px',
-                      color: '#6b7280',
-                      cursor: 'pointer',
-                      padding: '6px 8px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      transition: 'color 0.2s ease, border-color 0.2s ease',
-                    }}>
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                      </svg>
-                    </button>
-                    {/* Botão Excluir */}
-                    <button
-                      title="Excluir contato"
-                      onClick={() => {
-                        setContatoSelecionado(contato);
-                        setExcluirContatoModalVisible(true);
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.color = '#00d4ff';
-                        e.currentTarget.style.borderColor = '#00d4ff';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.color = '#6b7280';
-                        e.currentTarget.style.borderColor = '#475569';
-                      }}
-                      style={{
-                      background: 'transparent',
-                      border: '1px solid #475569',
-                      borderRadius: '6px',
-                      color: '#6b7280',
-                      cursor: 'pointer',
-                      padding: '6px 8px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      transition: 'color 0.2s ease, border-color 0.2s ease',
-                    }}>
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="3 6 5 6 21 6"></polyline>
-                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                        <line x1="10" y1="11" x2="10" y2="17"></line>
-                        <line x1="14" y1="11" x2="14" y2="17"></line>
-                      </svg>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {/* EMPTY STATE */}
-      {contatosFiltrados.length === 0 && (
-        <div style={{
-          textAlign: 'center',
-          padding: '40px',
-          color: '#7a96aa',
-        }}>
-          <div style={{ fontSize: '14px', marginBottom: '8px' }}>Nenhum contato encontrado</div>
-          <div style={{ fontSize: '12px' }}>Tente ajustar os filtros ou criar um novo contato</div>
+        <div style={{ display: 'flex', gap: 6 }}>
+          {origemFilters.map(o => {
+            const ativo = filterOrigem === o;
+            const cor = o === 'Todas' ? '#c9943a' : origemColor(o);
+            return (
+              <button key={o}
+                onClick={() => setFilterOrigem(o)}
+                className="ct-pill"
+                style={{
+                  padding: '8px 12px', borderRadius: 10, fontSize: 11, fontWeight: 700,
+                  background: ativo ? `${cor}22` : 'transparent',
+                  border: `1px solid ${ativo ? cor : '#1e3d54'}`,
+                  color: ativo ? cor : '#7a96aa',
+                  cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6,
+                }}>
+                <span style={{ width: 6, height: 6, borderRadius: '50%', background: cor }} />
+                {o}
+              </button>
+            );
+          })}
         </div>
-      )}
 
-      {/* MODAL NOVO CONTATO */}
+        <select
+          value={filterCanal}
+          onChange={(e) => setFilterCanal(e.target.value)}
+          className="ct-input"
+          style={{
+            padding: '8px 12px', borderRadius: 10, fontSize: 12,
+            background: '#0f2130', border: '1px solid #1e3d54', color: '#e8edf2', cursor: 'pointer',
+          }}>
+          <option>Todos os canais</option>
+          <option>WhatsApp</option>
+          <option>Instagram</option>
+          <option>Email</option>
+        </select>
+
+        <select
+          value={filterPipeline}
+          onChange={(e) => setFilterPipeline(e.target.value)}
+          className="ct-input"
+          style={{
+            padding: '8px 12px', borderRadius: 10, fontSize: 12,
+            background: '#0f2130', border: '1px solid #1e3d54', color: '#e8edf2', cursor: 'pointer',
+          }}>
+          <option>Todos os pipelines</option>
+          <option>Comercial</option>
+          <option>Follow-up</option>
+          <option>Suporte</option>
+        </select>
+      </div>
+
+      {/* LIST */}
+      <div className="ct-scroll" style={{ maxHeight: 'calc(100vh - 360px)', overflowY: 'auto', paddingRight: 6 }}>
+        {contatosFiltrados.length === 0 ? (
+          <div className="ct-fadeIn" style={{
+            padding: '60px 20px', textAlign: 'center',
+            background: 'linear-gradient(180deg, #132636, #0f2130)',
+            border: '1px dashed #1e3d54', borderRadius: 14,
+          }}>
+            <div style={{ fontSize: 42, marginBottom: 10 }}>👤</div>
+            <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 6 }}>Nenhum contato encontrado</div>
+            <div style={{ fontSize: 12, color: '#7a96aa' }}>Tente ajustar os filtros ou a busca, ou adicione um novo contato.</div>
+          </div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {contatosFiltrados.map((c) => (
+              <div key={c.id} className="ct-row ct-fadeIn" style={{
+                display: 'grid',
+                gridTemplateColumns: 'minmax(240px, 1.4fr) minmax(160px, 1fr) minmax(200px, 1.2fr) minmax(140px, 0.9fr) minmax(110px, 0.6fr) auto',
+                alignItems: 'center', gap: 14,
+                padding: '14px 16px',
+                background: 'linear-gradient(180deg, #132636 0%, #0f2130 100%)',
+                border: '1px solid #1e3d54', borderRadius: 12,
+              }}>
+                {/* NOME + AVATAR */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
+                  <div style={{
+                    width: 42, height: 42, borderRadius: '50%',
+                    background: `linear-gradient(135deg, ${c.avatarColor}, ${c.avatarColor}bb)`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    color: '#fff', fontWeight: 800, fontSize: 14, letterSpacing: 0.3,
+                    boxShadow: `0 6px 16px ${c.avatarColor}55`,
+                    border: '2px solid rgba(255,255,255,0.08)', flexShrink: 0,
+                  }}>
+                    {initials(c.nome)}
+                  </div>
+                  <div style={{ minWidth: 0, flex: 1 }}>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: '#e8edf2', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      {c.nome}
+                    </div>
+                    <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, marginTop: 4 }}>
+                      <span style={{
+                        padding: '2px 8px', borderRadius: 999, fontSize: 10, fontWeight: 700,
+                        color: c.badgeColor, background: `${c.badgeColor}1a`,
+                        border: `1px solid ${c.badgeColor}40`,
+                      }}>{c.badge}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* WHATSAPP */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#b0c4d4', fontSize: 12, minWidth: 0 }}>
+                  <MessageCircle size={13} color="#25d366" style={{ flexShrink: 0 }} />
+                  <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{c.whatsapp}</span>
+                </div>
+
+                {/* EMAIL */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#b0c4d4', fontSize: 12, minWidth: 0 }}>
+                  <AtSign size={13} color="#3498db" style={{ flexShrink: 0 }} />
+                  <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{c.email}</span>
+                </div>
+
+                {/* ÚLTIMA INTERAÇÃO */}
+                <div style={{ fontSize: 11, color: '#7a96aa' }}>
+                  <div style={{ fontWeight: 700, color: '#e8edf2' }}>{formatarUltimaInteracao(c.ultimaInteracao)}</div>
+                  <div style={{ marginTop: 2 }}>Última interação</div>
+                </div>
+
+                {/* STATUS */}
+                <div style={{ position: 'relative' }}>
+                  <span className="ct-pulse" style={{
+                    position: 'relative', display: 'inline-flex', alignItems: 'center',
+                    padding: '5px 12px 5px 20px',
+                    borderRadius: 999, fontSize: 11, fontWeight: 700,
+                    color: '#2ecc71',
+                    background: 'rgba(46,204,113,0.12)',
+                    border: '1px solid rgba(46,204,113,0.35)',
+                  }}>
+                    {c.status}
+                  </span>
+                </div>
+
+                {/* AÇÕES */}
+                <div style={{ display: 'flex', gap: 6 }}>
+                  <button onClick={() => abrirTicket(c)} className="ct-iconBtn" title="Abrir ticket" style={{
+                    width: 32, height: 32, borderRadius: 8,
+                    background: 'rgba(52,152,219,0.10)', border: '1px solid rgba(52,152,219,0.35)',
+                    color: '#3498db', cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    <Eye size={14} />
+                  </button>
+                  <button onClick={() => abrirEdicao(c)} className="ct-iconBtn" title="Editar" style={{
+                    width: 32, height: 32, borderRadius: 8,
+                    background: 'rgba(201,148,58,0.10)', border: '1px solid rgba(201,148,58,0.35)',
+                    color: '#c9943a', cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    <Pencil size={14} />
+                  </button>
+                  <button onClick={() => abrirExclusao(c)} className="ct-iconBtn" title="Excluir" style={{
+                    width: 32, height: 32, borderRadius: 8,
+                    background: 'rgba(231,76,60,0.10)', border: '1px solid rgba(231,76,60,0.35)',
+                    color: '#e74c3c', cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    <Trash2 size={14} />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* ====================== MODAL: NOVO CONTATO ====================== */}
       {novoContatoModalVisible && (
         <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'rgba(0, 0, 0, 0.65)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 9999,
-          backdropFilter: 'blur(6px)',
-        }}>
-          <div style={{
-            background: 'linear-gradient(135deg, #1a2332, #132636)',
-            borderRadius: '16px',
-            border: '2px solid #c9943a',
-            padding: '32px',
-            maxWidth: '600px',
-            width: '90%',
-            maxHeight: '80vh',
-            overflowY: 'auto',
-            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(201, 148, 58, 0.15)',
+          position: 'fixed', inset: 0, zIndex: 9999,
+          background: 'rgba(5,13,20,0.78)', backdropFilter: 'blur(10px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20,
+        }}
+        onClick={fecharNovoContatoModal}>
+          <div className="ct-modal" onClick={(e) => e.stopPropagation()} style={{
+            width: 'min(560px, 100%)', borderRadius: 16,
+            background: 'linear-gradient(180deg, #132636, #0f2130)',
+            border: '1px solid #2a4a64', boxShadow: '0 24px 60px rgba(0,0,0,0.6)',
+            overflow: 'hidden',
           }}>
-            {/* HEADER COM ÍCONE */}
             <div style={{
-              textAlign: 'center',
-              marginBottom: '32px',
-              paddingBottom: '16px',
-              borderBottom: '1px solid #1e3d54',
+              padding: '18px 22px', borderBottom: '1px solid #1e3d54',
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              background: 'linear-gradient(90deg, rgba(201,148,58,0.10), transparent)',
             }}>
-              <div style={{
-                width: '64px',
-                height: '64px',
-                borderRadius: '50%',
-                background: 'linear-gradient(135deg, #9b59b6, #8e44ad)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                margin: '0 auto 16px',
-                fontSize: '32px',
-              }}>
-                👤
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <div style={{
+                  width: 38, height: 38, borderRadius: 10,
+                  background: 'linear-gradient(135deg, #c9943a, #a87a28)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  color: '#0d1f2d', boxShadow: '0 8px 18px rgba(201,148,58,0.35)',
+                }}>
+                  <UserPlus size={18} strokeWidth={2.6} />
+                </div>
+                <div>
+                  <div style={{ fontSize: 15, fontWeight: 800, color: '#e8edf2' }}>Novo Contato</div>
+                  <div style={{ fontSize: 11, color: '#7a96aa', marginTop: 2 }}>Cadastre na base unificada</div>
+                </div>
               </div>
-              <h2 style={{
-                fontSize: '22px',
-                fontWeight: 800,
-                margin: '0 0 8px 0',
-                color: '#c9943a',
-                letterSpacing: '0.5px',
-              }}>
-                Novo Contato
-              </h2>
-              <p style={{
-                fontSize: '13px',
-                color: '#7a96aa',
-                margin: 0,
-              }}>
-                Preencha os dados do contato
-              </p>
+              <button onClick={fecharNovoContatoModal} style={{
+                width: 30, height: 30, borderRadius: 8,
+                background: 'transparent', border: '1px solid #1e3d54', color: '#7a96aa',
+                cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}><X size={14} /></button>
             </div>
 
-            {/* FORMULÁRIO */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '16px' }}>
-              {/* NOME */}
-              <div>
-                <label style={{ fontSize: '11px', fontWeight: 700, color: '#7a96aa', display: 'block', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                  Nome *
-                </label>
-                <input
-                  type="text"
-                  placeholder="Nome completo"
-                  value={formData.nome}
-                  onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '14px 16px',
-                    borderRadius: '10px',
-                    border: '1px solid #1e3d54',
-                    background: '#0d1f2d',
-                    color: '#e8edf2',
-                    fontSize: '13px',
-                    boxSizing: 'border-box',
-                    fontFamily: 'inherit',
-                    transition: 'all 0.3s ease',
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = '#c9943a';
-                    e.target.style.borderWidth = '2px';
-                    e.target.style.boxShadow = '0 0 12px rgba(201, 148, 58, 0.2)';
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = '#1e3d54';
-                    e.target.style.borderWidth = '1px';
-                    e.target.style.boxShadow = 'none';
-                  }}
-                />
-              </div>
-
-              {/* TELEFONE E CANAL */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                <div>
-                  <label style={{ fontSize: '11px', fontWeight: 700, color: '#7a96aa', display: 'block', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                    Telefone / Handle
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="(11) 99999-9999"
-                    value={formData.telefone}
-                    onChange={(e) => setFormData({ ...formData, telefone: e.target.value })}
-                    style={{
-                      width: '100%',
-                      padding: '12px 14px',
-                      borderRadius: '8px',
-                      border: '1px solid #1e3d54',
-                      background: '#132636',
-                      color: '#e8edf2',
-                      fontSize: '13px',
-                      boxSizing: 'border-box',
-                      fontFamily: 'inherit',
-                    }}
-                    onFocus={(e) => e.target.style.borderColor = '#c9943a'}
-                    onBlur={(e) => e.target.style.borderColor = '#1e3d54'}
-                  />
-                </div>
-                <div>
-                  <label style={{ fontSize: '11px', fontWeight: 700, color: '#7a96aa', display: 'block', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                    Canal
-                  </label>
-                  <select
-                    value={formData.canal}
-                    onChange={(e) => setFormData({ ...formData, canal: e.target.value })}
-                    style={{
-                      width: '100%',
-                      padding: '12px 14px',
-                      borderRadius: '8px',
-                      border: '1px solid #1e3d54',
-                      background: '#132636',
-                      color: '#e8edf2',
-                      fontSize: '13px',
-                      boxSizing: 'border-box',
-                      fontFamily: 'inherit',
-                      cursor: 'pointer',
-                    }}
-                    onFocus={(e) => e.target.style.borderColor = '#c9943a'}
-                    onBlur={(e) => e.target.style.borderColor = '#1e3d54'}
-                  >
-                    <option>WhatsApp</option>
-                    <option>Instagram</option>
-                    <option>Email</option>
-                    <option>Telefone</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* EMAIL */}
-              <div>
-                <label style={{ fontSize: '11px', fontWeight: 700, color: '#7a96aa', display: 'block', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                  E-mail *
-                </label>
-                <input
-                  type="email"
-                  placeholder="email@exemplo.com"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '12px 14px',
-                    borderRadius: '8px',
-                    border: '1px solid #1e3d54',
-                    background: '#132636',
-                    color: '#e8edf2',
-                    fontSize: '13px',
-                    boxSizing: 'border-box',
-                    fontFamily: 'inherit',
-                  }}
-                  onFocus={(e) => e.target.style.borderColor = '#c9943a'}
-                  onBlur={(e) => e.target.style.borderColor = '#1e3d54'}
-                />
-              </div>
-
-              {/* AGENTE E ORIGEM */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                <div>
-                  <label style={{ fontSize: '11px', fontWeight: 700, color: '#7a96aa', display: 'block', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                    Agente Responsável
-                  </label>
-                  <select
-                    value={formData.agente}
-                    onChange={(e) => setFormData({ ...formData, agente: e.target.value })}
-                    style={{
-                      width: '100%',
-                      padding: '14px 16px',
-                      borderRadius: '10px',
-                      border: '1px solid #1e3d54',
-                      background: '#0d1f2d',
-                      color: '#e8edf2',
-                      fontSize: '13px',
-                      boxSizing: 'border-box',
-                      fontFamily: 'inherit',
-                      cursor: 'pointer',
-                      transition: 'all 0.3s ease',
-                    }}
-                    onFocus={(e) => {
-                      e.target.style.borderColor = '#c9943a';
-                      e.target.style.borderWidth = '2px';
-                      e.target.style.boxShadow = '0 0 12px rgba(201, 148, 58, 0.2)';
-                    }}
-                    onBlur={(e) => {
-                      e.target.style.borderColor = '#1e3d54';
-                      e.target.style.borderWidth = '1px';
-                      e.target.style.boxShadow = 'none';
-                    }}
-                  >
-                    {membros.length > 0 ? (
-                      membros.map((m) => (
-                        <option key={m.id} value={m.nome}>
-                          {m.nome}
-                        </option>
-                      ))
-                    ) : (
-                      <>
-                        <option>Havila</option>
-                        <option>João</option>
-                        <option>Maria</option>
-                        <option>Pedro</option>
-                        <option>Ana</option>
-                      </>
-                    )}
-                  </select>
-                </div>
-                <div>
-                  <label style={{ fontSize: '11px', fontWeight: 700, color: '#7a96aa', display: 'block', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                    Origem
-                  </label>
-                  <select
-                    value={formData.origem}
-                    onChange={(e) => setFormData({ ...formData, origem: e.target.value })}
-                    style={{
-                      width: '100%',
-                      padding: '14px 16px',
-                      borderRadius: '10px',
-                      border: '1px solid #1e3d54',
-                      background: '#0d1f2d',
-                      color: '#e8edf2',
-                      fontSize: '13px',
-                      boxSizing: 'border-box',
-                      fontFamily: 'inherit',
-                      cursor: 'pointer',
-                      transition: 'all 0.3s ease',
-                    }}
-                    onFocus={(e) => {
-                      e.target.style.borderColor = '#c9943a';
-                      e.target.style.borderWidth = '2px';
-                      e.target.style.boxShadow = '0 0 12px rgba(201, 148, 58, 0.2)';
-                    }}
-                    onBlur={(e) => {
-                      e.target.style.borderColor = '#1e3d54';
-                      e.target.style.borderWidth = '1px';
-                      e.target.style.boxShadow = 'none';
-                    }}
-                  >
-                    {origens.length > 0 ? (
-                      origens.map((o) => (
-                        <option key={o} value={o}>
-                          {o}
-                        </option>
-                      ))
-                    ) : (
-                      <>
-                        <option>Tráfego Pago</option>
-                        <option>Orgânico</option>
-                        <option>Indicação</option>
-                        <option>Direto</option>
-                      </>
-                    )}
-                  </select>
-                </div>
-              </div>
-
-              {/* OBSERVAÇÕES */}
-              <div>
-                <label style={{ fontSize: '11px', fontWeight: 700, color: '#7a96aa', display: 'block', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                  Observações
-                </label>
-                <textarea
-                  placeholder="Notas sobre este contato..."
-                  value={formData.observacoes}
-                  onChange={(e) => setFormData({ ...formData, observacoes: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '12px 14px',
-                    borderRadius: '8px',
-                    border: '1px solid #1e3d54',
-                    background: '#132636',
-                    color: '#e8edf2',
-                    fontSize: '13px',
-                    boxSizing: 'border-box',
-                    fontFamily: 'inherit',
-                    minHeight: '80px',
-                    resize: 'none',
-                  }}
-                  onFocus={(e) => e.target.style.borderColor = '#c9943a'}
-                  onBlur={(e) => e.target.style.borderColor = '#1e3d54'}
-                />
-              </div>
+            <div style={{ padding: 22, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+              <Field label="Nome *" gridArea="1 / 1 / 2 / 3">
+                <input className="ct-input" value={formData.nome} onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
+                  placeholder="Ex: Maria Silva" style={inputStyle} />
+              </Field>
+              <Field label="Telefone">
+                <input className="ct-input" value={formData.telefone} onChange={(e) => setFormData({ ...formData, telefone: e.target.value })}
+                  placeholder="(11) 99999-0000" style={inputStyle} />
+              </Field>
+              <Field label="Canal">
+                <select className="ct-input" value={formData.canal} onChange={(e) => setFormData({ ...formData, canal: e.target.value })} style={inputStyle}>
+                  <option>WhatsApp</option><option>Instagram</option><option>Email</option>
+                </select>
+              </Field>
+              <Field label="Email *" gridArea="3 / 1 / 4 / 3">
+                <input className="ct-input" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  placeholder="nome@email.com" style={inputStyle} />
+              </Field>
+              <Field label="Agente">
+                <select className="ct-input" value={formData.agente} onChange={(e) => setFormData({ ...formData, agente: e.target.value })} style={inputStyle}>
+                  {membros.map((m) => <option key={m.id} value={m.nome}>{m.nome}</option>)}
+                </select>
+              </Field>
+              <Field label="Origem">
+                <select className="ct-input" value={formData.origem} onChange={(e) => setFormData({ ...formData, origem: e.target.value })} style={inputStyle}>
+                  {origens.map((o, i) => <option key={i}>{o}</option>)}
+                </select>
+              </Field>
+              <Field label="Observações" gridArea="5 / 1 / 6 / 3">
+                <textarea className="ct-input" value={formData.observacoes} onChange={(e) => setFormData({ ...formData, observacoes: e.target.value })}
+                  placeholder="Informações adicionais..." rows={3} style={{ ...inputStyle, resize: 'vertical' }} />
+              </Field>
             </div>
 
-            {/* BOTÕES */}
             <div style={{
-              display: 'flex',
-              gap: '12px',
-              marginTop: '24px',
-              paddingTop: '16px',
-              borderTop: '1px solid #1e3d54',
+              padding: '14px 22px', borderTop: '1px solid #1e3d54',
+              display: 'flex', justifyContent: 'flex-end', gap: 10,
+              background: 'rgba(13,31,45,0.4)',
             }}>
-              <button
-                onClick={fecharNovoContatoModal}
-                style={{
-                  flex: 1,
-                  padding: '12px 16px',
-                  borderRadius: '8px',
-                  border: '1px solid #1e3d54',
-                  background: 'transparent',
-                  color: '#7a96aa',
-                  fontSize: '13px',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = '#c9943a';
-                  e.currentTarget.style.color = '#c9943a';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = '#1e3d54';
-                  e.currentTarget.style.color = '#7a96aa';
-                }}
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={handleSalvarContato}
-                style={{
-                  flex: 1,
-                  padding: '14px 16px',
-                  borderRadius: '10px',
-                  border: 'none',
-                  background: 'linear-gradient(135deg, #c9943a, #d9a344)',
-                  color: '#0d1f2d',
-                  fontSize: '13px',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                  boxShadow: '0 4px 12px rgba(201, 148, 58, 0.3)',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow = '0 8px 24px rgba(201, 148, 58, 0.5)';
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(201, 148, 58, 0.3)';
-                  e.currentTarget.style.transform = 'translateY(0)';
-                }}
-              >
-                Salvar Contato
+              <button onClick={fecharNovoContatoModal} className="ct-ghostBtn" style={{ padding: '10px 18px', borderRadius: 10, fontSize: 12 }}>Cancelar</button>
+              <button onClick={handleSalvarContato} className="ct-goldBtn" style={{ padding: '10px 20px', borderRadius: 10, fontSize: 12, display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                <Plus size={14} strokeWidth={2.6} /> Salvar Contato
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* ============ MODAL EXPORTAR COM MÊS/ANO ============ */}
+      {/* ====================== MODAL: EXPORTAR EXCEL ====================== */}
       {exportarModalVisible && (
         <div style={{
-          position: 'fixed',
-          inset: 0,
-          background: 'rgba(0, 0, 0, 0.6)',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          zIndex: 2000,
-          backdropFilter: 'blur(6px)',
-        }}>
-          <div style={{
-            background: 'linear-gradient(135deg, #1a2332, #132636)',
-            border: '2px solid #c9943a',
-            borderRadius: '16px',
-            padding: '24px',
-            maxWidth: '500px',
-            width: '90%',
-            color: '#e8edf2',
-            fontFamily: "'Segoe UI', sans-serif",
-            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(201, 148, 58, 0.1)',
+          position: 'fixed', inset: 0, zIndex: 9999,
+          background: 'rgba(5,13,20,0.78)', backdropFilter: 'blur(10px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20,
+        }}
+        onClick={() => setExportarModalVisible(false)}>
+          <div className="ct-modal" onClick={(e) => e.stopPropagation()} style={{
+            width: 'min(560px, 100%)', borderRadius: 16,
+            background: 'linear-gradient(180deg, #132636, #0f2130)',
+            border: '1px solid #2a4a64', boxShadow: '0 24px 60px rgba(0,0,0,0.6)',
+            overflow: 'hidden',
           }}>
-            {/* TÍTULO */}
             <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px',
-              marginBottom: '24px',
+              padding: '18px 22px', borderBottom: '1px solid #1e3d54',
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              background: 'linear-gradient(90deg, rgba(46,204,113,0.10), transparent)',
             }}>
-              <BarChart3 size={24} color="#c9943a" />
-              <h2 style={{
-                fontSize: '18px',
-                fontWeight: 800,
-                margin: 0,
-                color: '#c9943a',
-              }}>
-                Exportar Contatos
-              </h2>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <div style={{
+                  width: 38, height: 38, borderRadius: 10,
+                  background: 'linear-gradient(135deg, #2ecc71, #16a085)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  color: '#0d1f2d', boxShadow: '0 8px 18px rgba(46,204,113,0.35)',
+                }}>
+                  <Download size={18} strokeWidth={2.6} />
+                </div>
+                <div>
+                  <div style={{ fontSize: 15, fontWeight: 800, color: '#e8edf2' }}>Exportar Contatos</div>
+                  <div style={{ fontSize: 11, color: '#7a96aa', marginTop: 2 }}>Selecione o período desejado</div>
+                </div>
+              </div>
+              <button onClick={() => setExportarModalVisible(false)} style={{
+                width: 30, height: 30, borderRadius: 8,
+                background: 'transparent', border: '1px solid #1e3d54', color: '#7a96aa',
+                cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}><X size={14} /></button>
             </div>
 
-            {/* SELETOR DE MÊS */}
-            <div style={{ marginBottom: '20px' }}>
-              <label style={{
-                fontSize: '11px',
-                fontWeight: 700,
-                color: '#7a96aa',
-                display: 'block',
-                marginBottom: '12px',
-                textTransform: 'uppercase',
-                letterSpacing: '0.5px',
-              }}>
-                Selecione o Mês
-              </label>
+            <div style={{ padding: 22 }}>
+              <div style={{ fontSize: 11, color: '#7a96aa', fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.6, marginBottom: 10 }}>Meses</div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, marginBottom: 20 }}>
+                {NOMES_MESES_CURTOS.map((m, i) => {
+                  const idx = i + 1;
+                  const ativo = mesesSelecionados.includes(idx);
+                  return (
+                    <button key={idx} onClick={() => toggleMesSelecionado(idx)} style={{
+                      padding: '10px 6px', borderRadius: 10, fontSize: 12, fontWeight: 700,
+                      cursor: 'pointer', transition: 'all 0.25s ease',
+                      background: ativo ? 'linear-gradient(135deg, #c9943a, #a87a28)' : 'transparent',
+                      color: ativo ? '#0d1f2d' : '#b0c4d4',
+                      border: `1px solid ${ativo ? '#c9943a' : '#1e3d54'}`,
+                      boxShadow: ativo ? '0 6px 14px rgba(201,148,58,0.35)' : 'none',
+                    }}>{m}</button>
+                  );
+                })}
+              </div>
+
+              <div style={{ fontSize: 11, color: '#7a96aa', fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.6, marginBottom: 10 }}>Ano</div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 8, marginBottom: 14 }}>
+                {[2023, 2024, 2025, 2026, 2027].map(y => {
+                  const ativo = anoSelecionado === y;
+                  return (
+                    <button key={y} onClick={() => setAnoSelecionado(y)} style={{
+                      padding: '10px 6px', borderRadius: 10, fontSize: 12, fontWeight: 700,
+                      cursor: 'pointer', transition: 'all 0.25s ease',
+                      background: ativo ? 'linear-gradient(135deg, #3498db, #2980b9)' : 'transparent',
+                      color: ativo ? '#0d1f2d' : '#b0c4d4',
+                      border: `1px solid ${ativo ? '#3498db' : '#1e3d54'}`,
+                      boxShadow: ativo ? '0 6px 14px rgba(52,152,219,0.35)' : 'none',
+                    }}>{y}</button>
+                  );
+                })}
+              </div>
+
               <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(3, 1fr)',
-                gap: '8px',
+                padding: 12, borderRadius: 10,
+                background: 'rgba(13,31,45,0.4)', border: '1px solid #1e3d54',
+                fontSize: 12, color: '#7a96aa',
               }}>
-                {['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'].map((mes, index) => (
-                  <button
-                    key={mes}
-                    onClick={() => toggleMesSelecionado(index + 1)}
-                    style={{
-                      padding: '12px 14px',
-                      borderRadius: '10px',
-                      border: mesesSelecionados.includes(index + 1) ? 'none' : '1px solid #1e3d54',
-                      background: mesesSelecionados.includes(index + 1) ? 'linear-gradient(135deg, #c9943a, #d9a344)' : 'transparent',
-                      color: mesesSelecionados.includes(index + 1) ? '#0d1f2d' : '#7a96aa',
-                      fontSize: '11px',
-                      fontWeight: mesesSelecionados.includes(index + 1) ? 700 : 600,
-                      cursor: 'pointer',
-                      transition: 'all 0.3s ease',
-                      boxShadow: mesesSelecionados.includes(index + 1) ? '0 4px 12px rgba(201, 148, 58, 0.2)' : 'none',
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!mesesSelecionados.includes(index + 1)) {
-                        e.currentTarget.style.borderColor = '#c9943a';
-                        e.currentTarget.style.color = '#c9943a';
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!mesesSelecionados.includes(index + 1)) {
-                        e.currentTarget.style.borderColor = '#1e3d54';
-                        e.currentTarget.style.color = '#7a96aa';
-                      }
-                    }}
-                  >
-                    {mes.substring(0, 3)}
-                  </button>
-                ))}
+                <strong style={{ color: '#e8edf2' }}>Resumo:</strong>{' '}
+                {mesesSelecionados.length === 0
+                  ? 'Nenhum mês selecionado'
+                  : `${mesesSelecionados.length} ${mesesSelecionados.length === 1 ? 'mês' : 'meses'} de ${anoSelecionado}`}
               </div>
             </div>
 
-            {/* SELETOR DE ANO */}
-            <div style={{ marginBottom: '24px' }}>
-              <label style={{
-                fontSize: '11px',
-                fontWeight: 700,
-                color: '#7a96aa',
-                display: 'block',
-                marginBottom: '12px',
-                textTransform: 'uppercase',
-                letterSpacing: '0.5px',
-              }}>
-                Selecione o Ano
-              </label>
-              <div style={{
-                display: 'flex',
-                gap: '8px',
-                justifyContent: 'center',
-              }}>
-                {[2023, 2024, 2025, 2026, 2027].map((ano) => (
-                  <button
-                    key={ano}
-                    onClick={() => setAnoSelecionado(ano)}
-                    style={{
-                      padding: '12px 18px',
-                      borderRadius: '10px',
-                      border: anoSelecionado === ano ? 'none' : '1px solid #1e3d54',
-                      background: anoSelecionado === ano ? 'linear-gradient(135deg, #c9943a, #d9a344)' : 'transparent',
-                      color: anoSelecionado === ano ? '#0d1f2d' : '#7a96aa',
-                      fontSize: '12px',
-                      fontWeight: anoSelecionado === ano ? 700 : 600,
-                      cursor: 'pointer',
-                      transition: 'all 0.3s ease',
-                      boxShadow: anoSelecionado === ano ? '0 4px 12px rgba(201, 148, 58, 0.2)' : 'none',
-                    }}
-                    onMouseEnter={(e) => {
-                      if (anoSelecionado !== ano) {
-                        e.currentTarget.style.borderColor = '#c9943a';
-                        e.currentTarget.style.color = '#c9943a';
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (anoSelecionado !== ano) {
-                        e.currentTarget.style.borderColor = '#1e3d54';
-                        e.currentTarget.style.color = '#7a96aa';
-                      }
-                    }}
-                  >
-                    {ano}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* RESUMO */}
             <div style={{
-              background: 'linear-gradient(135deg, #0d1f2d, #132636)',
-              border: '1px solid #1e3d54',
-              borderRadius: '12px',
-              padding: '14px',
-              marginBottom: '20px',
-              fontSize: '12px',
-              color: '#9ca3af',
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
+              padding: '14px 22px', borderTop: '1px solid #1e3d54',
+              display: 'flex', justifyContent: 'flex-end', gap: 10,
+              background: 'rgba(13,31,45,0.4)',
             }}>
-              <div style={{ marginBottom: '8px' }}>
-                <span style={{ fontWeight: 600, color: '#c9943a' }}>Período selecionado:</span> {mesesSelecionados.length === 0 ? 'Nenhum mês selecionado' : mesesSelecionados.map(m => ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'][m - 1]).join(', ')} de {anoSelecionado}
-              </div>
-              <div>
-                <span style={{ fontWeight: 600, color: '#c9943a' }}>Total de contatos:</span> {mesesSelecionados.length === 0 ? 0 : contatosList.filter(c => {
-                  const [data] = c.ultimaInteracao.split(' ');
-                  const [ano, mes] = data.split('-');
-                  return mesesSelecionados.includes(parseInt(mes)) && parseInt(ano) === anoSelecionado;
-                }).length}
-              </div>
-            </div>
-
-            {/* BOTÕES */}
-            <div style={{
-              display: 'flex',
-              gap: '12px',
-              marginTop: '20px',
-              paddingTop: '16px',
-              borderTop: '1px solid #1e3d54',
-            }}>
-              <button
-                onClick={() => setExportarModalVisible(false)}
-                style={{
-                  flex: 1,
-                  padding: '14px 18px',
-                  borderRadius: '10px',
-                  border: '1px solid #1e3d54',
-                  background: 'transparent',
-                  color: '#7a96aa',
-                  fontSize: '13px',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = '#c9943a';
-                  e.currentTarget.style.color = '#c9943a';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = '#1e3d54';
-                  e.currentTarget.style.color = '#7a96aa';
-                }}
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={exportarParaExcel}
-                style={{
-                  flex: 1,
-                  padding: '14px 18px',
-                  borderRadius: '10px',
-                  border: 'none',
-                  background: 'linear-gradient(135deg, #c9943a, #d9a344)',
-                  color: '#0d1f2d',
-                  fontSize: '13px',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                  boxShadow: '0 4px 12px rgba(201, 148, 58, 0.3)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '8px',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow = '0 8px 24px rgba(201, 148, 58, 0.5)';
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(201, 148, 58, 0.3)';
-                  e.currentTarget.style.transform = 'translateY(0)';
-                }}
-              >
-                <Download size={16} /> Exportar Excel
+              <button onClick={() => setExportarModalVisible(false)} className="ct-ghostBtn" style={{ padding: '10px 18px', borderRadius: 10, fontSize: 12 }}>Cancelar</button>
+              <button onClick={exportarParaExcel} className="ct-goldBtn" style={{
+                padding: '10px 20px', borderRadius: 10, fontSize: 12,
+                background: 'linear-gradient(135deg, #2ecc71, #16a085)',
+                display: 'inline-flex', alignItems: 'center', gap: 6,
+                boxShadow: '0 6px 18px rgba(46,204,113,0.35)',
+              }}>
+                <Download size={14} strokeWidth={2.6} /> Exportar CSV
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* ============ MODAL ABRIR TICKET ============ */}
+      {/* ====================== MODAL: ABRIR TICKET ====================== */}
       {abrirTicketModalVisible && contatoSelecionado && (
         <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'rgba(0, 0, 0, 0.5)',
-          backdropFilter: 'blur(4px)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 1000,
-        }}>
-          <div style={{
-            background: 'linear-gradient(135deg, #1a2332, #132636)',
-            border: '1px solid #1e3d54',
-            borderRadius: '12px',
-            padding: '28px',
-            minWidth: '420px',
-            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.4)',
+          position: 'fixed', inset: 0, zIndex: 9999,
+          background: 'rgba(5,13,20,0.78)', backdropFilter: 'blur(10px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20,
+        }}
+        onClick={() => setAbrirTicketModalVisible(false)}>
+          <div className="ct-modal" onClick={(e) => e.stopPropagation()} style={{
+            width: 'min(520px, 100%)', borderRadius: 16,
+            background: 'linear-gradient(180deg, #132636, #0f2130)',
+            border: '1px solid #2a4a64', boxShadow: '0 24px 60px rgba(0,0,0,0.6)',
+            overflow: 'hidden',
           }}>
-            <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#e8edf2', margin: '0 0 24px 0' }}>
-              Abrir Ticket - {contatoSelecionado.nome}
-            </h2>
-
-            <div style={{ marginBottom: '16px' }}>
-              <label style={{ display: 'block', fontSize: '12px', color: '#c9943a', fontWeight: 600, marginBottom: '8px' }}>
-                Fila
-              </label>
-              <select
-                value={filaSelecionada}
-                onChange={(e) => setFilaSelecionada(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '10px 12px',
-                  background: '#0d1f2d',
-                  border: '1px solid #1e3d54',
-                  borderRadius: '8px',
-                  color: '#e8edf2',
-                  fontSize: '13px',
-                  cursor: 'pointer',
+            <div style={{
+              padding: '18px 22px', borderBottom: '1px solid #1e3d54',
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              background: 'linear-gradient(90deg, rgba(52,152,219,0.10), transparent)',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <div style={{
+                  width: 38, height: 38, borderRadius: 10,
+                  background: 'linear-gradient(135deg, #3498db, #2980b9)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  color: '#0d1f2d', boxShadow: '0 8px 18px rgba(52,152,219,0.35)',
                 }}>
-                <option value="">Selecione uma fila...</option>
-                {mockFilas.map((fila) => (
-                  <option key={fila.id} value={fila.id}>
-                    {fila.nome}
-                  </option>
-                ))}
-              </select>
+                  <Eye size={18} strokeWidth={2.6} />
+                </div>
+                <div>
+                  <div style={{ fontSize: 15, fontWeight: 800, color: '#e8edf2' }}>Abrir Ticket</div>
+                  <div style={{ fontSize: 11, color: '#7a96aa', marginTop: 2 }}>{contatoSelecionado.nome}</div>
+                </div>
+              </div>
+              <button onClick={() => setAbrirTicketModalVisible(false)} style={{
+                width: 30, height: 30, borderRadius: 8,
+                background: 'transparent', border: '1px solid #1e3d54', color: '#7a96aa',
+                cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}><X size={14} /></button>
             </div>
 
-            <div style={{ marginBottom: '24px' }}>
-              <label style={{ display: 'block', fontSize: '12px', color: '#c9943a', fontWeight: 600, marginBottom: '8px' }}>
-                Conexão Ativa
-              </label>
-              <select
-                value={conexaoSelecionada}
-                onChange={(e) => setConexaoSelecionada(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '10px 12px',
-                  background: '#0d1f2d',
-                  border: '1px solid #1e3d54',
-                  borderRadius: '8px',
-                  color: '#e8edf2',
-                  fontSize: '13px',
-                  cursor: 'pointer',
-                }}>
-                <option value="">Selecione uma conexão...</option>
-                {mockConexoes.filter((c) => c.status === 'conectado').map((conexao) => (
-                  <option key={conexao.id} value={conexao.id}>
-                    {conexao.nome}
-                  </option>
-                ))}
-              </select>
+            <div style={{ padding: 22 }}>
+              <Field label="Fila">
+                <select className="ct-input" value={filaSelecionada} onChange={(e) => setFilaSelecionada(e.target.value)} style={inputStyle}>
+                  <option value="">Selecione uma fila</option>
+                  {mockFilas.map(f => <option key={f.id} value={f.id}>{f.nome}</option>)}
+                </select>
+              </Field>
+              <div style={{ height: 10 }} />
+              <Field label="Conexão Ativa">
+                <select className="ct-input" value={conexaoSelecionada} onChange={(e) => setConexaoSelecionada(e.target.value)} style={inputStyle}>
+                  <option value="">Selecione uma conexão</option>
+                  {mockConexoes.filter((c: any) => c.status === 'conectado').map((c: any) => (
+                    <option key={c.id} value={c.id}>{c.nome}</option>
+                  ))}
+                </select>
+              </Field>
             </div>
 
-            <div style={{ display: 'flex', gap: '12px' }}>
-              <button
-                onClick={() => setAbrirTicketModalVisible(false)}
-                style={{
-                  flex: 1,
-                  padding: '12px 16px',
-                  borderRadius: '8px',
-                  border: '1px solid #1e3d54',
-                  background: 'transparent',
-                  color: '#7a96aa',
-                  fontSize: '13px',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                }}>
-                Cancelar
-              </button>
+            <div style={{
+              padding: '14px 22px', borderTop: '1px solid #1e3d54',
+              display: 'flex', justifyContent: 'flex-end', gap: 10,
+              background: 'rgba(13,31,45,0.4)',
+            }}>
+              <button onClick={() => setAbrirTicketModalVisible(false)} className="ct-ghostBtn" style={{ padding: '10px 18px', borderRadius: 10, fontSize: 12 }}>Cancelar</button>
               <button
                 onClick={() => {
-                  if (filaSelecionada && conexaoSelecionada) {
-                    // Aqui seria criada a conversa e atribuída ao usuário logado
-                    // Por enquanto, apenas fecha o modal
-                    alert(`Ticket aberto para ${contatoSelecionado.nome} na fila selecionada!`);
-                    setAbrirTicketModalVisible(false);
-                  }
+                  if (!filaSelecionada) return alert('Selecione uma fila');
+                  if (!conexaoSelecionada) return alert('Selecione uma conexão ativa');
+                  alert(`Atendimento iniciado para ${contatoSelecionado.nome}`);
+                  setAbrirTicketModalVisible(false);
                 }}
-                disabled={!filaSelecionada || !conexaoSelecionada}
+                className="ct-goldBtn"
                 style={{
-                  flex: 1,
-                  padding: '12px 16px',
-                  borderRadius: '8px',
-                  border: 'none',
-                  background: filaSelecionada && conexaoSelecionada ? 'linear-gradient(135deg, #c9943a, #d9a344)' : '#333',
-                  color: filaSelecionada && conexaoSelecionada ? '#0d1f2d' : '#666',
-                  fontSize: '13px',
-                  fontWeight: 600,
-                  cursor: filaSelecionada && conexaoSelecionada ? 'pointer' : 'not-allowed',
-                  boxShadow: filaSelecionada && conexaoSelecionada ? '0 4px 12px rgba(201, 148, 58, 0.3)' : 'none',
+                  padding: '10px 20px', borderRadius: 10, fontSize: 12,
+                  background: 'linear-gradient(135deg, #3498db, #2980b9)',
+                  display: 'inline-flex', alignItems: 'center', gap: 6,
+                  boxShadow: '0 6px 18px rgba(52,152,219,0.35)',
                 }}>
-                Iniciar Atendimento
+                <Eye size={14} strokeWidth={2.6} /> Iniciar Atendimento
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* ============ MODAL EDITAR CONTATO ============ */}
+      {/* ====================== MODAL: EDITAR CONTATO ====================== */}
       {editarContatoModalVisible && contatoSelecionado && (
         <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'rgba(0, 0, 0, 0.5)',
-          backdropFilter: 'blur(4px)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 1000,
-        }}>
-          <div style={{
-            background: 'linear-gradient(135deg, #1a2332, #132636)',
-            border: '1px solid #1e3d54',
-            borderRadius: '12px',
-            padding: '28px',
-            minWidth: '420px',
-            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.4)',
+          position: 'fixed', inset: 0, zIndex: 9999,
+          background: 'rgba(5,13,20,0.78)', backdropFilter: 'blur(10px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20,
+        }}
+        onClick={() => setEditarContatoModalVisible(false)}>
+          <div className="ct-modal" onClick={(e) => e.stopPropagation()} style={{
+            width: 'min(560px, 100%)', borderRadius: 16,
+            background: 'linear-gradient(180deg, #132636, #0f2130)',
+            border: '1px solid #2a4a64', boxShadow: '0 24px 60px rgba(0,0,0,0.6)',
+            overflow: 'hidden',
           }}>
-            <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#e8edf2', margin: '0 0 24px 0' }}>
-              Editar Contato
-            </h2>
-
-            <div style={{ marginBottom: '16px' }}>
-              <label style={{ display: 'block', fontSize: '12px', color: '#c9943a', fontWeight: 600, marginBottom: '6px' }}>
-                Nome
-              </label>
-              <input
-                type="text"
-                value={formEditacao.nome}
-                onChange={(e) => setFormEditacao({ ...formEditacao, nome: e.target.value })}
-                style={{
-                  width: '100%',
-                  padding: '10px 12px',
-                  background: '#0d1f2d',
-                  border: '1px solid #1e3d54',
-                  borderRadius: '8px',
-                  color: '#e8edf2',
-                  fontSize: '13px',
-                  boxSizing: 'border-box',
-                }}
-              />
-            </div>
-
-            <div style={{ marginBottom: '16px' }}>
-              <label style={{ display: 'block', fontSize: '12px', color: '#c9943a', fontWeight: 600, marginBottom: '6px' }}>
-                WhatsApp
-              </label>
-              <input
-                type="text"
-                value={formEditacao.whatsapp}
-                onChange={(e) => setFormEditacao({ ...formEditacao, whatsapp: e.target.value })}
-                style={{
-                  width: '100%',
-                  padding: '10px 12px',
-                  background: '#0d1f2d',
-                  border: '1px solid #1e3d54',
-                  borderRadius: '8px',
-                  color: '#e8edf2',
-                  fontSize: '13px',
-                  boxSizing: 'border-box',
-                }}
-              />
-            </div>
-
-            <div style={{ marginBottom: '16px' }}>
-              <label style={{ display: 'block', fontSize: '12px', color: '#c9943a', fontWeight: 600, marginBottom: '6px' }}>
-                Email
-              </label>
-              <input
-                type="email"
-                value={formEditacao.email}
-                onChange={(e) => setFormEditacao({ ...formEditacao, email: e.target.value })}
-                style={{
-                  width: '100%',
-                  padding: '10px 12px',
-                  background: '#0d1f2d',
-                  border: '1px solid #1e3d54',
-                  borderRadius: '8px',
-                  color: '#e8edf2',
-                  fontSize: '13px',
-                  boxSizing: 'border-box',
-                }}
-              />
-            </div>
-
-            <div style={{ marginBottom: '16px' }}>
-              <label style={{ display: 'block', fontSize: '12px', color: '#c9943a', fontWeight: 600, marginBottom: '8px' }}>
-                Conexões
-              </label>
-              <select
-                value={formEditacao.conexao}
-                onChange={(e) => setFormEditacao({ ...formEditacao, conexao: e.target.value })}
-                style={{
-                  width: '100%',
-                  padding: '10px 12px',
-                  background: '#0d1f2d',
-                  border: '1px solid #1e3d54',
-                  borderRadius: '8px',
-                  color: '#e8edf2',
-                  fontSize: '13px',
-                  cursor: 'pointer',
+            <div style={{
+              padding: '18px 22px', borderBottom: '1px solid #1e3d54',
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              background: 'linear-gradient(90deg, rgba(201,148,58,0.10), transparent)',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <div style={{
+                  width: 38, height: 38, borderRadius: 10,
+                  background: 'linear-gradient(135deg, #c9943a, #a87a28)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  color: '#0d1f2d', boxShadow: '0 8px 18px rgba(201,148,58,0.35)',
                 }}>
-                <option value="">Selecione uma conexão...</option>
-                {mockConexoes.map((conexao) => (
-                  <option key={conexao.id} value={conexao.id}>
-                    {conexao.nome}
-                  </option>
-                ))}
-              </select>
+                  <Pencil size={18} strokeWidth={2.6} />
+                </div>
+                <div>
+                  <div style={{ fontSize: 15, fontWeight: 800, color: '#e8edf2' }}>Editar Contato</div>
+                  <div style={{ fontSize: 11, color: '#7a96aa', marginTop: 2 }}>{contatoSelecionado.nome}</div>
+                </div>
+              </div>
+              <button onClick={() => setEditarContatoModalVisible(false)} style={{
+                width: 30, height: 30, borderRadius: 8,
+                background: 'transparent', border: '1px solid #1e3d54', color: '#7a96aa',
+                cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}><X size={14} /></button>
             </div>
 
-            <div style={{ marginBottom: '24px' }}>
-              <label style={{ display: 'block', fontSize: '12px', color: '#c9943a', fontWeight: 600, marginBottom: '8px' }}>
-                Agente Responsável
-              </label>
-              <select
-                value={formEditacao.agenteResponsavel}
-                onChange={(e) => setFormEditacao({ ...formEditacao, agenteResponsavel: e.target.value })}
-                style={{
-                  width: '100%',
-                  padding: '10px 12px',
-                  background: '#0d1f2d',
-                  border: '1px solid #1e3d54',
-                  borderRadius: '8px',
-                  color: '#e8edf2',
-                  fontSize: '13px',
-                  cursor: 'pointer',
-                }}>
-                <option value="">Selecione um agente...</option>
-                {membros && membros.map((membro: any) => (
-                  <option key={membro.id} value={membro.id}>
-                    {membro.nome}
-                  </option>
-                ))}
-              </select>
+            <div style={{ padding: 22, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+              <Field label="Nome *" gridArea="1 / 1 / 2 / 3">
+                <input className="ct-input" value={formEditacao.nome} onChange={(e) => setFormEditacao({ ...formEditacao, nome: e.target.value })}
+                  placeholder="Nome completo" style={inputStyle} />
+              </Field>
+              <Field label="WhatsApp">
+                <input className="ct-input" value={formEditacao.whatsapp} onChange={(e) => setFormEditacao({ ...formEditacao, whatsapp: e.target.value })}
+                  placeholder="(11) 99999-0000" style={inputStyle} />
+              </Field>
+              <Field label="Email">
+                <input className="ct-input" value={formEditacao.email} onChange={(e) => setFormEditacao({ ...formEditacao, email: e.target.value })}
+                  placeholder="email@exemplo.com" style={inputStyle} />
+              </Field>
+              <Field label="Tipo / Origem">
+                <select className="ct-input" value={formEditacao.tipo} onChange={(e) => setFormEditacao({ ...formEditacao, tipo: e.target.value })} style={inputStyle}>
+                  <option value="">—</option>
+                  <option>Trabalho Pago</option>
+                  <option>Orgânico</option>
+                  <option>Importado</option>
+                </select>
+              </Field>
+              <Field label="Conexão">
+                <select className="ct-input" value={formEditacao.conexao} onChange={(e) => setFormEditacao({ ...formEditacao, conexao: e.target.value })} style={inputStyle}>
+                  <option value="">Selecione</option>
+                  {mockConexoes.map((c: any) => <option key={c.id} value={c.id}>{c.nome}</option>)}
+                </select>
+              </Field>
+              <Field label="Agente Responsável" gridArea="4 / 1 / 5 / 3">
+                <select className="ct-input" value={formEditacao.agenteResponsavel} onChange={(e) => setFormEditacao({ ...formEditacao, agenteResponsavel: e.target.value })} style={inputStyle}>
+                  <option value="">Selecione</option>
+                  {membros.map((m) => <option key={m.id} value={m.nome}>{m.nome}</option>)}
+                </select>
+              </Field>
             </div>
 
-            <div style={{ display: 'flex', gap: '12px' }}>
-              <button
-                onClick={() => setEditarContatoModalVisible(false)}
-                style={{
-                  flex: 1,
-                  padding: '12px 16px',
-                  borderRadius: '8px',
-                  border: '1px solid #1e3d54',
-                  background: 'transparent',
-                  color: '#7a96aa',
-                  fontSize: '13px',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                }}>
-                Cancelar
-              </button>
-              <button
-                onClick={() => {
-                  if (!formEditacao.nome.trim()) {
-                    alert('Nome é obrigatório');
-                    return;
-                  }
-                  updateContatoGlobal(contatoSelecionado.id, {
-                    nome: formEditacao.nome,
-                    whatsapp: formEditacao.whatsapp,
-                    email: formEditacao.email,
-                  });
-                  setEditarContatoModalVisible(false);
-                  // Atualizar lista local também
-                  setContatosList(contatosList.map(c =>
-                    c.id === contatoSelecionado.id
-                      ? { ...c, ...formEditacao }
-                      : c
-                  ));
-                }}
-                style={{
-                  flex: 1,
-                  padding: '12px 16px',
-                  borderRadius: '8px',
-                  border: 'none',
-                  background: 'linear-gradient(135deg, #c9943a, #d9a344)',
-                  color: '#0d1f2d',
-                  fontSize: '13px',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  boxShadow: '0 4px 12px rgba(201, 148, 58, 0.3)',
-                }}>
-                Salvar
+            <div style={{
+              padding: '14px 22px', borderTop: '1px solid #1e3d54',
+              display: 'flex', justifyContent: 'flex-end', gap: 10,
+              background: 'rgba(13,31,45,0.4)',
+            }}>
+              <button onClick={() => setEditarContatoModalVisible(false)} className="ct-ghostBtn" style={{ padding: '10px 18px', borderRadius: 10, fontSize: 12 }}>Cancelar</button>
+              <button onClick={salvarEdicao} className="ct-goldBtn" style={{ padding: '10px 20px', borderRadius: 10, fontSize: 12, display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                <Pencil size={14} strokeWidth={2.6} /> Salvar Alterações
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* ============ MODAL EXCLUIR CONTATO ============ */}
+      {/* ====================== MODAL: EXCLUIR CONTATO ====================== */}
       {excluirContatoModalVisible && contatoSelecionado && (
         <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'rgba(0, 0, 0, 0.5)',
-          backdropFilter: 'blur(4px)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 1000,
-        }}>
-          <div style={{
-            background: 'linear-gradient(135deg, #1a2332, #132636)',
-            border: '1px solid #1e3d54',
-            borderRadius: '12px',
-            padding: '28px',
-            minWidth: '380px',
-            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.4)',
+          position: 'fixed', inset: 0, zIndex: 9999,
+          background: 'rgba(5,13,20,0.78)', backdropFilter: 'blur(10px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20,
+        }}
+        onClick={() => setExcluirContatoModalVisible(false)}>
+          <div className="ct-modal" onClick={(e) => e.stopPropagation()} style={{
+            width: 'min(460px, 100%)', borderRadius: 16,
+            background: 'linear-gradient(180deg, #132636, #0f2130)',
+            border: '1px solid rgba(231,76,60,0.35)', boxShadow: '0 24px 60px rgba(231,76,60,0.18)',
+            overflow: 'hidden',
           }}>
-            <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#e8edf2', margin: '0 0 12px 0' }}>
-              Excluir Contato
-            </h2>
-            <p style={{ fontSize: '14px', color: '#7a96aa', margin: '0 0 24px 0' }}>
-              Tem certeza que deseja excluir o contato <strong style={{ color: '#c9943a' }}>{contatoSelecionado.nome}</strong>? Esta ação é irreversível.
-            </p>
+            <div style={{
+              padding: '18px 22px', borderBottom: '1px solid #1e3d54',
+              display: 'flex', alignItems: 'center', gap: 12,
+              background: 'linear-gradient(90deg, rgba(231,76,60,0.12), transparent)',
+            }}>
+              <div style={{
+                width: 38, height: 38, borderRadius: 10,
+                background: 'linear-gradient(135deg, #e74c3c, #c0392b)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: '#fff', boxShadow: '0 8px 18px rgba(231,76,60,0.38)',
+              }}>
+                <Trash2 size={18} strokeWidth={2.6} />
+              </div>
+              <div>
+                <div style={{ fontSize: 15, fontWeight: 800, color: '#e8edf2' }}>Excluir Contato</div>
+                <div style={{ fontSize: 11, color: '#7a96aa', marginTop: 2 }}>Esta ação não pode ser desfeita</div>
+              </div>
+            </div>
 
-            <div style={{ display: 'flex', gap: '12px' }}>
-              <button
-                onClick={() => setExcluirContatoModalVisible(false)}
-                style={{
-                  flex: 1,
-                  padding: '12px 16px',
-                  borderRadius: '8px',
-                  border: '1px solid #1e3d54',
-                  background: 'transparent',
-                  color: '#7a96aa',
-                  fontSize: '13px',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                }}>
-                Cancelar
-              </button>
-              <button
-                onClick={() => {
-                  removeContatoGlobal(contatoSelecionado.id);
-                  setContatosList(contatosList.filter(c => c.id !== contatoSelecionado.id));
-                  setExcluirContatoModalVisible(false);
-                }}
-                style={{
-                  flex: 1,
-                  padding: '12px 16px',
-                  borderRadius: '8px',
-                  border: 'none',
-                  background: '#ef5350',
-                  color: '#fff',
-                  fontSize: '13px',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  boxShadow: '0 4px 12px rgba(239, 83, 80, 0.3)',
-                }}>
-                Excluir
+            <div style={{ padding: 22 }}>
+              <div style={{ fontSize: 13, color: '#b0c4d4', lineHeight: 1.6 }}>
+                Tem certeza que deseja excluir o contato{' '}
+                <strong style={{ color: '#e8edf2' }}>{contatoSelecionado.nome}</strong>?
+                Todos os dados relacionados serão removidos da base.
+              </div>
+            </div>
+
+            <div style={{
+              padding: '14px 22px', borderTop: '1px solid #1e3d54',
+              display: 'flex', justifyContent: 'flex-end', gap: 10,
+              background: 'rgba(13,31,45,0.4)',
+            }}>
+              <button onClick={() => setExcluirContatoModalVisible(false)} className="ct-ghostBtn" style={{ padding: '10px 18px', borderRadius: 10, fontSize: 12 }}>Cancelar</button>
+              <button onClick={confirmarExclusao} style={{
+                padding: '10px 20px', borderRadius: 10, fontSize: 12, fontWeight: 800,
+                background: 'linear-gradient(135deg, #e74c3c, #c0392b)',
+                color: '#fff', border: 'none', cursor: 'pointer',
+                boxShadow: '0 6px 18px rgba(231,76,60,0.38)',
+                display: 'inline-flex', alignItems: 'center', gap: 6,
+                transition: 'all 0.25s ease',
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; }}>
+                <Trash2 size={14} strokeWidth={2.6} /> Excluir
               </button>
             </div>
           </div>
@@ -1970,3 +1186,27 @@ export function Contatos() {
     </div>
   );
 }
+
+// ============ SUB-COMPONENTES ============
+function Field({ label, children, gridArea }: { label: string; children: React.ReactNode; gridArea?: string }) {
+  return (
+    <div style={{ gridArea, display: 'flex', flexDirection: 'column', gap: 6 }}>
+      <label style={{ fontSize: 11, color: '#7a96aa', fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5 }}>
+        {label}
+      </label>
+      {children}
+    </div>
+  );
+}
+
+const inputStyle: React.CSSProperties = {
+  width: '100%',
+  padding: '10px 12px',
+  borderRadius: 10,
+  background: '#0f2130',
+  border: '1px solid #1e3d54',
+  color: '#e8edf2',
+  fontSize: 13,
+  fontFamily: "'Segoe UI', system-ui, sans-serif",
+  transition: 'all 0.25s ease',
+};

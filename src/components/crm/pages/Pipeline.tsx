@@ -6,7 +6,7 @@
 'use client';
 
 import { useState } from 'react';
-import { TrendingUp, CheckCircle, Percent, DollarSign } from 'lucide-react';
+import { TrendingUp, CheckCircle, Percent, DollarSign, Plus, Sparkles } from 'lucide-react';
 import { DragDropContext, DropResult } from '@hello-pangea/dnd';
 import { usePipelineStore } from '@/store/pipelineStore';
 import PipelineStage from './Pipeline/PipelineStage';
@@ -47,12 +47,15 @@ export function Pipeline() {
 
   return (
     <div className={styles.container}>
-      {/* HEADER */}
+      {/* HERO */}
       <div className={styles.header}>
         <div className={styles.headerContent}>
+          <span className={styles.eyebrow}>
+            <Sparkles size={11} /> Funil de Vendas · Drag &amp; Drop · Tempo Real
+          </span>
           <h1 className={styles.headerTitle}>Pipeline de Oportunidades</h1>
           <p className={styles.headerInfo}>
-            Clínica Dra. Andressa Barbarotti · {totalOportunidades} oportunidades · R$ {(totalValor / 1000).toFixed(1)}k no funil
+            Clínica Dra. Andressa Barbarotti · <strong>{totalOportunidades}</strong> oportunidades · <strong>R$ {(totalValor / 1000).toFixed(1)}k</strong> no funil
           </p>
         </div>
         <div className={styles.headerActions}>
@@ -61,7 +64,7 @@ export function Pipeline() {
             className={styles.btnNovaOportunidade}
             onClick={() => setCreateModalOpen(true)}
           >
-            + Nova Oportunidade
+            <Plus size={14} strokeWidth={2.6} /> Nova Oportunidade
           </button>
         </div>
       </div>

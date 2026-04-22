@@ -802,14 +802,18 @@ export function Conversas() {
         flexDirection: 'column',
         overflow: 'hidden',
       }}>
-        {/* TÍTULO */}
-        <div style={{ padding: '16px', borderBottom: '1px solid #1e3d54', flexShrink: 0 }}>
-          <h2 style={{ margin: '0 0 16px 0', fontSize: '18px', fontWeight: 800, color: '#e8edf2' }}>
-            Conversas
-          </h2>
+        {/* HERO PREMIUM */}
+        <div className={styles.sidebarHero}>
+          <span className={styles.eyebrow}>
+            <span className={styles.eyebrowDot} /> Inbox Unificado · Tempo Real
+          </span>
+          <h2 className={styles.heroTitle}>Conversas</h2>
+          <p className={styles.heroSubtitle}>
+            <strong>{totalAtendendo + totalAguardando}</strong> ativas · <strong>{totalFechadas}</strong> fechadas
+          </p>
 
-          {/* FILTROS - ATENDENDO, AGUARDANDO E FECHADAS */}
-          <div style={{ display: 'flex', gap: '8px', marginBottom: '14px', flexWrap: 'wrap' }}>
+          {/* FILTROS - ATENDENDO, AGUARDANDO, GRUPOS, FECHADAS */}
+          <div className={styles.filterGroup}>
             {[
               { id: 'atendendo', label: 'Atendendo', count: totalAtendendo },
               { id: 'aguardando', label: 'Aguardando', count: totalAguardando },
@@ -821,65 +825,24 @@ export function Conversas() {
                 onClick={() => handleFiltroChange(btn.id as any)}
                 aria-label={`${btn.label} conversas - ${btn.count} pendentes`}
                 aria-current={filtroStatus === btn.id ? 'page' : undefined}
-                style={{
-                  flex: 1,
-                  minWidth: '95px',
-                  padding: '8px 8px',
-                  borderRadius: '8px',
-                  border: filtroStatus === btn.id ? '2px solid #c9943a' : '1px solid #1e3d54',
-                  background: filtroStatus === btn.id ? '#c9943a' : 'rgba(201, 148, 58, 0.08)',
-                  color: filtroStatus === btn.id ? '#0d1f2d' : '#c9943a',
-                  fontSize: '12px',
-                  fontWeight: filtroStatus === btn.id ? 700 : 600,
-                  cursor: 'pointer',
-                  transition: 'all 0.25s ease',
-                  textAlign: 'center',
-                  whiteSpace: 'nowrap',
-                  overflow: 'visible',
-                }}
-                onMouseEnter={(e) => {
-                  if (filtroStatus !== btn.id) {
-                    (e.currentTarget as HTMLElement).style.background = 'rgba(201, 148, 58, 0.15)';
-                    (e.currentTarget as HTMLElement).style.borderColor = '#c9943a';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (filtroStatus !== btn.id) {
-                    (e.currentTarget as HTMLElement).style.background = 'rgba(201, 148, 58, 0.08)';
-                    (e.currentTarget as HTMLElement).style.borderColor = '#1e3d54';
-                  }
-                }}
+                className={`${styles.filterBtn} ${filtroStatus === btn.id ? styles.filterBtnActive : ''}`}
               >
                 {btn.label} ({btn.count})
               </button>
             ))}
           </div>
 
-          {/* SEARCH */}
-          <input
-            type="text"
-            placeholder="Buscar contato ou ticket..."
-            aria-label="Buscar conversas por contato ou número de ticket"
-            value={busca}
-            onChange={(e) => setBusca(e.target.value)}
-            style={{
-              width: '100%',
-              padding: '12px 14px',
-              borderRadius: '8px',
-              border: '1px solid #1e3d54',
-              background: '#132636',
-              color: '#e8edf2',
-              fontSize: '13px',
-              transition: 'all 0.15s',
-              boxSizing: 'border-box',
-            }}
-            onFocus={(e) => {
-              (e.currentTarget as HTMLElement).style.borderColor = '#c9943a';
-            }}
-            onBlur={(e) => {
-              (e.currentTarget as HTMLElement).style.borderColor = '#1e3d54';
-            }}
-          />
+          {/* SEARCH PREMIUM */}
+          <div className={styles.searchWrap}>
+            <input
+              type="text"
+              placeholder="Buscar contato ou ticket..."
+              aria-label="Buscar conversas por contato ou número de ticket"
+              value={busca}
+              onChange={(e) => setBusca(e.target.value)}
+              className={styles.searchInput}
+            />
+          </div>
         </div>
 
         {/* FILA DA IA - APENAS EM AGUARDANDO */}
