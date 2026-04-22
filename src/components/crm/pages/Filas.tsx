@@ -280,10 +280,11 @@ export function Filas() {
                 key={fila.id}
                 className={styles.estrategiaCard}
                 style={{
-                  borderColor: fila.cor,
                   cursor: 'pointer',
                   transition: 'all 0.2s ease',
                   backgroundColor: '#132636',
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)',
+                  border: 'none',
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.boxShadow = `0 8px 24px ${fila.cor}40`;
@@ -344,33 +345,55 @@ export function Filas() {
                   </div>
                 </div>
 
-                {/* TMR + SLA Compacto */}
-                <div style={{ display: 'flex', gap: '12px', marginBottom: '6px', fontSize: '12px' }}>
-                  <div>
-                    <span style={{ color: fila.cor, fontWeight: 700 }}>
+                {/* TMR + SLA Cards */}
+                <div style={{ display: 'flex', gap: '10px', marginBottom: '12px' }}>
+                  {/* TMR Card */}
+                  <div style={{
+                    flex: 1,
+                    padding: '10px 12px',
+                    border: `1px solid ${fila.cor}50`,
+                    borderRadius: '6px',
+                    backgroundColor: 'transparent',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'flex-start',
+                    justifyContent: 'center',
+                  }}>
+                    <span style={{ color: '#7a96aa', fontSize: '9px', textTransform: 'uppercase', marginBottom: '4px' }}>
+                      Tempo Resposta
+                    </span>
+                    <span style={{ color: fila.cor, fontWeight: 700, fontSize: '16px' }}>
                       {fila.tmr} min
                     </span>
-                    <span style={{ color: '#7a96aa', fontSize: '8px', marginLeft: '4px' }}>
-                      (ESPERA)
-                    </span>
                   </div>
-                  <div>
-                    <span
-                      style={{
-                        color: fila.slaPercentual >= 80 ? '#2ecc71' : fila.slaPercentual >= 60 ? '#f39c12' : '#ef4444',
-                        fontWeight: 700,
-                      }}
-                    >
-                      {fila.slaPercentual}%
+
+                  {/* SLA Card */}
+                  <div style={{
+                    flex: 1,
+                    padding: '10px 12px',
+                    border: `1px solid ${fila.slaPercentual >= 80 ? '#2ecc71' : fila.slaPercentual >= 60 ? '#f39c12' : '#ef4444'}50`,
+                    borderRadius: '6px',
+                    backgroundColor: 'transparent',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'flex-start',
+                    justifyContent: 'center',
+                  }}>
+                    <span style={{ color: '#7a96aa', fontSize: '9px', textTransform: 'uppercase', marginBottom: '4px' }}>
+                      SLA
                     </span>
-                    <span style={{ color: '#7a96aa', fontSize: '8px', marginLeft: '4px' }}>
-                      (SLA)
+                    <span style={{
+                      color: fila.slaPercentual >= 80 ? '#2ecc71' : fila.slaPercentual >= 60 ? '#f39c12' : '#ef4444',
+                      fontWeight: 700,
+                      fontSize: '16px',
+                    }}>
+                      {fila.slaPercentual}%
                     </span>
                   </div>
                 </div>
 
                 {/* Progress Bar */}
-                <div style={{ width: '100%', height: '2px', background: '#0d1f2d', borderRadius: '1px', marginBottom: '8px', overflow: 'hidden' }}>
+                <div style={{ width: '100%', height: '6px', background: '#0d1f2d', borderRadius: '3px', marginBottom: '12px', overflow: 'hidden' }}>
                   <div
                     style={{
                       width: `${fila.slaPercentual}%`,
