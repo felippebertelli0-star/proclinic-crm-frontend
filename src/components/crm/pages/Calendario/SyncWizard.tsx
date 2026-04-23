@@ -45,6 +45,51 @@ type WizardView = 'list' | 'wizard' | 'success';
 
 const STEP_LABELS = ['Plataforma', 'Autenticar', 'Configurar', 'Revisar'] as const;
 
+/**
+ * Renderiza o logo oficial da plataforma com fallback na letra.
+ * Fonte primária: Google S2 Favicons (até 128px). Fallback: DuckDuckGo Icons.
+ * Se ambos falharem, mostra a inicial da marca com gradiente colorido.
+ */
+function PlatformLogo({
+  platform,
+  size,
+  className,
+}: {
+  platform: Pick<Platform, 'nome' | 'cor' | 'inicial' | 'domain'>;
+  size?: number;
+  className?: string;
+}) {
+  const [stage, setStage] = useState<0 | 1 | 2>(0); // 0=google, 1=ddg, 2=fallback letter
+  const hasLogo = !!platform.domain && stage < 2;
+  const style: React.CSSProperties = {
+    ['--pf-color' as string]: platform.cor,
+    ...(size ? { width: size, height: size } : {}),
+  };
+  const src =
+    stage === 0
+      ? `https://icons.duckduckgo.com/ip3/${platform.domain}.ico`
+      : `https://www.google.com/s2/favicons?domain=${platform.domain}&sz=128`;
+  return (
+    <div
+      className={`${styles.pfIcon} ${hasLogo ? styles.pfIconLogo : ''} ${className ?? ''}`}
+      style={style}
+    >
+      {hasLogo ? (
+        <img
+          key={stage}
+          src={src}
+          alt={platform.nome}
+          onError={() => setStage((s) => (s + 1) as 0 | 1 | 2)}
+          loading="lazy"
+          referrerPolicy="no-referrer"
+        />
+      ) : (
+        platform.inicial
+      )}
+    </div>
+  );
+}
+
 const CATEGORIA_LABELS: Record<CategoryId, { titulo: string; descricao: string }> = {
   pessoal: {
     titulo: 'Calendários Pessoais',
@@ -367,12 +412,14 @@ export function SyncWizard({ isOpen, onClose }: SyncWizardProps) {
                       className={styles.activeItem}
                       style={{ ['--pf-color' as string]: c.platformCor } as React.CSSProperties}
                     >
-                      <div
-                        className={styles.pfIcon}
-                        style={{ ['--pf-color' as string]: c.platformCor } as React.CSSProperties}
-                      >
-                        {c.platformNome[0]}
-                      </div>
+                      <PlatformLogo
+                        platform={{
+                          nome: c.platformNome,
+                          cor: c.platformCor,
+                          inicial: c.platformNome[0],
+                          domain: PLATAFORMAS.find((p) => p.id === c.platformId)?.domain,
+                        }}
+                      />
                       <div className={styles.activeInfo}>
                         <span className={styles.activeName}>{c.platformNome}</span>
                         <span className={styles.activeMeta}>
@@ -493,7 +540,7 @@ export function SyncWizard({ isOpen, onClose }: SyncWizardProps) {
                           <span className={`${styles.pfBadge} ${styles[badge.className]}`}>
                             {badge.label}
                           </span>
-                          <div className={styles.pfIcon}>{pf.inicial}</div>
+                          <PlatformLogo platform={pf} />
                           <div className={styles.pfBody}>
                             <span className={styles.pfName}>{pf.nome}</span>
                             <span className={styles.pfDesc}>{pf.descricao}</span>
@@ -523,12 +570,7 @@ export function SyncWizard({ isOpen, onClose }: SyncWizardProps) {
               ) : (
                 <>
                   <div className={styles.authHero}>
-                    <div
-                      className={styles.pfIcon}
-                      style={{ ['--pf-color' as string]: selectedPf.cor } as React.CSSProperties}
-                    >
-                      {selectedPf.inicial}
-                    </div>
+                    <PlatformLogo platform={selectedPf} size={52} />
                     <div className={styles.authHeroInfo}>
                       <div className={styles.authHeroName}>{selectedPf.nome}</div>
                       <div className={styles.authHeroDesc}>{selectedPf.descricao}</div>

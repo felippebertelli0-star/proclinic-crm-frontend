@@ -308,6 +308,24 @@
     0 6px 16px color-mix(in srgb, var(--pf-color, #c9943a) 35%, transparent),
     inset 0 1px 0 rgba(255, 255, 255, 0.25);
   letter-spacing: -0.3px;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Variação quando exibindo logo real (fundo branco + borda colorida) */
+.pfIconLogo {
+  background: #ffffff;
+  border: 1.5px solid color-mix(in srgb, var(--pf-color, #c9943a) 55%, transparent);
+  padding: 6px;
+  box-shadow:
+    0 6px 16px color-mix(in srgb, var(--pf-color, #c9943a) 30%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+.pfIconLogo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
 }
 
 .pfBody {
