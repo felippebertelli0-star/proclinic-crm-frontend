@@ -355,9 +355,12 @@
 }
 
 .tableScroll {
-  /* overflow-x: scroll força a barra a SEMPRE aparecer (macOS overlay) */
+  /* overflow-x: scroll força a barra horizontal a SEMPRE aparecer */
   overflow-x: scroll;
-  overflow-y: visible;
+  /* overflow-y: auto aparece SÓ quando há muitos dias (após ~18 linhas) */
+  overflow-y: auto;
+  /* limite de altura para disparar a barra vertical — sem isso ela nunca aparece */
+  max-height: 640px;
   position: relative;
   /* Firefox */
   scrollbar-width: auto;
@@ -366,12 +369,12 @@
   padding-bottom: 2px;
 }
 
-/* Fade à direita em overlay — NÃO usa mask (que cortaria a barra) */
+/* Fade à direita em overlay — acima das duas barras para não cortá-las */
 .fadeRight {
   position: absolute;
   top: 0;
-  right: 0;
-  bottom: 18px; /* acima da barra de rolagem */
+  right: 18px;  /* fora da área da barra vertical (12px scrollbar + folga) */
+  bottom: 18px; /* acima da barra horizontal */
   width: 48px;
   pointer-events: none;
   background: linear-gradient(90deg, transparent 0%, rgba(15, 33, 48, 0.9) 100%);
@@ -382,26 +385,27 @@
   opacity: 0;
 }
 
-/* WebKit / Chromium / Safari — barra sempre visível, dourada e GROSSA */
+/* WebKit / Chromium / Safari — barras sempre visíveis, douradas e GROSSAS */
 .tableScroll::-webkit-scrollbar {
-  height: 16px;
-  width: 12px;
+  height: 16px;              /* horizontal */
+  width: 12px;               /* vertical */
   background: #0f2130;
 }
 .tableScroll::-webkit-scrollbar-track {
   background: linear-gradient(180deg, #0f2130 0%, #132636 100%);
-  border-top: 1px solid #1e3d54;
-  border-radius: 0 0 14px 14px;
+  border: 1px solid #1e3d54;
+  border-radius: 10px;
 }
 .tableScroll::-webkit-scrollbar-thumb {
-  background: linear-gradient(90deg, #c9943a 0%, #a87a28 100%);
+  background: linear-gradient(135deg, #c9943a 0%, #a87a28 100%);
   border-radius: 999px;
   border: 3px solid #132636;
   box-shadow: 0 0 12px rgba(201, 148, 58, 0.55);
   min-width: 60px;
+  min-height: 60px;
 }
 .tableScroll::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(90deg, #d4a04a 0%, #b58430 100%);
+  background: linear-gradient(135deg, #d4a04a 0%, #b58430 100%);
   box-shadow: 0 0 18px rgba(201, 148, 58, 0.7);
 }
 .tableScroll::-webkit-scrollbar-corner {
@@ -548,8 +552,11 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #e8edf2;
+  color: #c9943a;             /* dourado */
   font-weight: 700;
+  font-size: 11px;            /* menor que o padrão 12px da tabela */
+  letter-spacing: 0.2px;
+  font-variant-numeric: tabular-nums;
 }
 
 .chipFds {
