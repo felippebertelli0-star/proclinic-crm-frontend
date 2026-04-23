@@ -369,9 +369,9 @@
   max-height: calc(100vh - 580px);
   min-height: 180px;
   position: relative;
-  /* Firefox */
+  /* Firefox — dourado com 50% de opacidade para ficar mais sutil */
   scrollbar-width: auto;
-  scrollbar-color: #c9943a #132636;
+  scrollbar-color: rgba(201, 148, 58, 0.5) #132636;
   padding-bottom: 2px;
 }
 
@@ -403,15 +403,18 @@
   border-radius: 10px;
 }
 .tableScroll::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #c9943a 0%, #a87a28 100%);
+  /* dourado com 50% de opacidade — sutil, mas ainda visível */
+  background: linear-gradient(135deg, rgba(201, 148, 58, 0.5) 0%, rgba(168, 122, 40, 0.5) 100%);
   border-radius: 999px;
   border: 3px solid #132636;
-  box-shadow: 0 0 12px rgba(201, 148, 58, 0.55);
+  box-shadow: 0 0 10px rgba(201, 148, 58, 0.25);
   min-width: 60px;
   min-height: 60px;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
 }
 .tableScroll::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #d4a04a 0%, #b58430 100%);
+  /* no hover volta para 100% para indicar interatividade */
+  background: linear-gradient(135deg, rgba(201, 148, 58, 1) 0%, rgba(168, 122, 40, 1) 100%);
   box-shadow: 0 0 18px rgba(201, 148, 58, 0.7);
 }
 .tableScroll::-webkit-scrollbar-corner {
