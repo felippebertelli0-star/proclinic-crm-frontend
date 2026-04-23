@@ -19,6 +19,7 @@ import {
   CalendarDays,
 } from 'lucide-react';
 import styles from './Agenda.module.css';
+import { SyncWizard } from './Calendario/SyncWizard';
 
 interface Agendamento {
   id: number;
@@ -95,6 +96,7 @@ export function Calendario() {
   const [currentMonth, setCurrentMonth] = useState(today.getMonth());
   const [currentYear, setCurrentYear] = useState(today.getFullYear());
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
+  const [syncOpen, setSyncOpen] = useState(false);
 
   // Mapa de agendamentos do mês atual (apenas Abril/2026 povoado; outros meses ficam vazios)
   const agendaDoMes: AgendaMap = useMemo(() => {
@@ -217,7 +219,7 @@ export function Calendario() {
         </div>
 
         <div className={styles.heroActions}>
-          <button className={styles.btnSync} type="button">
+          <button className={styles.btnSync} type="button" onClick={() => setSyncOpen(true)}>
             <RefreshCw size={14} strokeWidth={2.6} className={styles.spinIcon} />
             Sincronizar Agenda
           </button>
@@ -496,6 +498,9 @@ export function Calendario() {
           </div>
         </>
       )}
+
+      {/* SYNC WIZARD */}
+      <SyncWizard isOpen={syncOpen} onClose={() => setSyncOpen(false)} />
     </div>
   );
 }
