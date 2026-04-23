@@ -2,14 +2,27 @@
  * Página: Filas
  * Gerenciar filas de atendimento com cards Premium AAA
  * Sincronização em tempo real com métricas dinâmicas
- * Qualidade: Premium AAA
+ * Qualidade: ULTRA MEGA PREMIUM AAA
  */
 
 'use client';
 
 import { useState, useMemo, useEffect, useCallback } from 'react';
-import { Clock, AlertCircle, Trash2 } from 'lucide-react';
-import styles from './Calendario.module.css';
+import {
+  AlertCircle,
+  Trash2,
+  Search,
+  Inbox,
+  Activity,
+  Ticket,
+  Timer,
+  Gauge,
+  Settings2,
+  Users,
+  Plus,
+  Pause,
+} from 'lucide-react';
+import styles from './Filas.module.css';
 import { useFilasStore } from '@/store/filasStore';
 import { CreateFilaModal } from './Filas/CreateFilaModal';
 import { useFilaSync } from '@/hooks/useFilaSync';
@@ -169,11 +182,9 @@ export function Filas() {
   // Filtrar filas
   const filasFiltradas = useMemo(() => {
     return filas.filter((fila) => {
-      // Filtro status
       if (statusFilter === 'ativas' && fila.status !== 'ativa') return false;
       if (statusFilter === 'pausadas' && fila.status !== 'pausada') return false;
 
-      // Filtro busca
       if (
         searchTerm &&
         !fila.nome.toLowerCase().includes(searchTerm.toLowerCase()) &&
@@ -203,7 +214,6 @@ export function Filas() {
     (filaId: string) => {
       const fila = filas.find((f) => f.id === filaId);
       if (!fila) return [];
-
       return MEMBROS_MOCK.filter((m) => fila.agenteIds.includes(m.id));
     },
     [filas]
@@ -232,71 +242,99 @@ export function Filas() {
     setFilaParaDeletar(null);
   }, []);
 
+  // Mouse tracker for card radial glow
+  const handleCardMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const el = e.currentTarget;
+    const rect = el.getBoundingClientRect();
+    el.style.setProperty('--mx', `${e.clientX - rect.left}px`);
+    el.style.setProperty('--my', `${e.clientY - rect.top}px`);
+  };
+
+  const slaColorClass = (sla: number) =>
+    sla >= 80 ? styles.metricValueGreen : sla >= 60 ? styles.metricValueOrange : styles.metricValueRed;
+
   return (
     <div className={styles.container}>
-      {/* Header */}
+      {/* HEADER HERO */}
       <div className={styles.header}>
         <div className={styles.headerContent}>
+          <span className={styles.eyebrow}>
+            <span className={styles.eyebrowDot} /> Atendimento · Distribuição Inteligente
+          </span>
           <h1 className={styles.title}>Filas de Atendimento</h1>
-          <p className={styles.subtitle}>Gerenciar filas e distribuição de pacientes</p>
+          <p className={styles.subtitle}>
+            <strong>{stats.total}</strong> filas · <strong>{stats.ativas}</strong> ativas · <strong>{stats.totalTickets}</strong> tickets em espera
+          </p>
 
-          {/* Filtros de Status */}
-          <div className={styles.botoesContainer}>
+          <div className={styles.filterGroup}>
             <button
               onClick={() => setStatusFilter('todos')}
-              className={`${styles.botaoMes} ${statusFilter === 'todos' ? styles.active : ''}`}
+              className={`${styles.filterBtn} ${statusFilter === 'todos' ? styles.filterBtnActive : ''}`}
             >
-              Todos
+              Todos ({stats.total})
             </button>
             <button
               onClick={() => setStatusFilter('ativas')}
-              className={`${styles.botaoMes} ${statusFilter === 'ativas' ? styles.active : ''}`}
+              className={`${styles.filterBtn} ${statusFilter === 'ativas' ? styles.filterBtnActive : ''}`}
             >
-              Ativas
+              Ativas ({stats.ativas})
             </button>
             <button
               onClick={() => setStatusFilter('pausadas')}
-              className={`${styles.botaoMes} ${statusFilter === 'pausadas' ? styles.active : ''}`}
+              className={`${styles.filterBtn} ${statusFilter === 'pausadas' ? styles.filterBtnActive : ''}`}
             >
-              Pausadas
+              Pausadas ({stats.pausadas})
             </button>
           </div>
         </div>
-        <button
-          onClick={() => setCreateModalOpen(true)}
-          className={styles.btnNova}
-          style={{ cursor: 'pointer' }}
-        >
-          🔌 Nova Fila
+
+        <button onClick={() => setCreateModalOpen(true)} className={styles.btnNova}>
+          <Plus size={16} strokeWidth={2.6} />
+          Nova Fila
         </button>
       </div>
 
-      {/* Cards de Estatísticas */}
+      {/* STATS GRID */}
       <div className={styles.statsGrid}>
         <div className={styles.statCard}>
-          <span className={styles.statLabel}>Total de Filas</span>
-          <span className={styles.statValue}>{stats.total}</span>
+          <span className={styles.statIcon}><Inbox size={18} strokeWidth={2.2} /></span>
+          <div className={styles.statBody}>
+            <span className={styles.statLabel}>Total de Filas</span>
+            <span className={styles.statValue}>{stats.total}</span>
+          </div>
         </div>
         <div className={styles.statCard}>
-          <span className={styles.statLabel}>Ativas</span>
-          <span className={styles.statValue}>{stats.ativas}</span>
+          <span className={styles.statIcon}><Activity size={18} strokeWidth={2.2} /></span>
+          <div className={styles.statBody}>
+            <span className={styles.statLabel}>Ativas</span>
+            <span className={styles.statValue}>{stats.ativas}</span>
+          </div>
         </div>
         <div className={styles.statCard}>
-          <span className={styles.statLabel}>Tickets na Fila</span>
-          <span className={styles.statValue}>{stats.totalTickets}</span>
+          <span className={styles.statIcon}><Ticket size={18} strokeWidth={2.2} /></span>
+          <div className={styles.statBody}>
+            <span className={styles.statLabel}>Tickets na Fila</span>
+            <span className={styles.statValue}>{stats.totalTickets}</span>
+          </div>
         </div>
         <div className={styles.statCard}>
-          <span className={styles.statLabel}>TMR Médio</span>
-          <span className={styles.statValue}>{stats.tmrMedio}min</span>
+          <span className={styles.statIcon}><Timer size={18} strokeWidth={2.2} /></span>
+          <div className={styles.statBody}>
+            <span className={styles.statLabel}>TMR Médio</span>
+            <span className={styles.statValue}>{stats.tmrMedio}min</span>
+          </div>
         </div>
         <div className={styles.statCard}>
-          <span className={styles.statLabel}>SLA Médio</span>
-          <span className={styles.statValue}>{stats.slaMedio}%</span>
+          <span className={styles.statIcon}><Gauge size={18} strokeWidth={2.2} /></span>
+          <div className={styles.statBody}>
+            <span className={styles.statLabel}>SLA Médio</span>
+            <span className={styles.statValue}>{stats.slaMedio}%</span>
+          </div>
         </div>
       </div>
 
-      {/* Busca */}
-      <div style={{ marginBottom: '20px' }}>
+      {/* SEARCH */}
+      <div className={styles.searchWrap}>
         <input
           type="text"
           placeholder="Buscar por nome ou descrição..."
@@ -304,250 +342,105 @@ export function Filas() {
           onChange={(e) => setSearchTerm(e.target.value)}
           className={styles.searchInput}
         />
+        <Search size={16} className={styles.searchIcon} strokeWidth={2.2} />
       </div>
 
-      {/* Grid de Filas */}
+      {/* GRID DE FILAS */}
       {filasFiltradas.length > 0 ? (
-        <div className={styles.gridCards}>
+        <div className={styles.grid}>
           {filasFiltradas.map((fila) => {
             const membros = getMembrosOfFila(fila.id);
 
             return (
               <div
                 key={fila.id}
-                className={styles.estrategiaCard}
-                style={{
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease',
-                  backgroundColor: '#132636',
-                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)',
-                  border: 'none',
-                  padding: '14px',
-                  minHeight: '220px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow = `0 8px 24px ${fila.cor}40`;
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                  // Mostrar ícone delete ao passar mouse
-                  const deleteBtn = e.currentTarget.querySelector('button[title="Deletar fila"]') as HTMLButtonElement;
-                  if (deleteBtn) deleteBtn.style.opacity = '1';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.4)';
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  // Esconder ícone delete ao sair o mouse
-                  const deleteBtn = e.currentTarget.querySelector('button[title="Deletar fila"]') as HTMLButtonElement;
-                  if (deleteBtn) deleteBtn.style.opacity = '0';
-                }}
+                className={styles.card}
+                onMouseMove={handleCardMove}
+                style={{ ['--fila-color' as string]: fila.cor } as React.CSSProperties}
               >
-                {/* Header: Título + Status + Tickets */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '6px' }}>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '2px', justifyContent: 'space-between' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <h3 className={styles.cardTitle} style={{ margin: 0 }}>{fila.nome}</h3>
+                <button
+                  onClick={() => handleAbrirDeleteModal(fila.id)}
+                  className={styles.deleteBtn}
+                  title="Deletar fila"
+                  aria-label={`Deletar fila ${fila.nome}`}
+                >
+                  <Trash2 size={14} strokeWidth={2.3} />
+                </button>
+
+                <div className={styles.cardHeader}>
+                  <div className={styles.cardHeaderLeft}>
+                    <div className={styles.cardTitleRow}>
+                      <h3 className={styles.cardTitle}>{fila.nome}</h3>
+                      <span className={`${styles.statusBadge} ${fila.status === 'ativa' ? styles.statusAtiva : styles.statusPausada}`}>
                         <span
+                          className={styles.statusDot}
                           style={{
-                            display: 'inline-block',
-                            padding: '2px 6px',
-                            borderRadius: '4px',
-                            fontSize: '9px',
-                            fontWeight: 600,
-                            background: fila.status === 'ativa' ? 'rgba(46, 204, 113, 0.15)' : 'rgba(255, 193, 7, 0.15)',
-                            color: fila.status === 'ativa' ? '#2ecc71' : '#ffc107',
-                            whiteSpace: 'nowrap',
+                            background: fila.status === 'ativa' ? '#2ecc71' : '#f39c12',
+                            boxShadow: `0 0 6px ${fila.status === 'ativa' ? '#2ecc71' : '#f39c12'}`,
                           }}
-                        >
-                          {fila.status === 'ativa' ? '🟢 Ativa' : '⭕ Pausada'}
-                        </span>
-                      </div>
-                      {/* Botão Delete - Inicialmente invisível, aparece no hover */}
-                      <button
-                        onClick={() => handleAbrirDeleteModal(fila.id)}
-                        style={{
-                          background: 'transparent',
-                          border: 'none',
-                          cursor: 'pointer',
-                          padding: '4px',
-                          color: '#ef4444',
-                          opacity: 0,
-                          transition: 'opacity 0.2s ease',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          flexShrink: 0,
-                        }}
-                        title="Deletar fila"
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.opacity = '1';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.opacity = '0';
-                        }}
-                      >
-                        <Trash2 size={16} />
-                      </button>
+                        />
+                        {fila.status === 'ativa' ? 'Ativa' : 'Pausada'}
+                      </span>
                     </div>
-                    <p className={styles.cardDescription} style={{ margin: 0, marginBottom: '4px' }}>{fila.descricao}</p>
-                    {membros.length > 0 && (
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: membros[0].avatarColor, fontSize: '12px' }}>
-                        <span style={{ fontSize: '14px' }}>👤</span>
-                        {membros.map((m, idx) => (
-                          <span key={m.id}>{m.nome.split(' ')[0]}{idx < membros.length - 1 ? ', ' : ''}</span>
-                        ))}
-                      </div>
-                    )}
+                    {fila.descricao && <p className={styles.cardDescription}>{fila.descricao}</p>}
                   </div>
-                  <div style={{ textAlign: 'right', marginLeft: '8px', whiteSpace: 'nowrap' }}>
-                    <div style={{ color: fila.cor, fontSize: '18px', fontWeight: 700, lineHeight: '1' }}>
-                      {fila.totalTickets}
-                    </div>
-                    <div style={{ color: '#7a96aa', fontSize: '8px', textTransform: 'uppercase' }}>
-                      tickets
-                    </div>
+
+                  <div className={styles.ticketPill}>
+                    <span className={styles.ticketValue}>{fila.totalTickets}</span>
+                    <span className={styles.ticketLabel}>Tickets</span>
                   </div>
                 </div>
 
-                {/* TMR + SLA Cards */}
-                <div style={{ display: 'flex', gap: '10px', marginBottom: '12px' }}>
-                  {/* TMR Card */}
-                  <div style={{
-                    flex: 1,
-                    padding: '10px 12px',
-                    border: `1px solid ${fila.cor}20`,
-                    borderRadius: '6px',
-                    backgroundColor: 'transparent',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'flex-start',
-                    justifyContent: 'center',
-                  }}>
-                    <span style={{ color: '#7a96aa', fontSize: '9px', textTransform: 'uppercase', marginBottom: '4px' }}>
-                      Tempo Resposta
-                    </span>
-                    <span style={{ color: fila.cor, fontWeight: 700, fontSize: '16px' }}>
+                <div className={styles.metricsRow}>
+                  <div className={styles.metricCard}>
+                    <span className={styles.metricLabel}>⏱ Tempo de Resposta</span>
+                    <span className={`${styles.metricValue} ${styles.metricValueTmr}`}>
                       {fila.tmr} min
                     </span>
                   </div>
-
-                  {/* SLA Card */}
-                  <div style={{
-                    flex: 1,
-                    padding: '10px 12px',
-                    border: `1px solid ${fila.slaPercentual >= 80 ? '#2ecc71' : fila.slaPercentual >= 60 ? '#f39c12' : '#ef4444'}20`,
-                    borderRadius: '6px',
-                    backgroundColor: 'transparent',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'flex-start',
-                    justifyContent: 'center',
-                  }}>
-                    <span style={{ color: '#7a96aa', fontSize: '9px', textTransform: 'uppercase', marginBottom: '4px' }}>
-                      SLA
-                    </span>
-                    <span style={{
-                      color: fila.slaPercentual >= 80 ? '#2ecc71' : fila.slaPercentual >= 60 ? '#f39c12' : '#ef4444',
-                      fontWeight: 700,
-                      fontSize: '16px',
-                    }}>
+                  <div className={styles.metricCard}>
+                    <span className={styles.metricLabel}>📊 SLA</span>
+                    <span className={`${styles.metricValue} ${slaColorClass(fila.slaPercentual)}`}>
                       {fila.slaPercentual}%
                     </span>
                   </div>
                 </div>
 
-                {/* Progress Bar */}
-                <div style={{ width: '100%', height: '6px', background: '#0d1f2d', borderRadius: '3px', marginBottom: '12px', overflow: 'hidden' }}>
-                  <div
-                    style={{
-                      width: `${fila.slaPercentual}%`,
-                      height: '100%',
-                      background: fila.cor,
-                      transition: 'width 0.3s ease',
-                    }}
-                  />
+                <div className={styles.slaWrap}>
+                  <div className={styles.slaLabel}>
+                    <span>Performance SLA</span>
+                    <strong>{fila.slaPercentual}%</strong>
+                  </div>
+                  <div className={styles.slaTrack}>
+                    <div className={styles.slaFill} style={{ width: `${fila.slaPercentual}%` }} />
+                  </div>
                 </div>
 
-                {/* Membros Badges */}
                 {membros.length > 0 && (
-                  <div style={{ display: 'flex', gap: '6px', marginBottom: '12px', flexWrap: 'wrap' }}>
+                  <div className={styles.membros}>
                     {membros.map((m) => (
                       <span
                         key={m.id}
-                        style={{
-                          display: 'inline-block',
-                          padding: '4px 10px',
-                          background: `${m.avatarColor}20`,
-                          color: m.avatarColor,
-                          borderRadius: '4px',
-                          fontSize: '11px',
-                          fontWeight: 600,
-                          border: `1px solid ${m.avatarColor}50`,
-                        }}
+                        className={styles.membroBadge}
+                        style={{ ['--membro-color' as string]: m.avatarColor } as React.CSSProperties}
                       >
+                        <span className={styles.membroAvatar} style={{ background: m.avatarColor }}>
+                          {m.nome[0]}
+                        </span>
                         {m.nome.split(' ')[0]}
                       </span>
                     ))}
                   </div>
                 )}
 
-                {/* Botões de Ação */}
-                <div
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: '1fr 1fr',
-                    gap: '8px',
-                    marginBottom: '0',
-                  }}
-                  className="button-group"
-                >
-                  <button
-                    style={{
-                      padding: '8px 12px',
-                      background: 'transparent',
-                      border: `1px solid ${fila.cor}70`,
-                      color: fila.cor,
-                      borderRadius: '6px',
-                      fontSize: '11px',
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                      transition: 'all 0.2s',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.background = `${fila.cor}20`;
-                      e.currentTarget.style.borderColor = fila.cor;
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.background = 'transparent';
-                      e.currentTarget.style.borderColor = `${fila.cor}70`;
-                    }}
-                  >
-                    ⚙️ Config
+                <div className={styles.actions}>
+                  <button className={styles.btnPrimary}>
+                    <Settings2 size={13} strokeWidth={2.4} />
+                    Config
                   </button>
-                  <button
-                    style={{
-                      padding: '8px 12px',
-                      background: 'transparent',
-                      border: '1px solid #7a96aa70',
-                      color: '#7a96aa',
-                      borderRadius: '6px',
-                      fontSize: '11px',
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                      transition: 'all 0.2s',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.background = 'rgba(122, 150, 170, 0.15)';
-                      e.currentTarget.style.borderColor = '#7a96aa';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.background = 'transparent';
-                      e.currentTarget.style.borderColor = '#7a96aa70';
-                    }}
-                  >
-                    👥 Membros
+                  <button className={styles.btnSecondary}>
+                    <Users size={13} strokeWidth={2.4} />
+                    Membros
                   </button>
                 </div>
               </div>
@@ -576,96 +469,26 @@ export function Filas() {
       {/* Modal: Confirmar Exclusão */}
       {deleteModalOpen && (
         <>
-          {/* Backdrop */}
-          <div
-            onClick={handleCancelarDelete}
-            style={{
-              position: 'fixed',
-              inset: 0,
-              background: 'rgba(0, 0, 0, 0.5)',
-              backdropFilter: 'blur(4px)',
-              zIndex: 40,
-            }}
-          />
-
-          {/* Modal */}
-          <div
-            style={{
-              position: 'fixed',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              background: '#132636',
-              border: '1px solid rgba(201, 148, 58, 0.2)',
-              borderRadius: '12px',
-              padding: '24px',
-              zIndex: 50,
-              maxWidth: '400px',
-              width: '90%',
-              boxShadow: '0 20px 25px rgba(0, 0, 0, 0.4)',
-            }}
-          >
-            {/* Header com ícone de alerta */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-              <AlertCircle size={24} color="#ef4444" />
-              <h2 style={{ margin: 0, color: '#e8edf2', fontSize: '18px', fontWeight: 700 }}>
-                Confirmar Exclusão
-              </h2>
+          <div onClick={handleCancelarDelete} className={styles.modalBackdrop} />
+          <div className={styles.modal} role="dialog" aria-modal="true" aria-labelledby="delete-title">
+            <div className={styles.modalHeader}>
+              <span className={styles.modalIcon}>
+                <AlertCircle size={22} strokeWidth={2.3} />
+              </span>
+              <h2 id="delete-title" className={styles.modalTitle}>Confirmar Exclusão</h2>
             </div>
 
-            {/* Mensagem */}
-            <p style={{ color: '#7a96aa', fontSize: '14px', marginBottom: '24px', lineHeight: '1.5' }}>
-              Tem certeza que deseja excluir a fila <strong style={{ color: '#e8edf2' }}>"{filas.find(f => f.id === filaParaDeletar)?.nome}"</strong>? Esta ação não pode ser desfeita.
+            <p className={styles.modalText}>
+              Tem certeza que deseja excluir a fila{' '}
+              <strong>"{filas.find((f) => f.id === filaParaDeletar)?.nome}"</strong>? Esta ação não pode ser desfeita.
             </p>
 
-            {/* Botões */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-              <button
-                onClick={handleCancelarDelete}
-                style={{
-                  padding: '10px 16px',
-                  background: 'transparent',
-                  border: '1px solid #7a96aa70',
-                  color: '#7a96aa',
-                  borderRadius: '8px',
-                  fontSize: '13px',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'rgba(122, 150, 170, 0.15)';
-                  e.currentTarget.style.borderColor = '#7a96aa';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'transparent';
-                  e.currentTarget.style.borderColor = '#7a96aa70';
-                }}
-              >
+            <div className={styles.modalActions}>
+              <button onClick={handleCancelarDelete} className={styles.btnCancel}>
                 Cancelar
               </button>
-              <button
-                onClick={handleConfirmarDelete}
-                style={{
-                  padding: '10px 16px',
-                  background: '#ef4444',
-                  border: '1px solid #ef4444',
-                  color: '#fff',
-                  borderRadius: '8px',
-                  fontSize: '13px',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = '#dc2626';
-                  e.currentTarget.style.borderColor = '#dc2626';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = '#ef4444';
-                  e.currentTarget.style.borderColor = '#ef4444';
-                }}
-              >
+              <button onClick={handleConfirmarDelete} className={styles.btnDanger}>
+                <Trash2 size={14} strokeWidth={2.4} />
                 Sim, Excluir
               </button>
             </div>

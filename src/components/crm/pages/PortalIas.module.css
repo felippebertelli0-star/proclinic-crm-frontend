@@ -1,0 +1,603 @@
+/* ==================== PORTAL DAS IAs ULTRA MEGA PREMIUM AAA ==================== */
+
+/* ---------- ANIMATIONS ---------- */
+@keyframes piFadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes piFadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes piPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.55); }
+  50% { box-shadow: 0 0 0 6px rgba(46, 204, 113, 0); }
+}
+
+@keyframes piShimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes piRotate {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes piFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+/* ---------- CONTAINER ---------- */
+.container {
+  padding: 28px 32px;
+  background:
+    radial-gradient(1200px 520px at 0% 0%, rgba(155, 89, 182, 0.07), transparent 60%),
+    radial-gradient(900px 420px at 100% 0%, rgba(201, 148, 58, 0.05), transparent 60%),
+    radial-gradient(600px 380px at 100% 100%, rgba(52, 152, 219, 0.04), transparent 60%),
+    #0d1f2d;
+  min-height: 100vh;
+  color: #e8edf2;
+  animation: piFadeIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ---------- HEADER HERO ---------- */
+.header {
+  position: relative;
+  margin-bottom: 26px;
+  padding: 24px 26px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  border-radius: 18px;
+  border: 1px solid #1e3d54;
+  background:
+    radial-gradient(700px 300px at 0% 0%, rgba(155, 89, 182, 0.08), transparent 60%),
+    linear-gradient(180deg, #132636 0%, #0f2130 100%);
+  box-shadow:
+    0 18px 40px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+  animation: piFadeInUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.header::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #9b59b6, #c9943a, #9b59b6, transparent);
+  background-size: 200% 100%;
+  animation: piShimmer 6s linear infinite;
+  opacity: 0.8;
+}
+
+.headerContent {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(155, 89, 182, 0.4);
+  background: rgba(155, 89, 182, 0.1);
+  color: #b57ed1;
+  font-size: 9.5px;
+  letter-spacing: 1.4px;
+  font-weight: 800;
+  text-transform: uppercase;
+  width: fit-content;
+  margin-bottom: 6px;
+}
+
+.eyebrowDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #9b59b6;
+  box-shadow: 0 0 8px #9b59b6;
+  animation: piPulse 2s infinite;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 900;
+  margin: 0;
+  letter-spacing: -0.7px;
+  background: linear-gradient(135deg, #e8edf2 0%, #b57ed1 45%, #c9943a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1.1;
+}
+
+.subtitle {
+  font-size: 12.5px;
+  color: #8aa4b8;
+  margin: 0;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+}
+
+.subtitle strong {
+  color: #e8edf2;
+  font-weight: 800;
+}
+
+/* ---------- CTA BUTTON ---------- */
+.btnNovo {
+  position: relative;
+  padding: 12px 20px;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(135deg, #9b59b6 0%, #7d3c98 100%);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  flex-shrink: 0;
+  letter-spacing: 0.3px;
+  box-shadow:
+    0 8px 20px rgba(155, 89, 182, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btnNovo::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.btnNovo:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 14px 28px rgba(155, 89, 182, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.btnNovo:hover::before {
+  transform: translateX(100%);
+}
+
+.btnNovo:active {
+  transform: translateY(0);
+}
+
+/* ---------- STATS BAR ---------- */
+.statsBar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 12px;
+  margin-bottom: 26px;
+}
+
+.statBadge {
+  position: relative;
+  padding: 14px 16px;
+  background: linear-gradient(180deg, #132636 0%, #0f2130 100%);
+  border: 1px solid #1e3d54;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  overflow: hidden;
+  transition: all 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  animation: piFadeInUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.statBadge::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, #9b59b6, #7d3c98);
+}
+
+.statBadge:hover {
+  transform: translateY(-2px);
+  border-color: rgba(155, 89, 182, 0.35);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.4);
+}
+
+.statBadgeIcon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(155, 89, 182, 0.22), rgba(125, 60, 152, 0.15));
+  color: #b57ed1;
+  flex-shrink: 0;
+  border: 1px solid rgba(155, 89, 182, 0.35);
+}
+
+.statBadgeBody {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.statBadgeLabel {
+  font-size: 9.5px;
+  color: #7a96aa;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+}
+
+.statBadgeValue {
+  font-size: 20px;
+  font-weight: 900;
+  color: #e8edf2;
+  letter-spacing: -0.3px;
+  line-height: 1;
+}
+
+/* ---------- GRID ---------- */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 18px;
+  padding-bottom: 32px;
+}
+
+/* ---------- IA CARD ---------- */
+.card {
+  position: relative;
+  background: linear-gradient(180deg, #1a3043 0%, #132636 100%);
+  border: 1px solid #1e3d54;
+  border-left: 4px solid var(--ia-accent, #9b59b6);
+  border-radius: 16px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  overflow: hidden;
+  animation: piFadeInUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+  box-shadow:
+    0 6px 14px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    500px circle at var(--mx, 50%) var(--my, 0%),
+    rgba(155, 89, 182, 0.1),
+    transparent 40%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  border-radius: 16px;
+}
+
+.card::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--ia-accent, #9b59b6), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(155, 89, 182, 0.3);
+  box-shadow:
+    0 24px 52px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(155, 89, 182, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.card:hover::before { opacity: 1; }
+.card:hover::after { opacity: 1; }
+
+/* ---------- CARD HEADER ---------- */
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  z-index: 1;
+}
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--ia-accent, #9b59b6) 0%, var(--ia-accent-dark, #7d3c98) 100%);
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: 800;
+  flex-shrink: 0;
+  border: 1.5px solid rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 8px 18px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  position: relative;
+}
+
+.avatar::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--ia-accent, #9b59b6), transparent 60%);
+  filter: blur(10px);
+  opacity: 0.4;
+  z-index: -1;
+}
+
+.cardTitleWrap {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cardTitle {
+  font-size: 15px;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0;
+  letter-spacing: -0.2px;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cardDesc {
+  font-size: 11px;
+  color: #8aa4b8;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.statusDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #2ecc71;
+  box-shadow: 0 0 8px #2ecc71;
+  flex-shrink: 0;
+  animation: piPulse 2.4s infinite;
+}
+
+/* ---------- METRICS GRID ---------- */
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(13, 31, 45, 0.55);
+  border: 1px solid rgba(30, 61, 84, 0.7);
+  position: relative;
+  z-index: 1;
+}
+
+.metricCell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.metricLabel {
+  font-size: 9px;
+  color: #7a96aa;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.9px;
+}
+
+.metricValue {
+  font-size: 15px;
+  font-weight: 900;
+  color: #e8edf2;
+  letter-spacing: -0.2px;
+  line-height: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.metricAccent {
+  color: var(--ia-accent, #9b59b6);
+}
+
+/* ---------- PROGRESS BAR ---------- */
+.progressWrap {
+  position: relative;
+  z-index: 1;
+}
+
+.progressLabel {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 6px;
+  font-size: 10px;
+  color: #7a96aa;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.progressLabel strong {
+  color: var(--ia-accent, #9b59b6);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.progressTrack {
+  position: relative;
+  height: 6px;
+  border-radius: 6px;
+  background: rgba(13, 31, 45, 0.7);
+  overflow: hidden;
+  border: 1px solid rgba(30, 61, 84, 0.6);
+}
+
+.progressFill {
+  position: relative;
+  height: 100%;
+  border-radius: 6px;
+  background: linear-gradient(90deg, var(--ia-accent, #9b59b6), var(--ia-accent-dark, #7d3c98));
+  transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  overflow: hidden;
+}
+
+.progressFill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  background-size: 200% 100%;
+  animation: piShimmer 2.4s infinite;
+}
+
+/* ---------- ACTIONS ---------- */
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  position: relative;
+  z-index: 1;
+}
+
+.btnPrimary {
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid var(--ia-accent, #9b59b6);
+  background: linear-gradient(135deg, rgba(155, 89, 182, 0.18), rgba(125, 60, 152, 0.1));
+  color: #b57ed1;
+  font-size: 11.5px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  letter-spacing: 0.3px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.btnPrimary:hover {
+  background: linear-gradient(135deg, var(--ia-accent, #9b59b6), var(--ia-accent-dark, #7d3c98));
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(155, 89, 182, 0.3);
+}
+
+.btnSecondary {
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #1e3d54;
+  background: rgba(13, 31, 45, 0.5);
+  color: #b0c4d4;
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  letter-spacing: 0.3px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.btnSecondary:hover {
+  border-color: #c9943a;
+  color: #c9943a;
+  background: rgba(201, 148, 58, 0.08);
+  transform: translateY(-1px);
+}
+
+/* ---------- STATUS BADGE ---------- */
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 9.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  border: 1px solid;
+  flex-shrink: 0;
+}
+
+.statusOnline {
+  color: #2ecc71;
+  background: rgba(46, 204, 113, 0.12);
+  border-color: rgba(46, 204, 113, 0.4);
+}
+
+.statusIdle {
+  color: #f39c12;
+  background: rgba(243, 156, 18, 0.12);
+  border-color: rgba(243, 156, 18, 0.4);
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 1024px) {
+  .container { padding: 20px; }
+  .header { flex-direction: column; align-items: stretch; padding: 20px; }
+  .btnNovo { width: 100%; justify-content: center; }
+}
+
+@media (max-width: 768px) {
+  .container { padding: 14px; }
+  .header { padding: 16px; }
+  .title { font-size: 22px; }
+  .grid { grid-template-columns: 1fr; }
+  .metrics { grid-template-columns: repeat(3, 1fr); }
+  .avatar { width: 40px; height: 40px; font-size: 17px; }
+}
