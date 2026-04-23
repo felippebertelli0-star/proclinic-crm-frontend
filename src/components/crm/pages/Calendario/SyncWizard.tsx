@@ -47,7 +47,8 @@ const STEP_LABELS = ['Plataforma', 'Autenticar', 'Configurar', 'Revisar'] as con
 
 /**
  * Renderiza o logo oficial da plataforma com fallback na letra.
- * Fonte primária: Google S2 Favicons (até 128px). Fallback: DuckDuckGo Icons.
+ * Fonte primária: Google S2 Favicons (retorna até 128px reais quando disponíveis).
+ * Fallback: DuckDuckGo Icons (sempre 48x48).
  * Se ambos falharem, mostra a inicial da marca com gradiente colorido.
  */
 function PlatformLogo({
@@ -67,8 +68,8 @@ function PlatformLogo({
   };
   const src =
     stage === 0
-      ? `https://icons.duckduckgo.com/ip3/${platform.domain}.ico`
-      : `https://www.google.com/s2/favicons?domain=${platform.domain}&sz=128`;
+      ? `https://www.google.com/s2/favicons?domain=${platform.domain}&sz=128`
+      : `https://icons.duckduckgo.com/ip3/${platform.domain}.ico`;
   return (
     <div
       className={`${styles.pfIcon} ${hasLogo ? styles.pfIconLogo : ''} ${className ?? ''}`}

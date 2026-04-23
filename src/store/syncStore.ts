@@ -57,7 +57,7 @@ export const PLATAFORMAS: Platform[] = [
   { id: 'ical',       nome: 'Link iCal (URL)',      descricao: 'Qualquer agenda com link .ics',     categoria: 'pessoal',      integracao: 'ical',    cor: '#9b59b6', inicial: '∞' },
 
   // ── Sistemas Médicos Brasileiros ──
-  { id: 'feegow',     nome: 'Feegow',               descricao: 'Gestão de clínicas e consultórios', categoria: 'medico',       integracao: 'api',     cor: '#00a896', inicial: 'F',  domain: 'feegow.com' },
+  { id: 'feegow',     nome: 'Feegow',               descricao: 'Gestão de clínicas e consultórios', categoria: 'medico',       integracao: 'api',     cor: '#00a896', inicial: 'F',  domain: 'app.feegow.com' },
   { id: 'iclinic',    nome: 'iClinic',              descricao: 'Prontuário eletrônico e agenda',    categoria: 'medico',       integracao: 'api',     cor: '#3498db', inicial: 'iC', domain: 'iclinic.com.br' },
   { id: 'doctoralia', nome: 'Doctoralia',           descricao: 'Agendamento online e telemedicina', categoria: 'medico',       integracao: 'ical',    cor: '#2ecc71', inicial: 'D',  domain: 'doctoralia.com.br' },
   { id: 'amplimed',   nome: 'Amplimed',             descricao: 'Gestão clínica completa',           categoria: 'medico',       integracao: 'api',     cor: '#e67e22', inicial: 'Am', domain: 'amplimed.com.br' },
@@ -67,7 +67,8 @@ export const PLATAFORMAS: Platform[] = [
   { id: 'tasy',       nome: 'Tasy (Philips)',       descricao: 'Hospitais e redes de saúde',        categoria: 'medico',       integracao: 'api',     cor: '#0b5394', inicial: 'T',  domain: 'philips.com.br' },
   { id: 'conexa',     nome: 'Conexa Saúde',         descricao: 'Telemedicina e agendamento',        categoria: 'medico',       integracao: 'api',     cor: '#e91e63', inicial: 'Cx', domain: 'conexasaude.com.br' },
   { id: 'shosp',      nome: 'ShoSP',                descricao: 'Gestão clínica regional',           categoria: 'medico',       integracao: 'api',     cor: '#f39c12', inicial: 'Sh', domain: 'shosp.com.br' },
-  { id: 'vidaconnect',nome: 'Vida Connect',         descricao: 'Integração moderna de clínicas',    categoria: 'medico',       integracao: 'api',     cor: '#16a085', inicial: 'Vc', domain: 'vidaconnect.com.br' },
+  // Vida Connect sem domain: favicon genérico, melhor usar avatar colorido 'Vc'
+  { id: 'vidaconnect',nome: 'Vida Connect',         descricao: 'Integração moderna de clínicas',    categoria: 'medico',       integracao: 'api',     cor: '#16a085', inicial: 'Vc' },
   { id: 'outro',      nome: 'Outro sistema',        descricao: 'ClinicWeb, MedKey, Nexodata, etc.', categoria: 'medico',       integracao: 'ical',    cor: '#7f8c8d', inicial: '+' },
 
   // ── Agendamento Online ──
