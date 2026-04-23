@@ -318,10 +318,6 @@
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
-  /* Largura máxima para que a barra horizontal fique SEMPRE enxergável
-     dentro do viewport — evita que o card se estique em monitores largos. */
-  max-width: 1100px;
-  margin: 0 auto;
 }
 
 .tableHeader {
@@ -361,15 +357,21 @@
 .tableScroll {
   /* overflow-x: scroll força a barra horizontal a SEMPRE aparecer */
   overflow-x: scroll;
-  /* overflow-y: auto aparece SÓ quando há muitos dias (após ~12 linhas) */
+  /* overflow-y: auto aparece SÓ quando há muitos dias */
   overflow-y: auto;
-  /* Card mais achatado — dispara a rolagem vertical cedo + UI compacta */
-  max-height: 480px;
+  /* Altura travada via calc(): o card INTEIRO (header do card + tabela +
+     barra horizontal) precisa caber dentro do viewport do navegador,
+     senão a barra horizontal fica abaixo da dobra.
+     580px = distância do topo até o início da tabela (~550px: header da
+     página + KPIs + seletor de mês + banner + header do card) + folga
+     de ~30px para a barra ficar confortável acima da dobra.
+     min-height baixo para funcionar em notebooks 1366x768. */
+  max-height: calc(100vh - 580px);
+  min-height: 180px;
   position: relative;
   /* Firefox */
   scrollbar-width: auto;
   scrollbar-color: #c9943a #132636;
-  /* Garante espaço inferior para a barra não encostar na borda arredondada */
   padding-bottom: 2px;
 }
 
