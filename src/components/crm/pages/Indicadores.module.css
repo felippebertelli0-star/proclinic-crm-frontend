@@ -318,6 +318,10 @@
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+  /* Largura máxima para que a barra horizontal fique SEMPRE enxergável
+     dentro do viewport — evita que o card se estique em monitores largos. */
+  max-width: 1100px;
+  margin: 0 auto;
 }
 
 .tableHeader {
@@ -357,10 +361,10 @@
 .tableScroll {
   /* overflow-x: scroll força a barra horizontal a SEMPRE aparecer */
   overflow-x: scroll;
-  /* overflow-y: auto aparece SÓ quando há muitos dias (após ~18 linhas) */
+  /* overflow-y: auto aparece SÓ quando há muitos dias (após ~12 linhas) */
   overflow-y: auto;
-  /* limite de altura para disparar a barra vertical — sem isso ela nunca aparece */
-  max-height: 640px;
+  /* Card mais achatado — dispara a rolagem vertical cedo + UI compacta */
+  max-height: 480px;
   position: relative;
   /* Firefox */
   scrollbar-width: auto;
