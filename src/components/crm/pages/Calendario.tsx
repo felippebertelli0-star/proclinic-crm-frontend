@@ -5,7 +5,7 @@
 
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Calendar as CalendarIcon,
   CalendarCheck,
@@ -15,6 +15,8 @@ import {
   ChevronRight,
   Plus,
   RefreshCw,
+  X,
+  CalendarDays,
 } from 'lucide-react';
 import styles from './Agenda.module.css';
 
@@ -78,10 +80,21 @@ const MESES = [
 
 const DIAS_SEMANA = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
 
+// Grade padrão de horários da clínica (08:00 → 18:00, intervalos de 30min)
+const SLOTS_PADRAO: string[] = (() => {
+  const list: string[] = [];
+  for (let h = 8; h <= 18; h++) {
+    list.push(`${String(h).padStart(2, '0')}:00`);
+    if (h !== 18) list.push(`${String(h).padStart(2, '0')}:30`);
+  }
+  return list;
+})();
+
 export function Calendario() {
   const today = new Date();
   const [currentMonth, setCurrentMonth] = useState(today.getMonth());
   const [currentYear, setCurrentYear] = useState(today.getFullYear());
+  const [selectedDay, setSelectedDay] = useState<number | null>(null);
 
   // Mapa de agendamentos do mês atual (apenas Abril/2026 povoado; outros meses ficam vazios)
   const agendaDoMes: AgendaMap = useMemo(() => {
@@ -95,7 +108,6 @@ export function Calendario() {
     const confirmados = flat.filter((a) => a.status === 'Confirmado').length;
     const pendentes = flat.filter((a) => a.status === 'Pendente').length;
 
-    // Esta semana = agendamentos cujos dias caem na mesma semana que "hoje"
     let esteSemana = 0;
     if (currentMonth === today.getMonth() && currentYear === today.getFullYear()) {
       const dayToday = today.getDate();
@@ -109,7 +121,6 @@ export function Calendario() {
         return dia >= startOfWeek && dia <= endOfWeek;
       }).length;
     } else {
-      // Para meses diferentes, estimativa: 1ª semana
       esteSemana = Object.keys(agendaDoMes)
         .map(Number)
         .filter((d) => d <= 7)
@@ -160,12 +171,35 @@ export function Calendario() {
     el.style.setProperty('--my', `${e.clientY - rect.top}px`);
   };
 
+  const handleOpenDay = (day: number) => setSelectedDay(day);
+  const handleCloseModal = useCallback(() => setSelectedDay(null), []);
+
+  // ESC para fechar
+  useEffect(() => {
+    if (selectedDay === null) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') handleCloseModal();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [selectedDay, handleCloseModal]);
+
   const STAT_CARDS = [
     { label: 'Total do Mês', value: stats.total, color: '#3498db', Icon: CalendarIcon },
     { label: 'Esta Semana', value: stats.esteSemana, color: '#f39c12', Icon: Clock },
     { label: 'Confirmados', value: stats.confirmados, color: '#2ecc71', Icon: CalendarCheck },
     { label: 'Pendentes', value: stats.pendentes, color: '#e74c3c', Icon: AlertCircle },
   ];
+
+  // Dados do dia selecionado
+  const selectedAgendamentos: Agendamento[] =
+    selectedDay !== null ? agendaDoMes[selectedDay] || [] : [];
+  const horariosOcupados = new Set(selectedAgendamentos.map((a) => a.hora));
+  const selectedDate =
+    selectedDay !== null ? new Date(currentYear, currentMonth, selectedDay) : null;
+  const selectedDateLabel = selectedDate
+    ? `${DIAS_SEMANA[selectedDate.getDay()]}, ${selectedDay} de ${MESES[currentMonth]} de ${currentYear}`
+    : '';
 
   return (
     <div className={styles.container}>
@@ -248,11 +282,11 @@ export function Calendario() {
             const events = agendaDoMes[day] || [];
             const dow = (firstDayOfMonth + day - 1) % 7;
             const isWeekend = dow === 0 || dow === 6;
-            const today = isToday(day);
+            const todayFlag = isToday(day);
             const cellClasses = [
               styles.dayCell,
-              today ? styles.dayCellToday : '',
-              isWeekend && !today ? styles.dayCellWeekend : '',
+              todayFlag ? styles.dayCellToday : '',
+              isWeekend && !todayFlag ? styles.dayCellWeekend : '',
             ]
               .filter(Boolean)
               .join(' ');
@@ -262,7 +296,20 @@ export function Calendario() {
             const overflow = events.length - MAX_VISIBLE;
 
             return (
-              <div key={day} className={cellClasses} onMouseMove={handleMove}>
+              <div
+                key={day}
+                className={cellClasses}
+                onMouseMove={handleMove}
+                onClick={() => handleOpenDay(day)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    handleOpenDay(day);
+                  }
+                }}
+              >
                 <span className={styles.dayNumber}>{day}</span>
                 {events.length > 0 && (
                   <div className={styles.events}>
@@ -311,6 +358,144 @@ export function Calendario() {
           </span>
         </div>
       </div>
+
+      {/* DAY MODAL */}
+      {selectedDay !== null && (
+        <>
+          <div className={styles.modalBackdrop} onClick={handleCloseModal} />
+          <div
+            className={styles.modal}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="agenda-modal-title"
+          >
+            <div className={styles.modalHeader}>
+              <div className={styles.modalTitleWrap}>
+                <span className={styles.modalEyebrow}>
+                  <CalendarDays size={11} strokeWidth={2.6} />
+                  Agenda do Dia
+                </span>
+                <h2 id="agenda-modal-title" className={styles.modalTitle}>
+                  {selectedDay} de {MESES[currentMonth]}
+                </h2>
+                <span className={styles.modalSubtitle}>{selectedDateLabel}</span>
+              </div>
+              <button
+                className={styles.modalClose}
+                type="button"
+                onClick={handleCloseModal}
+                aria-label="Fechar"
+              >
+                <X size={16} strokeWidth={2.6} />
+              </button>
+            </div>
+
+            <div className={styles.modalBody}>
+              {/* Agendamentos */}
+              <div className={styles.modalSection}>
+                <span className={styles.modalSectionTitle}>
+                  <CalendarCheck size={12} strokeWidth={2.6} style={{ color: '#2ecc71' }} />
+                  Agendamentos · <strong>{selectedAgendamentos.length}</strong>
+                </span>
+                {selectedAgendamentos.length === 0 ? (
+                  <div className={styles.apptEmpty}>
+                    Nenhum agendamento para este dia
+                  </div>
+                ) : (
+                  <div className={styles.apptList}>
+                    {selectedAgendamentos
+                      .slice()
+                      .sort((a, b) => a.hora.localeCompare(b.hora))
+                      .map((ag) => (
+                        <div
+                          key={ag.id}
+                          className={styles.apptItem}
+                          style={{ ['--appt-color' as string]: ag.cor } as React.CSSProperties}
+                        >
+                          <span className={styles.apptTime}>{ag.hora}</span>
+                          <div className={styles.apptInfo}>
+                            <span className={styles.apptName}>{ag.paciente}</span>
+                            <span className={styles.apptTipo}>{ag.tipo}</span>
+                          </div>
+                          <span
+                            className={`${styles.apptStatus} ${
+                              ag.status === 'Confirmado'
+                                ? styles.statusConfirmed
+                                : styles.statusPending
+                            }`}
+                          >
+                            <span
+                              className={`${styles.statusDot} ${
+                                ag.status === 'Confirmado'
+                                  ? styles.statusConfirmed
+                                  : styles.statusPending
+                              }`}
+                            />
+                            {ag.status}
+                          </span>
+                        </div>
+                      ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Horários disponíveis */}
+              <div className={styles.modalSection}>
+                <span className={styles.modalSectionTitle}>
+                  <Clock size={12} strokeWidth={2.6} style={{ color: '#c9943a' }} />
+                  Grade de Horários · <strong>{SLOTS_PADRAO.length - horariosOcupados.size}</strong> livres
+                </span>
+                <div className={styles.slotsGrid}>
+                  {SLOTS_PADRAO.map((slot) => {
+                    const ocupado = horariosOcupados.has(slot);
+                    return (
+                      <span
+                        key={slot}
+                        className={`${styles.slot} ${
+                          ocupado ? styles.slotOccupied : styles.slotFree
+                        }`}
+                        title={ocupado ? 'Horário ocupado' : 'Disponível'}
+                      >
+                        {slot}
+                      </span>
+                    );
+                  })}
+                </div>
+                <div className={styles.slotLegend}>
+                  <span>
+                    <span
+                      className={styles.slotLegendDot}
+                      style={{ background: '#2ecc71', boxShadow: '0 0 6px #2ecc71' }}
+                    />
+                    Disponível
+                  </span>
+                  <span>
+                    <span
+                      className={styles.slotLegendDot}
+                      style={{ background: '#c9943a', boxShadow: '0 0 6px #c9943a' }}
+                    />
+                    Ocupado
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className={styles.modalFooter}>
+              <button
+                type="button"
+                className={styles.modalBtnGhost}
+                onClick={handleCloseModal}
+              >
+                Fechar
+              </button>
+              <button type="button" className={styles.modalBtnPrimary}>
+                <Plus size={14} strokeWidth={2.8} />
+                Novo Agendamento
+              </button>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
