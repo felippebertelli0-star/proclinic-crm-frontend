@@ -305,10 +305,7 @@ export function Indicadores() {
           </div>
         </div>
 
-        <div
-          ref={scrollRef}
-          className={`${styles.tableScroll} ${atEnd ? styles.atEnd : ''}`}
-        >
+        <div ref={scrollRef} className={styles.tableScroll}>
           <table className={styles.table}>
             <thead className={styles.thead}>
               <tr>
@@ -409,6 +406,7 @@ export function Indicadores() {
             </tfoot>
           </table>
         </div>
+        <div className={`${styles.fadeRight} ${atEnd ? styles.fadeRightHidden : ''}`} />
         {!atEnd && (
           <div className={styles.scrollHint}>
             Arraste <ArrowRight size={11} strokeWidth={3} />

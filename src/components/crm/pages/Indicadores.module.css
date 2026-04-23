@@ -355,42 +355,54 @@
 }
 
 .tableScroll {
-  /* overflow-x: scroll força a barra a SEMPRE aparecer (macOS/overlay scrollbars) */
+  /* overflow-x: scroll força a barra a SEMPRE aparecer (macOS overlay) */
   overflow-x: scroll;
-  overflow-y: auto;
-  max-height: 680px;
+  overflow-y: visible;
+  position: relative;
   /* Firefox */
   scrollbar-width: auto;
   scrollbar-color: #c9943a #132636;
-  position: relative;
-  /* Fade à direita que some ao chegar no fim — dica visual de "tem mais" */
-  -webkit-mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 28px), transparent 100%);
-  mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 28px), transparent 100%);
-}
-.tableScroll.atEnd {
-  -webkit-mask-image: none;
-  mask-image: none;
+  /* Garante espaço inferior para a barra não encostar na borda arredondada */
+  padding-bottom: 2px;
 }
 
-/* WebKit / Chromium / Safari — barra sempre visível, dourada */
+/* Fade à direita em overlay — NÃO usa mask (que cortaria a barra) */
+.fadeRight {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 18px; /* acima da barra de rolagem */
+  width: 48px;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent 0%, rgba(15, 33, 48, 0.9) 100%);
+  z-index: 2;
+  transition: opacity 0.25s ease;
+}
+.fadeRightHidden {
+  opacity: 0;
+}
+
+/* WebKit / Chromium / Safari — barra sempre visível, dourada e GROSSA */
 .tableScroll::-webkit-scrollbar {
-  height: 14px;
-  width: 14px;
+  height: 16px;
+  width: 12px;
   background: #0f2130;
 }
 .tableScroll::-webkit-scrollbar-track {
-  background: #132636;
+  background: linear-gradient(180deg, #0f2130 0%, #132636 100%);
   border-top: 1px solid #1e3d54;
+  border-radius: 0 0 14px 14px;
 }
 .tableScroll::-webkit-scrollbar-thumb {
   background: linear-gradient(90deg, #c9943a 0%, #a87a28 100%);
   border-radius: 999px;
   border: 3px solid #132636;
-  box-shadow: 0 0 10px rgba(201, 148, 58, 0.35);
+  box-shadow: 0 0 12px rgba(201, 148, 58, 0.55);
+  min-width: 60px;
 }
 .tableScroll::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(90deg, #d4a04a 0%, #b58430 100%);
-  box-shadow: 0 0 14px rgba(201, 148, 58, 0.55);
+  box-shadow: 0 0 18px rgba(201, 148, 58, 0.7);
 }
 .tableScroll::-webkit-scrollbar-corner {
   background: #132636;
