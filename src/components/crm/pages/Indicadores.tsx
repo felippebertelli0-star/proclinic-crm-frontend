@@ -11,7 +11,7 @@
  * Qualidade: ULTRA MEGA PREMIUM AAA.
  */
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   BarChart3,
   RefreshCw,
@@ -24,6 +24,7 @@ import {
   Target,
   TrendingUp,
   CheckCircle2,
+  ArrowRight,
 } from 'lucide-react';
 
 import styles from './Indicadores.module.css';
@@ -84,6 +85,25 @@ export function Indicadores() {
   useEffect(() => {
     const id = setInterval(() => setTick((t) => t + 1), 60_000);
     return () => clearInterval(id);
+  }, []);
+
+  /* ── Detectar se rolou até o fim horizontal (hint "Arraste →") ── */
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [atEnd, setAtEnd] = useState(false);
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const onScroll = () => {
+      const end = el.scrollLeft + el.clientWidth >= el.scrollWidth - 4;
+      setAtEnd(end);
+    };
+    onScroll();
+    el.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    return () => {
+      el.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+    };
   }, []);
 
   /* ── Cálculo das métricas ── */
@@ -285,7 +305,10 @@ export function Indicadores() {
           </div>
         </div>
 
-        <div className={styles.tableScroll}>
+        <div
+          ref={scrollRef}
+          className={`${styles.tableScroll} ${atEnd ? styles.atEnd : ''}`}
+        >
           <table className={styles.table}>
             <thead className={styles.thead}>
               <tr>
@@ -386,6 +409,11 @@ export function Indicadores() {
             </tfoot>
           </table>
         </div>
+        {!atEnd && (
+          <div className={styles.scrollHint}>
+            Arraste <ArrowRight size={11} strokeWidth={3} />
+          </div>
+        )}
       </div>
 
       {/* ── TOAST ───────────────────────────────────────────── */}
