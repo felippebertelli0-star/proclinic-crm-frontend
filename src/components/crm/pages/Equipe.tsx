@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import { useEquipeStore } from '@/store/equipeStore';
+import { usePipelineStore } from '@/store/pipelineStore';
 import { useEquipeSync } from '@/hooks/useEquipeSync';
 import { CreateMembroModal } from './Equipe/CreateMembroModal';
 import {
@@ -35,9 +36,20 @@ export function Equipe() {
     hydrate();
   }, [hydrate]);
 
-  const conversasMock = useMemo(() => [], []);
-  const opportunitiesMock = useMemo(() => [], []);
-  useEquipeSync(conversasMock, opportunitiesMock);
+  // Dados reais do pipeline: achata todas as oportunidades de todos os estágios
+  // e tagueia cada uma com o stage.id para permitir contagem por estágio.
+  const estagios = usePipelineStore((state) => state.estagios);
+  const opportunitiesReais = useMemo(
+    () =>
+      estagios.flatMap((s) =>
+        s.opportunities.map((o) => ({ ...o, stage: s.id })),
+      ),
+    [estagios],
+  );
+  // conversasStore não mantém array de conversas (apenas contagens globais),
+  // portanto passamos [] até existir histórico por agente.
+  const conversasReais = useMemo(() => [], []);
+  useEquipeSync(conversasReais, opportunitiesReais);
 
   const handleCreateMembro = (novoMembro: any) => {
     const id = membros.length > 0 ? Math.max(...membros.map((m) => m.id)) + 1 : 1;

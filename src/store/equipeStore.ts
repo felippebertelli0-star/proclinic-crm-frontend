@@ -110,12 +110,20 @@ export const useEquipeStore = create<EquipeStore>((set, get) => ({
     };
 
     const membros = get().membros.map((membro) => {
+      // Normalização: oportunidades usam primeiro nome (ex.: "Hávila"),
+      // membros usam nome completo (ex.: "Hávila Rodrigues"). Comparamos por
+      // primeiro nome em lowercase para casar os dois formatos.
+      const primeiroNome = (membro.nome || '').trim().split(/\s+/)[0].toLowerCase();
+      const matchAgente = (agente: any) => {
+        if (!agente) return false;
+        const a = String(agente).trim().toLowerCase();
+        return a === membro.nome.toLowerCase() || a === primeiroNome;
+      };
+
       const minhasConversas = conversas.filter(
-        (c: any) => c.agente === membro.nome || c.agente === membro.id
+        (c: any) => matchAgente(c.agente) || c.agente === membro.id
       );
-      const meusPipeline = opportunities.filter(
-        (o: any) => o.agente === membro.nome
-      );
+      const meusPipeline = opportunities.filter((o: any) => matchAgente(o.agente));
 
       return {
         ...membro,
