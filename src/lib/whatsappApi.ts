@@ -87,6 +87,79 @@ export async function removerConexaoWhatsapp(
   await apiClient.delete(`/whatsapp/sistemas/${sistemaId}/conexoes/${conexaoId}`);
 }
 
+// ---------------------------------------------------------------------------
+// Modo Teste IA / Allowlist por conexão
+// ---------------------------------------------------------------------------
+
+export interface AllowlistItem {
+  id: string;
+  conexaoId: string;
+  telefone: string;
+  nome: string | null;
+  criadoEm: string;
+}
+
+export interface IaConfig {
+  conexaoId: string;
+  iaAtiva: boolean;
+  iaModoTeste: boolean;
+  ia: { id: string; nome: string; status: string; modo: string } | null;
+}
+
+export async function buscarIaConfig(
+  sistemaId: string,
+  conexaoId: string,
+): Promise<IaConfig> {
+  const resp = await apiClient.get<IaConfig>(
+    `/whatsapp/sistemas/${sistemaId}/conexoes/${conexaoId}/ia-config`,
+  );
+  return resp.data;
+}
+
+export async function atualizarIaConfig(
+  sistemaId: string,
+  conexaoId: string,
+  input: { iaAtiva?: boolean; iaModoTeste?: boolean },
+): Promise<{ id: string; iaAtiva: boolean; iaModoTeste: boolean }> {
+  const resp = await apiClient.patch(
+    `/whatsapp/sistemas/${sistemaId}/conexoes/${conexaoId}/ia-config`,
+    input,
+  );
+  return resp.data;
+}
+
+export async function listarAllowlist(
+  sistemaId: string,
+  conexaoId: string,
+): Promise<AllowlistItem[]> {
+  const resp = await apiClient.get<AllowlistItem[]>(
+    `/whatsapp/sistemas/${sistemaId}/conexoes/${conexaoId}/allowlist`,
+  );
+  return Array.isArray(resp.data) ? resp.data : [];
+}
+
+export async function adicionarAllowlist(
+  sistemaId: string,
+  conexaoId: string,
+  input: { telefone: string; nome?: string },
+): Promise<AllowlistItem> {
+  const resp = await apiClient.post<AllowlistItem>(
+    `/whatsapp/sistemas/${sistemaId}/conexoes/${conexaoId}/allowlist`,
+    input,
+  );
+  return resp.data;
+}
+
+export async function removerAllowlist(
+  sistemaId: string,
+  conexaoId: string,
+  allowlistId: string,
+): Promise<void> {
+  await apiClient.delete(
+    `/whatsapp/sistemas/${sistemaId}/conexoes/${conexaoId}/allowlist/${allowlistId}`,
+  );
+}
+
 import { getToken } from './auth';
 
 export function isMockToken(): boolean {

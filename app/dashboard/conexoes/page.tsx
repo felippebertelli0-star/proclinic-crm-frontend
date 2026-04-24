@@ -17,6 +17,7 @@ import {
   removerConexaoWhatsapp,
   isMockToken,
 } from '@/lib/whatsappApi';
+import { ModoTesteIaDrawer } from './ModoTesteIaDrawer';
 
 interface QrModalState {
   conexaoId: string;
@@ -54,6 +55,9 @@ export default function ConexoesPage() {
 
   const [qrModal, setQrModal] = useState<QrModalState | null>(null);
   const qrPollRef = useRef<{ status?: number; refresh?: number }>({});
+
+  // Drawer Modo Teste IA (por conexão)
+  const [iaDrawer, setIaDrawer] = useState<{ conexaoId: string; nome: string } | null>(null);
 
   const mockMode = isMockToken();
 
@@ -398,12 +402,12 @@ export default function ConexoesPage() {
                   </div>
                 </div>
 
-                <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
+                <div style={{ display: 'flex', gap: 8, marginTop: 12, flexWrap: 'wrap' }}>
                   {c.status !== 'conectado' && (
                     <button
                       onClick={() => handleReconectar(c)}
                       style={{
-                        flex: 1,
+                        flex: '1 1 120px',
                         padding: '8px 12px',
                         borderRadius: 8,
                         border: '1px solid #c9943a',
@@ -418,9 +422,26 @@ export default function ConexoesPage() {
                     </button>
                   )}
                   <button
+                    onClick={() => setIaDrawer({ conexaoId: c.id, nome: c.nome })}
+                    title="Modo Teste IA (allowlist)"
+                    style={{
+                      flex: '1 1 120px',
+                      padding: '8px 12px',
+                      borderRadius: 8,
+                      border: '1px solid rgba(155,89,182,0.5)',
+                      background: 'rgba(155,89,182,0.08)',
+                      color: '#b07fd9',
+                      fontSize: 12,
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    🧪 Modo Teste IA
+                  </button>
+                  <button
                     onClick={() => handleRemover(c)}
                     style={{
-                      flex: 1,
+                      flex: '1 1 120px',
                       padding: '8px 12px',
                       borderRadius: 8,
                       border: '1px solid rgba(231,76,60,0.5)',
@@ -683,6 +704,16 @@ export default function ConexoesPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* ───────── Drawer: Modo Teste IA ───────── */}
+      {iaDrawer && sistemaId && (
+        <ModoTesteIaDrawer
+          sistemaId={sistemaId}
+          conexaoId={iaDrawer.conexaoId}
+          conexaoNome={iaDrawer.nome}
+          onClose={() => setIaDrawer(null)}
+        />
       )}
     </div>
   );
