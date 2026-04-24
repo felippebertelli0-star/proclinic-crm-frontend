@@ -119,3 +119,124 @@ export async function aplicarKitPadrao(sistemaId: string): Promise<IA[]> {
   const criadas = Array.isArray(resp.data?.criadas) ? resp.data.criadas : [];
   return criadas.map(normalizarIA);
 }
+
+// ─── IA de Atendimento (Aurora) — endpoints v1 ──────────────────────────────
+
+export interface OpenAIKeyValidationResult {
+  valida: boolean;
+  modelos?: string[];
+  erro?: string;
+}
+
+export async function validarOpenAIKey(
+  sistemaId: string,
+  iaId: string,
+  apiKey: string,
+): Promise<OpenAIKeyValidationResult> {
+  const resp = await apiClient.post<OpenAIKeyValidationResult>(
+    `/sistemas/${sistemaId}/ias/${iaId}/openai-key/validar`,
+    { apiKey },
+  );
+  return resp.data;
+}
+
+export async function salvarOpenAIKey(
+  sistemaId: string,
+  iaId: string,
+  apiKey: string,
+): Promise<{ apiKeyMasked: string; apiKeyValidadaEm: string; modelosDisponiveis: string[] }> {
+  const resp = await apiClient.post(
+    `/sistemas/${sistemaId}/ias/${iaId}/openai-key`,
+    { apiKey },
+  );
+  return resp.data;
+}
+
+export async function removerOpenAIKey(sistemaId: string, iaId: string): Promise<void> {
+  await apiClient.post(`/sistemas/${sistemaId}/ias/${iaId}/openai-key/remover`);
+}
+
+export interface ChatTestResult {
+  texto: string;
+  solicitaHandoff: boolean;
+  tokensEntrada: number;
+  tokensSaida: number;
+  custoBrl: number;
+  latenciaMs: number;
+  modeloUsado: string;
+}
+
+export async function testarIA(
+  sistemaId: string,
+  iaId: string,
+  mensagem: string,
+  historico?: Array<{ role: 'user' | 'assistant'; content: string }>,
+  modeloOverride?: string,
+): Promise<ChatTestResult> {
+  const resp = await apiClient.post<ChatTestResult>(
+    `/sistemas/${sistemaId}/ias/${iaId}/testar`,
+    { mensagem, historico, modeloOverride },
+  );
+  return resp.data;
+}
+
+export interface MetricasIA {
+  iaId: string;
+  nome: string;
+  status: string;
+  periodoInicio: string;
+  periodoFim: string;
+  execucoes: number;
+  sucessos: number;
+  erros: number;
+  rateLimited: number;
+  timeouts: number;
+  custoExcedido: number;
+  tokensEntrada: number;
+  tokensSaida: number;
+  custoBrl: number;
+  latenciaMediaMs: number;
+  latenciaP95Ms: number;
+  custoMensalAtualBrl: number;
+  custoMensalMaxBrl: number | null;
+  percentualConsumido: number | null;
+}
+
+export async function getMetricasIA(
+  sistemaId: string,
+  iaId: string,
+): Promise<MetricasIA> {
+  const resp = await apiClient.get<MetricasIA>(
+    `/sistemas/${sistemaId}/ias/${iaId}/metricas`,
+  );
+  return resp.data;
+}
+
+export interface ExecucaoIA {
+  id: string;
+  conversaId: string | null;
+  status: string;
+  modeloUsado: string;
+  tokensEntrada: number;
+  tokensSaida: number;
+  custoEstimadoBrl: number;
+  latenciaMs: number;
+  erroDetalhes: string | null;
+  criadoEm: string;
+}
+
+export async function getExecucoesIA(
+  sistemaId: string,
+  iaId: string,
+  limite = 50,
+): Promise<ExecucaoIA[]> {
+  const resp = await apiClient.get<ExecucaoIA[]>(
+    `/sistemas/${sistemaId}/ias/${iaId}/execucoes`,
+    { params: { limite } },
+  );
+  return resp.data;
+}
+
+export async function resetarCustoIA(sistemaId: string, iaId: string): Promise<void> {
+  await apiClient.post(`/sistemas/${sistemaId}/ias/${iaId}/custo/reset`);
+}

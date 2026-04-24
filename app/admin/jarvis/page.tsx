@@ -46,6 +46,7 @@ import {
 } from '@/store/iasStore';
 import { useSistemasStore, PLANO_CONFIG } from '@/store/sistemasStore';
 import { JarvisWizard } from '@/components/admin/JarvisWizard';
+import { AuroraConfigModal } from '@/components/admin/AuroraConfigModal';
 
 /* ─────────────────────────────────────────────
  *  Helpers
@@ -113,6 +114,7 @@ export default function JarvisAdminPage() {
 
   const [wizardOpen, setWizardOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [auroraConfig, setAuroraConfig] = useState<{ iaId: string; iaNome: string } | null>(null);
   const [busca, setBusca] = useState('');
   const [filtroFuncao, setFiltroFuncao] = useState<IAFuncao | 'todas'>('todas');
   const [sistemaAtivo, setSistemaAtivo] = useState<string | null>(null);
@@ -416,6 +418,11 @@ export default function JarvisAdminPage() {
               onToggle={() => toggleStatus(ia.id)}
               onDuplicate={() => duplicarIA(ia.id)}
               onRemove={() => handleRemover(ia.id, ia.nome)}
+              onConfigAurora={
+                ia.funcao === 'atendimento'
+                  ? () => setAuroraConfig({ iaId: ia.id, iaNome: ia.nome })
+                  : undefined
+              }
             />
           ))}
         </div>
@@ -432,6 +439,17 @@ export default function JarvisAdminPage() {
         initialIA={editingIA}
         sistemaId={sistemaAtivo ?? undefined}
       />
+
+      {/* ── AURORA CONFIG (IA de Atendimento v1) ── */}
+      {auroraConfig && sistemaAtivo && (
+        <AuroraConfigModal
+          isOpen={!!auroraConfig}
+          sistemaId={sistemaAtivo}
+          iaId={auroraConfig.iaId}
+          iaNome={auroraConfig.iaNome}
+          onClose={() => setAuroraConfig(null)}
+        />
+      )}
     </div>
   );
 }
@@ -500,12 +518,14 @@ function IACard({
   onToggle,
   onDuplicate,
   onRemove,
+  onConfigAurora,
 }: {
   ia: IA;
   onEdit: () => void;
   onToggle: () => void;
   onDuplicate: () => void;
   onRemove: () => void;
+  onConfigAurora?: () => void;
 }) {
   const funcaoInfo = FUNCAO_LABELS[ia.funcao];
   const canalInfo = CANAL_LABELS[ia.canal];
@@ -584,14 +604,26 @@ function IACard({
           </ActionButton>
         </div>
 
-        <button
-          onClick={onEdit}
-          className="flex items-center gap-1 px-3 py-1.5 rounded-[8px] bg-gradient-to-r from-[#c9943a] to-[#8a6424] text-[#0a1520] text-[11px] font-bold hover:shadow-[0_8px_20px_-8px_rgba(201,148,58,0.6)] transition-all"
-        >
-          <Settings2 size={12} strokeWidth={2.5} />
-          Configurar
-          <ChevronRight size={12} />
-        </button>
+        <div className="flex items-center gap-2">
+          {onConfigAurora && (
+            <button
+              onClick={onConfigAurora}
+              className="flex items-center gap-1 px-3 py-1.5 rounded-[8px] bg-[rgba(167,139,250,0.10)] border border-[rgba(167,139,250,0.30)] text-[#a78bfa] text-[11px] font-bold hover:bg-[rgba(167,139,250,0.18)] transition-all"
+              title="Configurar Aurora (API key, persona, humanização, métricas)"
+            >
+              <Sparkles size={12} strokeWidth={2.5} />
+              Aurora
+            </button>
+          )}
+          <button
+            onClick={onEdit}
+            className="flex items-center gap-1 px-3 py-1.5 rounded-[8px] bg-gradient-to-r from-[#c9943a] to-[#8a6424] text-[#0a1520] text-[11px] font-bold hover:shadow-[0_8px_20px_-8px_rgba(201,148,58,0.6)] transition-all"
+          >
+            <Settings2 size={12} strokeWidth={2.5} />
+            Configurar
+            <ChevronRight size={12} />
+          </button>
+        </div>
       </div>
     </div>
   );
