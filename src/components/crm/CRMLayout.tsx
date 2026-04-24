@@ -151,8 +151,10 @@ export function CRMLayout({ children }: { children?: React.ReactNode }) {
     // Detectar a página atual pela URL
     const pathSegments = pathname?.split('/').filter(Boolean) || [];
     const pageName = pathSegments[1] || 'dashboard'; // [0] é 'dashboard', [1] é a página
-    if (pageName && pageName !== 'admin') {
-      setCurrentPage(pageName as PageType);
+    // Converter URL slug (hífen) para id interno (underscore)
+    const normalized = pageName === 'portal-ias' ? 'portal_ias' : pageName === 'pedido-exames' ? 'pedido_exames' : pageName;
+    if (normalized && normalized !== 'admin') {
+      setCurrentPage(normalized as PageType);
     }
   }, [pathname]);
 
@@ -166,13 +168,18 @@ export function CRMLayout({ children }: { children?: React.ReactNode }) {
       return;
     }
 
-    router.push(id === 'dashboard' ? '/dashboard' : `/dashboard/${id}`);
+    // Some routes use hyphenated URLs while the internal id uses underscore
+    const urlSlug = id === 'portal_ias' ? 'portal-ias' : id === 'pedido_exames' ? 'pedido-exames' : id;
+    router.push(id === 'dashboard' ? '/dashboard' : `/dashboard/${urlSlug}`);
   };
 
   const renderPage = () => {
     // If we're on a route with App Router children (e.g., /dashboard/estrategias)
     // render them instead of using PAGE_MAPPING
     if (pathname.includes('/estrategias') && children) {
+      return children;
+    }
+    if (pathname.includes('/portal-ias') && children) {
       return children;
     }
 

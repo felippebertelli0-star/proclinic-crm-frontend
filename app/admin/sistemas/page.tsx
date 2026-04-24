@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   Plus,
   Search,
@@ -13,20 +13,15 @@ import {
   AlertCircle,
   Sparkles,
 } from 'lucide-react';
-
-type PlanoId = 'starter' | 'pro' | 'enterprise';
-type StatusId = 'ativo' | 'trial' | 'suspenso';
-
-interface Clinica {
-  id: string;
-  nome: string;
-  slug: string;
-  plano: PlanoId;
-  status: StatusId;
-  usuarios: number;
-  mrr: number;
-  criadaEm: string;
-}
+import {
+  useSistemasStore,
+  PLANO_CONFIG,
+  STATUS_CONFIG,
+  type Clinica,
+  type PlanoId,
+  type StatusClinicaId as StatusId,
+} from '@/store/sistemasStore';
+import { useIAsStore } from '@/store/iasStore';
 
 const SLUGS_RESERVADOS = new Set([
   'admin',
@@ -58,65 +53,8 @@ const SLUGS_RESERVADOS = new Set([
   'assets',
 ]);
 
-const CLINICAS_MOCK: Clinica[] = [
-  {
-    id: '1',
-    nome: 'Clínica Andressa Estética',
-    slug: 'andressa',
-    plano: 'pro',
-    status: 'ativo',
-    usuarios: 12,
-    mrr: 697,
-    criadaEm: '12 mar 2026',
-  },
-  {
-    id: '2',
-    nome: 'Odonto Premium SP',
-    slug: 'odontopremium',
-    plano: 'enterprise',
-    status: 'ativo',
-    usuarios: 34,
-    mrr: 1997,
-    criadaEm: '02 fev 2026',
-  },
-  {
-    id: '3',
-    nome: 'Dermato Vida Plena',
-    slug: 'vidaplena',
-    plano: 'pro',
-    status: 'trial',
-    usuarios: 5,
-    mrr: 0,
-    criadaEm: '18 abr 2026',
-  },
-];
-
-const planoConfig: Record<PlanoId, { label: string; color: string; bg: string; border: string }> = {
-  starter: {
-    label: 'Starter',
-    color: '#8ea3b5',
-    bg: 'rgba(142,163,181,0.10)',
-    border: 'rgba(142,163,181,0.25)',
-  },
-  pro: {
-    label: 'Pro',
-    color: '#c9943a',
-    bg: 'rgba(201,148,58,0.12)',
-    border: 'rgba(201,148,58,0.30)',
-  },
-  enterprise: {
-    label: 'Enterprise',
-    color: '#a78bfa',
-    bg: 'rgba(167,139,250,0.12)',
-    border: 'rgba(167,139,250,0.30)',
-  },
-};
-
-const statusConfig: Record<StatusId, { label: string; color: string; bg: string }> = {
-  ativo: { label: 'Ativo', color: '#2ecc71', bg: 'rgba(46,204,113,0.12)' },
-  trial: { label: 'Trial', color: '#f39c12', bg: 'rgba(243,156,18,0.12)' },
-  suspenso: { label: 'Suspenso', color: '#e74c3c', bg: 'rgba(231,76,60,0.12)' },
-};
+const planoConfig = PLANO_CONFIG;
+const statusConfig = STATUS_CONFIG;
 
 function normalizarSlug(valor: string): string {
   return valor
@@ -151,9 +89,25 @@ function validarSlug(slug: string, slugsExistentes: Set<string>): ValidacaoSlug 
 }
 
 export default function ClinicasPage() {
-  const [clinicas, setClinicas] = useState<Clinica[]>(CLINICAS_MOCK);
+  const {
+    clinicas,
+    hydrated: sistemasHidratado,
+    hydrate: hydrateSistemas,
+    addClinica,
+  } = useSistemasStore();
+  const {
+    hydrated: iasHidratado,
+    hydrate: hydrateIAs,
+    seedKitPadrao,
+  } = useIAsStore();
+
   const [busca, setBusca] = useState('');
   const [modalAberto, setModalAberto] = useState(false);
+
+  useEffect(() => {
+    if (!sistemasHidratado) hydrateSistemas();
+    if (!iasHidratado) hydrateIAs();
+  }, [sistemasHidratado, hydrateSistemas, iasHidratado, hydrateIAs]);
 
   const slugsExistentes = useMemo(
     () => new Set(clinicas.map((c) => c.slug)),
@@ -184,14 +138,17 @@ export default function ClinicasPage() {
       month: 'short',
       year: 'numeric',
     });
-    setClinicas((prev) => [
-      ...prev,
-      {
-        ...nova,
-        id: String(Math.max(0, ...prev.map((c) => Number(c.id))) + 1),
-        criadaEm: hoje,
-      },
-    ]);
+    const novoId = String(
+      Math.max(0, ...clinicas.map((c) => Number(c.id) || 0)) + 1,
+    );
+    const clinicaCompleta: Clinica = {
+      ...nova,
+      id: novoId,
+      criadaEm: hoje,
+    };
+    addClinica(clinicaCompleta);
+    // Seed automático de IAs — kit padrão 100% configurado para a nova clínica
+    seedKitPadrao(novoId);
     setModalAberto(false);
   };
 
@@ -586,6 +543,20 @@ function CreateClinicaModal({
                 <option value="ativo">Ativo</option>
                 <option value="suspenso">Suspenso</option>
               </select>
+            </div>
+          </div>
+
+          {/* Kit de IAs — seed automático */}
+          <div className="bg-[rgba(201,148,58,0.06)] border border-[rgba(201,148,58,0.22)] rounded-[10px] p-3.5 flex items-start gap-2.5">
+            <Sparkles size={14} className="text-[#c9943a] mt-0.5 shrink-0" />
+            <div>
+              <div className="text-[11px] font-bold text-[#e8b86d] leading-tight">
+                Kit JARVIS configurado automaticamente
+              </div>
+              <p className="text-[11px] text-[#8ea3b5] leading-relaxed mt-0.5">
+                Ao cadastrar, 5 IAs (Aurora, Agenda, Confirma, Nora, Insight) serão
+                provisionadas para a clínica — personalizáveis em Jarvis IA.
+              </p>
             </div>
           </div>
 
