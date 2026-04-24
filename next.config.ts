@@ -1,7 +1,15 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  async redirects() {
+    return [
+      {
+        source: "/dashboard/portal_ias",
+        destination: "/dashboard/portal-ias",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
