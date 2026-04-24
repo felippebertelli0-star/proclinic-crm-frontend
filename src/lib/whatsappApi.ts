@@ -92,5 +92,7 @@ import { getToken } from './auth';
 export function isMockToken(): boolean {
   if (typeof window === 'undefined') return true;
   const token = getToken() || '';
-  return token === '' || token.startsWith('mock_token_');
+  if (token === '') return true;
+  // Mock tokens usam prefixo 'mock_' (variações: mock_token_, mock_123...)
+  return token.startsWith('mock_');
 }

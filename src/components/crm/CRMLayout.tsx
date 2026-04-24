@@ -182,6 +182,9 @@ export function CRMLayout({ children }: { children?: React.ReactNode }) {
     if (pathname.includes('/portal-ias') && children) {
       return children;
     }
+    if (pathname.includes('/conexoes') && children) {
+      return children;
+    }
 
     const PageComponent = PAGE_MAPPING[currentPage];
     if (PageComponent) {
