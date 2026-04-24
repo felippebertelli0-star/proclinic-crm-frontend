@@ -4,7 +4,7 @@
   "devCommand": "npm run dev",
   "installCommand": "npm ci",
   "env": {
-    "NEXT_PUBLIC_API_URL": "https://api.proclinic.com.br"
+    "NEXT_PUBLIC_API_URL": "https://proclinic-crm-backend-production.up.railway.app/api/v1"
   },
   "regions": ["sfo1"],
   "headers": [
