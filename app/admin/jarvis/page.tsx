@@ -92,6 +92,14 @@ const STATUS_CONFIG: Record<IAStatus, { label: string; color: string; bg: string
   },
 };
 
+// Fallbacks defensivos para quando o backend devolver valores não mapeados
+// (evita crash "Cannot read properties of undefined (reading 'label')").
+const FALLBACK_FUNCAO = { label: '—', descricao: 'Sem descrição', emoji: '🤖' };
+const FALLBACK_CANAL = { label: '—', emoji: '💬' };
+const FALLBACK_MODO = { label: '—', descricao: '' };
+const FALLBACK_PROVIDER = { label: '—', modelos: [] as { id: string; label: string; custoRelativo: number }[] };
+const FALLBACK_STATUS = { label: '—', color: '#8ea3b5', bg: 'rgba(142,163,181,0.10)', dot: '#8ea3b5' };
+
 /* ─────────────────────────────────────────────
  *  Página
  * ───────────────────────────────────────────── */
@@ -165,9 +173,10 @@ export default function JarvisAdminPage() {
     return iasDaClinica.filter((ia) => {
       if (filtroFuncao !== 'todas' && ia.funcao !== filtroFuncao) return false;
       if (!termo) return true;
+      const funcaoLabel = (FUNCAO_LABELS[ia.funcao] ?? FALLBACK_FUNCAO).label;
       return (
         ia.nome.toLowerCase().includes(termo) ||
-        FUNCAO_LABELS[ia.funcao].label.toLowerCase().includes(termo)
+        funcaoLabel.toLowerCase().includes(termo)
       );
     });
   }, [iasDaClinica, busca, filtroFuncao]);
@@ -535,11 +544,11 @@ function IACard({
   onRemove: () => void;
   onConfigAurora?: () => void;
 }) {
-  const funcaoInfo = FUNCAO_LABELS[ia.funcao];
-  const canalInfo = CANAL_LABELS[ia.canal];
-  const modoInfo = MODO_LABELS[ia.modo];
-  const providerInfo = PROVIDER_LABELS[ia.provider];
-  const statusInfo = STATUS_CONFIG[ia.status];
+  const funcaoInfo = FUNCAO_LABELS[ia.funcao] ?? FALLBACK_FUNCAO;
+  const canalInfo = CANAL_LABELS[ia.canal] ?? FALLBACK_CANAL;
+  const modoInfo = MODO_LABELS[ia.modo] ?? FALLBACK_MODO;
+  const providerInfo = PROVIDER_LABELS[ia.provider] ?? FALLBACK_PROVIDER;
+  const statusInfo = STATUS_CONFIG[ia.status] ?? FALLBACK_STATUS;
 
   return (
     <div className="group relative overflow-hidden rounded-[16px] border border-[#132636] bg-gradient-to-br from-[#0f1f2e] to-[#0a1520] hover:border-[#1e3d54] transition-all hover:shadow-[0_20px_50px_-20px_rgba(0,0,0,0.5)]">
