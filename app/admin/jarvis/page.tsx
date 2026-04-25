@@ -47,6 +47,7 @@ import {
 import { useSistemasStore, PLANO_CONFIG } from '@/store/sistemasStore';
 import { JarvisWizard } from '@/components/admin/JarvisWizard';
 import { AuroraConfigModal } from '@/components/admin/AuroraConfigModal';
+import { getUser } from '@/lib/auth';
 
 /* ─────────────────────────────────────────────
  *  Helpers
@@ -125,9 +126,16 @@ export default function JarvisAdminPage() {
     if (!sistemasHydrated) hydrateSistemas();
   }, [hydrated, hydrate, sistemasHydrated, hydrateSistemas]);
 
-  // Seleciona a primeira clínica como padrão após hidratação
+  // Prioriza o sistemaId real do usuário autenticado (do JWT).
+  // Fallback: primeira clínica mock (para desenvolvimento sem login).
   useEffect(() => {
-    if (sistemasHydrated && !sistemaAtivo && clinicas.length > 0) {
+    if (sistemaAtivo) return;
+    const user = getUser();
+    if (user?.sistemaId) {
+      setSistemaAtivo(user.sistemaId);
+      return;
+    }
+    if (sistemasHydrated && clinicas.length > 0) {
       setSistemaAtivo(clinicas[0].id);
     }
   }, [sistemasHydrated, sistemaAtivo, clinicas]);

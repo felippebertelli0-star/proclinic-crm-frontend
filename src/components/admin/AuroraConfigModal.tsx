@@ -52,6 +52,8 @@ interface IAFull {
   personaGenero: string;
   personaTom: string;
   personaEstilo: string;
+  promptSistema: string;
+  objetivo: string;
   delayReacaoSemanaMs: number;
   delayReacaoFimSemanaMs: number;
   delayDigitacaoMinMs: number;
@@ -84,6 +86,8 @@ export function AuroraConfigModal({ isOpen, sistemaId, iaId, iaNome, onClose }: 
         personaGenero: data.personaGenero ?? 'feminino',
         personaTom: data.personaTom ?? 'misto',
         personaEstilo: data.personaEstilo ?? '',
+        promptSistema: data.promptSistema ?? '',
+        objetivo: data.objetivo ?? '',
         handoffPalavrasChave: Array.isArray(data.handoffPalavrasChave) ? data.handoffPalavrasChave : [],
       };
       setIA(fallback);
@@ -469,6 +473,8 @@ function AbaPersona({
     personaGenero: ia.personaGenero || 'feminino',
     personaTom: ia.personaTom || 'misto',
     personaEstilo: ia.personaEstilo || '',
+    promptSistema: ia.promptSistema || '',
+    objetivo: ia.objetivo || '',
   });
   return (
     <div className="space-y-4">
@@ -526,13 +532,45 @@ function AbaPersona({
           className="w-full bg-[#0f1f2e] border border-[#1e3d54] rounded-[10px] px-3 py-2 text-[13px] text-white"
         />
       </Field>
+
+      <div className="border-t border-[#1e3d54] pt-4 mt-2">
+        <h4 className="text-[13px] font-semibold text-white mb-1">Instruções (Prompt do Sistema)</h4>
+        <p className="text-[11px] text-[#8ea3b5] mb-3">
+          Aqui você define exatamente como a IA deve se comportar, o que pode e o que não pode dizer, e o objetivo principal das respostas.
+          Este texto é injetado no início de cada conversa.
+        </p>
+      </div>
+
+      <Field label="Objetivo principal">
+        <input
+          value={form.objetivo}
+          onChange={(e) => setForm({ ...form, objetivo: e.target.value })}
+          placeholder="Ex: agendar a primeira consulta de avaliação."
+          className="w-full bg-[#0f1f2e] border border-[#1e3d54] rounded-[10px] px-3 py-2 text-[13px] text-white"
+        />
+      </Field>
+
+      <Field label="Prompt do sistema (instruções completas)">
+        <textarea
+          rows={10}
+          value={form.promptSistema}
+          onChange={(e) => setForm({ ...form, promptSistema: e.target.value })}
+          placeholder={`Ex.:
+Você é a Sofia, atendente da Clínica X. Sempre cumprimente pelo primeiro nome.
+Nunca prometa preços sem confirmar com a recepção.
+Sempre que o paciente quiser agendar, peça: nome completo, telefone e melhor dia.
+Tom: acolhedor, claro, sem jargão médico.`}
+          className="w-full bg-[#0f1f2e] border border-[#1e3d54] rounded-[10px] px-3 py-2 text-[13px] text-white font-mono leading-relaxed"
+        />
+      </Field>
+
       <div className="flex justify-end">
         <button
           onClick={() => onSave(form)}
           disabled={saving}
           className="px-4 py-2 rounded-[10px] bg-gradient-to-r from-[#c9943a] to-[#8a6424] text-[#0a1520] text-[12px] font-bold disabled:opacity-40"
         >
-          {saving ? 'Salvando…' : 'Salvar persona'}
+          {saving ? 'Salvando…' : 'Salvar persona & prompt'}
         </button>
       </div>
     </div>
