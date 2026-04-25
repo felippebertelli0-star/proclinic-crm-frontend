@@ -336,11 +336,17 @@ export default function PortalIAsClinicaPage() {
  *  Card read-only
  * ───────────────────────────────────────────── */
 
+const FALLBACK_FUNCAO = { label: '—', descricao: 'Sem descrição', emoji: '🤖' };
+const FALLBACK_CANAL = { label: '—', emoji: '💬' };
+const FALLBACK_MODO = { label: '—', descricao: '' };
+const FALLBACK_STATUS = { label: '—', color: '#8ea3b5', bg: 'rgba(142,163,181,0.10)' };
+const FALLBACK_PROVIDER = { label: '—', modelos: [] as { id: string; label: string; custoRelativo: number }[] };
+
 function IAReadOnlyCard({ ia, onClick }: { ia: IA; onClick: () => void }) {
-  const funcaoInfo = FUNCAO_LABELS[ia.funcao];
-  const canalInfo = CANAL_LABELS[ia.canal];
-  const modoInfo = MODO_LABELS[ia.modo];
-  const statusInfo = STATUS_CONFIG[ia.status];
+  const funcaoInfo = FUNCAO_LABELS[ia.funcao] ?? FALLBACK_FUNCAO;
+  const canalInfo = CANAL_LABELS[ia.canal] ?? FALLBACK_CANAL;
+  const modoInfo = MODO_LABELS[ia.modo] ?? FALLBACK_MODO;
+  const statusInfo = STATUS_CONFIG[ia.status] ?? FALLBACK_STATUS;
 
   return (
     <button
@@ -538,11 +544,11 @@ function HeroKpi({
  * ───────────────────────────────────────────── */
 
 function DetailModal({ ia, onClose }: { ia: IA; onClose: () => void }) {
-  const funcaoInfo = FUNCAO_LABELS[ia.funcao];
-  const canalInfo = CANAL_LABELS[ia.canal];
-  const modoInfo = MODO_LABELS[ia.modo];
-  const providerInfo = PROVIDER_LABELS[ia.provider];
-  const statusInfo = STATUS_CONFIG[ia.status];
+  const funcaoInfo = FUNCAO_LABELS[ia.funcao] ?? FALLBACK_FUNCAO;
+  const canalInfo = CANAL_LABELS[ia.canal] ?? FALLBACK_CANAL;
+  const modoInfo = MODO_LABELS[ia.modo] ?? FALLBACK_MODO;
+  const providerInfo = PROVIDER_LABELS[ia.provider] ?? FALLBACK_PROVIDER;
+  const statusInfo = STATUS_CONFIG[ia.status] ?? FALLBACK_STATUS;
 
   useEffect(() => {
     const h = (e: KeyboardEvent) => {
